@@ -1,13 +1,12 @@
 package it.polimi.ingsw.am48.model.player;
 
+import it.polimi.ingsw.am48.model.card.BuildingCard;
+import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.Artifact;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Resource;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 public class Tribe {
     // final sugli oggetti per garantire che la variabile di riferimento non possa esser riassegnata a un altro oggetto
