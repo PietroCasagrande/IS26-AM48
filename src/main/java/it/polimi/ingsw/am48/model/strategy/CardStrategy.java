@@ -1,0 +1,22 @@
+package it.polimi.ingsw.am48.model.strategy;
+
+import it.polimi.ingsw.am48.model.player.Player;
+
+import java.util.List;
+
+public abstract class CardStrategy {
+    private final RegistrationAction registration;
+
+    // da rivedere sta cosa strana
+    protected CardStrategy(RegistrationAction registration){
+        this.registration = registration;
+    }
+
+    public abstract void effect(Player player, List<Player> allPlayers);
+
+    public void registerTo(NotificatorCenter nc, Player player){
+        if(registration != null){
+            registration.registerMethod(nc, player, this);
+        }
+    }
+}
