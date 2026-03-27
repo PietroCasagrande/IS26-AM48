@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.model.card;
 
+import it.polimi.ingsw.am48.model.board.Showed;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.player.Player;
@@ -28,7 +29,7 @@ public class CharacterCard extends Card {
     }
 
     @Override
-    public void acquire(Player player, Showed<T> showedList) {
+    public void acquire(Player player, Showed<Card> showedList) {
         throw new UnsupportedOperationException("TODO");
     }
 
