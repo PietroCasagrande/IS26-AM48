@@ -10,14 +10,11 @@ public class OnEventNotificator {
     private Map<EventType, List<CardStrategy>> listeners;
 
     public void attach(EventType e, CardStrategy cs){
-        // TODO
-    }
+        throw new UnsupportedOperationException("TODO");    }
 
     public void detach(){
-        // TODO
-    }
+        throw new UnsupportedOperationException("TODO");    }
 
     public void notifyListeners(EventType p){
-        // TODO
-    }
+        throw new UnsupportedOperationException("TODO");    }
 }

@@ -10,10 +10,10 @@ public class OnEndGameNotificator {
     private Map<Player, List<CardStrategy>> listeners;
 
     public void attach(Player p, CardStrategy cs){
-        // TODO
+        throw new UnsupportedOperationException("TODO");
     }
 
     public void notifyListeners(){
-        // TODO
+        throw new UnsupportedOperationException("TODO");
     }
 }
