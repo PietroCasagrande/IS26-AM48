@@ -7,33 +7,34 @@ import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class OfferTurnCard {
     private final int numPlayers;
-    private final List<Player> positions;
+    private final List<Player> order;
     private final List<Integer> foodRewards;
 
     public OfferTurnCard(int numPlayers, List<Integer> foodRewards) {
         this.numPlayers = numPlayers;
         this.foodRewards = List.copyOf(foodRewards);
-        this.positions = new ArrayList<>();
+        this.order = new ArrayList<>();
     }
 
     // randomizes player order for the very first turn
     public void setupOrder(List<Player> players){
-        this.positions.addAll(players);
-        Collections.shuffle(this.positions);
+        this.order.addAll(players);
+        Collections.shuffle(this.order);
     }
 
     // removes the totem to be placed on the offer track
     public Player takeTotem(){
-        return this.positions.removeFirst();
+        return this.order.removeFirst();
     }
 
     // replaces the totem at the end of the offer phase
     public void returnTotem(Player player){
-        this.positions.add(player);
-        player.addResource(Resource.FOOD, this.foodRewards.get(positions.size()-1));
+        this.order.add(player);
+        player.addResource(Resource.FOOD, this.foodRewards.get(order.size()-1));
     }
 
     // getSnapshot
