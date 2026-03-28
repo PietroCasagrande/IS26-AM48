@@ -6,6 +6,10 @@ import it.polimi.ingsw.am48.model.player.Player;
 public class WaitingForPlayersPhase implements GamePhase {
     private int requiredPlayer;
 
+    public WaitingForPlayersPhase(int requiredPlayer) {
+        this.requiredPlayer = requiredPlayer;
+    }
+
     @Override
     public void addPlayer(Game game, String playerNickname){
         throw new UnsupportedOperationException("TODO");

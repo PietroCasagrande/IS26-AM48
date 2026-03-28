@@ -30,12 +30,12 @@ public class PlayerOfferPhase implements GamePhase, PickContext {
     }
 
     // @Override ?
-    public void getPicksUp(){
+    public int getPicksUp(){
         throw new UnsupportedOperationException("TODO");
     }
 
     // @Override ?
-    public void getPicksDown(){
+    public int getPicksDown(){
         throw new UnsupportedOperationException("TODO");
     }
 
