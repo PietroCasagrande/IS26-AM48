@@ -30,5 +30,11 @@ public class OfferTurnCard {
         return this.positions.removeFirst();
     }
 
+    // replaces the totem at the end of the offer phase
+    public void returnTotem(Player player){
+        this.positions.add(player);
+        player.addResource(Resource.FOOD, this.foodRewards.get(positions.size()-1));
+    }
+
     // getSnapshot
 }
