@@ -25,5 +25,10 @@ public class OfferTurnCard {
         Collections.shuffle(this.positions);
     }
 
+    // removes the totem to be placed on the offer track
+    public Player takeTotem(){
+        return this.positions.removeFirst();
+    }
+
     // getSnapshot
 }
