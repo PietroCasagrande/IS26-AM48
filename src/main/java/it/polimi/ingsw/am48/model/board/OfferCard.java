@@ -1,6 +1,7 @@
 package it.polimi.ingsw.am48.model.board;
 
 import it.polimi.ingsw.am48.model.card.Card;
+import it.polimi.ingsw.am48.model.phase.GamePhase;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
