@@ -22,18 +22,18 @@ public class OfferTurnCard {
         this.order = new ArrayList<>();
     }
 
-    // randomizes player order for the very first turn
+    // Randomizes player order for the very first turn
     public void setupOrder(List<Player> players){
         this.order.addAll(players);
         Collections.shuffle(this.order);
     }
 
-    // removes the totem to be placed on the offer track
+    // Removes the totem to be placed on the offer track
     public Player takeTotem(){
         return this.order.removeFirst();
     }
 
-    // replaces the totem at the end of the offer phase:
+    // Replaces the totem at the end of the offer phase:
     // the first player or the first two players get food, depending on the number of players
     // the last player loses food and gets penalty if they haven't enough food
     public void returnTotem(Player player){
