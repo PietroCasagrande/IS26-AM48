@@ -4,17 +4,39 @@ import it.polimi.ingsw.am48.model.player.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class OfferCardTrack {
-    private final Map<Character, OfferCard> track;
+    private final Map<Character, OfferCard> track;  // Must be a TreeMap to guarantee OfferCard oreder
 
     public OfferCardTrack(Map<Character, OfferCard> track){
         this.track = track;
     }
 
-    public void placeTotem(Player player, char position){ throw new UnsupportedOperationException("TODO"); }
-    public List<Player> getActionOrder(){ throw new UnsupportedOperationException("TODO"); }
-    public OfferCard findTrackPosition(Player player){ throw new UnsupportedOperationException("TODO"); }
+    // Finds the requested offer card on which placing player totem
+    public void placeTotem(Player player, char letterId){
+        OfferCard offerCard = this.track.get(letterId);
+        if(offerCard == null){ throw new IllegalArgumentException("Cannot place totem: invalid letter id"); }
+        offerCard.placeTotem(player);
+    }
+
+    // Returns offer phase order based on players' placements
+    public List<Player> getActionOrder(){
+        return this.track.values()
+                .stream()
+                .map(OfferCard::getTotem)
+                .flatMap(Optional::stream)
+                .toList();
+    }
+
+    // Finds the offer track on which the requested payer totem lies
+    public OfferCard findTrackPosition(Player player){
+        return this.track.values()
+                .stream()
+                .filter(o -> o.getTotem().equals(Optional.of(player)))
+                .findFirst()
+                .orElse(null);
+    }
 
     // getSnapshot()
 }

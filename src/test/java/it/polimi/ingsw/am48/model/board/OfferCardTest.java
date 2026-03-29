@@ -45,6 +45,18 @@ class OfferCardTest {
         assertEquals(Optional.empty(), offerCard.returnTotem());
     }
 
+    @Test
+    void shouldNotGetTotemIfNotPresent() {
+        // Getting totem from an empty offer card
+        assertEquals(Optional.empty(), offerCard.getTotem());
+    }
+
+    @Test
+    void shouldGetTotemIfPresent() {
+        // Getting totem from an occupied offer card
+        offerCard.placeTotem(mockP1);
+        assertEquals(Optional.of(mockP1), offerCard.getTotem());
+    }
     /*
     @Test
     void activateStrategy() {

@@ -33,6 +33,10 @@ public class OfferCard {
         return removedTotem;
     }
 
+    public Optional<Player> getTotem(){
+        return Optional.ofNullable(this.totem);
+    }
+
     /*
     // To implement: waiting for PickCardStrategy definition
     public Card activateStrategy(Board board, String cardId, Player player, GamePhase phase){
