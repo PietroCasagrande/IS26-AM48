@@ -19,9 +19,9 @@ public class CharacterCard extends Card {
         this.minPlayers = minPlayers;
     }
 
-    // capiamo se servono sti getter, non credo
-    // public CharacterType getType() { return type; }
-    // public int getMinPlayers() { return minPlayers; }
+    // getter() per il tipo di personaggio e il numero minimo di giocatori
+    public CharacterType getType() { return type; }
+    public int getMinPlayers() { return minPlayers; }
 
     @Override
     public void onPlay(Player player, List<Player> allPlayers) {

@@ -17,6 +17,10 @@ public class Player {
         this.tribe = new Tribe();
     }
 
+    // getter nickname e totem
+    public String getNickname(){ return nickname; }
+    public Totem getTotem(){ return totem; }
+
     // getter e setter direttamente da player, non passiamo per getTribe()
     public int getPoints() { return this.tribe.getCurrentPrestigePoints(); }
     public int getFood() { return this.tribe.getCurrentFood(); }
