@@ -27,7 +27,7 @@ public class Player {
     public Tribe getTribe() { return this.tribe; }
 
     // metodo per pagare cibo e perdere punti in caso di cibo insufficiente
-    public void payFood(int food, int ppPerFood){this.tribe.payFood(food, ppPerFood);}
+    public void payFood(int food, int ppPerFood){this.tribe.payFood(food, ppPerFood); }
 
     // per non concatenare getTribe().set(), altrimenti demetra si arrabbia
     public void addToTribe(CharacterCard card) { this.tribe.addToTribe(card); }

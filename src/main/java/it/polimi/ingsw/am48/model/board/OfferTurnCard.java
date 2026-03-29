@@ -12,8 +12,8 @@ import java.util.NoSuchElementException;
 public class OfferTurnCard {
     private final int numPlayers;
     private final List<Player> order;
-    private final List<Integer> foodRewards;        // must be 3 numbers
-    private final int ppPenalty;                    // negative number for penalty
+    private final List<Integer> foodRewards;        // must be 3 positive numbers
+    private final int ppPenalty;                    // positive number for penalty
 
     public OfferTurnCard(int numPlayers, List<Integer> foodRewards, int  ppPenalty) {
         this.numPlayers = numPlayers;
@@ -39,7 +39,7 @@ public class OfferTurnCard {
     public void returnTotem(Player player){
         this.order.add(player);
         if(this.order.size() <= 2) player.updateFood(this.foodRewards.get(order.size()-1));
-        else if (this.order.size() == this.numPlayers) player.payFood(this.foodRewards.get(order.size()-1), this.ppPenalty);
+        else if (this.order.size() == this.numPlayers) player.payFood(this.foodRewards.getLast(), this.ppPenalty);
     }
 
     // getSnapshot

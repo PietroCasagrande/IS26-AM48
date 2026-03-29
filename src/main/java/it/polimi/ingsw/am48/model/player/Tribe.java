@@ -64,12 +64,12 @@ public class Tribe {
     public void updateCurrentPrestigePoints(int currentPrestigePoints) { this.currentPrestigePoints += currentPrestigePoints; }
 
     // metodo per pagare cibo e perdere punti in caso di cibo insufficiente
-    // ppPerFood deve essere negativo
+    // food e ppPerFood devono essere positivi
     public void payFood(int food, int ppPerFood){
         if(this.currentFood - food >= 0) this.currentFood -= food;
         else {
+            this.currentPrestigePoints += (this.currentFood - food) * ppPerFood;
             this.currentFood = 0;
-            this.currentPrestigePoints += (food - this.currentFood) * ppPerFood;
         }
     }
 
