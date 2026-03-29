@@ -17,11 +17,14 @@ public class Player {
         this.tribe = new Tribe();
     }
 
+    // getter direttamente da player, non passiamo per getTribe()
     public int getPoints() { return tribe.getCurrentPrestigePoints(); }
-    public int getFood() { return tribe.getFood(); }
+    public int getFood() { return tribe.getCurrentFood(); }
+
+    // metodo utilizzato nelle strategy per aggiornare statistiche di tribe
+    public Tribe getTribe() { return tribe; }
+
     public void addToTribe(CharacterCard card) { tribe.addToTribe(card); }
     public void addToTribe(BuildingCard card) { tribe.addToTribe(card); }
-    public void addResource(Resource resource, int amount) { tribe.updateResource(resource, amount); }
-    public void addArtifact(Artifact artifact) { tribe.updateArtifact(artifact); }
-    // da capire se servono i metodi getTribe(), removePoints(), e altri getter
+
 }

@@ -13,7 +13,8 @@ public class Tribe {
     private final Map<CharacterType, List<CharacterCard>> characters;
     private final List<BuildingCard> buildings;
     private final Set<Artifact> artifacts;
-    private int food;
+    private int currentFood;        // cibo totale tribù
+    private int foodDiscount;       // totale dello sconto sul cibo dato dai picker
     private int buildingDiscount;
     private int shamanStars;
     private int builderPoints;
@@ -27,22 +28,41 @@ public class Tribe {
         }
         this.buildings = new ArrayList<>();
         this.artifacts = EnumSet.noneOf(Artifact.class);
-        this.food = 0;
+        this.currentFood = 0;
+        this.foodDiscount = 0;
         this.currentPrestigePoints = 0;
         this.shamanStars = 0;
         this.builderPoints = 0;
         this.buildingPoints = 0;
     }
 
+    // metodi che ci servono per gestire personaggi ed edifici nella tribe
     public int tribeSize() { throw new UnsupportedOperationException("TODO"); }
     public int countByType(CharacterType type) { throw new UnsupportedOperationException("TODO"); }
     public void addToTribe(CharacterCard card) { throw new UnsupportedOperationException("TODO"); }
     public void addToTribe(BuildingCard card) { throw new UnsupportedOperationException("TODO"); }
-    public void updateResource(Resource resource, int amount) { throw new UnsupportedOperationException("TODO"); }
-    public void updateArtifact(Artifact artifact) { throw new UnsupportedOperationException("TODO"); }
-    public void computeTotalEndGameScore() { throw new UnsupportedOperationException("TODO"); }
 
-    // getters per punti e cibo, da capire se servono effettivamente
-    public int getFood() { return food; }
+    // setter utilizzati nelle strategy, in particolare UpdateResources, per aggiornare le risorse della tribe
+    public void updateFoodDiscount(int amount) { throw new UnsupportedOperationException("TODO"); }
+    public void updateBuildingDiscount(int amount) { throw new UnsupportedOperationException("TODO"); }
+    public void updateShamanStars(int amount) { throw new UnsupportedOperationException("TODO"); }
+    public void updateBuilderPoints(int amount) { throw new UnsupportedOperationException("TODO"); }
+    public void updateBuildingPoints(int amount) { throw new UnsupportedOperationException("TODO"); }
+    public void updateArtifact(Artifact artifact) { throw new UnsupportedOperationException("TODO"); }
+
+    // getter degli attributi di tribe, utilizzati nelle strategy degli eventi, per fare check sulla quantità
+    public int getFoodDiscount() { return foodDiscount; }
+    public int getBuildingDiscount() { return buildingDiscount; }
+    public int getShamanStars() { return shamanStars; }
+    public int getBuilderPoints() { return builderPoints; }
+    public int getBuildingPoints() { return buildingPoints; }
+
+    // metodi per statistiche del giocatore, ovvero punti e cibo
+    public int getCurrentFood() { return currentFood; }
+    public void setCurrentFood(int currentFood) { this.currentFood = currentFood; }
     public int getCurrentPrestigePoints() { return currentPrestigePoints; }
+    public void setCurrentPrestigePoints(int currentPrestigePoints) { this.currentPrestigePoints = currentPrestigePoints; }
+
+    // metodo utilizzato per il calcolo dei punti finali della tribù: currentPrestigePoints + puntiInventori + puntiPicker
+    public void computeTotalEndGameScore() { throw new UnsupportedOperationException("TODO"); }
 }
