@@ -7,6 +7,14 @@ public class NotificatorCenter {
     private OnTotemReturnedNotificator totemReturnedNotificator;
     private OnEndGameNotificator endGameNotificator;
 
+    public NotificatorCenter() {
+        this.pickNotificator = new OnPickNotificator();
+        this.eventNotificator = new OnEventNotificator();
+        this.endOfferPhaseNotificator = new OnEndOfferPhaseNotificator();
+        this.totemReturnedNotificator = new OnTotemReturnedNotificator();
+        this.endGameNotificator = new OnEndGameNotificator();
+    }
+
     public OnPickNotificator getPickNotificator() {
         return pickNotificator;
     }
