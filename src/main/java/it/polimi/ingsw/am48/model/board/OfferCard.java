@@ -18,12 +18,17 @@ public class OfferCard {
         this.totem = null;
     }
 
-    public Optional<Player> getTotem(){ return Optional.of(this.totem); }
-
-    // Place player totem to compute offer phase
+    // places player totem to compute offer phase
     public void placeTotem(Player player){
         if(this.totem != null){ throw new IllegalStateException("Cannot place totem: this position is already occupied"); }
         this.totem = player;
+    }
+
+    // returns totem after offer phase
+    public Optional<Player> returnTotem(){
+        Optional<Player> removedTotem = Optional.of(this.totem);
+        this.totem = null;
+        return removedTotem;
     }
 
     public Card activateStrategy(Board board, String cardId, Player player, GamePhase phase){
