@@ -21,8 +21,8 @@ class OfferTurnCardTest {
     void shouldSetupOrderAndTakeTotem() {
 
         // Food rewards for a 5-player game
-        List<Integer> listRewards = List.of(3, 1, 0, 0, -1);
-        offerTurnCard = new OfferTurnCard(5, listRewards);
+        List<Integer> listRewards = List.of(3, 1, 1);
+        offerTurnCard = new OfferTurnCard(5, listRewards, 2);
 
         // Creating list of players
         Player p1 = new Player("alice", Totem.BLACK);
@@ -50,27 +50,26 @@ class OfferTurnCardTest {
 
     @Test
     void returnTotem() {
-        offerTurnCard = new OfferTurnCard(5, List.of(3, 1, 0, 0, -1));
+        offerTurnCard = new OfferTurnCard(5, List.of(3, 1, 1), 2);
 
         // Verifying total calls on Player.addResource method
         Player mockP1 = mock(Player.class);
         offerTurnCard.returnTotem(mockP1);
-        verify(mockP1, times(1)).addResource(Resource.FOOD, 3);
+        verify(mockP1, times(1)).updateFood(3);
+
 
         Player mockP2 = mock(Player.class);
         offerTurnCard.returnTotem(mockP2);
-        verify(mockP2, times(1)).addResource(Resource.FOOD, 1);
+        verify(mockP2, times(1)).updateFood(1);
 
         Player mockP3 = mock(Player.class);
         offerTurnCard.returnTotem(mockP3);
-        verify(mockP3, times(1)).addResource(Resource.FOOD, 0);
 
         Player mockP4 = mock(Player.class);
         offerTurnCard.returnTotem(mockP4);
-        verify(mockP4, times(1)).addResource(Resource.FOOD, 0);
 
         Player mockP5 = mock(Player.class);
         offerTurnCard.returnTotem(mockP5);
-        verify(mockP5, times(1)).addResource(Resource.FOOD, -1);
+        verify(mockP5, times(1)).payFood(1, 2);
     }
 }
