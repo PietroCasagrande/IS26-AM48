@@ -8,20 +8,22 @@ import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 import java.util.Optional;
 
 public class OfferCard {
-    private final char letterId;
+    private final char letterId;                // Letters from A to G, depending on number of players
     private final CardStrategy strategy;
-    private Optional<Player> totem;
+    private Player totem;
 
     public OfferCard(char letterId, CardStrategy strategy){
         this.letterId = letterId;
         this.strategy = strategy;
+        this.totem = null;
     }
 
-    public Optional<Player> getTotem(){ return totem; }
+    public Optional<Player> getTotem(){ return Optional.of(this.totem); }
 
-    // da guardare il tipo di ritorno
+    // Place player totem to compute offer phase
     public void placeTotem(Player player){
-        throw new UnsupportedOperationException("TODO");
+        if(this.totem != null){ throw new IllegalStateException("Cannot place totem: this position is already occupied"); }
+        this.totem = player;
     }
 
     public Card activateStrategy(Board board, String cardId, Player player, GamePhase phase){
