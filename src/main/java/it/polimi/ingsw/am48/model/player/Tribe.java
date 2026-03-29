@@ -48,7 +48,7 @@ public class Tribe {
     public void updateShamanStars(int amount) { throw new UnsupportedOperationException("TODO"); }
     public void updateBuilderPoints(int amount) { throw new UnsupportedOperationException("TODO"); }
     public void updateBuildingPoints(int amount) { throw new UnsupportedOperationException("TODO"); }
-    public void updateArtifact(Artifact artifact) { throw new UnsupportedOperationException("TODO"); }
+    public void updateArtifacts(Artifact artifact) { throw new UnsupportedOperationException("TODO"); }
 
     // getter degli attributi di tribe, utilizzati nelle strategy degli eventi, per fare check sulla quantità
     public int getFoodDiscount() { return foodDiscount; }
