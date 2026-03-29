@@ -12,11 +12,13 @@ import java.util.NoSuchElementException;
 public class OfferTurnCard {
     private final int numPlayers;
     private final List<Player> order;
-    private final List<Integer> foodRewards;
+    private final List<Integer> foodRewards;        // must be 3 numbers
+    private final int ppPenalty;                    // negative number for penalty
 
-    public OfferTurnCard(int numPlayers, List<Integer> foodRewards) {
+    public OfferTurnCard(int numPlayers, List<Integer> foodRewards, int  ppPenalty) {
         this.numPlayers = numPlayers;
         this.foodRewards = List.copyOf(foodRewards);
+        this.ppPenalty = ppPenalty;
         this.order = new ArrayList<>();
     }
 
@@ -31,10 +33,13 @@ public class OfferTurnCard {
         return this.order.removeFirst();
     }
 
-    // replaces the totem at the end of the offer phase
+    // replaces the totem at the end of the offer phase:
+    // the first player or the first two players get food, depending on the number of players
+    // the last player loses food and gets penalty if they haven't enough food
     public void returnTotem(Player player){
         this.order.add(player);
-        player.addResource(Resource.FOOD, this.foodRewards.get(order.size()-1));
+        if(this.order.size() <= 2) player.updateFood(this.foodRewards.get(order.size()-1));
+        else if (this.order.size() == this.numPlayers) player.payFood(this.foodRewards.get(order.size()-1), this.ppPenalty);
     }
 
     // getSnapshot
