@@ -63,6 +63,16 @@ public class Tribe {
     public int getCurrentPrestigePoints() { return currentPrestigePoints; }
     public void updateCurrentPrestigePoints(int currentPrestigePoints) { this.currentPrestigePoints += currentPrestigePoints; }
 
+    // metodo per pagare cibo e perdere punti in caso di cibo insufficiente
+    // ppPerFood deve essere negativo
+    public void payFood(int food, int ppPerFood){
+        if(this.currentFood - food >= 0) this.currentFood -= food;
+        else {
+            this.currentFood = 0;
+            this.currentPrestigePoints += (food - this.currentFood) * ppPerFood;
+        }
+    }
+
     // metodo utilizzato per il calcolo dei punti finali della tribù: currentPrestigePoints + puntiInventori + puntiPicker
     public void computeTotalEndGameScore() { throw new UnsupportedOperationException("TODO"); }
 }
