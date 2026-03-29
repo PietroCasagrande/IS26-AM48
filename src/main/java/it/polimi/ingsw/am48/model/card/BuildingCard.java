@@ -18,6 +18,7 @@ public class BuildingCard extends Card{
         this.prestigePoints = prestigePoints;
     }
 
+    // getter per il costo dell'edificio (costo in cibo) e i punti che assegna
     public int getFoodCost() { return foodCost; }
     public int getPrestigePoints() { return prestigePoints; }
 

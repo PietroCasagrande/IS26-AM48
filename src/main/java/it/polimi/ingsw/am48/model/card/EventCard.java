@@ -16,8 +16,8 @@ public class EventCard extends Card{
         this.eventType = eventType;
     }
 
-    // solito discorso x i getter, capiamo se serve
-    // public EventType getEventType() { return eventType; }
+    // getter() per il tipo di evento
+    public EventType getEventType() { return eventType; }
 
     @Override
     public void onPlay(Player player, List<Player> allPlayers) {
