@@ -3,7 +3,6 @@ package it.polimi.ingsw.am48.model.player;
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.Artifact;
-import it.polimi.ingsw.am48.model.enums.Resource;
 import it.polimi.ingsw.am48.model.enums.Totem;
 
 public class Player {

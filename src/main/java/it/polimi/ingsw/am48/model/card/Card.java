@@ -1,11 +1,8 @@
 package it.polimi.ingsw.am48.model.card;
 
-import it.polimi.ingsw.am48.model.board.Showed;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
-
-import java.util.List;
 
 public abstract class Card {
     private final String cardId;
@@ -22,6 +19,5 @@ public abstract class Card {
     public Era getEra() { return era; }
     public CardStrategy getStrategy() { return strategy; }
 
-    public abstract void onPlay(Player player, List<Player> allPlayers);
-    public abstract void acquire(Player player, Showed<Card> showedList);
+    public abstract void acquire(Player player);
 }
