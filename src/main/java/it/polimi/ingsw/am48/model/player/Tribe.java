@@ -4,7 +4,6 @@ import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.Artifact;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
-import it.polimi.ingsw.am48.model.enums.Resource;
 
 import java.util.*;
 

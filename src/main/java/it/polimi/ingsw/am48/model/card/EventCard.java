@@ -1,12 +1,10 @@
 package it.polimi.ingsw.am48.model.card;
 
-import it.polimi.ingsw.am48.model.board.Showed;
+import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.enums.EventType;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
-
-import java.util.List;
 
 public class EventCard extends Card{
     private final EventType eventType;
@@ -20,14 +18,8 @@ public class EventCard extends Card{
     public EventType getEventType() { return eventType; }
 
     @Override
-    public void onPlay(Player player, List<Player> allPlayers) {
-        throw new UnsupportedOperationException("TODO");
-    }
-
-    @Override
-    public void acquire(Player player, Showed<Card> showedList) {
+    public void acquire(Player player) {
         // Le EventCard non vengono acquisite dal giocatore
-        // throw new InvalidActionException("Le carte Evento non possono essere acquisite.");
-        throw new UnsupportedOperationException("TODO");
+        throw new InvalidActionException("EventCard can not be acquired.");
     }
 }

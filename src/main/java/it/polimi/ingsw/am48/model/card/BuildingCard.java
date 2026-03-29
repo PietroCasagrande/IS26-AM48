@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.model.card;
 
+import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.board.Showed;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.player.Player;
@@ -23,12 +24,13 @@ public class BuildingCard extends Card{
     public int getPrestigePoints() { return prestigePoints; }
 
     @Override
-    public void onPlay(Player player, List<Player> allPlayers) {
-        throw new UnsupportedOperationException("TODO");
-    }
-
-    @Override
-    public void acquire(Player player, Showed<Card> showedList) {
-        throw new UnsupportedOperationException("TODO");
+    public void acquire(Player player) {
+        int actualCost = Math.max(0, this.foodCost - player.getTribe().getBuildingDiscount());
+        if(player.getFood() < actualCost){
+            throw new InvalidActionException(
+                    "Not enough food: requested " + actualCost + ", available " + player.getFood());
+        }
+        player.updateFood(-actualCost);
+        player.addToTribe(this);
     }
 }
