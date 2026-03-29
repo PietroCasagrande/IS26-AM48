@@ -120,4 +120,9 @@ public class Tribe {
         int numOfArtifacts = artifacts.size();
         this.currentPrestigePoints += numOfInventors * numOfArtifacts;
     }
+
+    // getter per i test di TribeTest e per le strategy
+    public Set<Artifact> getArtifacts() { return Collections.unmodifiableSet(artifacts); }
+    public List<BuildingCard> getBuildings() { return Collections.unmodifiableList(buildings); }
+    public Map<CharacterType, List<CharacterCard>> getCharacters() { return Collections.unmodifiableMap(characters); }
 }
