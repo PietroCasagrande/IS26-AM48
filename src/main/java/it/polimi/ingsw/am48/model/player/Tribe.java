@@ -59,9 +59,9 @@ public class Tribe {
 
     // metodi per statistiche del giocatore, ovvero punti e cibo
     public int getCurrentFood() { return currentFood; }
-    public void setCurrentFood(int currentFood) { this.currentFood = currentFood; }
+    public void updateCurrentFood(int currentFood) { this.currentFood += currentFood; }
     public int getCurrentPrestigePoints() { return currentPrestigePoints; }
-    public void setCurrentPrestigePoints(int currentPrestigePoints) { this.currentPrestigePoints = currentPrestigePoints; }
+    public void updateCurrentPrestigePoints(int currentPrestigePoints) { this.currentPrestigePoints += currentPrestigePoints; }
 
     // metodo utilizzato per il calcolo dei punti finali della tribù: currentPrestigePoints + puntiInventori + puntiPicker
     public void computeTotalEndGameScore() { throw new UnsupportedOperationException("TODO"); }

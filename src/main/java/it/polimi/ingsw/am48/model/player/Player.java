@@ -20,8 +20,8 @@ public class Player {
     // getter e setter direttamente da player, non passiamo per getTribe()
     public int getPoints() { return tribe.getCurrentPrestigePoints(); }
     public int getFood() { return tribe.getCurrentFood(); }
-    public void setPoints(int points) { tribe.setCurrentPrestigePoints(points); }
-    public void setFood(int food) { tribe.setCurrentFood(food); }
+    public void updatePoints(int points) { tribe.updateCurrentPrestigePoints(points); }
+    public void updateFood(int food) { tribe.updateCurrentFood(food); }
 
     // metodo utilizzato nelle strategy per aggiornare statistiche di tribe
     public Tribe getTribe() { return tribe; }
