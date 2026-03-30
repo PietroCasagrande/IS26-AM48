@@ -22,9 +22,9 @@ public abstract class CardStrategy {
         }
     }
 
-    public void unregisterTo(NotificatorCenter nc, Player player){
+    public void unregisterFrom(List<CardStrategy> toDetach){
         if(registration != null){
-            registration.unregisterMethod(nc, player, this);
+            registration.unregisterMethod(toDetach);
         }
     }
 }
