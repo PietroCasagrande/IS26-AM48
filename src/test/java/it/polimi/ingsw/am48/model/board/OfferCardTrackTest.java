@@ -198,7 +198,7 @@ class OfferCardTrackTest {
 
     @Test
     @DisplayName("findTrackPosition: returns first matching card (no duplicate totems assumed)")
-    void findTrackPosition_playerOnMiddleCard_returnsMiddleCard() {
+    void shouldFindPlayerInMiddleOfferCard() {
         when(offerCardA.getTotem()).thenReturn(Optional.empty());
         when(offerCardB.getTotem()).thenReturn(Optional.of(playerA));
         when(offerCardC.getTotem()).thenReturn(Optional.empty());
