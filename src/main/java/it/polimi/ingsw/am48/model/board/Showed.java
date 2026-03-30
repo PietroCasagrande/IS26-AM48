@@ -3,42 +3,89 @@ package it.polimi.ingsw.am48.model.board;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.player.Player;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
-public class Showed<T>{
-    private List<T> upperList;
-    private List<T> lowerList;
+public class Showed<T extends Card>{
+    private final List<T> upperList;
+    private final List<T> lowerList;
 
-    public void addCard(List<T> cl){
-        throw new UnsupportedOperationException("TODO");
+    // initialization of the two lists
+    public Showed(){
+        this.upperList = new ArrayList<>();
+        this.lowerList = new ArrayList<>();
     }
 
+    // getter needed by board
+    public List<T> getUpperList() { return List.copyOf(upperList); }
+    public List<T> getLowerList() { return List.copyOf(lowerList); }
+
+    // adds cardsList to upperList on each round, the deck chooses the size() and the cards for cardsList
+    public void addUpperCards(List<T> cardsList){
+        upperList.addAll(cardsList);
+    }
+
+    // adds cardsList to lowerList at the beginning of the game, later on we'll use the shiftRow method
+    public void addLowerCards(List<T> cardsList){
+        lowerList.addAll(cardsList);
+    }
+
+    // moves the cards from the upperList to the lowerList
+    // tribeShowed upperList will be shifted at the end of each Turn
+    // buildingShowed upperList instead will be shifted only at the era exchange
     public void shiftRow(){
-        throw new UnsupportedOperationException("TODO");
+        lowerList.addAll(upperList);
+        upperList.clear();
     }
 
     public void clearBottom(){
-        throw new UnsupportedOperationException("TODO");
+        lowerList.clear();
     }
 
+    // checks if the era of upperList's last card and the era of lowerList's last card
+    // if the two are different, returns true (different eras)
     public boolean diffLastEras(){
-        // controlla era di ultimo elemento di upper e ultimo di lowe
-        // se sono diverse return true (era cambiata)
-        throw new UnsupportedOperationException("TODO");
+        if(upperList.isEmpty() || lowerList.isEmpty()) return false;
+        return upperList.getLast().getEra() != lowerList.getLast().getEra();
     }
 
-    public T takeCard(Player p, String id){
-        throw new UnsupportedOperationException("TODO");
+    // takeCard is used inside of Board's method "takeCard(player, cardId)"
+    public Optional<T> takeCard(Player player, String cardId){
+        // search the cardId in the upperList first
+        Iterator<T> upperIt = upperList.iterator();
+        while(upperIt.hasNext()){
+            T card = upperIt.next();
+            if(card.getCardId().equals(cardId)){
+                card.acquire(player);
+                upperIt.remove();
+                return Optional.of(card);
+            }
+        }
+
+        // search the cardId in the lowerList if it isn't in the upperList
+        Iterator<T> lowerIt = lowerList.iterator();
+        while(lowerIt.hasNext()){
+            T card = lowerIt.next();
+            if(card.getCardId().equals(cardId)){
+                card.acquire(player);
+                lowerIt.remove();
+                return Optional.of(card);
+            }
+        }
+        return Optional.empty();
     }
 
-    // public getSnapshot(){}; bisogna capire cosa returna nello specifico
-
-    public boolean isTop(String id){
-        throw new UnsupportedOperationException("TODO");
+    // checks if the card belongs to the upperList: used in Board's method "isCardTop()"
+    public boolean isTop(String cardId){
+        return upperList.stream().anyMatch(c -> c.getCardId().equals(cardId));
     }
 
-    public boolean isDown(String id){
-        throw new UnsupportedOperationException("TODO");
+    // checks if the card belongs to the lowerList: used in Board's method "isCardDown()"
+    public boolean isDown(String cardId){
+        return lowerList.stream().anyMatch(c -> c.getCardId().equals(cardId));
     }
 
+    // public getSnapshot(){}; bisogna capire cosa restituisce nello specifico
 }
