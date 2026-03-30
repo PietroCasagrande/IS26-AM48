@@ -3,47 +3,53 @@ package it.polimi.ingsw.am48.model.strategy;
 import it.polimi.ingsw.am48.model.enums.Artifact;
 import it.polimi.ingsw.am48.model.enums.Totem;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 
 class InventorStrategyTest {
 
-    private Player player;
+    private Player currPlayer;
+    private Player otherPlayer;
+    private PlayerContext context;
     private InventorStrategy strategy;
 
     @BeforeEach
     void setUp() {
-        player = new Player("alice", Totem.BLACK);
-        strategy = new InventorStrategy(null, Artifact.ARROW);
+        currPlayer = new Player("alice", Totem.BLACK);
+        otherPlayer = new Player("bob", Totem.BLUE);
+
+        context = new PlayerContext();
+        context.setCurrPlayer(currPlayer);
+        context.addPlayer(currPlayer);
+        context.addPlayer(otherPlayer);
+
+        strategy = new InventorStrategy(Artifact.ARROW, null);
     }
 
     @Test
-    void shouldAddCorrectArtifactToTribe() {
-        strategy.effect(player, List.of());
-        assertTrue(player.getTribe().getArtifacts().contains(Artifact.ARROW));
+    void shouldAddCorrectArtifactToCurrentPlayer() {
+        strategy.effect(context);
+        assertTrue(currPlayer.getArtifacts().contains(Artifact.ARROW));
     }
 
     @Test
     void shouldAddExactlyOneArtifact() {
-        strategy.effect(player, List.of());
-        assertEquals(1, player.getTribe().getArtifacts().size());
+        strategy.effect(context);
+        assertEquals(1, currPlayer.getArtifacts().size());
     }
 
     @Test
     void shouldNotAddWrongArtifact() {
-        strategy.effect(player, List.of());
-        assertFalse(player.getTribe().getArtifacts().contains(Artifact.CANOE));
+        strategy.effect(context);
+        assertFalse(currPlayer.getArtifacts().contains(Artifact.CANOE));
     }
 
     @Test
     void shouldNotModifyOtherPlayers() {
-        Player other = new Player("bob", Totem.BLUE);
-        strategy.effect(player, List.of(other));
-        assertTrue(other.getTribe().getArtifacts().isEmpty());
+        strategy.effect(context);
+        assertTrue(otherPlayer.getArtifacts().isEmpty());
     }
 }

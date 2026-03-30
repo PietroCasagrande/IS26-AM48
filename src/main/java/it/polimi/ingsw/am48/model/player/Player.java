@@ -5,6 +5,8 @@ import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.Artifact;
 import it.polimi.ingsw.am48.model.enums.Totem;
 
+import java.util.Set;
+
 public class Player {
     private final String nickname;
     private final Totem totem;
@@ -27,7 +29,7 @@ public class Player {
     public void updateFood(int food) { this.tribe.updateCurrentFood(food); }
 
     // metodo utilizzato nelle strategy per aggiornare statistiche di tribe
-    public Tribe getTribe() { return this.tribe; }
+    public Tribe getTribe() { return this.tribe; }    // forse non serve più avendo aggiunto i getter per ogni attributo
 
     // metodo per pagare cibo e perdere punti in caso di cibo insufficiente
     public void payFood(int food, int ppPerFood){this.tribe.payFood(food, ppPerFood); }
@@ -35,6 +37,12 @@ public class Player {
     // per non concatenare getTribe().set(), altrimenti demetra si arrabbia
     public void addToTribe(CharacterCard card) { this.tribe.addToTribe(card); }
     public void addToTribe(BuildingCard card) { this.tribe.addToTribe(card); }
+    public int getFoodDiscount() { return tribe.getFoodDiscount(); }
+    public int getBuildingDiscount() { return tribe.getBuildingDiscount(); }
+    public int getShamanStars() { return tribe.getShamanStars(); }
+    public int getBuilderPoints() { return tribe.getBuilderPoints(); }
+    public int getBuildingPoints() { return tribe.getBuildingPoints(); }
+    public Set<Artifact> getArtifacts() { return tribe.getArtifacts(); }
     public void updateFoodDiscount(int amount) { this.tribe.updateFoodDiscount(amount); }
     public void updateBuildingDiscount(int amount) { this.tribe.updateBuildingDiscount(amount); }
     public void updateShamanStars(int amount) { this.tribe.updateShamanStars(amount); }
