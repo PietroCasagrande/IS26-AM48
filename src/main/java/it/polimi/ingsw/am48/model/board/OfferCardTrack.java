@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class OfferCardTrack {
-    private final Map<Character, OfferCard> track;  // Must be a TreeMap to guarantee OfferCard oreder
+    private final Map<Character, OfferCard> track;  // Must be a TreeMap to guarantee OfferCard order
 
     public OfferCardTrack(Map<Character, OfferCard> track){
         this.track = track;
@@ -29,13 +29,13 @@ public class OfferCardTrack {
                 .toList();
     }
 
-    // Finds the offer track on which the requested payer totem lies
+    // Finds the offer track on which the requested player totem lies
     public OfferCard findTrackPosition(Player player){
         return this.track.values()
                 .stream()
                 .filter(o -> o.getTotem().equals(Optional.of(player)))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find track position for player " + player));
     }
 
     // getSnapshot()
