@@ -1,9 +1,11 @@
 package it.polimi.ingsw.am48.model.board;
 
+import it.polimi.ingsw.am48.model.card.Card;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Deck<T> {
+public class Deck<T extends Card> {
     private final List<T> deck;
 
     public Deck(List<T> deck) {

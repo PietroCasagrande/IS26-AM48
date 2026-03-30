@@ -9,14 +9,16 @@ import java.util.List;
 public class Board {
     private final OfferCardTrack track;
     private final OfferTurnCard turnOrder;
-    private final Deck<Card> deck;
+    private final Deck<Card> tribeDeck;
+    private final Deck<BuildingCard> buildingDeck;
     private final Showed<Card> tribeShowed;
     private final Showed<BuildingCard> buildingsShowed;
 
-    public Board(OfferCardTrack track, OfferTurnCard turnOrder, Deck<Card> deck, Showed<Card> tribeShowed, Showed<BuildingCard> buildingsShowed){
+    public Board(OfferCardTrack track, OfferTurnCard turnOrder, Deck<Card> tribeDeck, Deck<BuildingCard> buildingDeck, Showed<Card> tribeShowed, Showed<BuildingCard> buildingsShowed){
         this.track = track;
         this.turnOrder = turnOrder;
-        this.deck = deck;
+        this.tribeDeck = tribeDeck;
+        this.buildingDeck = buildingDeck;
         this.tribeShowed = tribeShowed;
         this.buildingsShowed = buildingsShowed;
     }
