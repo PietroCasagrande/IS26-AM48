@@ -32,24 +32,24 @@ class InventorStrategyTest {
     @Test
     void shouldAddCorrectArtifactToCurrentPlayer() {
         strategy.effect(context);
-        assertTrue(currPlayer.getTribe().getArtifacts().contains(Artifact.ARROW));
+        assertTrue(currPlayer.getArtifacts().contains(Artifact.ARROW));
     }
 
     @Test
     void shouldAddExactlyOneArtifact() {
         strategy.effect(context);
-        assertEquals(1, currPlayer.getTribe().getArtifacts().size());
+        assertEquals(1, currPlayer.getArtifacts().size());
     }
 
     @Test
     void shouldNotAddWrongArtifact() {
         strategy.effect(context);
-        assertFalse(currPlayer.getTribe().getArtifacts().contains(Artifact.CANOE));
+        assertFalse(currPlayer.getArtifacts().contains(Artifact.CANOE));
     }
 
     @Test
     void shouldNotModifyOtherPlayers() {
         strategy.effect(context);
-        assertTrue(otherPlayer.getTribe().getArtifacts().isEmpty());
+        assertTrue(otherPlayer.getArtifacts().isEmpty());
     }
 }

@@ -20,7 +20,9 @@ public class UpdateResourcesStrategy extends CardStrategy{
     public void effect(PlayerContext playerContext) {
         switch (resource) {
             case STAR -> playerContext.getCurrPlayer().updateShamanStars(quantity);    // sciamano (con 1-3 stelle) oppure edificio che assegna 3 stelle bonus
-            case FOOD_DISCOUNT -> playerContext.getCurrPlayer().updateFoodDiscount(quantity);    // picker che dà 3
+            case FOOD_DISCOUNT -> playerContext.getCurrPlayer().updateFoodDiscount(quantity);    // picker che dà 3 (sconto inteso positivo)
+            case FOOD -> playerContext.getCurrPlayer().updateFood(quantity);    // offerCard A (+3 cibo istantanei)
+            default -> throw new IllegalArgumentException("Invalid resource " + resource);
         }
     }
 }
