@@ -104,7 +104,7 @@ public class Tribe {
     }
 
     // metodo che restituisce numero di personaggi la cui occorrenza di CharacterType è presente in minore quantità all'interno della mappa characters (anche 0 se nessuno di quel tipo)
-    public int minSetSize() {
+    public int minListSize() {
         if (characters.size() < CharacterType.values().length) return 0;
         return characters.values().stream()
                 .mapToInt(List::size)
