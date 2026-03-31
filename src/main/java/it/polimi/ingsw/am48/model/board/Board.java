@@ -6,7 +6,6 @@ import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.player.Player;
 
 import java.util.List;
-import java.util.Optional;
 
 public class Board {
     private final OfferCardTrack track;
@@ -19,7 +18,9 @@ public class Board {
     private Era currEra;
     private final int numPlayers;
 
-    public Board(OfferCardTrack track, OfferTurnCard turnOrder, Deck<Card> tribeDeck, Deck<BuildingCard> buildingDeck, Showed<Card> tribeShowed, Showed<BuildingCard> buildingsShowed, List<Integer> buildingsPerEra, int numPlayers) {
+    public Board(OfferCardTrack track, OfferTurnCard turnOrder, Deck<Card> tribeDeck,
+                 Deck<BuildingCard> buildingDeck, Showed<Card> tribeShowed, Showed<BuildingCard> buildingsShowed,
+                 List<Integer> buildingsPerEra, int numPlayers) {
         this.track = track;
         this.turnOrder = turnOrder;
         this.tribeDeck = tribeDeck;
@@ -42,7 +43,7 @@ public class Board {
     }
 
     // Takes the requested card from the showed
-    // throwing exception is necessary to return a Card instead of a Optional<Card>
+    // throwing exception is necessary to return a Card instead of an Optional<Card>
     public Card takeCard(Player player, String cardId){
         return this.tribeShowed.takeCard(player, cardId)
                 .or(() -> this.buildingShowed.takeCard(player, cardId))
@@ -72,13 +73,16 @@ public class Board {
         this.turnOrder.setupOrder(players);
     }
 
+    // Ends the current turn and sets up the next one
     public void endTurn(){
         this.tribeShowed.clearBottom();
         this.tribeShowed.shiftRow();
         this.displayTribeCards();
+        if(this.tribeShowed.diffLastEras()) this.changeEra();
     }
 
-    public void changeEra(){
+    // Changes displayed building cards due to Era changing
+    private void changeEra(){
         this.currEra = this.currEra.next();
         this.buildingShowed.clearBottom();
         this.buildingShowed.shiftRow();
@@ -100,6 +104,4 @@ public class Board {
     public Showed<BuildingCard> getBuildingShowed() { return buildingShowed; }
 
     // BoardSnapshot getSnapshot()
-
-    // metodo setupTurn()
 }
