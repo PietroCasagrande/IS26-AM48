@@ -1,7 +1,6 @@
 module it.polimi.ingsw.am48 {
     requires javafx.controls;
     requires javafx.fxml;
-    requires it.polimi.ingsw.am48;
 
     exports it.polimi.ingsw.am48.model.game;
     exports it.polimi.ingsw.am48.model.player;
