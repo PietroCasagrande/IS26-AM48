@@ -1,6 +1,7 @@
 package it.polimi.ingsw.am48.model.notificator;
 
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
 import java.util.HashMap;
@@ -13,6 +14,16 @@ public class OnTotemReturnedNotificator {
         listeners.put(p, cs);
     }
 
-    public void notifyListeners(){
-        throw new UnsupportedOperationException("TODO");    }
+    public void notify(PlayerContext p) {
+        // taking the current player
+        Player currPlayer = p.getCurrPlayer();
+
+        // looking for the strategy
+        CardStrategy strategy = listeners.get(currPlayer);
+
+        // if present, it activates the effect
+        if (strategy != null) {
+            strategy.effect(p);
+        }
+    }
 }
