@@ -12,20 +12,25 @@ import java.util.NoSuchElementException;
 public class OfferTurnCard {
     private final int numPlayers;
     private final List<Player> order;
-    private final List<Integer> foodRewards;        // must be 3 positive numbers
-    private final int ppPenalty;                    // positive number for penalty
+    private final List<Integer> foodRewards;            // must be 3 positive numbers
+    private final int ppPenalty;                        // positive number for penalty
+    private final List<Integer> initialFoodRewards;     // initial food
 
     public OfferTurnCard(int numPlayers, List<Integer> foodRewards, int  ppPenalty) {
         this.numPlayers = numPlayers;
         this.foodRewards = List.copyOf(foodRewards);
         this.ppPenalty = ppPenalty;
         this.order = new ArrayList<>();
+        this.initialFoodRewards = new ArrayList<>(List.of(2, 3, 3, 4, 4));
     }
 
     // Randomizes player order for the very first turn
     public void setupOrder(List<Player> players){
         this.order.addAll(players);
         Collections.shuffle(this.order);
+        for(int i = 0; i < this.order.size(); i++){
+            this.order.get(i).updateFood(this.initialFoodRewards.get(i));
+        }
     }
 
     // Removes the totem to be placed on the offer track
