@@ -103,6 +103,15 @@ public class Tribe {
         }
     }
 
+    // metodo che restituisce numero di personaggi la cui occorrenza di CharacterType è presente in minore quantità all'interno della mappa characters (anche 0 se nessuno di quel tipo)
+    public int minListSize() {
+        if (characters.size() < CharacterType.values().length) return 0;
+        return characters.values().stream()
+                .mapToInt(List::size)
+                .min()
+                .orElse(0);
+    }
+
     // metodo utilizzato per il calcolo dei punti finali della tribù: currentPrestigePoints + puntiInventori + puntiPicker
     public void computeTotalEndGameScore() {
         // punti edifici (accumulati all'acquisto degli edifici, tramite addToTribe(BuildingCard))
