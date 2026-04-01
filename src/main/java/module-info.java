@@ -16,4 +16,5 @@ module it.polimi.ingsw.am48 {
     exports it.polimi.ingsw.am48.dto;
     exports it.polimi.ingsw.am48.exception;
     exports it.polimi.ingsw.am48.repository;
+    exports it.polimi.ingsw.am48.controller;
 }
