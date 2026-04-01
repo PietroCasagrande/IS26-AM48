@@ -41,12 +41,14 @@ public class Player {
     public int getFoodDiscount() { return tribe.getFoodDiscount(); }
     public int getBuildingDiscount() { return tribe.getBuildingDiscount(); }
     public int getShamanStars() { return tribe.getShamanStars(); }
+    public boolean isShamanSafe() { return tribe.isShamanSafe(); }
     public int getBuilderPoints() { return tribe.getBuilderPoints(); }
     public int getBuildingPoints() { return tribe.getBuildingPoints(); }
     public Map<Artifact, Integer> getArtifacts() { return tribe.getArtifacts(); }
     public void updateFoodDiscount(int amount) { this.tribe.updateFoodDiscount(amount); }
     public void updateBuildingDiscount(int amount) { this.tribe.updateBuildingDiscount(amount); }
     public void updateShamanStars(int amount) { this.tribe.updateShamanStars(amount); }
+    public void setShamanSafety(){ this.tribe.setShamanSafety(); }
     public void updateBuilderPoints(int amount) { this.tribe.updateBuilderPoints(amount); }
     public void updateBuildingPoints(int amount) { this.tribe.updateBuildingPoints(amount); }
     public void addArtifact(Artifact artifact) { this.tribe.addArtifact(artifact); }
