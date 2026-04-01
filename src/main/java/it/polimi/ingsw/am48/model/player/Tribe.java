@@ -11,7 +11,7 @@ public class Tribe {
     // final sugli oggetti per garantire che la variabile di riferimento non possa esser riassegnata a un altro oggetto
     private final Map<CharacterType, List<CharacterCard>> characters;
     private final List<BuildingCard> buildings;
-    private final Set<Artifact> artifacts;
+    private final Map<Artifact, Integer> artifacts;
     private int currentFood;        // cibo totale tribù
     private int foodDiscount;       // totale dello sconto sul cibo dato dai picker
     private int buildingDiscount;
@@ -26,7 +26,7 @@ public class Tribe {
             characters.put(t, new ArrayList<>());
         }
         this.buildings = new ArrayList<>();
-        this.artifacts = EnumSet.noneOf(Artifact.class);
+        this.artifacts = new EnumMap<>(Artifact.class);
         this.currentFood = 0;
         this.foodDiscount = 0;
         this.currentPrestigePoints = 0;
@@ -76,8 +76,8 @@ public class Tribe {
         this.buildingPoints += amount;
     }
 
-    public void updateArtifacts(Artifact artifact) {
-        artifacts.add(artifact);
+    public void addArtifact(Artifact artifact) {
+        artifacts.merge(artifact, 1, Integer::sum);
     }
 
     // getter degli attributi di tribe, utilizzati nelle strategy degli eventi, per fare check sulla quantità
@@ -112,6 +112,13 @@ public class Tribe {
                 .orElse(0);
     }
 
+    // conta il numero di coppie di inventori con lo stesso Artifact
+    public int countInventorPairs() {
+        return artifacts.values().stream()
+                .mapToInt(count -> count / 2)
+                .sum();
+    }
+
     // metodo utilizzato per il calcolo dei punti finali della tribù: currentPrestigePoints + puntiInventori + puntiPicker
     public void computeTotalEndGameScore() {
         // punti edifici (accumulati all'acquisto degli edifici, tramite addToTribe(BuildingCard))
@@ -130,7 +137,7 @@ public class Tribe {
     }
 
     // getter per i test di TribeTest e per le strategy
-    public Set<Artifact> getArtifacts() { return Collections.unmodifiableSet(artifacts); }
+    public Map<Artifact, Integer> getArtifacts() { return Collections.unmodifiableMap(artifacts); }
     public List<BuildingCard> getBuildings() { return Collections.unmodifiableList(buildings); }
     public Map<CharacterType, List<CharacterCard>> getCharacters() { return Collections.unmodifiableMap(characters); }
 }

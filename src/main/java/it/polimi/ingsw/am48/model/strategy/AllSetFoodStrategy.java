@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.model.strategy;
 
+import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 
@@ -8,6 +9,13 @@ public class AllSetFoodStrategy extends CardStrategy {
 
     public AllSetFoodStrategy(RegistrationAction registrationAction) {
         super(registrationAction);
+    }
+
+    @Override
+    public void registerTo(NotificatorCenter notificatorCenter, PlayerContext playerContext) {
+        // inizializza il counter al numero di set già presenti al momento dell'acquisizione
+        completedSets = playerContext.getCurrPlayer().getTribe().minListSize();
+        super.registerTo(notificatorCenter,playerContext);
     }
 
     @Override

@@ -5,6 +5,7 @@ import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.Artifact;
 import it.polimi.ingsw.am48.model.enums.Totem;
 
+import java.util.Map;
 import java.util.Set;
 
 public class Player {
@@ -42,12 +43,12 @@ public class Player {
     public int getShamanStars() { return tribe.getShamanStars(); }
     public int getBuilderPoints() { return tribe.getBuilderPoints(); }
     public int getBuildingPoints() { return tribe.getBuildingPoints(); }
-    public Set<Artifact> getArtifacts() { return tribe.getArtifacts(); }
+    public Map<Artifact, Integer> getArtifacts() { return tribe.getArtifacts(); }
     public void updateFoodDiscount(int amount) { this.tribe.updateFoodDiscount(amount); }
     public void updateBuildingDiscount(int amount) { this.tribe.updateBuildingDiscount(amount); }
     public void updateShamanStars(int amount) { this.tribe.updateShamanStars(amount); }
     public void updateBuilderPoints(int amount) { this.tribe.updateBuilderPoints(amount); }
     public void updateBuildingPoints(int amount) { this.tribe.updateBuildingPoints(amount); }
-    public void updateArtifacts(Artifact artifact) { this.tribe.updateArtifacts(artifact); }
+    public void addArtifact(Artifact artifact) { this.tribe.addArtifact(artifact); }
 
 }

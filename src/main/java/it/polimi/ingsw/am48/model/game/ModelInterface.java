@@ -1,7 +1,6 @@
 package it.polimi.ingsw.am48.model.game;
 
 import it.polimi.ingsw.am48.model.delta.GameDelta;
-import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 
 public interface ModelInterface {
     // metodi lobby: gestione partite

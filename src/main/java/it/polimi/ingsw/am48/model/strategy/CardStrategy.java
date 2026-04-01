@@ -16,9 +16,9 @@ public abstract class CardStrategy {
 
     public abstract void effect(PlayerContext playerContext);
 
-    public void registerTo(NotificatorCenter nc, Player player){
+    public void registerTo(NotificatorCenter nc, PlayerContext playerContext){
         if(registration != null){
-            registration.registerMethod(nc, player, this);
+            registration.registerMethod(nc, playerContext, this);
         }
     }
 
