@@ -10,6 +10,6 @@ public class ShamanSafetyStrategy extends CardStrategy {
 
     @Override
     public void effect(PlayerContext playerContext) {
-
+        playerContext.getCurrPlayer().setShamanSafety();
     }
 }
