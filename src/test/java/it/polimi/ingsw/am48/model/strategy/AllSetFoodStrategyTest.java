@@ -4,11 +4,13 @@ import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.enums.Totem;
+import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class AllSetFoodStrategyTest {
 
@@ -16,6 +18,7 @@ class AllSetFoodStrategyTest {
     private Player otherPlayer;
     private PlayerContext context;
     private AllSetFoodStrategy strategy;
+    private NotificatorCenter mockNotificatorCenter; // dichiarazione mock
 
     @BeforeEach
     void setUp() {
@@ -27,6 +30,7 @@ class AllSetFoodStrategyTest {
         context.addPlayer(currPlayer);
         context.addPlayer(otherPlayer);
 
+        mockNotificatorCenter = mock(NotificatorCenter.class);
         strategy = new AllSetFoodStrategy(null);
     }
 
@@ -49,33 +53,55 @@ class AllSetFoodStrategyTest {
     }
 
     @Test
-    void shouldGiveFivefoodWhenFirstSetCompleted() {
+    void shouldGiveFiveFoodWhenFirstSetCompleted() {
+        // un set completo di 6 tipi diversi assegna 5 cibo
         addOneOfEachType();
         strategy.effect(context);
-        assertEquals(5, currPlayer.getFood()); // 1 set × 5 cibo
+        assertEquals(5, currPlayer.getFood());
     }
 
     @Test
     void shouldGiveTenFoodWhenTwoSetsCompleted() {
+        // due set completati in momenti diversi assegnano 10 cibo totali
         addOneOfEachType();
-        strategy.effect(context); // primo set completato
+        strategy.effect(context); // primo set
         addOneOfEachType();
-        strategy.effect(context); // secondo set completato
-        assertEquals(10, currPlayer.getFood()); // 2 set × 5 cibo
+        strategy.effect(context); // secondo set
+        assertEquals(10, currPlayer.getFood());
     }
 
     @Test
     void shouldNotGiveFoodIfNoNewSetCompleted() {
+        // aggiungere un personaggio di tipo già presente non completa un nuovo set
         addOneOfEachType();
         strategy.effect(context); // primo set completato, 5 cibo
-        // aggiungo un personaggio che non completa un nuovo set
         currPlayer.addToTribe(new CharacterCard("H2", Era.FIRST, null, CharacterType.HUNTER, 2));
         strategy.effect(context); // nessun nuovo set
-        assertEquals(5, currPlayer.getFood()); // rimane 5, nessun cibo aggiunto
+        assertEquals(5, currPlayer.getFood()); // rimane 5
+    }
+
+    @Test
+    void shouldNotGiveFoodForSetsAlreadyPresentAtAcquisition() {
+        // set già presenti prima dell'acquisizione non devono contare
+        addOneOfEachType();
+        strategy.registerTo(mockNotificatorCenter, context); // simula acquisizione
+        strategy.effect(context); // nessun nuovo set dall'acquisizione
+        assertEquals(0, currPlayer.getFood());
+    }
+
+    @Test
+    void shouldGiveFoodOnlyForNewSetsAfterAcquisition() {
+        // set pre-esistenti non contano, solo quelli nuovi dopo acquisizione
+        addOneOfEachType();
+        strategy.registerTo(mockNotificatorCenter, context); // acquisizione con 1 set già presente
+        addOneOfEachType();
+        strategy.effect(context); // nuovo set completato dopo acquisizione
+        assertEquals(5, currPlayer.getFood()); // solo 1 nuovo set × 5 cibo
     }
 
     @Test
     void shouldNotAffectOtherPlayers() {
+        // l'effetto non deve modificare gli altri giocatori
         addOneOfEachType();
         strategy.effect(context);
         assertEquals(0, otherPlayer.getFood());
