@@ -8,7 +8,7 @@ public class StrategyDTO {
     public String notificator;              //notificator type
     public String artifact;                 //artifact type (inventors only)
     public String resource;                 //resource type
-    public String characterType;            //character on which the strategy would be applied
+    public String character;            //character on which the strategy would be applied
 
     // Generic payload slots populated by StrategyDtoDeserializer based on the 'effect' string
     public int num1;
