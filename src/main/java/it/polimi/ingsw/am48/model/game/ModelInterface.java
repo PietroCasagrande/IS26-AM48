@@ -10,7 +10,4 @@ public interface ModelInterface {
     // metodi in-game: azioni del giocatore
     GameDelta placeTotem(String nickname, char position);
     GameDelta takeCard(String name, String cardId);
-
-    // metodo getSnapshot: inizializzazione e a seguito di un crash, per la persistenza
-    GameSnapshot getSnapshot(String nickname);
 }
