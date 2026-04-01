@@ -5,6 +5,7 @@ import java.util.Map;
 public class StrategyDTO {
 
     public String effect;                   //strategy name
+    public String notificator;              //notificator type
     public String artifact;                 //artifact type (inventors only)
     public String resource;                 //resource type
     public String characterType;            //character on which the strategy would be applied
