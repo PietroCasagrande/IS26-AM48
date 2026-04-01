@@ -156,27 +156,27 @@ class TribeTest {
     }
 
 
-    // updateArtifacts() — aggiunge artefatto al set
+    // addArtifact() — aggiunge artefatto al set
     @Test
-    void updateArtifactsShouldAdd() {
-        tribe.updateArtifacts(Artifact.ARROW);
-        assertTrue(tribe.getArtifacts().contains(Artifact.ARROW));
+    void addArtifactShouldAdd() {
+        tribe.addArtifact(Artifact.ARROW);
+        assertTrue(tribe.getArtifacts().containsKey(Artifact.ARROW));
         assertEquals(1, tribe.getArtifacts().size());
     }
 
     @Test
-    void updateArtifactsShouldNotDuplicate() {
+    void addArtifactShouldNotDuplicate() {
         // È un Set, aggiungere lo stesso artefatto due volte non cambia nulla
-        tribe.updateArtifacts(Artifact.ARROW);
-        tribe.updateArtifacts(Artifact.ARROW);
+        tribe.addArtifact(Artifact.ARROW);
+        tribe.addArtifact(Artifact.ARROW);
         assertEquals(1, tribe.getArtifacts().size());
     }
 
     @Test
-    void updateArtifactsShouldTrackMultipleDifferent() {
-        tribe.updateArtifacts(Artifact.ARROW);
-        tribe.updateArtifacts(Artifact.BOWL);
-        tribe.updateArtifacts(Artifact.FLUTE);
+    void addArtifactShouldTrackMultipleDifferent() {
+        tribe.addArtifact(Artifact.ARROW);
+        tribe.addArtifact(Artifact.BOWL);
+        tribe.addArtifact(Artifact.FLUTE);
         assertEquals(3, tribe.getArtifacts().size());
     }
 
@@ -260,10 +260,10 @@ class TribeTest {
         for (int i = 0; i < 3; i++) {
             tribe.addToTribe(new CharacterCard("I" + i, Era.FIRST, null, CharacterType.INVENTOR, 2));
         }
-        tribe.updateArtifacts(Artifact.ARROW);
-        tribe.updateArtifacts(Artifact.BOWL);
-        tribe.updateArtifacts(Artifact.FLUTE);
-        tribe.updateArtifacts(Artifact.CANOE);
+        tribe.addArtifact(Artifact.ARROW);
+        tribe.addArtifact(Artifact.BOWL);
+        tribe.addArtifact(Artifact.FLUTE);
+        tribe.addArtifact(Artifact.CANOE);
         tribe.computeTotalEndGameScore();
         assertEquals(12, tribe.getCurrentPrestigePoints());
     }
@@ -271,11 +271,11 @@ class TribeTest {
     @Test
     void endGameScoreWithZeroInventorsShouldGiveZeroInventorPoints() {
         // 0 inventori × 5 artefatti = 0 PP
-        tribe.updateArtifacts(Artifact.ARROW);
-        tribe.updateArtifacts(Artifact.BOWL);
-        tribe.updateArtifacts(Artifact.FLUTE);
-        tribe.updateArtifacts(Artifact.CANOE);
-        tribe.updateArtifacts(Artifact.DOLL);
+        tribe.addArtifact(Artifact.ARROW);
+        tribe.addArtifact(Artifact.BOWL);
+        tribe.addArtifact(Artifact.FLUTE);
+        tribe.addArtifact(Artifact.CANOE);
+        tribe.addArtifact(Artifact.DOLL);
         tribe.computeTotalEndGameScore();
         assertEquals(0, tribe.getCurrentPrestigePoints());
     }
@@ -300,10 +300,10 @@ class TribeTest {
             tribe.addToTribe(new CharacterCard("I" + i, Era.FIRST, null, CharacterType.INVENTOR, 2));
         }
         // 4 artefatti diversi → inventori = 5 × 4 = 20 PP
-        tribe.updateArtifacts(Artifact.ARROW);
-        tribe.updateArtifacts(Artifact.BOWL);
-        tribe.updateArtifacts(Artifact.FLUTE);
-        tribe.updateArtifacts(Artifact.CANOE);
+        tribe.addArtifact(Artifact.ARROW);
+        tribe.addArtifact(Artifact.BOWL);
+        tribe.addArtifact(Artifact.FLUTE);
+        tribe.addArtifact(Artifact.CANOE);
 
         // 2 costruttori con 3+1 PP → builderPoints = 4
         tribe.updateBuilderPoints(4);

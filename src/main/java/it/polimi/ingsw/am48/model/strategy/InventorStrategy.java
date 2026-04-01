@@ -17,6 +17,6 @@ public class InventorStrategy extends CardStrategy{
 
     @Override
     public void effect(PlayerContext playerContext) {
-        playerContext.getCurrPlayer().updateArtifacts(artifact);
+        playerContext.getCurrPlayer().addArtifact(artifact);
     }
 }

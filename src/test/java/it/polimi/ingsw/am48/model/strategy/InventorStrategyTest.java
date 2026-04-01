@@ -32,7 +32,7 @@ class InventorStrategyTest {
     @Test
     void shouldAddCorrectArtifactToCurrentPlayer() {
         strategy.effect(context);
-        assertTrue(currPlayer.getArtifacts().contains(Artifact.ARROW));
+        assertTrue(currPlayer.getArtifacts().containsKey(Artifact.ARROW));
     }
 
     @Test
@@ -44,7 +44,7 @@ class InventorStrategyTest {
     @Test
     void shouldNotAddWrongArtifact() {
         strategy.effect(context);
-        assertFalse(currPlayer.getArtifacts().contains(Artifact.CANOE));
+        assertFalse(currPlayer.getArtifacts().containsKey(Artifact.CANOE));
     }
 
     @Test
