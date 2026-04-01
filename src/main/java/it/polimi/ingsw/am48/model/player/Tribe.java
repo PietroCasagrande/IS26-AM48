@@ -17,6 +17,7 @@ public class Tribe {
     private int buildingDiscount;
     private int shamanStars;
     private boolean shamanSafety;    // indica se il Player è immune all'evento sciamanico
+    private boolean shamanDoubling;
     private int builderPoints;
     private int buildingPoints;
     private int currentPrestigePoints;
@@ -33,6 +34,7 @@ public class Tribe {
         this.currentPrestigePoints = 0;
         this.shamanStars = 0;
         this.shamanSafety = false;
+        this.shamanDoubling = false;
         this.builderPoints = 0;
         this.buildingPoints = 0;
     }
@@ -84,6 +86,8 @@ public class Tribe {
 
     public void setShamanSafety() { this.shamanSafety = true; }
 
+    public void setShamanDoubling() { this.shamanDoubling = true; }
+
     // getter degli attributi di tribe, utilizzati nelle strategy degli eventi, per fare check sulla quantità
     public int getFoodDiscount() { return foodDiscount; }
     public int getBuildingDiscount() { return buildingDiscount; }
@@ -91,6 +95,7 @@ public class Tribe {
     public int getBuilderPoints() { return builderPoints; }
     public int getBuildingPoints() { return buildingPoints; }
     public boolean isShamanSafe() { return shamanSafety; }
+    public boolean deservesDoubleShamanPp() { return shamanDoubling; }
 
     // metodi per statistiche del giocatore, ovvero punti e cibo
     public int getCurrentFood() { return currentFood; }
