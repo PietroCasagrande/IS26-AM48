@@ -25,6 +25,6 @@ class SnapshotTest {
         assertEquals(10, snapshot.getCurrentPrestigePoints());
         assertTrue(snapshot.getArtifacts().containsKey("ARROW"));
         assertEquals(1, snapshot.getCharacterCardIds().size());
-        assertEquals("H1", snapshot.getCharacterCardIds().get(0));
+        assertEquals("H1", snapshot.getCharacterCardIds().getFirst());
     }
 }
