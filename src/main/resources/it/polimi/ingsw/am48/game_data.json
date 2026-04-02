@@ -1113,8 +1113,10 @@
       "id": "BLD-09",
       "era": "SECOND",
       "strategy": {
-        "effect": "AllSetPPStrategy",
-        "notificator": "OnEndGame"
+        "effect": "UpdateResourcesStrategy",
+        "notificator": "OnEndGame",
+        "resource": "PRESTIGE_POINT",
+        "quantity": 6
       },
       "foodCost": 5,
       "prestigePoints": 6
