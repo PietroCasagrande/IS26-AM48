@@ -3,6 +3,8 @@ package it.polimi.ingsw.am48.model.phase;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.snapshot.PhaseSnapshot;
+import it.polimi.ingsw.am48.model.snapshot.PlayerOfferPhaseSnapshot;
 
 import java.util.List;
 
@@ -54,4 +56,12 @@ public class PlayerOfferPhase implements GamePhase, PickContext {
         throw new UnsupportedOperationException("TODO");
     }
 
+    @Override
+    public PhaseSnapshot toSnapshot(){
+        List<String> orderNicknames = actionOrder.stream()
+                .map(Player::getNickname)
+                .toList();
+
+        return new PlayerOfferPhaseSnapshot(orderNicknames, currIdx);
+    }
 }
