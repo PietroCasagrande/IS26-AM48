@@ -1,11 +1,14 @@
 package it.polimi.ingsw.am48.model.player;
 
 import it.polimi.ingsw.am48.model.card.BuildingCard;
+import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.Artifact;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
+import it.polimi.ingsw.am48.model.snapshot.TribeSnapshot;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Tribe {
     // final sugli oggetti per garantire che la variabile di riferimento non possa esser riassegnata a un altro oggetto
@@ -150,4 +153,32 @@ public class Tribe {
     public Map<Artifact, Integer> getArtifacts() { return Collections.unmodifiableMap(artifacts); }
     public List<BuildingCard> getBuildings() { return Collections.unmodifiableList(buildings); }
     public Map<CharacterType, List<CharacterCard>> getCharacters() { return Collections.unmodifiableMap(characters); }
+
+    public TribeSnapshot toSnapshot() {
+        List<String> charactersIds = characters.values().stream()
+                .flatMap(List::stream)
+                .map(Card::getCardId)
+                .toList();
+
+        List<String> buildingIds = buildings.stream()
+                .map(Card::getCardId)
+                .toList();
+
+        Map<String, Integer> artifactSnapshot = artifacts.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().name(), Map.Entry::getValue
+                ));
+
+        return new TribeSnapshot(
+                charactersIds,
+                buildingIds,
+                artifactSnapshot,
+                currentFood,
+                currentPrestigePoints,
+                shamanStars,
+                buildingDiscount,
+                builderPoints,
+                buildingPoints
+        );
+    }
 }
