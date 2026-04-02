@@ -11,8 +11,8 @@ public class UpdateResourcesStrategy extends CardStrategy{
     private final Resource resource;
     private final int quantity;
 
-    public UpdateResourcesStrategy(Resource resource, int quantity, RegistrationAction registrationAction) {
-        super(registrationAction);
+    public UpdateResourcesStrategy(Resource resource, int quantity, RegistrationAction registrationAction, UnregistrationAction unregistrationAction) {
+        super(registrationAction, unregistrationAction);
         this.resource = resource;
         this.quantity = quantity;
     }
