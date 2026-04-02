@@ -23,13 +23,11 @@ public class CharacterFactory implements BoardFactory<CharacterCard> {
 
     @Override
     public List<CharacterCard> createCards(int numPlayers) {
-        List<CharacterCard> charactersDeck = new ArrayList<>();
+        List<CharacterCard> characterDeck = new ArrayList<>();
 
         for(CardDTO dto : this.characters){
             if(dto.minPlayers <= numPlayers){
-                String cardId = dto.id;
                 Era era = Era.valueOf(dto.era);
-                int minPlayers = dto.minPlayers;
                 CharacterType type = CharacterType.valueOf(dto.character);
 
                 CardStrategy strategy = null;
@@ -37,11 +35,11 @@ public class CharacterFactory implements BoardFactory<CharacterCard> {
                     strategy = buildStrategy(dto.strategy);
                 }
 
-                charactersDeck.add(new CharacterCard(cardId, era, strategy, type, minPlayers));
+                characterDeck.add(new CharacterCard(dto.id, era, strategy, type, dto.minPlayers));
             }
         }
 
-        return charactersDeck;
+        return characterDeck;
     }
 
     // da modificare l'UnregisterAction
