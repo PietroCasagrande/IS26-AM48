@@ -8,7 +8,7 @@ public class InventorsPairStrategy extends CardStrategy {
     int completedPairs;
 
     protected InventorsPairStrategy(RegistrationAction registration) {
-        super(registration);
+        super(registration, null);
         completedPairs = 0;
     }
 

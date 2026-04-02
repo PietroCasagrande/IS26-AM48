@@ -6,7 +6,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 public class DoubleBuilderPPStrategy extends CardStrategy {
 
     protected DoubleBuilderPPStrategy(RegistrationAction registration) {
-        super(registration);
+        super(registration, null);
     }
 
     @Override

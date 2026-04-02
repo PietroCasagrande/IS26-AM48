@@ -8,7 +8,7 @@ public class AllSetFoodStrategy extends CardStrategy {
     private int completedSets = 0;
 
     public AllSetFoodStrategy(RegistrationAction registrationAction) {
-        super(registrationAction);
+        super(registrationAction, null);
     }
 
     @Override

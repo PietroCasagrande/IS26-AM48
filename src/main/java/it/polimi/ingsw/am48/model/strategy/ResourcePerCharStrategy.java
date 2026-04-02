@@ -10,7 +10,8 @@ public class ResourcePerCharStrategy extends CardStrategy{
     private final CharacterType characterType;
 
     public ResourcePerCharStrategy(Resource resource, int quantity, CharacterType characterType, RegistrationAction registration) {
-        super(registration);
+        // PER IL MOMENTO SEGNATA COME PERSISTENTE, MA DA RIVEDERE PER L'HUNTER CHARACTER
+        super(registration, null);
         this.resource = resource;
         this.quantity = quantity;
         this.characterType = characterType;
