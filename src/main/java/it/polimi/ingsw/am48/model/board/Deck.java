@@ -21,6 +21,11 @@ public class Deck<T extends Card> {
         return drawnCards;
     }
 
-    // getSnapshot
-    // public List<T> getSnapshot() {throw new UnsupportedOperationException("TODO");}
+    // getter for remaining cards' ids
+    public List<String> getRemainingCardIds() {
+        return deck.stream()
+                .map(Card::getCardId)
+                .toList();
+    }
+
 }

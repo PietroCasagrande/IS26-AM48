@@ -1,7 +1,9 @@
 package it.polimi.ingsw.am48.model.board;
 
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.snapshot.OfferTrackSnapshot;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,5 +40,16 @@ public class OfferCardTrack {
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find track position for player " + player));
     }
 
-    // getSnapshot()
+    public OfferTrackSnapshot toSnapshot() {
+        Map<String, String> totemPositions = new HashMap<>();
+        for(Map.Entry<Character, OfferCard> entry : track.entrySet()){
+            entry.getValue().getTotem().ifPresent(player ->
+                    totemPositions.put(
+                            String.valueOf(entry.getKey()), player.getTotem().name()
+                    )
+            );
+        }
+
+        return new OfferTrackSnapshot(totemPositions);
+    }
 }
