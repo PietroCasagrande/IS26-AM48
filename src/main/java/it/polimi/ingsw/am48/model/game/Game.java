@@ -8,6 +8,10 @@ import it.polimi.ingsw.am48.model.phase.GamePhase;
 import it.polimi.ingsw.am48.model.phase.WaitingForPlayersPhase;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
+import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
+import it.polimi.ingsw.am48.model.snapshot.PlayerSnapshot;
+
+import java.util.List;
 
 public class Game {
     private final String gameId;
@@ -75,4 +79,20 @@ public class Game {
     void setPhase(GamePhase phase) { this.currentPhase = phase; }
     void setBoard(Board board) { this.board = board; }
     public void incrementTurn() { this.currentTurn++; }
+
+    public GameSnapshot toSnapshot(){
+        List<PlayerSnapshot> playerSnapshots = playerContext.getPlayers().stream()
+                .map(Player::toSnapshot)
+                .toList();
+
+        return new GameSnapshot(
+                gameId,
+                numPlayers,
+                currentTurn,
+                playerSnapshots,
+                // board!=null serve perché durante la WaitingForPlayersPhase il board non è ancora stato creato teoricamente
+                board != null ? board.toSnapshot() : null,
+                currentPhase.toSnapshot()
+        );
+    }
 }

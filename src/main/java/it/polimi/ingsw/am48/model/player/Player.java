@@ -4,6 +4,7 @@ import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.Artifact;
 import it.polimi.ingsw.am48.model.enums.Totem;
+import it.polimi.ingsw.am48.model.snapshot.PlayerSnapshot;
 
 import java.util.Map;
 import java.util.Set;
@@ -55,4 +56,11 @@ public class Player {
     public void updateBuildingPoints(int amount) { this.tribe.updateBuildingPoints(amount); }
     public void addArtifact(Artifact artifact) { this.tribe.addArtifact(artifact); }
 
+    public PlayerSnapshot toSnapshot(){
+        return new PlayerSnapshot(
+                nickname,
+                totem.name(),
+                tribe.toSnapshot()
+        );
+    }
 }

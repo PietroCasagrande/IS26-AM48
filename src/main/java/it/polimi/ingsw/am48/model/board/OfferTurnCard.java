@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.model.board;
 
 import it.polimi.ingsw.am48.model.enums.Resource;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.snapshot.OfferTurnCardSnapshot;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
 import java.util.ArrayList;
@@ -47,5 +48,11 @@ public class OfferTurnCard {
         else if (this.order.size() == this.numPlayers) player.payFood(this.foodRewards.getLast(), this.ppPenalty);
     }
 
-    // getSnapshot
+    public OfferTurnCardSnapshot toSnapshot() {
+        List<String> totemOrder = order.stream()
+                .map(p -> p.getTotem().name())
+                .toList();
+
+        return new OfferTurnCardSnapshot(totemOrder);
+    }
 }

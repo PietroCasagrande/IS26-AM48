@@ -4,6 +4,7 @@ import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.snapshot.BoardSnapshot;
 
 import java.util.List;
 
@@ -103,5 +104,35 @@ public class Board {
     public Showed<Card> getTribeShowed() { return tribeShowed; }
     public Showed<BuildingCard> getBuildingShowed() { return buildingShowed; }
 
-    // BoardSnapshot getSnapshot()
+    public BoardSnapshot toSnapshot(){
+        List<String> upperRowIds = tribeShowed.getUpperList().stream()
+                .map(Card::getCardId)
+                .toList();
+
+        List<String> lowerRowIds = tribeShowed.getLowerList().stream()
+                .map(Card::getCardId)
+                .toList();
+
+        List<String> buildingUpperIds = buildingShowed.getUpperList().stream()
+                .map(Card::getCardId)
+                .toList();
+
+        List<String> buildingLowerIds = buildingShowed.getLowerList().stream()
+                .map(Card::getCardId)
+                .toList();
+
+        List<String> tribeDeckIds = tribeDeck.getRemainingCardIds();
+        List<String> buildingDeckIds = buildingDeck.getRemainingCardIds(); // TODO: se vogliamo il deck di building separato per ere, dovremo salvarlo come Map<String, List<String>> per lo Snapshot
+
+        return new BoardSnapshot(
+                upperRowIds,
+                lowerRowIds,
+                buildingUpperIds,
+                buildingLowerIds,
+                tribeDeckIds,
+                buildingDeckIds,
+                track.toSnapshot(),
+                turnOrder.toSnapshot()
+        );
+    }
 }

@@ -2,12 +2,12 @@
 package it.polimi.ingsw.am48.model.snapshot;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class TribeSnapshot {
     private final List<String> characterCardIds;
     private final List<String> buildingCardIds;
-    private final Set<String> artifactNames;
+    private final Map<String, Integer> artifacts;
     private final int food;
     private final int currentPrestigePoints;
     private final int shamanStars;
@@ -16,12 +16,12 @@ public class TribeSnapshot {
     private final int buildingPoints;
 
     public TribeSnapshot(List<String> characterCardIds, List<String> buildingCardIds,
-                         Set<String> artifactNames, int food, int currentPrestigePoints,
+                         Map<String, Integer> artifacts, int food, int currentPrestigePoints,
                          int shamanStars, int buildingDiscount, int builderPoints,
                          int buildingPoints) {
         this.characterCardIds = characterCardIds;
         this.buildingCardIds = buildingCardIds;
-        this.artifactNames = artifactNames;
+        this.artifacts = artifacts;
         this.food = food;
         this.currentPrestigePoints = currentPrestigePoints;
         this.shamanStars = shamanStars;
@@ -32,7 +32,7 @@ public class TribeSnapshot {
 
     public List<String> getCharacterCardIds() { return characterCardIds; }
     public List<String> getBuildingCardIds() { return buildingCardIds; }
-    public Set<String> getArtifactNames() { return artifactNames; }
+    public Map<String, Integer> getArtifacts() { return artifacts; }
     public int getFood() { return food; }
     public int getCurrentPrestigePoints() { return currentPrestigePoints; }
     public int getShamanStars() { return shamanStars; }
