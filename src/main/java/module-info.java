@@ -2,7 +2,6 @@ module it.polimi.ingsw.am48 {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.xml;
-    requires it.polimi.ingsw.am48;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
 
@@ -21,4 +20,6 @@ module it.polimi.ingsw.am48 {
     exports it.polimi.ingsw.am48.exception;
     exports it.polimi.ingsw.am48.repository;
     exports it.polimi.ingsw.am48.controller;
+
+    opens it.polimi.ingsw.am48 to com.fasterxml.jackson.databind;
 }

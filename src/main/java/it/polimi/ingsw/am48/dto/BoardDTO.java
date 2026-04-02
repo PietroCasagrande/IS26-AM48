@@ -11,6 +11,6 @@ public class BoardDTO {
     public List<CardDTO> events;
     public List<CardDTO> buildings;
     public List<OfferCardDTO> offerCards;
-    public OfferTurnCardDTO offerTurnCard;
+    public List<OfferTurnCardDTO> offerTurnCard;
     public Map<Integer, Map<Era, Integer>> buildingSetup;
 }
