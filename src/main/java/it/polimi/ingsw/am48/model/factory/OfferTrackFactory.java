@@ -17,6 +17,7 @@ public class OfferTrackFactory implements BoardFactory<OfferCard>{
 
     @Override
     public List<OfferCard> createCards(int numPlayers) {
+        if(numPlayers < 2 || numPlayers > 5) throw new IllegalArgumentException("Invalid number of players");
         List<OfferCard> offerTrack = new ArrayList<>();
 
         for(OfferCardDTO dto : this.track){

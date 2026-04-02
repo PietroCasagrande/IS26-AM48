@@ -19,6 +19,7 @@ public class BuildingFactory implements BoardFactory<BuildingCard> {
 
     @Override
     public List<BuildingCard> createCards(int numPlayers) {
+        if(numPlayers < 2 || numPlayers > 5) throw new IllegalArgumentException("Invalid number of players");
         List<BuildingCard> buildingDeck = new ArrayList<>();
 
         for (CardDTO dto : this.buildings) {

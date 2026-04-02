@@ -13,7 +13,8 @@ public class OfferTurnFactory implements BoardFactory<OfferTurnCard> {
 
     @Override
     public List<OfferTurnCard> createCards(int numPlayers){
-        List<OfferTurnCard> cards = new ArrayList<OfferTurnCard>();
+        if(numPlayers < 2 || numPlayers > 5) throw new IllegalArgumentException("Invalid number of players");
+        List<OfferTurnCard> cards = new ArrayList<>();
 
         if(this.offerTurn.numPlayers == numPlayers){
             cards.add(new OfferTurnCard(offerTurn.numPlayers, offerTurn.foodRewards, offerTurn.ppPenalty));

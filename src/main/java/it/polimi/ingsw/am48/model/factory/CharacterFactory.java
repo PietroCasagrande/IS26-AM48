@@ -23,6 +23,7 @@ public class CharacterFactory implements BoardFactory<CharacterCard> {
 
     @Override
     public List<CharacterCard> createCards(int numPlayers) {
+        if(numPlayers < 2 || numPlayers > 5) throw new IllegalArgumentException("Invalid number of players");
         List<CharacterCard> characterDeck = new ArrayList<>();
 
         for(CardDTO dto : this.characters){

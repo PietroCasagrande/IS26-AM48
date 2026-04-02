@@ -885,6 +885,18 @@
 
   "events": [
     {
+      "id": "EVA-01",
+      "era": "FIRST",
+      "eventType": "ARTIST_EVENT",
+      "strategy": {
+        "effect": "ArtistEventStrategy",
+        "notificator": "OnEvent",
+        "threshold": 1,
+        "winRes": 1,
+        "loseRes": -2
+      }
+    },
+    {
       "id": "EVH-01",
       "era": "FIRST",
       "eventType": "HUNTER_EVENT",
@@ -892,16 +904,6 @@
         "effect": "HuntEventStrategy",
         "notificator": "OnEvent",
         "ppGained": 1
-      }
-    },
-    {
-      "id": "EVP-01",
-      "era": "FIRST",
-      "eventType": "PICKER_EVENT",
-      "strategy": {
-        "effect": "SustenanceStrategy",
-        "notificator": "OnEvent",
-        "ppLost": 1
       }
     },
     {
@@ -916,46 +918,13 @@
       }
     },
     {
-      "id": "EVA-01",
+      "id": "EVP-01",
       "era": "FIRST",
-      "eventType": "ARTIST_EVENT",
-      "strategy": {
-        "effect": "ArtistEventStrategy",
-        "notificator": "OnEvent",
-        "threshold": 1,
-        "winRes": 1,
-        "loseRes": -2
-      }
-    },
-    {
-      "id": "EVH-02",
-      "era": "SECOND",
-      "eventType": "HUNTER_EVENT",
-      "strategy": {
-        "effect": "HuntEventStrategy",
-        "notificator": "OnEvent",
-        "ppGained": 2
-      }
-    },
-    {
-      "id": "EVP-02",
-      "era": "SECOND",
       "eventType": "PICKER_EVENT",
       "strategy": {
         "effect": "SustenanceStrategy",
         "notificator": "OnEvent",
-        "ppLost": 2
-      }
-    },
-    {
-      "id": "EVS-02",
-      "era": "SECOND",
-      "eventType": "SHAMAN_EVENT",
-      "strategy": {
-        "effect": "ShamanEventStrategy",
-        "notificator": "OnEvent",
-        "ppToMin": -5,
-        "ppToMax": 10
+        "ppLost": 1
       }
     },
     {
@@ -971,6 +940,49 @@
       }
     },
     {
+      "id": "EVH-02",
+      "era": "SECOND",
+      "eventType": "HUNTER_EVENT",
+      "strategy": {
+        "effect": "HuntEventStrategy",
+        "notificator": "OnEvent",
+        "ppGained": 2
+      }
+    },
+    {
+      "id": "EVS-02",
+      "era": "SECOND",
+      "eventType": "SHAMAN_EVENT",
+      "strategy": {
+        "effect": "ShamanEventStrategy",
+        "notificator": "OnEvent",
+        "ppToMin": -5,
+        "ppToMax": 10
+      }
+    },
+    {
+      "id": "EVP-02",
+      "era": "SECOND",
+      "eventType": "PICKER_EVENT",
+      "strategy": {
+        "effect": "SustenanceStrategy",
+        "notificator": "OnEvent",
+        "ppLost": 2
+      }
+    },
+    {
+      "id": "EVA-03",
+      "era": "THIRD",
+      "eventType": "ARTIST_EVENT",
+      "strategy": {
+        "effect": "ArtistEventStrategy",
+        "notificator": "OnEvent",
+        "threshold": 3,
+        "winRes": 3,
+        "loseRes": -2
+      }
+    },
+    {
       "id": "EVH-03",
       "era": "THIRD",
       "eventType": "HUNTER_EVENT",
@@ -978,17 +990,6 @@
         "effect": "HuntEventStrategy",
         "notificator": "OnEvent",
         "ppGained": 3
-      }
-    },
-
-    {
-      "id": "EVP-03",
-      "era": "THIRD",
-      "eventType": "PICKER_EVENT",
-      "strategy": {
-        "effect": "SustenanceStrategy",
-        "notificator": "OnEvent",
-        "ppLost": 3
       }
     },
     {
@@ -1003,15 +1004,13 @@
       }
     },
     {
-      "id": "EVA-03",
+      "id": "EVP-03",
       "era": "THIRD",
-      "eventType": "ARTIST_EVENT",
+      "eventType": "PICKER_EVENT",
       "strategy": {
-        "effect": "ArtistEventStrategy",
+        "effect": "SustenanceStrategy",
         "notificator": "OnEvent",
-        "threshold": 3,
-        "winRes": 3,
-        "loseRes": -2
+        "ppLost": 3
       }
     }
   ],
@@ -1330,7 +1329,7 @@
     }
   ],
 
-  "offerTurnCards": [
+  "offerTurnCard": [
     {
       "numPlayers": 2,
       "foodRewards": [1,0,1],
@@ -1351,5 +1350,12 @@
       "foodRewards": [3,1,1],
       "ppPenalty": 2
     }
-  ]
+  ],
+
+  "buildingSetup": {
+    "2": {"FIRST": 1, "SECOND": 2, "THIRD": 3},
+    "3": {"FIRST": 2, "SECOND": 2, "THIRD": 4},
+    "4": {"FIRST": 2, "SECOND": 3, "THIRD": 4},
+    "5": {"FIRST": 2, "SECOND": 3, "THIRD": 5}
+  }
 }
