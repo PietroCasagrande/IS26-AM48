@@ -3,6 +3,8 @@ module it.polimi.ingsw.am48 {
     requires javafx.fxml;
     requires java.xml;
     requires it.polimi.ingsw.am48;
+    requires com.fasterxml.jackson.annotation;
+    requires com.fasterxml.jackson.databind;
 
     exports it.polimi.ingsw.am48.model.game;
     exports it.polimi.ingsw.am48.model.player;
