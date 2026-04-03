@@ -254,7 +254,7 @@ class ShowedTest {
         // Player takes one card from upper
         showed.takeCard(player, "H2");
         assertEquals(2, showed.getUpperList().size());
-        assertEquals(1, player.getTribe().tribeSize());
+        assertEquals(1, player.getTotalCharacters());
 
         // End of round: shift remaining upper to lower
         showed.shiftRow();

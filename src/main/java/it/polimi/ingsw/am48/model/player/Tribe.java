@@ -42,13 +42,6 @@ public class Tribe {
         this.buildingPoints = 0;
     }
 
-    // metodi che ci servono per gestire personaggi ed edifici nella tribe
-    public int tribeSize() {
-        return characters.values().stream()
-                .mapToInt(List::size)
-                .sum();
-    }
-
     public int countByType(CharacterType type) {
         return characters.get(type).size();
     }
@@ -100,6 +93,7 @@ public class Tribe {
     public boolean isShamanSafe() { return shamanSafety; }
     public boolean deservesDoubleShamanPp() { return shamanDoubling; }
 
+    // sostituisce il vecchio tribeSize(), getTotalCharacters() in player delega a questo
     public int getTotalCharacters(){
         return characters.values().stream()
                  .mapToInt(List::size)

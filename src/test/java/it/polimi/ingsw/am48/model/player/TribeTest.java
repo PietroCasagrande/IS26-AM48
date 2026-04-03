@@ -19,20 +19,20 @@ class TribeTest {
     }
 
 
-    // tribeSize() — conta tutti i personaggi
+    // getTotalCharacters() — conta tutti i personaggi
     @Test
     void newTribeShouldHaveZeroSize() {
         // Una tribe appena creata non ha personaggi
-        assertEquals(0, tribe.tribeSize());
+        assertEquals(0, tribe.getTotalCharacters());
     }
 
     @Test
-    void tribeSizeShouldCountAllCharacterTypes() {
+    void getTotalCharactersShouldCountAllCharacterTypes() {
         // Aggiungo personaggi di tipi diversi, verifico che li conti tutti
         tribe.addToTribe(new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2));
         tribe.addToTribe(new CharacterCard("H2", Era.FIRST, null, CharacterType.HUNTER, 2));
         tribe.addToTribe(new CharacterCard("S1", Era.FIRST, null, CharacterType.SHAMAN, 2));
-        assertEquals(3, tribe.tribeSize());
+        assertEquals(3, tribe.getTotalCharacters());
     }
 
 
@@ -58,7 +58,7 @@ class TribeTest {
     void addCharacterShouldIncreaseSizeAndCount() {
         CharacterCard hunter = new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2);
         tribe.addToTribe(hunter);
-        assertEquals(1, tribe.tribeSize());
+        assertEquals(1, tribe.getTotalCharacters());
         assertEquals(1, tribe.countByType(CharacterType.HUNTER));
     }
 

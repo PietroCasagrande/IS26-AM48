@@ -34,7 +34,7 @@ class CardTest {
         new CharacterCard("S1", Era.FIRST, null, CharacterType.SHAMAN, 2).acquire(player);
         assertEquals(2, player.getTribe().countByType(CharacterType.HUNTER));
         assertEquals(1, player.getTribe().countByType(CharacterType.SHAMAN));
-        assertEquals(3, player.getTribe().tribeSize());
+        assertEquals(3, player.getTotalCharacters());
     }
 
     @Test

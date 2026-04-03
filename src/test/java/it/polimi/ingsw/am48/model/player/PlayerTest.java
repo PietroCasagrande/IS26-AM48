@@ -30,7 +30,7 @@ class PlayerTest {
     @Test
     void addCharacterShouldBeAccessibleFromPlayer() {
         player.addToTribe(new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2));
-        assertEquals(1, player.getTribe().tribeSize());
+        assertEquals(1, player.getTotalCharacters());
     }
 
     // Adding a building should be reflected in player's buildingPoints
