@@ -137,11 +137,13 @@ class GameDataLoaderTest {
     }
 
     @Test
-    @DisplayName("loadData: should deserialize the last two events as Era THIRD (final events)")
-    void shouldDeserializeLastTwoEventsAsThirdEra() {
+    @DisplayName("loadData: should deserialize final events as Shaman and Picker type")
+    void shouldDeserializeLastTwoEventsCorrectly() {
         int size = boardDTO.events.size();
         assertEquals("THIRD", boardDTO.events.get(size - 2).era);
         assertEquals("THIRD", boardDTO.events.get(size - 1).era);
+        assertEquals("SHAMAN_EVENT", boardDTO.events.get(size - 2).eventType);
+        assertEquals("PICKER_EVENT", boardDTO.events.get(size - 1).eventType);
     }
 
     // ==================== loadData: buildings ====================

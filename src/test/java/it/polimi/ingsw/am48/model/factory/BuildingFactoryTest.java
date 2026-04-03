@@ -20,21 +20,21 @@ class BuildingFactoryTest {
     @BeforeEach
     void setUp() {
         dtoFirst = new CardDTO();
-        dtoFirst.id = "building-1";
+        dtoFirst.id = "BUI-01";
         dtoFirst.era = "FIRST";
         dtoFirst.foodCost = 2;
         dtoFirst.prestigePoints = 3;
         dtoFirst.strategy = null;
 
         dtoSecond = new CardDTO();
-        dtoSecond.id = "building-2";
+        dtoSecond.id = "BUI-20";
         dtoSecond.era = "SECOND";
         dtoSecond.foodCost = 4;
         dtoSecond.prestigePoints = 5;
         dtoSecond.strategy = null;
 
         dtoThird = new CardDTO();
-        dtoThird.id = "building-3";
+        dtoThird.id = "BUI-21";
         dtoThird.era = "THIRD";
         dtoThird.foodCost = 6;
         dtoThird.prestigePoints = 7;
@@ -56,7 +56,7 @@ class BuildingFactoryTest {
     void shouldMapCardIdCorrectly() {
         BuildingFactory factory = new BuildingFactory(List.of(dtoFirst));
         BuildingCard card = factory.createCards(2).get(0);
-        assertEquals("building-1", card.getCardId());
+        assertEquals("BUI-01", card.getCardId());
     }
 
     @Test

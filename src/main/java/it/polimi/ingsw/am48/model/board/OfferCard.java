@@ -37,6 +37,11 @@ public class OfferCard {
         return Optional.ofNullable(this.totem);
     }
 
+    // Getters for testing
+    public char getLetterId() {return this.letterId;}
+    public int getNumPlayers(){return this.numPlayers;}
+    public CardStrategy getStrategy(){return this.strategy;}
+
     /*
     // To implement: waiting for PickCardStrategy definition
     public Card activateStrategy(Board board, String cardId, Player player, GamePhase phase){

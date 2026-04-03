@@ -55,4 +55,9 @@ public class OfferTurnCard {
 
         return new OfferTurnCardSnapshot(totemOrder);
     }
+
+    // Getters for testing
+    public int getNumPlayers(){return  this.numPlayers;}
+    public List<Integer> getFoodRewards(){return  this.foodRewards;}
+    public int getPpPenalty(){return  this.ppPenalty;}
 }

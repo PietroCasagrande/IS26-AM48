@@ -20,21 +20,21 @@ class CharacterFactoryTest {
     @BeforeEach
     void setUp() {
         dtoTwoPlus = new CardDTO();
-        dtoTwoPlus.id = "char-1";
+        dtoTwoPlus.id = "PIC-01";
         dtoTwoPlus.era = "FIRST";
         dtoTwoPlus.character = "PICKER";
         dtoTwoPlus.minPlayers = 2;
         dtoTwoPlus.strategy = null;
 
         dtoThreePlus = new CardDTO();
-        dtoThreePlus.id = "char-2";
+        dtoThreePlus.id = "ART-13";
         dtoThreePlus.era = "SECOND";
         dtoThreePlus.character = "ARTIST";
         dtoThreePlus.minPlayers = 3;
         dtoThreePlus.strategy = null;
 
         dtoFivePlus = new CardDTO();
-        dtoFivePlus.id = "char-3";
+        dtoFivePlus.id = "INV-19";
         dtoFivePlus.era = "THIRD";
         dtoFivePlus.character = "INVENTOR";
         dtoFivePlus.minPlayers = 5;
@@ -46,7 +46,7 @@ class CharacterFactoryTest {
     @Test
     @DisplayName("createCards: should include cards whose minPlayers is equal to numPlayers")
     void shouldIncludeCardWithMinPlayersEqualToNumPlayers() {
-        CharacterFactory factory = new CharacterFactory(List.of(dtoTwoPlus));
+        CharacterFactory factory = new CharacterFactory(List.of(dtoTwoPlus, dtoThreePlus, dtoFivePlus));
         List<CharacterCard> result = factory.createCards(2);
         assertEquals(1, result.size());
     }
@@ -54,16 +54,16 @@ class CharacterFactoryTest {
     @Test
     @DisplayName("createCards: should include cards whose minPlayers is less than numPlayers")
     void shouldIncludeCardWithMinPlayersBelowNumPlayers() {
-        CharacterFactory factory = new CharacterFactory(List.of(dtoTwoPlus));
+        CharacterFactory factory = new CharacterFactory(List.of(dtoTwoPlus, dtoThreePlus, dtoFivePlus));
         List<CharacterCard> result = factory.createCards(4);
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
     }
 
     @Test
     @DisplayName("createCards: should exclude cards whose minPlayers exceeds numPlayers")
     void shouldExcludeCardWithMinPlayersAboveNumPlayers() {
-        CharacterFactory factory = new CharacterFactory(List.of(dtoFivePlus));
-        List<CharacterCard> result = factory.createCards(3);
+        CharacterFactory factory = new CharacterFactory(List.of(dtoThreePlus, dtoFivePlus));
+        List<CharacterCard> result = factory.createCards(2);
         assertTrue(result.isEmpty());
     }
 
@@ -81,7 +81,7 @@ class CharacterFactoryTest {
     void shouldMapCardIdCorrectly() {
         CharacterFactory factory = new CharacterFactory(List.of(dtoTwoPlus));
         CharacterCard card = factory.createCards(2).get(0);
-        assertEquals("char-1", card.getCardId());
+        assertEquals("PIC-01", card.getCardId());
     }
 
     @Test
