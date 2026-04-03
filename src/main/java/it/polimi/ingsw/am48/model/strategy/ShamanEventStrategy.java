@@ -39,7 +39,7 @@ public class ShamanEventStrategy extends CardStrategy {
                 if(p.deservesDoubleShamanPp()) p.updatePoints(ppToMax);
             }
             // tutti i player con le stelle minime perdono punti (a meno che non si abbia l'edificio che rende immuni)
-            else if(p.getShamanStars() == minStars){
+            if(p.getShamanStars() == minStars){
                 if(!p.isShamanSafe()) p.updatePoints(-ppToMin);
             }
         });
