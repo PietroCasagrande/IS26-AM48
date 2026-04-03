@@ -48,15 +48,15 @@ class DeckSetupTest {
         charThird1  = new CharacterCard("ct1", Era.THIRD,  strategy, CharacterType.PICKER, 2);
 
         eventSecond1 = new EventCard("es1", Era.SECOND, strategy, EventType.HUNTER_EVENT);
-        eventFinalA  = new EventCard("efa", Era.THIRD,  strategy, EventType.ARTIST_EVENT);
-        eventFinalB  = new EventCard("efb", Era.THIRD,  strategy, EventType.SHAMAN_EVENT);
+        eventFinalA  = new EventCard("et1", Era.THIRD,  strategy, EventType.ARTIST_EVENT);
+        eventFinalB  = new EventCard("et2", Era.THIRD,  strategy, EventType.SHAMAN_EVENT);
 
-        buildFirst1  = new BuildingCard("bf1", Era.FIRST,  null, 2, 3);
-        buildFirst2  = new BuildingCard("bf2", Era.FIRST,  null, 2, 3);
-        buildSecond1 = new BuildingCard("bs1", Era.SECOND, null, 4, 5);
-        buildSecond2 = new BuildingCard("bs2", Era.SECOND, null, 4, 5);
-        buildThird1  = new BuildingCard("bt1", Era.THIRD,  null, 6, 7);
-        buildThird2  = new BuildingCard("bt2", Era.THIRD,  null, 6, 7);
+        buildFirst1  = new BuildingCard("bf1", Era.FIRST,  strategy, 2, 3);
+        buildFirst2  = new BuildingCard("bf2", Era.FIRST,  strategy, 2, 3);
+        buildSecond1 = new BuildingCard("bs1", Era.SECOND, strategy, 4, 5);
+        buildSecond2 = new BuildingCard("bs2", Era.SECOND, strategy, 4, 5);
+        buildThird1  = new BuildingCard("bt1", Era.THIRD,  strategy, 6, 7);
+        buildThird2  = new BuildingCard("bt2", Era.THIRD,  strategy, 6, 7);
 
         buildingSetup = new HashMap<>();
         buildingSetup.put(2, Map.of(Era.FIRST, 1, Era.SECOND, 1, Era.THIRD, 1));

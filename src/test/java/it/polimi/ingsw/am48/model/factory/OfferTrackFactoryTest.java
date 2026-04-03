@@ -49,7 +49,7 @@ class OfferTrackFactoryTest {
     void shouldMapCharIdCorrectly() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
         OfferCard card = factory.createCards(2).get(0);
-        //assertEquals('A', card.getCardId());
+        assertEquals('A', card.getLetterId());
     }
 
     @Test
@@ -57,7 +57,7 @@ class OfferTrackFactoryTest {
     void shouldMapMinPlayersCorrectly() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoB));
         OfferCard card = factory.createCards(3).get(0);
-        //assertEquals(3, card.getMinPlayers());
+        assertEquals(3, card.getNumPlayers());
     }
 
     @Test
@@ -65,7 +65,7 @@ class OfferTrackFactoryTest {
     void shouldSetNullStrategyWhenDtoStrategyIsNull() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
         OfferCard card = factory.createCards(2).get(0);
-        //assertNull(card.getStrategy());
+        assertNull(card.getStrategy());
     }
 
     @Test
@@ -73,9 +73,9 @@ class OfferTrackFactoryTest {
     void shouldPreserveInsertionOrder() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA, dtoB, dtoC));
         List<OfferCard> result = factory.createCards(3);
-        //assertEquals('A', result.get(0).getId());
-        //assertEquals('B', result.get(1).getId());
-        //assertEquals('C', result.get(2).getId());
+        assertEquals('A', result.get(0).getLetterId());
+        assertEquals('B', result.get(1).getLetterId());
+        assertEquals('C', result.get(2).getLetterId());
     }
 
     @Test

@@ -115,21 +115,21 @@ class OfferTurnFactoryTest {
     @DisplayName("createCards: should map numPlayers correctly from matching DTO")
     void shouldMapNumPlayersCorrectly() {
         OfferTurnFactory factory = new OfferTurnFactory(allDtos);
-        //assertEquals(3, factory.createCards(3).get(0).getNumPlayers());
+        assertEquals(3, factory.createCards(3).get(0).getNumPlayers());
     }
 
     @Test
     @DisplayName("createCards: should map foodRewards correctly from matching DTO")
     void shouldMapFoodRewardsCorrectly() {
         OfferTurnFactory factory = new OfferTurnFactory(allDtos);
-        //assertEquals(List.of(2, 0, 1), factory.createCards(3).get(0).getFoodRewards());
+        assertEquals(List.of(2, 0, 1), factory.createCards(3).get(0).getFoodRewards());
     }
 
     @Test
     @DisplayName("createCards: should map ppPenalty correctly from matching DTO")
     void shouldMapPpPenaltyCorrectly() {
         OfferTurnFactory factory = new OfferTurnFactory(allDtos);
-        //assertEquals(2, factory.createCards(3).get(0).getPpPenalty());
+        assertEquals(2, factory.createCards(3).get(0).getPpPenalty());
     }
 
     @Test
@@ -137,9 +137,9 @@ class OfferTurnFactoryTest {
     void shouldCorrectlyMapEachPlayerCountToItsOwnDto() {
         OfferTurnFactory factory = new OfferTurnFactory(allDtos);
 
-        //assertEquals(List.of(1, 0, 1), factory.createCards(2).get(0).getFoodRewards());
-        //assertEquals(List.of(2, 0, 1), factory.createCards(3).get(0).getFoodRewards());
-        //assertEquals(List.of(2, 1, 1), factory.createCards(4).get(0).getFoodRewards());
-        //assertEquals(List.of(3, 1, 1), factory.createCards(5).get(0).getFoodRewards());
+        assertEquals(List.of(1, 0, 1), factory.createCards(2).get(0).getFoodRewards());
+        assertEquals(List.of(2, 0, 1), factory.createCards(3).get(0).getFoodRewards());
+        assertEquals(List.of(2, 1, 1), factory.createCards(4).get(0).getFoodRewards());
+        assertEquals(List.of(3, 1, 1), factory.createCards(5).get(0).getFoodRewards());
     }
 }
