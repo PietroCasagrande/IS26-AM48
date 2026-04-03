@@ -32,6 +32,7 @@ public class Player {
 
     // metodo utilizzato nelle strategy per aggiornare statistiche di tribe
     public Tribe getTribe() { return this.tribe; }    // forse non serve più avendo aggiunto i getter per ogni attributo
+    public int getTotalCharacters() { return this.tribe.getTotalCharacters(); }
 
     // metodo per pagare cibo e perdere punti in caso di cibo insufficiente
     public void payFood(int food, int ppPerFood){this.tribe.payFood(food, ppPerFood); }

@@ -100,6 +100,12 @@ public class Tribe {
     public boolean isShamanSafe() { return shamanSafety; }
     public boolean deservesDoubleShamanPp() { return shamanDoubling; }
 
+    public int getTotalCharacters(){
+        return characters.values().stream()
+                 .mapToInt(List::size)
+                 .sum();
+    }
+
     // metodi per statistiche del giocatore, ovvero punti e cibo
     public int getCurrentFood() { return currentFood; }
     public void updateCurrentFood(int currentFood) { this.currentFood += currentFood; }
