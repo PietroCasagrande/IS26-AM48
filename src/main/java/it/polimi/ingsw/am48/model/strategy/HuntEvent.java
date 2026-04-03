@@ -14,7 +14,6 @@ public class HuntEvent extends CardStrategy {
 
     // se si cambia il discorso di PlayerContext si può semplicemente chiamare new ResourcePerCharStrategy(FOOD_POINTS, ...)
     // e poi strategy.effect(player) per ogni player
-
     @Override
     public void effect(PlayerContext playerContext) {
         playerContext.getPlayers()
