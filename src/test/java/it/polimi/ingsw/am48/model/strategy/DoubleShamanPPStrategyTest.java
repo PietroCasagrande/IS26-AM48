@@ -25,7 +25,7 @@ class DoubleShamanPPStrategyTest {
         context.addPlayer(currPlayer);
         context.addPlayer(otherPlayer);
 
-        strategy = new DoubleShamanPPStrategy(null);
+        strategy = new DoubleShamanPPStrategy(null, null);
     }
 
     @Test

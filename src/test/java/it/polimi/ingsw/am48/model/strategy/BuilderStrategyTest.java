@@ -26,21 +26,21 @@ class BuilderStrategyTest {
 
     @Test
     void shouldUpdateBuilderPointsCorrectly() {
-        BuilderStrategy strategy = new BuilderStrategy(3, 0, null);
+        BuilderStrategy strategy = new BuilderStrategy(3, 0, null, null);
         strategy.effect(context);
         assertEquals(3, currPlayer.getBuilderPoints());
     }
 
     @Test
     void shouldUpdateBuildingDiscountCorrectly() {
-        BuilderStrategy strategy = new BuilderStrategy(0, 2, null);
+        BuilderStrategy strategy = new BuilderStrategy(0, 2, null, null);
         strategy.effect(context);
         assertEquals(2, currPlayer.getBuildingDiscount());
     }
 
     @Test
     void shouldUpdateBothAttributesCorrectly() {
-        BuilderStrategy strategy = new BuilderStrategy(3, 2, null);
+        BuilderStrategy strategy = new BuilderStrategy(3, 2, null, null);
         strategy.effect(context);
         assertEquals(3, currPlayer.getBuilderPoints());
         assertEquals(2, currPlayer.getBuildingDiscount());
@@ -48,7 +48,7 @@ class BuilderStrategyTest {
 
     @Test
     void shouldNotAffectOtherPlayers() {
-        BuilderStrategy strategy = new BuilderStrategy(3, 2, null);
+        BuilderStrategy strategy = new BuilderStrategy(3, 2, null, null);
         strategy.effect(context);
         assertEquals(0, otherPlayer.getBuilderPoints());
         assertEquals(0, otherPlayer.getBuildingDiscount());
