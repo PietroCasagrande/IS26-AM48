@@ -3,6 +3,7 @@ package it.polimi.ingsw.am48.model.notificator;
 import it.polimi.ingsw.am48.exception.StrategyNotFoundException;
 import it.polimi.ingsw.am48.model.enums.EventType;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
 import java.util.ArrayList;
@@ -37,6 +38,25 @@ public class OnEventNotificator {
         if (playerMap.isEmpty()) listeners.remove(e);
     }
 
-    public void notifyListeners(EventType p){
-        throw new UnsupportedOperationException("TODO");    }
+    public void notify(EventType e, PlayerContext playerContext) {
+        Map<Player, List<CardStrategy>> playerMap = listeners.get(e);
+        if (playerMap == null) return;
+
+        Player previous = playerContext.getCurrPlayer();
+
+        for (Map.Entry<Player, List<CardStrategy>> entry : playerMap.entrySet()) {
+            playerContext.setCurrPlayer(entry.getKey());
+
+            List<CardStrategy> toDetach = new ArrayList<>();
+
+            for (CardStrategy cs : entry.getValue()) {
+                cs.effect(playerContext);
+                cs.unregisterFrom(toDetach);
+            }
+
+            entry.getValue().removeAll(toDetach);
+        }
+        // resets the previous player as the current
+        playerContext.setCurrPlayer(previous);
+    }
 }
