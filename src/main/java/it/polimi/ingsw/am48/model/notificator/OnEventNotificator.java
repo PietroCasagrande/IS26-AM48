@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.model.notificator;
 
+import it.polimi.ingsw.am48.exception.StrategyNotFoundException;
 import it.polimi.ingsw.am48.model.enums.EventType;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
@@ -18,8 +19,23 @@ public class OnEventNotificator {
                 .add(cs);
     }
 
-    public void detach(){
-        throw new UnsupportedOperationException("TODO");    }
+    public void detach(EventType e, Player p, CardStrategy cs){
+        Map<Player, List<CardStrategy>> playerMap = listeners.get(e);
+
+        if (playerMap == null) {
+            throw new StrategyNotFoundException("Impossibile rimuovere la strategia: " + cs + " per il giocatore " + p);
+        }
+
+        List<CardStrategy> strategies = playerMap.get(p);
+
+        if (strategies == null || !strategies.contains(cs)) {
+            throw new StrategyNotFoundException("Impossibile rimuovere la strategia: " + cs + " per il giocatore " + p);
+        }
+
+        strategies.remove(cs);
+        if (strategies.isEmpty()) playerMap.remove(p);
+        if (playerMap.isEmpty()) listeners.remove(e);
+    }
 
     public void notifyListeners(EventType p){
         throw new UnsupportedOperationException("TODO");    }
