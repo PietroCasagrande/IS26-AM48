@@ -40,12 +40,21 @@ public class OfferTurnCard {
     }
 
     // Replaces the totem at the end of the offer phase:
-    // the first player or the first two players get food, depending on the number of players
+    // the first player or the first two players get food (or 0), depending on the number of players
     // the last player loses food and gets penalty if they haven't enough food
     public void returnTotem(Player player){
         this.order.add(player);
-        if(this.order.size() <= 2) player.updateFood(this.foodRewards.get(order.size()-1));
-        else if (this.order.size() == this.numPlayers) player.payFood(this.foodRewards.getLast(), this.ppPenalty);
+        int position = this.order.size();
+        player.setExtraFoodRight(false);    // reset the extra food right to avoid errors from the previous turn
+
+        if(position <= 2) {
+            player.updateFood(this.foodRewards.get(position-1));
+            if(foodRewards.get(position-1) != 0) player.setExtraFoodRight(true);    // player deserves extra food only if he gets food from the offer turn card (not when he gets 0)
+        }
+
+        if(position == this.numPlayers) {
+            player.payFood(this.foodRewards.getLast(), this.ppPenalty);
+        }
     }
 
     public OfferTurnCardSnapshot toSnapshot() {
