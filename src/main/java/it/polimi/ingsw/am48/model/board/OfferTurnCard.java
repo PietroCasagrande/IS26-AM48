@@ -45,7 +45,7 @@ public class OfferTurnCard {
     public void returnTotem(Player player){
         this.order.add(player);
         int position = this.order.size();
-        player.setExtraFoodRight(false);    // reset the extra food right to avoid errors from the previous turn
+        player.setExtraFoodRight(false);    // set the extra food right to default value to avoid errors from the previous turn
 
         if(position <= 2) {
             player.updateFood(this.foodRewards.get(position-1));
