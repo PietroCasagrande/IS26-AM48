@@ -42,7 +42,7 @@ public class EventFactory implements BoardFactory<EventCard> {
 
     // to do
     private RegistrationAction buildRegistrationAction(String notificator, EventType eventType) {
-        if (notificator.equals("OnEvent")) return (nc, player, strategy) -> nc.getEventNotificator().attach(eventType, strategy);
+        if (notificator.equals("OnEvent")) return (nc, player, strategy) -> nc.getEventNotificator().attach(eventType,player.getCurrPlayer(), strategy);
         else throw new IllegalArgumentException("Invalid notificator for CharacterCard strategy");
     }
 }
