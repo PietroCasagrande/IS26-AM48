@@ -43,9 +43,6 @@ public class Game {
     public List<GameDelta> takeCard(Player player, String cardId) {
         return currentPhase.takeCard(this, player, cardId);
     }
-    public List<GameDelta> endTurn() {
-        return currentPhase.endTurn(this);
-    }
 
     // Player lookup, needed by GameManager's methods
     public Player getPlayerByNickname(String nickname){

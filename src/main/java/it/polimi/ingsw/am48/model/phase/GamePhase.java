@@ -18,9 +18,6 @@ public interface GamePhase {
     default List<GameDelta> takeCard(Game game, Player player, String cardId){
         throw new InvalidActionException("Azione non consentita in questa fase");
     }
-    default List<GameDelta> endTurn (Game game){
-        throw new InvalidActionException("Azione non consentita in questa fase");
-    }
 
     PhaseSnapshot toSnapshot();
 }
