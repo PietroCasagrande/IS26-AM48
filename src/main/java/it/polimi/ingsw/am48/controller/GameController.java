@@ -3,6 +3,8 @@ package it.polimi.ingsw.am48.controller;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.game.ModelInterface;
 
+import java.util.List;
+
 public class GameController {
     private final ModelInterface model;
 
@@ -24,9 +26,9 @@ public class GameController {
     }
 
     // client prende una carta
-    GameDelta handleTakeCard(String nickname, String cardId){
-        GameDelta delta = model.takeCard(nickname, cardId);
+    List<GameDelta> handleTakeCard(String nickname, String cardId){
+        List<GameDelta> deltas = model.takeCard(nickname, cardId);
         // TODO: serializzazione Json(?), sincronizzazione(?)
-        return delta;
+        return deltas;
     }
 }

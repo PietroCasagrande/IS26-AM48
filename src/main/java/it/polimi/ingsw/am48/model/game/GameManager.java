@@ -7,6 +7,7 @@ import it.polimi.ingsw.am48.repository.GameRepository;
 import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -53,7 +54,7 @@ public class GameManager implements ModelInterface{
     }
 
     @Override
-    public GameDelta takeCard(String nickname, String cardId){
+    public List<GameDelta> takeCard(String nickname, String cardId){
         Game game = getGameByNickname(nickname);
         Player player = game.getPlayerByNickname(nickname);
         return game.takeCard(player, cardId);
