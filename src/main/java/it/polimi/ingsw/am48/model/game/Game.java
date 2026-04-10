@@ -40,11 +40,8 @@ public class Game {
     public GameDelta placeTotem(Player player, char position) {
         return currentPhase.placeTotem(this, player, position);
     }
-    public GameDelta takeCard(Player player, String cardId) {
+    public List<GameDelta> takeCard(Player player, String cardId) {
         return currentPhase.takeCard(this, player, cardId);
-    }
-    public GameDelta endTurn() {
-        return currentPhase.endTurn(this);
     }
 
     // Player lookup, needed by GameManager's methods
