@@ -13,19 +13,10 @@ import java.util.Map;
 public class OnPickNotificator {
     // private Map<Player, List<CardStrategy>> listeners;
     private Map<Player, List<CardStrategy>> listeners = new HashMap<>();
+
     public void attach(Player p, CardStrategy cs){
         listeners.computeIfAbsent(p, k -> new ArrayList<>())
                 .add(cs);
-    }
-
-    public void detach(Player p, CardStrategy cs){
-        List<CardStrategy> strategies = listeners.get(p);
-
-        if (strategies == null || !strategies.contains(cs)) {
-            throw new StrategyNotFoundException("Impossibile rimuovere la strategia: " + cs + " per il giocatore " + p);
-        }
-        strategies.remove(cs);
-        if (strategies.isEmpty()) listeners.remove(p);
     }
 
     public void notify(PlayerContext p) {

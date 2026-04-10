@@ -3,7 +3,9 @@ package it.polimi.ingsw.am48.model.board;
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.enums.Era;
+import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,8 @@ class BoardTest {
     private Showed<BuildingCard> buildingShowed;
     private List<Integer> buildingsPerEra;
     private Board board;
+    private NotificatorCenter nc;
+    private PlayerContext playerContext;
 
     private Player playerA;
     private Player playerB;
@@ -35,17 +39,19 @@ class BoardTest {
     @BeforeEach
     @SuppressWarnings("unchecked")
     void setUp() {
-        track = mock(OfferCardTrack.class);
-        turnOrder = mock(OfferTurnCard.class);
-        tribeDeck = mock(Deck.class);
-        buildingDeck = mock(Deck.class);
-        tribeShowed = mock(Showed.class);
+        track         = mock(OfferCardTrack.class);
+        turnOrder     = mock(OfferTurnCard.class);
+        tribeDeck     = mock(Deck.class);
+        buildingDeck  = mock(Deck.class);
+        tribeShowed   = mock(Showed.class);
         buildingShowed = mock(Showed.class);
-        buildingsPerEra = List.of(1, 2, 3); // one value per era
+        nc            = mock(NotificatorCenter.class);
+        playerContext = mock(PlayerContext.class);
+        buildingsPerEra = List.of(1, 2, 3); // FIRST=1, SECOND=2, THIRD=3
 
-        playerA = mock(Player.class);
-        playerB = mock(Player.class);
-        cardA = mock(Card.class);
+        playerA      = mock(Player.class);
+        playerB      = mock(Player.class);
+        cardA        = mock(Card.class);
         buildingCardA = mock(BuildingCard.class);
 
         board = new Board(track, turnOrder, tribeDeck, buildingDeck,
@@ -142,7 +148,6 @@ class BoardTest {
     @DisplayName("isCardTop: returns true when card is on top row of tribeShowed")
     void shouldReturnTrueForTribeShowedIfTop() {
         when(tribeShowed.isTop("ART-01")).thenReturn(true);
-
         assertTrue(board.isCardTop("ART-01"));
     }
 
@@ -151,7 +156,6 @@ class BoardTest {
     void shouldReturnTrueForBuildingShowedIfTop() {
         when(tribeShowed.isTop("BUI-01")).thenReturn(false);
         when(buildingShowed.isTop("BUI-01")).thenReturn(true);
-
         assertTrue(board.isCardTop("BUI-01"));
     }
 
@@ -160,7 +164,6 @@ class BoardTest {
     void shouldReturnFalseWhenNotFoundInTop() {
         when(tribeShowed.isTop("unknown")).thenReturn(false);
         when(buildingShowed.isTop("unknown")).thenReturn(false);
-
         assertFalse(board.isCardTop("unknown"));
     }
 
@@ -170,7 +173,6 @@ class BoardTest {
     @DisplayName("isCardDown: returns true when card is on lower row of tribeShowed")
     void shouldReturnTrueForTribeShowedIfDown() {
         when(tribeShowed.isDown("ART-01")).thenReturn(true);
-
         assertTrue(board.isCardDown("ART-01"));
     }
 
@@ -179,7 +181,6 @@ class BoardTest {
     void shouldReturnTrueForBuildingShowedIfDown() {
         when(tribeShowed.isDown("BUI-01")).thenReturn(false);
         when(buildingShowed.isDown("BUI-01")).thenReturn(true);
-
         assertTrue(board.isCardDown("BUI-01"));
     }
 
@@ -188,7 +189,6 @@ class BoardTest {
     void shouldReturnFalseWhenNotFoundInBottom() {
         when(tribeShowed.isDown("unknown")).thenReturn(false);
         when(buildingShowed.isDown("unknown")).thenReturn(false);
-
         assertFalse(board.isCardDown("unknown"));
     }
 
@@ -210,7 +210,6 @@ class BoardTest {
     @DisplayName("findTrackPosition: returns null when player has no totem on track")
     void shouldReturnNullWhenPlayerNotFound() {
         when(track.findTrackPosition(playerA)).thenReturn(null);
-
         assertNull(board.findTrackPosition(playerA));
     }
 
@@ -222,7 +221,6 @@ class BoardTest {
         List<Card> lowerCards = List.of(mock(Card.class), mock(Card.class), mock(Card.class));
         List<Card> upperCards = List.of(mock(Card.class), mock(Card.class),
                 mock(Card.class), mock(Card.class), mock(Card.class), mock(Card.class));
-        // first draw: numPlayers+1=3, second draw (displayTribeCards): numPlayers+4=6
         when(tribeDeck.drawCards(NUM_PLAYERS + 1)).thenReturn(lowerCards);
         when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(upperCards);
         when(buildingDeck.drawCards(anyInt())).thenReturn(List.of());
@@ -252,13 +250,12 @@ class BoardTest {
     @DisplayName("setupBoard: draws correct number of building cards for Era.FIRST")
     void shouldDisplayCorrectBuildingCardsForFirstEra() {
         when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
-        List<BuildingCard> buildings = List.of(mock(BuildingCard.class),
-                mock(BuildingCard.class), mock(BuildingCard.class));
+        List<BuildingCard> buildings = List.of(mock(BuildingCard.class));
         when(buildingDeck.drawCards(buildingsPerEra.get(Era.FIRST.getIndex()))).thenReturn(buildings);
 
         board.setupBoard(List.of(playerA, playerB));
 
-        verify(buildingDeck, times(1)).drawCards(1);
+        verify(buildingDeck, times(1)).drawCards(1); // buildingsPerEra.get(0) = 1
         verify(buildingShowed, times(1)).addUpperCards(buildings);
     }
 
@@ -282,10 +279,21 @@ class BoardTest {
         when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
         when(tribeShowed.diffLastEras()).thenReturn(false);
 
-        board.endTurn();
+        board.endTurn(nc, playerContext);
 
         verify(tribeShowed, times(1)).clearBottom();
         verify(tribeShowed, times(1)).shiftRow();
+    }
+
+    @Test
+    @DisplayName("endTurn: calls registerBottom on tribeShowed with nc and playerContext")
+    void shouldCallRegisterBottomOnTribeShowed() {
+        when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
+        when(tribeShowed.diffLastEras()).thenReturn(false);
+
+        board.endTurn(nc, playerContext);
+
+        verify(tribeShowed, times(1)).registerBottom(nc, playerContext);
     }
 
     @Test
@@ -295,7 +303,7 @@ class BoardTest {
         when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(newCards);
         when(tribeShowed.diffLastEras()).thenReturn(false);
 
-        board.endTurn();
+        board.endTurn(nc, playerContext);
 
         verify(tribeDeck, times(1)).drawCards(NUM_PLAYERS + 4);
         verify(tribeShowed, times(1)).addUpperCards(newCards);
@@ -307,7 +315,7 @@ class BoardTest {
         when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
         when(tribeShowed.diffLastEras()).thenReturn(false);
 
-        board.endTurn();
+        board.endTurn(nc, playerContext);
 
         verify(buildingShowed, never()).clearBottom();
         verify(buildingShowed, never()).shiftRow();
@@ -321,7 +329,7 @@ class BoardTest {
         when(buildingDeck.drawCards(anyInt())).thenReturn(List.of());
         when(tribeShowed.diffLastEras()).thenReturn(true);
 
-        board.endTurn();
+        board.endTurn(nc, playerContext);
 
         verify(buildingShowed, times(1)).clearBottom();
         verify(buildingShowed, times(1)).shiftRow();
@@ -334,10 +342,10 @@ class BoardTest {
         when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
         when(tribeShowed.diffLastEras()).thenReturn(true);
         List<BuildingCard> newBuildings = List.of(mock(BuildingCard.class), mock(BuildingCard.class));
-        // Era advances from FIRST to SECOND
+        // Era advances from FIRST to SECOND → index 1 → buildingsPerEra.get(1) = 2
         when(buildingDeck.drawCards(buildingsPerEra.get(Era.SECOND.getIndex()))).thenReturn(newBuildings);
 
-        board.endTurn();
+        board.endTurn(nc, playerContext);
 
         verify(buildingDeck, times(1)).drawCards(buildingsPerEra.get(Era.SECOND.getIndex()));
         verify(buildingShowed, times(1)).addUpperCards(newBuildings);

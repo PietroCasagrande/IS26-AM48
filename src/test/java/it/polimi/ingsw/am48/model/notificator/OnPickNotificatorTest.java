@@ -1,6 +1,5 @@
 package it.polimi.ingsw.am48.model.notificator;
 
-import it.polimi.ingsw.am48.exception.StrategyNotFoundException;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
@@ -73,59 +72,6 @@ class OnPickNotificatorTest {
         verify(strategy2, never()).effect(any());
     }
 
-    // ==================== detach ====================
-
-    @Test
-    @DisplayName("detach: should not fire strategy after it has been detached")
-    void shouldNotFireStrategyAfterDetach() {
-        notificator.attach(player1, strategy1);
-        notificator.detach(player1, strategy1);
-
-        notificator.notify(context1);
-
-        verify(strategy1, never()).effect(any());
-    }
-
-    @Test
-    @DisplayName("detach: should only remove the target strategy leaving others intact")
-    void shouldOnlyRemoveTargetStrategyLeavingOthersIntact() {
-        notificator.attach(player1, strategy1);
-        notificator.attach(player1, strategy2);
-
-        notificator.detach(player1, strategy1);
-
-        notificator.notify(context1);
-
-        verify(strategy1, never()).effect(any());
-        verify(strategy2, times(1)).effect(any());
-    }
-
-    @Test
-    @DisplayName("detach: should not throw when notifying after last strategy for player is removed")
-    void shouldNotThrowWhenNotifyingAfterLastStrategyRemoved() {
-        notificator.attach(player1, strategy1);
-        notificator.detach(player1, strategy1);
-
-        assertDoesNotThrow(() -> notificator.notify(context1));
-        verify(strategy1, never()).effect(any());
-    }
-
-    @Test
-    @DisplayName("detach: should throw StrategyNotFoundException when player is not registered")
-    void shouldThrowWhenPlayerNotRegistered() {
-        assertThrows(StrategyNotFoundException.class,
-                () -> notificator.detach(player1, strategy1));
-    }
-
-    @Test
-    @DisplayName("detach: should throw StrategyNotFoundException when strategy is not registered for player")
-    void shouldThrowWhenStrategyNotRegisteredForPlayer() {
-        notificator.attach(player1, strategy1);
-
-        assertThrows(StrategyNotFoundException.class,
-                () -> notificator.detach(player1, strategy2));
-    }
-
     // ==================== notify ====================
 
     @Test
@@ -135,8 +81,8 @@ class OnPickNotificatorTest {
     }
 
     @Test
-    @DisplayName("notify: should fire strategy multiple times on repeated notify calls")
-    void shouldFireStrategyMultipleTimesOnRepeatedNotify() {
+    @DisplayName("notify: should fire strategy persistently on repeated notify calls")
+    void shouldFireStrategyPersistentlyOnRepeatedNotify() {
         notificator.attach(player1, strategy1);
 
         notificator.notify(context1);

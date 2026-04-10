@@ -3,7 +3,9 @@ package it.polimi.ingsw.am48.model.board;
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.enums.Era;
+import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.snapshot.BoardSnapshot;
 
 import java.util.List;
@@ -75,9 +77,10 @@ public class Board {
     }
 
     // Ends the current turn and sets up the next one
-    public void endTurn(){
+    public void endTurn(NotificatorCenter nc, PlayerContext playerContext){
         this.tribeShowed.clearBottom();
         this.tribeShowed.shiftRow();
+        this.tribeShowed.registerBottom(nc, playerContext);
         this.displayTribeCards();
         if(this.tribeShowed.diffLastEras()) this.changeEra();
     }
