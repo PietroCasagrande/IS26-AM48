@@ -31,16 +31,6 @@ public class OnPickNotificator {
     public void notify(PlayerContext p) {
         List<CardStrategy> strategies = listeners.get(p.getCurrPlayer());
         if (strategies == null) return;
-
-        List<CardStrategy> toDetach = new ArrayList<>();
-
-        for (CardStrategy cs : strategies) {
-            cs.effect(p);
-            cs.unregisterFrom(toDetach); // the strategy may add itself to the array if its effect works once
-        }
-
-        // removing out of the cycle to avoid problems
-        strategies.removeAll(toDetach);
-        if (strategies.isEmpty()) listeners.remove(p.getCurrPlayer());
+        for (CardStrategy cs : strategies) cs.effect(p);
     }
 }

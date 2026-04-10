@@ -27,7 +27,7 @@ class ShamanEventStrategyTest {
         context.addPlayer(p2);
         context.addPlayer(p3);
 
-        strategy = new ShamanEventStrategy(1, 3, null, null); // ppToMin=1, ppToMax=3
+        strategy = new ShamanEventStrategy(1, 3, null); // ppToMin=1, ppToMax=3
     }
 
     @Test

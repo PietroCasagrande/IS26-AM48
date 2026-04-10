@@ -46,15 +46,7 @@ public class OnEventNotificator {
 
         for (Map.Entry<Player, List<CardStrategy>> entry : playerMap.entrySet()) {
             playerContext.setCurrPlayer(entry.getKey());
-
-            List<CardStrategy> toDetach = new ArrayList<>();
-
-            for (CardStrategy cs : entry.getValue()) {
-                cs.effect(playerContext);
-                cs.unregisterFrom(toDetach);
-            }
-
-            entry.getValue().removeAll(toDetach);
+            for (CardStrategy cs : entry.getValue()) cs.effect(playerContext);
         }
         // resets the previous player as the current
         playerContext.setCurrPlayer(previous);

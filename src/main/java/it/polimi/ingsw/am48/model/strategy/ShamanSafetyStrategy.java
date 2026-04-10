@@ -4,8 +4,8 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 
 public class ShamanSafetyStrategy extends CardStrategy {
 
-    protected ShamanSafetyStrategy(RegistrationAction registration, UnregistrationAction unregistration) {
-        super(registration, unregistration);
+    protected ShamanSafetyStrategy(RegistrationAction registration) {
+        super(registration);
     }
 
     @Override

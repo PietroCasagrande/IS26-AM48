@@ -7,11 +7,9 @@ import java.util.List;
 
 public abstract class CardStrategy {
     private final RegistrationAction registration;
-    private final UnregistrationAction unregistration;
 
-    protected CardStrategy(RegistrationAction registration,UnregistrationAction unregistration){
+    protected CardStrategy(RegistrationAction registration){
         this.registration = registration;
-        this.unregistration = unregistration;
     }
 
     public abstract void effect(PlayerContext playerContext);
@@ -19,12 +17,6 @@ public abstract class CardStrategy {
     public void registerTo(NotificatorCenter nc, PlayerContext playerContext){
         if(registration != null){
             registration.registerMethod(nc, playerContext, this);
-        }
-    }
-
-    public void unregisterFrom(List<CardStrategy> toDetach){
-        if(registration != null){
-            unregistration.unregisterMethod(toDetach);
         }
     }
 }

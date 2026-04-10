@@ -9,20 +9,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class OnEventNotificatorTest {
 
     private OnEventNotificator notificator;
-
     private Player player1;
     private Player player2;
     private PlayerContext context;
-    private CardStrategy persistent;
-    private CardStrategy oneShot;
+    private CardStrategy strategy1;
+    private CardStrategy strategy2;
 
     @BeforeEach
     void setUp() {
@@ -34,207 +31,178 @@ class OnEventNotificatorTest {
 
         when(context.getCurrPlayer()).thenReturn(player1);
 
-        // persistent strategy: unregisterFrom does not add itself to toDetach
-        persistent = mock(CardStrategy.class);
-        doNothing().when(persistent).effect(any());
-        doNothing().when(persistent).unregisterFrom(anyList());
-
-        // one-shot strategy: unregisterFrom adds itself to toDetach
-        oneShot = mock(CardStrategy.class);
-        doNothing().when(oneShot).effect(any());
-        doAnswer(inv -> {
-            List<CardStrategy> list = inv.getArgument(0);
-            list.add(oneShot);
-            return null;
-        }).when(oneShot).unregisterFrom(anyList());
+        strategy1 = mock(CardStrategy.class);
+        strategy2 = mock(CardStrategy.class);
     }
 
-    // ATTACH
+    // ==================== attach ====================
 
     @Test
-    void attach_singleStrategy_firedOnNotify() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
+    @DisplayName("attach: should fire strategy on notify after registration")
+    void shouldFireStrategyOnNotifyAfterRegistration() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        verify(persistent, times(1)).effect(context);
+        verify(strategy1, times(1)).effect(context);
     }
 
     @Test
-    void attach_multipleStrategiesSamePlayerAndEvent_allFired() {
-        CardStrategy second = mock(CardStrategy.class);
-        doNothing().when(second).unregisterFrom(anyList());
-
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.attach(EventType.HUNTER_EVENT, player1, second);
+    @DisplayName("attach: should fire all strategies when multiple are registered for same player and event")
+    void shouldFireAllStrategiesForSamePlayerAndEvent() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy2);
 
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        verify(persistent, times(1)).effect(context);
-        verify(second, times(1)).effect(context);
+        verify(strategy1, times(1)).effect(context);
+        verify(strategy2, times(1)).effect(context);
     }
 
     @Test
-    void attach_differentPlayersSameEvent_bothFired() {
-        // context switches currPlayer per entry in notify
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.attach(EventType.HUNTER_EVENT, player2, oneShot);
+    @DisplayName("attach: should fire strategies for both players when registered on same event")
+    void shouldFireStrategiesForBothPlayersOnSameEvent() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
+        notificator.attach(EventType.HUNTER_EVENT, player2, strategy2);
 
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        verify(persistent, times(1)).effect(context);
-        verify(oneShot, times(1)).effect(context);
+        verify(strategy1, times(1)).effect(context);
+        verify(strategy2, times(1)).effect(context);
     }
 
     @Test
-    void attach_differentEvents_noInterference() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.attach(EventType.SHAMAN_EVENT, player1, oneShot);
+    @DisplayName("attach: should not fire strategy registered for a different event")
+    void shouldNotFireStrategyRegisteredForDifferentEvent() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
+        notificator.attach(EventType.SHAMAN_EVENT, player1, strategy2);
 
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        verify(persistent, times(1)).effect(context);
-        verify(oneShot, never()).effect(any());
+        verify(strategy1, times(1)).effect(context);
+        verify(strategy2, never()).effect(any());
     }
 
-    // DETACH
+    // ==================== detach ====================
 
     @Test
-    void detach_existingStrategy_removedSuccessfully() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.detach(EventType.HUNTER_EVENT, player1, persistent);
+    @DisplayName("detach: should not fire strategy after it has been detached")
+    void shouldNotFireStrategyAfterDetach() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
+        notificator.detach(EventType.HUNTER_EVENT, player1, strategy1);
 
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        verify(persistent, never()).effect(any());
+        verify(strategy1, never()).effect(any());
     }
 
     @Test
-    void detach_oneOfMultiple_onlyTargetRemoved() {
-        CardStrategy other = mock(CardStrategy.class);
-        doNothing().when(other).unregisterFrom(anyList());
+    @DisplayName("detach: should only remove the target strategy leaving others intact")
+    void shouldOnlyRemoveTargetStrategyLeavingOthersIntact() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy2);
 
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.attach(EventType.HUNTER_EVENT, player1, other);
-
-        notificator.detach(EventType.HUNTER_EVENT, player1, persistent);
+        notificator.detach(EventType.HUNTER_EVENT, player1, strategy1);
 
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        verify(persistent, never()).effect(any());
-        verify(other, times(1)).effect(context);
+        verify(strategy1, never()).effect(any());
+        verify(strategy2, times(1)).effect(context);
     }
 
     @Test
-    void detach_lastStrategyForPlayer_playerEntryRemoved() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.detach(EventType.HUNTER_EVENT, player1, persistent);
+    @DisplayName("detach: should not throw when notifying after last strategy for a player is removed")
+    void shouldNotThrowWhenNotifyingAfterLastStrategyRemoved() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
+        notificator.detach(EventType.HUNTER_EVENT, player1, strategy1);
 
-        // notify must not throw and must not fire anything
         assertDoesNotThrow(() -> notificator.notify(EventType.HUNTER_EVENT, context));
-        verify(persistent, never()).effect(any());
+        verify(strategy1, never()).effect(any());
     }
 
     @Test
-    void detach_lastPlayerForEvent_eventEntryRemoved() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.detach(EventType.HUNTER_EVENT, player1, persistent);
+    @DisplayName("detach: should not throw when notifying after last player for an event is removed")
+    void shouldNotThrowWhenNotifyingAfterLastPlayerForEventRemoved() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
+        notificator.detach(EventType.HUNTER_EVENT, player1, strategy1);
 
-        // notify on now-empty event must not throw
         assertDoesNotThrow(() -> notificator.notify(EventType.HUNTER_EVENT, context));
     }
 
     @Test
-    void detach_eventNotRegistered_throwsException() {
+    @DisplayName("detach: should throw StrategyNotFoundException when event is not registered")
+    void shouldThrowWhenEventNotRegistered() {
         assertThrows(StrategyNotFoundException.class,
-                () -> notificator.detach(EventType.HUNTER_EVENT, player1, persistent));
+                () -> notificator.detach(EventType.HUNTER_EVENT, player1, strategy1));
     }
 
     @Test
-    void detach_playerNotRegisteredForEvent_throwsException() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
+    @DisplayName("detach: should throw StrategyNotFoundException when player is not registered for event")
+    void shouldThrowWhenPlayerNotRegisteredForEvent() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
 
         assertThrows(StrategyNotFoundException.class,
-                () -> notificator.detach(EventType.HUNTER_EVENT, player2, persistent));
+                () -> notificator.detach(EventType.HUNTER_EVENT, player2, strategy1));
     }
 
     @Test
-    void detach_strategyNotRegisteredForPlayer_throwsException() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        CardStrategy unregistered = mock(CardStrategy.class);
+    @DisplayName("detach: should throw StrategyNotFoundException when strategy is not registered for player")
+    void shouldThrowWhenStrategyNotRegisteredForPlayer() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
 
         assertThrows(StrategyNotFoundException.class,
-                () -> notificator.detach(EventType.HUNTER_EVENT, player1, unregistered));
+                () -> notificator.detach(EventType.HUNTER_EVENT, player1, strategy2));
     }
 
-    // NOTIFY
+    // ==================== notify ====================
 
     @Test
-    void notify_noStrategiesForEvent_doesNothing() {
+    @DisplayName("notify: should not throw when no strategies are registered for the event")
+    void shouldNotThrowWhenNoStrategiesRegisteredForEvent() {
         assertDoesNotThrow(() -> notificator.notify(EventType.HUNTER_EVENT, context));
     }
 
     @Test
-    void notify_oneShotStrategy_removedAfterFirstFire() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, oneShot);
+    @DisplayName("notify: should fire strategy multiple times on repeated notify calls")
+    void shouldFireStrategyMultipleTimesOnRepeatedNotify() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
 
         notificator.notify(EventType.HUNTER_EVENT, context);
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        verify(oneShot, times(1)).effect(context);
+        verify(strategy1, times(2)).effect(context);
     }
 
     @Test
-    void notify_persistentStrategy_remainsAfterFire() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
+    @DisplayName("notify: should not fire strategies registered for a different event")
+    void shouldNotFireStrategiesForWrongEvent() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
 
-        notificator.notify(EventType.HUNTER_EVENT, context);
-        notificator.notify(EventType.HUNTER_EVENT, context);
+        notificator.notify(EventType.SHAMAN_EVENT, context);
 
-        verify(persistent, times(2)).effect(context);
+        verify(strategy1, never()).effect(any());
     }
 
     @Test
-    void notify_mixedStrategies_onlyOneShotRemoved() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.attach(EventType.HUNTER_EVENT, player1, oneShot);
-
-        notificator.notify(EventType.HUNTER_EVENT, context);
-        notificator.notify(EventType.HUNTER_EVENT, context);
-
-        verify(persistent, times(2)).effect(context);
-        verify(oneShot, times(1)).effect(context);
-    }
-
-    @Test
-    void notify_setCurrPlayerCalledPerPlayer() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-        notificator.attach(EventType.HUNTER_EVENT, player2, oneShot);
+    @DisplayName("notify: should call setCurrPlayer for each registered player")
+    void shouldSetCurrPlayerForEachRegisteredPlayer() {
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
+        notificator.attach(EventType.HUNTER_EVENT, player2, strategy2);
 
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        // context.setCurrPlayer must have been called for player1 and player2
         verify(context, atLeastOnce()).setCurrPlayer(player1);
         verify(context, atLeastOnce()).setCurrPlayer(player2);
     }
 
     @Test
-    void notify_currPlayerRestoredAfterNotify() {
+    @DisplayName("notify: should restore the original currPlayer after notify completes")
+    void shouldRestoreCurrPlayerAfterNotify() {
         Player previousPlayer = mock(Player.class);
         when(context.getCurrPlayer()).thenReturn(previousPlayer);
 
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
+        notificator.attach(EventType.HUNTER_EVENT, player1, strategy1);
         notificator.notify(EventType.HUNTER_EVENT, context);
 
-        // the last setCurrPlayer call must restore the original player
         verify(context).setCurrPlayer(previousPlayer);
-    }
-
-    @Test
-    void notify_wrongEvent_doesNotFireStrategies() {
-        notificator.attach(EventType.HUNTER_EVENT, player1, persistent);
-
-        notificator.notify(EventType.SHAMAN_EVENT, context);
-
-        verify(persistent, never()).effect(any());
     }
 }

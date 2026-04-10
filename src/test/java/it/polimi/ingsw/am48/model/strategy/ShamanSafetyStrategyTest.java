@@ -25,7 +25,7 @@ class ShamanSafetyStrategyTest {
         context.addPlayer(currPlayer);
         context.addPlayer(otherPlayer);
 
-        strategy = new ShamanSafetyStrategy(null, null);
+        strategy = new ShamanSafetyStrategy(null);
     }
 
     @Test

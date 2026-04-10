@@ -27,7 +27,7 @@ class SustenanceStrategyTest {
         context.addPlayer(p1);
         context.addPlayer(p2);
 
-        strategy = new SustenanceStrategy(1, null, null); // 1 pp perso per ogni cibo mancante
+        strategy = new SustenanceStrategy(1, null); // 1 pp perso per ogni cibo mancante
     }
 
     private void addCharacters(Player player, int count) {
@@ -120,11 +120,10 @@ class SustenanceStrategyTest {
 
     @Test
     void shouldLoseMorePPWithHigherPpLostPerChar() {
-        // con ppLostPerChar più alto perde più PP per ogni cibo mancante
-        SustenanceStrategy heavyStrategy = new SustenanceStrategy(3, null, null);
-        addCharacters(p1, 3); // deve pagare 3, ha 0 cibo
+        SustenanceStrategy heavyStrategy = new SustenanceStrategy(3, null);
+        addCharacters(p1, 3);
         heavyStrategy.effect(context);
         assertEquals(0, p1.getFood());
-        assertEquals(-9, p1.getPoints()); // 3 cibo mancanti × 3 pp
+        assertEquals(-9, p1.getPoints());
     }
 }
