@@ -26,7 +26,7 @@ class InventorStrategyTest {
         context.addPlayer(currPlayer);
         context.addPlayer(otherPlayer);
 
-        strategy = new InventorStrategy(Artifact.ARROW, null, null);
+        strategy = new InventorStrategy(Artifact.ARROW, null);
     }
 
     @Test

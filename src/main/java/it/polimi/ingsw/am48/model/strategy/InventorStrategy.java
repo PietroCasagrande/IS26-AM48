@@ -10,8 +10,8 @@ public class InventorStrategy extends CardStrategy{
 
     private final Artifact artifact;
 
-    public InventorStrategy(Artifact artifact, RegistrationAction registrationAction, UnregistrationAction unregistrationAction) {
-        super(registrationAction, unregistrationAction);
+    public InventorStrategy(Artifact artifact, RegistrationAction registrationAction) {
+        super(registrationAction);
         this.artifact = artifact;
     }
 

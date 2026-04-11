@@ -30,7 +30,7 @@ class HuntEventTest {
         context.addPlayer(p2);
         context.addPlayer(p3);
 
-        strategy = new HuntEvent(2, null, null); // 2 pp per hunter
+        strategy = new HuntEvent(2, null); // 2 pp per hunter
     }
 
     private void addHunters(Player player, int count) {
@@ -119,8 +119,7 @@ class HuntEventTest {
 
     @Test
     void shouldWorkWithZeroPPPerHunter() {
-        // con ppPerPlayer=0 assegna solo cibo, nessun PP
-        HuntEvent zeroStrategy = new HuntEvent(0, null, null);
+        HuntEvent zeroStrategy = new HuntEvent(0, null);
         addHunters(p1, 3);
         zeroStrategy.effect(context);
         assertEquals(3, p1.getFood());

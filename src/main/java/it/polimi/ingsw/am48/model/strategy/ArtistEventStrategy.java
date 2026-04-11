@@ -9,8 +9,8 @@ public class ArtistEventStrategy extends CardStrategy {
     int ppPerArtist;
     int ppLost;   // salvato con segno POSITIVO, metto io il - in updatePoints
 
-    protected ArtistEventStrategy(int threshold, int ppPerArtist, int ppLost, RegistrationAction registration, UnregistrationAction unregistration) {
-        super(registration, unregistration);
+    protected ArtistEventStrategy(int threshold, int ppPerArtist, int ppLost, RegistrationAction registration) {
+        super(registration);
         this.threshold = threshold;
         this.ppPerArtist = ppPerArtist;
         this.ppLost = ppLost;

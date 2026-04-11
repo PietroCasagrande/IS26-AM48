@@ -47,10 +47,10 @@ public class CharacterFactory implements BoardFactory<CharacterCard> {
     private CardStrategy buildStrategy(StrategyDTO dto){
         switch (dto.effect)
             {
-                case "BuilderStrategy": return new BuilderStrategy(dto.num2, dto.num1, buildRegistrationAction(dto.notificator), null);
+                case "BuilderStrategy": return new BuilderStrategy(dto.num2, dto.num1, buildRegistrationAction(dto.notificator));
                 case "InventorStrategy": {
                     Artifact artifact = Artifact.valueOf(dto.artifact);
-                    return new InventorStrategy(artifact, buildRegistrationAction(dto.notificator), null);
+                    return new InventorStrategy(artifact, buildRegistrationAction(dto.notificator));
                 }
                 case "ResourcePerCharStrategy": {
                     Resource resource = Resource.valueOf(dto.resource);
@@ -59,7 +59,7 @@ public class CharacterFactory implements BoardFactory<CharacterCard> {
                 }
                 case "UpdateResourcesStrategy": {
                     Resource resource = Resource.valueOf(dto.resource);
-                    return new UpdateResourcesStrategy(resource,  dto.num1, buildRegistrationAction(dto.notificator), null);
+                    return new UpdateResourcesStrategy(resource,  dto.num1, buildRegistrationAction(dto.notificator));
                 }
                 default: throw new IllegalArgumentException("Invalid strategy");
             }

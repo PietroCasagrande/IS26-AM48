@@ -6,57 +6,45 @@ import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OnEventNotificator {
-    private Map<EventType, Map<Player,List<CardStrategy>>> listeners = new HashMap<>();;
+    private final Map<EventType, Map<Player,List<CardStrategy>>> buildingListeners = new EnumMap<>(EventType.class);
+    private final Map<EventType, List<CardStrategy>> eventListeners = new EnumMap<>(EventType.class);
 
+    // Gli EventType dei metodi attach saranno passati dalle lambda function
+    // Attaches event-depending buildings (persistent)
     public void attach(EventType e, Player p, CardStrategy cs) {
-        listeners.computeIfAbsent(e, k -> new HashMap<>())
+        buildingListeners.computeIfAbsent(e, k -> new HashMap<>())
                 .computeIfAbsent(p, k -> new ArrayList<>())
                 .add(cs);
     }
 
-    public void detach(EventType e, Player p, CardStrategy cs){
-        Map<Player, List<CardStrategy>> playerMap = listeners.get(e);
-
-        if (playerMap == null) {
-            throw new StrategyNotFoundException("Impossibile rimuovere la strategia: " + cs + " per il giocatore " + p);
-        }
-
-        List<CardStrategy> strategies = playerMap.get(p);
-
-        if (strategies == null || !strategies.contains(cs)) {
-            throw new StrategyNotFoundException("Impossibile rimuovere la strategia: " + cs + " per il giocatore " + p);
-        }
-
-        strategies.remove(cs);
-        if (strategies.isEmpty()) playerMap.remove(p);
-        if (playerMap.isEmpty()) listeners.remove(e);
+    // Attaches events (one-shot)
+    public void attach(EventType e, CardStrategy cs) {
+        eventListeners.computeIfAbsent(e, k -> new ArrayList<>())
+                .add(cs);
     }
 
     public void notify(EventType e, PlayerContext playerContext) {
-        Map<Player, List<CardStrategy>> playerMap = listeners.get(e);
-        if (playerMap == null) return;
+        // If an event is not present for the current turn, doesn't activate any effect
+        if (!this.eventListeners.containsKey(e)) return;
 
-        Player previous = playerContext.getCurrPlayer();
+        // Activates building effect
+        Map<Player, List<CardStrategy>> playerMap = buildingListeners.get(e);
+        if (playerMap != null) {
+            Player previous = playerContext.getCurrPlayer();
 
-        for (Map.Entry<Player, List<CardStrategy>> entry : playerMap.entrySet()) {
-            playerContext.setCurrPlayer(entry.getKey());
-
-            List<CardStrategy> toDetach = new ArrayList<>();
-
-            for (CardStrategy cs : entry.getValue()) {
-                cs.effect(playerContext);
-                cs.unregisterFrom(toDetach);
+            for (Map.Entry<Player, List<CardStrategy>> entry : playerMap.entrySet()) {
+                playerContext.setCurrPlayer(entry.getKey());
+                for (CardStrategy cs : entry.getValue()) cs.effect(playerContext);
             }
-
-            entry.getValue().removeAll(toDetach);
+            // resets the previous player as the current
+            playerContext.setCurrPlayer(previous);
         }
-        // resets the previous player as the current
-        playerContext.setCurrPlayer(previous);
+
+        // Activates event effect and then deletes them
+        for (CardStrategy cs : this.eventListeners.get(e)) cs.effect(playerContext);
+        this.eventListeners.clear();
     }
 }

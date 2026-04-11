@@ -6,8 +6,8 @@ public class BuilderStrategy extends CardStrategy {
     private final int builderPp;
     private final int buildingDiscount;
 
-    public BuilderStrategy(int builderPp, int buildingDiscount, RegistrationAction registrationAction, UnregistrationAction unregistrationAction) {
-        super(registrationAction, unregistrationAction);
+    public BuilderStrategy(int builderPp, int buildingDiscount, RegistrationAction registrationAction) {
+        super(registrationAction);
         this.builderPp = builderPp;
         this.buildingDiscount = buildingDiscount;
     }
