@@ -46,7 +46,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should throw InvalidActionException when player places totem twice")
     void shouldThrowWhenPlayerPlacesTotemTwice() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         phase.placeTotem(game, playerA, 'B');
 
@@ -58,7 +58,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should not throw when different players place their totems")
     void shouldNotThrowWhenDifferentPlayersPlaceTheirTotems() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         assertDoesNotThrow(() -> phase.placeTotem(game, playerA, 'B'));
         assertDoesNotThrow(() -> phase.placeTotem(game, playerB, 'C'));
@@ -68,7 +68,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should throw InvalidActionException with descriptive message")
     void shouldThrowWithDescriptiveMessageWhenAlreadyPlaced() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         phase.placeTotem(game, playerA, 'B');
 
@@ -84,7 +84,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should delegate to board.placeTotem with correct arguments")
     void shouldDelegatePlaceTotemToBoardWithCorrectArguments() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         phase.placeTotem(game, playerA, 'B');
 
@@ -95,7 +95,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should delegate to board for each player that places their totem")
     void shouldDelegateToBoarForEachPlayerThatPlacesTotem() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         phase.placeTotem(game, playerA, 'B');
         phase.placeTotem(game, playerB, 'C');
@@ -110,7 +110,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should return a TotemPlacedDelta")
     void shouldReturnTotemPlacedDelta() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         GameDelta delta = phase.placeTotem(game, playerA, 'B');
 
@@ -121,7 +121,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should return delta with correct player nickname")
     void shouldReturnDeltaWithCorrectPlayerNickname() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         TotemPlacedDelta delta = (TotemPlacedDelta) phase.placeTotem(game, playerA, 'B');
 
@@ -132,7 +132,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should return delta with correct position")
     void shouldReturnDeltaWithCorrectPosition() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         TotemPlacedDelta delta = (TotemPlacedDelta) phase.placeTotem(game, playerA, 'B');
 
@@ -157,7 +157,7 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should transition to PlayerOfferPhase when all players have placed")
     void shouldTransitionToPlayerOfferPhaseWhenAllPlayersHavePlaced() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(board.getPickOrder()).thenReturn(List.of(playerA, playerB, playerC));
 
         phase.placeTotem(game, playerA, 'B');
         phase.placeTotem(game, playerB, 'C');
@@ -171,13 +171,13 @@ class PlaceTotemPhaseTest {
     void shouldPassBoardActionOrderToPlayerOfferPhaseOnTransition() {
         List<Player> trackOrder = List.of(playerC, playerA, playerB);
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(trackOrder);
+        when(board.getPickOrder()).thenReturn(trackOrder);
 
         phase.placeTotem(game, playerA, 'B');
         phase.placeTotem(game, playerB, 'C');
         phase.placeTotem(game, playerC, 'D');
 
-        verify(board, times(1)).getActionOrder();
+        verify(board, times(1)).getPickOrder();
         verify(game, times(1)).setPhase(any(PlayerOfferPhase.class));
     }
 
@@ -185,17 +185,17 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should query board action order only when all players have placed")
     void shouldQueryBoardActionOrderOnlyWhenAllPlayersHavePlaced() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getActionOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of());
 
         phase.placeTotem(game, playerA, 'B');
         phase.placeTotem(game, playerB, 'C');
 
-        // not all placed yet: getActionOrder must not be called
-        verify(board, never()).getActionOrder();
+        // not all placed yet: getPickOrder must not be called
+        verify(board, never()).getPickOrder();
 
         phase.placeTotem(game, playerC, 'D');
 
-        // now all placed: getActionOrder must be called exactly once
-        verify(board, times(1)).getActionOrder();
+        // now all placed: getPickOrder must be called exactly once
+        verify(board, times(1)).getPickOrder();
     }
 }
