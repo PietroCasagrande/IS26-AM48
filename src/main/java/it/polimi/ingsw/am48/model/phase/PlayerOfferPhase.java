@@ -14,6 +14,10 @@ public class PlayerOfferPhase implements GamePhase, PickContext {
     private int pickFromUp;
     private int PickFromDown;
 
+    public PlayerOfferPhase(List<Player> actionOrder) {
+        this.actionOrder = actionOrder;
+    }
+
     @Override
     public List<GameDelta> takeCard(Game game, Player player, String cardId){
         throw new UnsupportedOperationException("TODO");

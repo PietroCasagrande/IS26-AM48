@@ -73,7 +73,7 @@ public class Game {
 
 
     // Package-private: solo le Phase cambiano fase
-    void setPhase(GamePhase phase) { this.currentPhase = phase; }
+    public void setPhase(GamePhase phase) { this.currentPhase = phase; }
     void setBoard(Board board) { this.board = board; }
     public void incrementTurn() { this.currentTurn++; }
 
