@@ -10,13 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class HuntEventTest {
+class HuntEventStrategyTest {
 
     private Player p1;
     private Player p2;
     private Player p3;
     private PlayerContext context;
-    private HuntEvent strategy;
+    private HuntEventStrategy strategy;
 
     @BeforeEach
     void setUp() {
@@ -30,7 +30,7 @@ class HuntEventTest {
         context.addPlayer(p2);
         context.addPlayer(p3);
 
-        strategy = new HuntEvent(2, null); // 2 pp per hunter
+        strategy = new HuntEventStrategy(2, null); // 2 pp per hunter
     }
 
     private void addHunters(Player player, int count) {
@@ -119,7 +119,7 @@ class HuntEventTest {
 
     @Test
     void shouldWorkWithZeroPPPerHunter() {
-        HuntEvent zeroStrategy = new HuntEvent(0, null);
+        HuntEventStrategy zeroStrategy = new HuntEventStrategy(0, null);
         addHunters(p1, 3);
         zeroStrategy.effect(context);
         assertEquals(3, p1.getFood());
