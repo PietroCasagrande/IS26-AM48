@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.model.board;
 
+import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.enums.Era;
@@ -37,7 +38,12 @@ public class Board {
 
     // Places player totem on the offer track
     public void placeTotem(Player player, char position){
-        this.track.placeTotem(player, position);
+        Player expectedPlayer = this.turnOrder.getNextTotem();
+        if(expectedPlayer == null || !expectedPlayer.equals(player)){
+            throw new IllegalStateException("Cannot place totem: wait for your turn.");
+        }
+        this.track.placeTotem(expectedPlayer, position);
+        this.turnOrder.removeNextTotem();
     }
 
     // Returns offer phase order based on players' placements

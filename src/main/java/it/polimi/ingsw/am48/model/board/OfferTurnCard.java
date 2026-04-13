@@ -35,8 +35,13 @@ public class OfferTurnCard {
     }
 
     // Removes the totem to be placed on the offer track
-    public Player takeTotem(){
-        return this.order.removeFirst();
+    public void removeNextTotem(){
+        this.order.removeFirst();
+    }
+
+    public Player getNextTotem() {
+        if (this.order.isEmpty()) return null;
+        return this.order.getFirst();
     }
 
     // Replaces the totem at the end of the offer phase:
