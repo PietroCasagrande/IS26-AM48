@@ -50,6 +50,7 @@ public class OfferCard {
     public int getNumUp(){return this.numUp;}
     public int getNumDown(){return this.numDown;}
     public int getNumPlayers(){return this.numPlayers;}
+    public int getFoodBonus(){return this.foodBonus;}
 
 
     /*

@@ -24,13 +24,22 @@ public class PlayerOfferPhase implements GamePhase {
     private boolean extraPickActive;     // per l'edificio extra pick
     private Player extraPickPlayer;      // chi ha l'edificio
 
-    public PlayerOfferPhase(List<Player> actionOrder) {
+    public PlayerOfferPhase(List<Player> actionOrder, Game  game) {
         this.actionOrder = new ArrayList<Player>(actionOrder);
         currIdx = 0;
         picksFromUp = 0;
         picksFromDown = 0;
         extraPickActive = false;
         extraPickPlayer = null;
+
+        OfferCard firstOffer = game.getBoard().findTrackPosition(actionOrder.getFirst());
+
+        if(firstOffer.getLetterId() == 'A'){
+            Player firstPlayer = actionOrder.getFirst();
+            firstPlayer.updateFood(firstOffer.getFoodBonus());
+            handleTotemReturn(game, firstPlayer);
+            currIdx++;
+        }
     }
 
     @Override
