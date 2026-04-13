@@ -27,7 +27,7 @@ public class Game {
         this.numPlayers = numPlayers;
         this.playerContext = new PlayerContext();
         this.notificatorCenter = new NotificatorCenter();
-        this.currentTurn = 0;
+        this.currentTurn = 1;
         this.currentPhase = new WaitingForPlayersPhase(numPlayers);
     }
 
