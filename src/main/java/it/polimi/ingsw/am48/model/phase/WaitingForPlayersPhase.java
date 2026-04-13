@@ -22,12 +22,12 @@ public class WaitingForPlayersPhase implements GamePhase {
         Totem[] availableTotems = Totem.values();
         Totem assignedTotem = availableTotems[index];
         Player player = new Player(playerNickname, assignedTotem);
-        playerContext.addPlayer(player);
         if (index == requiredPlayer) {
             game.getBoard().setupBoard(playerContext.getPlayers());
             List <Player> casuallyOrderedPlayers = game.getBoard().getPlaceOrder();
             game.setPhase(new PlaceTotemPhase(casuallyOrderedPlayers));
         }
+        playerContext.addPlayer(player);
     }
 
     @Override
