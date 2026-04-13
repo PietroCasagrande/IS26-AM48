@@ -23,7 +23,7 @@ public class OfferCardTrack {
     }
 
     // Returns offer phase order based on players' placements
-    public List<Player> getActionOrder(){
+    public List<Player> getPickOrder(){
         return this.track.values()
                 .stream()
                 .map(OfferCard::getTotem)

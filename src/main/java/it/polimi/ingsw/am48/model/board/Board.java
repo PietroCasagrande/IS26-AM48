@@ -47,8 +47,8 @@ public class Board {
     }
 
     // Returns offer phase order based on players' placements
-    public List<Player> getActionOrder(){
-        return this.track.getActionOrder();
+    public List<Player> getPickOrder(){
+        return this.track.getPickOrder();
     }
 
     // Takes the requested card from the showed
@@ -113,6 +113,8 @@ public class Board {
     public Showed<Card> getTribeShowed() { return tribeShowed; }
     public Showed<BuildingCard> getBuildingShowed() { return buildingShowed; }
 
+    // takes the order attribute from OfferTurnCard
+    public List <Player> getPlaceOrder(){return turnOrder.getPlaceOrder(); }
     public BoardSnapshot toSnapshot(){
         List<String> upperRowIds = tribeShowed.getUpperList().stream()
                 .map(Card::getCardId)

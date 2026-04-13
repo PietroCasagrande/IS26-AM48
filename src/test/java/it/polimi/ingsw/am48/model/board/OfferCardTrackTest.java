@@ -91,10 +91,10 @@ class OfferCardTrackTest {
         assertTrue(ex.getMessage().toLowerCase().contains("cannot place totem: invalid letter id"));
     }
 
-    // ==================== getActionOrder ====================
+    // ==================== getPickOrder ====================
 
     @Test
-    @DisplayName("getActionOrder: returns players in TreeMap following track order")
+    @DisplayName("getPickOrder: returns players in TreeMap following track order")
     void shouldReturnCorrectPlayersOrder() {
         when(offerCardA.getTotem()).thenReturn(Optional.of(playerB));
         when(offerCardB.getTotem()).thenReturn(Optional.empty());
@@ -104,7 +104,7 @@ class OfferCardTrackTest {
         when(offerCardF.getTotem()).thenReturn(Optional.of(playerC));
         when(offerCardG.getTotem()).thenReturn(Optional.of(playerD));
 
-        List<Player> order = offerCardTrack.getActionOrder();
+        List<Player> order = offerCardTrack.getPickOrder();
 
         assertEquals(5, order.size());
         assertEquals(playerB, order.get(0));
@@ -115,7 +115,7 @@ class OfferCardTrackTest {
     }
 
     @Test
-    @DisplayName("getActionOrder: returns empty list when no totems are placed")
+    @DisplayName("getPickOrder: returns empty list when no totems are placed")
     void shouldReturnEmptyListIfNoTotemsArePlaced() {
         when(offerCardA.getTotem()).thenReturn(Optional.empty());
         when(offerCardB.getTotem()).thenReturn(Optional.empty());
@@ -125,26 +125,26 @@ class OfferCardTrackTest {
         when(offerCardF.getTotem()).thenReturn(Optional.empty());
         when(offerCardG.getTotem()).thenReturn(Optional.empty());
 
-        List<Player> order = offerCardTrack.getActionOrder();
+        List<Player> order = offerCardTrack.getPickOrder();
 
         assertTrue(order.isEmpty());
     }
 
     @Test
-    @DisplayName("getActionOrder: skips cards with no totem")
+    @DisplayName("getPickOrder: skips cards with no totem")
     void shouldSkipEmptySlots() {
         when(offerCardA.getTotem()).thenReturn(Optional.empty());
         when(offerCardB.getTotem()).thenReturn(Optional.of(playerA));
         when(offerCardC.getTotem()).thenReturn(Optional.empty());
 
-        List<Player> order = offerCardTrack.getActionOrder();
+        List<Player> order = offerCardTrack.getPickOrder();
 
         assertEquals(1, order.size());
         assertEquals(playerA, order.get(0));
     }
 
     @Test
-    @DisplayName("getActionOrder: all first cards occupied returns all players in order")
+    @DisplayName("getPickOrder: all first cards occupied returns all players in order")
     void shouldReturnAllPlayersInFirstOccupiedCards() {
         Player playerC = mock(Player.class);
         when(offerCardA.getTotem()).thenReturn(Optional.of(playerA));
@@ -153,7 +153,7 @@ class OfferCardTrackTest {
         when(offerCardD.getTotem()).thenReturn(Optional.of(playerD));
         when(offerCardE.getTotem()).thenReturn(Optional.of(playerE));
 
-        List<Player> order = offerCardTrack.getActionOrder();
+        List<Player> order = offerCardTrack.getPickOrder();
 
         assertEquals(List.of(playerA, playerB, playerC, playerD, playerE), order);
     }
