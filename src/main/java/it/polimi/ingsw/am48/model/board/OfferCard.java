@@ -9,13 +9,17 @@ import java.util.Optional;
 
 public class OfferCard {
     private final char letterId;                // Letters from A to G, depending on number of players
-    private final CardStrategy strategy;
+    private final int numUp;        // quante carte da fila superiore
+    private final int numDown;      // quante carte da fila inferiore
+    private final int foodBonus;    // cibo dato (3 per tessera A, 0 per le altre)
     private final int numPlayers;
     private Player totem;
 
-    public OfferCard(char letterId, CardStrategy strategy, int numPlayers) {
+    public OfferCard(char letterId, int numUp, int numDown, int foodBonus, int numPlayers) {
         this.letterId = letterId;
-        this.strategy = strategy;
+        this.numUp = numUp;
+        this.numDown = numDown;
+        this.foodBonus = foodBonus;
         this.numPlayers = numPlayers;
         this.totem = null;
     }
@@ -33,14 +37,20 @@ public class OfferCard {
         return removedTotem;
     }
 
+    public int getTotalPicks(){
+        return this.numUp + this.numDown;
+    }
+
     public Optional<Player> getTotem(){
         return Optional.ofNullable(this.totem);
     }
 
-    // Getters for testing
+    // Getters
     public char getLetterId() {return this.letterId;}
+    public int getNumUp(){return this.numUp;}
+    public int getNumDown(){return this.numDown;}
     public int getNumPlayers(){return this.numPlayers;}
-    public CardStrategy getStrategy(){return this.strategy;}
+
 
     /*
     // To implement: waiting for PickCardStrategy definition
