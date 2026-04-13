@@ -46,6 +46,7 @@ public class Player {
     public boolean isShamanSafe() { return tribe.isShamanSafe(); }
     public boolean deservesDoubleShamanPp() { return tribe.deservesDoubleShamanPp();}
     public boolean deservesExtraFood() { return tribe.deservesExtraFood(); }
+    public boolean deservesExtraPick() { return tribe.deservesExtraPick(); }
     public int getBuilderPoints() { return tribe.getBuilderPoints(); }
     public int getBuildingPoints() { return tribe.getBuildingPoints(); }
     public Map<Artifact, Integer> getArtifacts() { return tribe.getArtifacts(); }
@@ -55,6 +56,7 @@ public class Player {
     public void setShamanSafety(){ this.tribe.setShamanSafety(); }
     public void setShamanDoubling() {this.tribe.setShamanDoubling(); }
     public void setExtraFoodRight(boolean extraFoodRight) {this.tribe.setExtraFoodRight(extraFoodRight);}
+    public void setExtraPickRight() {this.tribe.setExtraPickRight();}
     public void updateBuilderPoints(int amount) { this.tribe.updateBuilderPoints(amount); }
     public void updateBuildingPoints(int amount) { this.tribe.updateBuildingPoints(amount); }
     public void addArtifact(Artifact artifact) { this.tribe.addArtifact(artifact); }
