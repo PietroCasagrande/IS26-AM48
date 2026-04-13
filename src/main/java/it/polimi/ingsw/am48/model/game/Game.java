@@ -31,8 +31,6 @@ public class Game {
         this.currentPhase = new WaitingForPlayersPhase(numPlayers);
     }
 
-    // void setupGame() ??? che dobbiamo fare
-
     // Methods exposed to the controller
     public void addPlayer(String nickname) {
         currentPhase.addPlayer( playerContext,this, nickname);

@@ -62,6 +62,7 @@ public class OfferTurnCard {
         }
     }
 
+    public List <Player> getPlaceOrder(){return this.order; }
     public OfferTurnCardSnapshot toSnapshot() {
         List<String> totemOrder = order.stream()
                 .map(p -> p.getTotem().name())

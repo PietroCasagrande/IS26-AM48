@@ -35,7 +35,7 @@ public class PlaceTotemPhase implements GamePhase {
 
         // Checks whether all totems have been placed
         if(this.playersPlaced.size() == game.getNumPlayers()){
-            List<Player> trackOrder = game.getBoard().getActionOrder();
+            List<Player> trackOrder = game.getBoard().getPickOrder();
             game.setPhase(new PlayerOfferPhase(trackOrder));
         }
 
