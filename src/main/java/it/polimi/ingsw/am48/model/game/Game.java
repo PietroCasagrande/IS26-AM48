@@ -35,7 +35,7 @@ public class Game {
 
     // Methods exposed to the controller
     public void addPlayer(String nickname) {
-        currentPhase.addPlayer(this, nickname);
+        currentPhase.addPlayer( playerContext,this, nickname);
     }
     public GameDelta placeTotem(Player player, char position) {
         return currentPhase.placeTotem(this, player, position);
