@@ -11,24 +11,20 @@ public class EndTurnDelta extends GameDelta {
     private final List<String> newLowerTribeIds;             // carte spostate nella fila inferiore
     private final List<String> newUpperBuildingIds;     // nuovi edifici (se cambio era)
     private final List<String> newLowerBuildingIds;
-    private final boolean eraChanged;
-    private final boolean gameEnded;
+
 
     public EndTurnDelta(Map<String, Integer> updatedFood,
                         Map<String, Integer> updatedPrestige,
                         List<String> newUpperTribeIds,
                         List<String> newLowerTribeIds,
                         List<String> newUpperBuildingIds,
-                        List<String> newLowerBuildingIds,
-                        boolean eraChanged, boolean gameEnded) {
+                        List<String> newLowerBuildingIds) {
         this.updatedFood = updatedFood;
         this.updatedPrestige = updatedPrestige;
         this.newUpperTribeIds = newUpperTribeIds;
         this.newLowerTribeIds = newLowerTribeIds;
         this.newUpperBuildingIds = newUpperBuildingIds;
         this.newLowerBuildingIds = newLowerBuildingIds;
-        this.eraChanged = eraChanged;
-        this.gameEnded = gameEnded;
     }
 
     // getter per tutti i campi
@@ -38,6 +34,4 @@ public class EndTurnDelta extends GameDelta {
     public List<String> getNewLowerRowIds() { return newLowerTribeIds; }
     public List<String> getNewBuildingUpperRowIds() { return newUpperBuildingIds; }
     public List<String> getNewBuildingLowerRowIds() { return newLowerBuildingIds; }
-    public boolean isEraChanged() { return eraChanged; }
-    public boolean isGameEnded() { return gameEnded; }
 }
