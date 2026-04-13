@@ -167,6 +167,13 @@ public class PlayerOfferPhase implements GamePhase {
         // Se sì, settiamo extraPickActive ed extraPickPlayer
         // Il notify dell'OnEndOfferPhaseNotificator non esegue il pick,
         // setta solo un flag — il pick vero lo fa il player col prossimo takeCard
+        game.getPlayerContext().getPlayers().stream()
+                .filter(Player::deservesExtraPick)
+                .findFirst()
+                .ifPresent(p -> {
+                    extraPickActive = true;
+                    extraPickPlayer = p;
+                });
     }
 
     private GameDelta buildCardDelta(Player player, Card card, Game game) {
