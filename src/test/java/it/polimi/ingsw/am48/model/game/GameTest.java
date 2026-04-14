@@ -27,7 +27,7 @@ class GameTest {
         assertEquals(3, game.getNumPlayers());
         assertEquals(0, game.getPlayerContext().getPlayers().size());
         assertFalse(game.isFull());
-        assertEquals(0, game.getCurrentTurn());
+        assertEquals(1, game.getCurrentTurn());
     }
 
     // getPlayerByNickname should find existing player
@@ -65,11 +65,11 @@ class GameTest {
     // incrementTurn should increase turn counter
     @Test
     void incrementTurnShouldIncrease() {
-        assertEquals(0, game.getCurrentTurn());
-        game.incrementTurn();
         assertEquals(1, game.getCurrentTurn());
         game.incrementTurn();
         assertEquals(2, game.getCurrentTurn());
+        game.incrementTurn();
+        assertEquals(3, game.getCurrentTurn());
     }
 
     // findWinner should return player with highest points

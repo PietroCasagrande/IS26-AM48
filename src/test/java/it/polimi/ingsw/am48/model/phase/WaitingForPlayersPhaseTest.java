@@ -114,7 +114,6 @@ class WaitingForPlayersPhaseTest {
             }
             when(playerContext.getPlayers()).thenReturn(fullLobby);
             when(game.getBoard()).thenReturn(board);
-            when(board.getPlaceOrder()).thenReturn(fullLobby);
         }
 
         @Test
@@ -143,12 +142,5 @@ class WaitingForPlayersPhaseTest {
             verify(playerContext).addPlayer(any(Player.class));
         }
 
-        @Test
-        @DisplayName("getPlaceOrder viene usato per costruire PlaceTotemPhase")
-        void addPlayer_lastPlayer_usesGetPlaceOrder() {
-            phase.addPlayer(playerContext, game, "Charlie");
-
-            verify(board).getPlaceOrder();
-        }
     }
 }

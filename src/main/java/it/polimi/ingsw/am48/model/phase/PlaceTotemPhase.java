@@ -15,10 +15,8 @@ import java.util.stream.Collectors;
 
 public class PlaceTotemPhase implements GamePhase {
     private Set<Player> playersPlaced;
-    private List<Player> placeOrder;
 
-    public PlaceTotemPhase(List<Player> placeOrder) {
-        this.placeOrder = placeOrder;
+    public PlaceTotemPhase() {
         this.playersPlaced = new HashSet<Player>();
     }
 
