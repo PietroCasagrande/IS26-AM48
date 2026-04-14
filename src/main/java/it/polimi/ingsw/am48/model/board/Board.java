@@ -1,6 +1,5 @@
 package it.polimi.ingsw.am48.model.board;
 
-import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.enums.Era;
@@ -47,7 +46,7 @@ public class Board {
     }
 
     // Places player totem on offer turn card after player picks
-    public void returnTotem(Player player) {this.turnOrder.addTotem(player);}
+    public void returnTotem(Player player) {this.turnOrder.returnTotem(player);}
 
     // Returns offer phase order based on players' placements
     public List<Player> getPickOrder(){

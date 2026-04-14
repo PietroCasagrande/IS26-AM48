@@ -1,9 +1,7 @@
 package it.polimi.ingsw.am48.model.factory;
 
 import it.polimi.ingsw.am48.dto.OfferCardDTO;
-import it.polimi.ingsw.am48.dto.StrategyDTO;
 import it.polimi.ingsw.am48.model.board.OfferCard;
-import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
 import java.util.ArrayList;
 import java.util.List;

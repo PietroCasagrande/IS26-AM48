@@ -1,14 +1,11 @@
 package it.polimi.ingsw.am48.model.board;
 
-import it.polimi.ingsw.am48.model.enums.Resource;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.OfferTurnCardSnapshot;
-import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class OfferTurnCard {
     private final int numPlayers;
