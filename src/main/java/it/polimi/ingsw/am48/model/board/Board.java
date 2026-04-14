@@ -46,6 +46,9 @@ public class Board {
         this.turnOrder.removeNextTotem();
     }
 
+    // Places player totem on offer turn card after player picks
+    public void returnTotem(Player player) {this.turnOrder.addTotem(player);}
+
     // Returns offer phase order based on players' placements
     public List<Player> getPickOrder(){
         return this.track.getPickOrder();

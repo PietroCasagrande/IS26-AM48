@@ -17,22 +17,13 @@ public class OfferTrackFactory implements BoardFactory<OfferCard>{
 
     @Override
     public List<OfferCard> createCards(int numPlayers) {
-        if(numPlayers < 2 || numPlayers > 5) throw new IllegalArgumentException("Invalid number of players");
+        if (numPlayers < 2 || numPlayers > 5) throw new IllegalArgumentException("Invalid number of players");
         List<OfferCard> offerTrack = new ArrayList<>();
 
-        for(OfferCardDTO dto : this.track){
-            char id = dto.id;
-
-            CardStrategy strategy = null;
-            if(dto.strategy != null){
-                strategy = buildStrategy(dto.strategy);
-            }
-
-            offerTrack.add(new OfferCard(id, strategy, dto.minPlayers));
+        for (OfferCardDTO dto : this.track) {
+            offerTrack.add(new OfferCard(dto.id, dto.numUp, dto.numDown, dto.foodBonus, dto.minPlayers));
         }
 
         return offerTrack;
     }
-
-    private CardStrategy buildStrategy(StrategyDTO strategy) {throw new UnsupportedOperationException("TO DO");}
 }

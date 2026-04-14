@@ -202,15 +202,6 @@ class GameDataLoaderTest {
                 .findFirst()
                 .orElseThrow();
         assertEquals(5, cardA.minPlayers);
-        assertNotNull(cardA.strategy);
-        assertEquals("UpdateResourcesStrategy", cardA.strategy.effect);
-    }
-
-    @Test
-    @DisplayName("loadData: should deserialize all offer cards with non-null strategy")
-    void shouldDeserializeAllOfferCardsWithNonNullStrategy() {
-        boardDTO.offerCards.forEach(o ->
-                assertNotNull(o.strategy, "OfferCard " + o.id + " should have a non-null strategy"));
     }
 
     // ==================== loadData: offerTurnCard ====================

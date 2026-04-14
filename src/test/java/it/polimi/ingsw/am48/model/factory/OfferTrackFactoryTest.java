@@ -21,17 +21,14 @@ class OfferTrackFactoryTest {
         dtoA = new OfferCardDTO();
         dtoA.id = 'A';
         dtoA.minPlayers = 2;
-        dtoA.strategy = null;
 
         dtoB = new OfferCardDTO();
         dtoB.id = 'B';
         dtoB.minPlayers = 3;
-        dtoB.strategy = null;
 
         dtoC = new OfferCardDTO();
         dtoC.id = 'C';
         dtoC.minPlayers = 2;
-        dtoC.strategy = null;
     }
 
     // ==================== createCards ====================
@@ -58,14 +55,6 @@ class OfferTrackFactoryTest {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoB));
         OfferCard card = factory.createCards(3).get(0);
         assertEquals(3, card.getNumPlayers());
-    }
-
-    @Test
-    @DisplayName("createCards: should set strategy to null when DTO has no strategy")
-    void shouldSetNullStrategyWhenDtoStrategyIsNull() {
-        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
-        OfferCard card = factory.createCards(2).get(0);
-        assertNull(card.getStrategy());
     }
 
     @Test

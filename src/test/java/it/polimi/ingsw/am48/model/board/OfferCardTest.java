@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 class OfferCardTest {
 
     CardStrategy mockCardStrategy = mock(CardStrategy.class);
-    OfferCard offerCard = new OfferCard('A', mockCardStrategy, 5);
+    OfferCard offerCard = new OfferCard('A',1, 1, 0, 5);
     Player mockP1 = mock(Player.class);
 
     @Test
