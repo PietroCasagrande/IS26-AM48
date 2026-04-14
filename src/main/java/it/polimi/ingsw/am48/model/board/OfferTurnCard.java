@@ -34,11 +34,6 @@ public class OfferTurnCard {
         }
     }
 
-    // add totem to its order list
-    public void addTotem(Player player){
-        this.order.add(player);
-    }
-
     // Removes the totem to be placed on the offer track
     public void removeNextTotem(){
         this.order.removeFirst();
