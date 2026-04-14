@@ -28,20 +28,26 @@ class DeckTest {
         cardD = mock(Card.class);
         cardE = mock(Card.class);
 
+        when(cardA.getCardId()).thenReturn("A");
+        when(cardB.getCardId()).thenReturn("B");
+        when(cardC.getCardId()).thenReturn("C");
+        when(cardD.getCardId()).thenReturn("D");
+        when(cardE.getCardId()).thenReturn("E");
+
         deck = new Deck<>(List.of(cardA, cardB, cardC, cardD, cardE));
     }
 
-    // ==================== Constructor ====================
+    // ==================== constructor ====================
 
     @Test
-    @DisplayName("constructor: deck is initialized with the correct elements")
+    @DisplayName("constructor: should initialize deck with the correct elements")
     void shouldInitializeDeckWithCorrectElements() {
         List<Card> drawn = deck.drawCards(5);
         assertEquals(List.of(cardA, cardB, cardC, cardD, cardE), drawn);
     }
 
     @Test
-    @DisplayName("constructor: modifying the original list does not affect the deck")
+    @DisplayName("constructor: should defensively copy the input list")
     void shouldDefensivelyCopyInputList() {
         List<Card> source = new ArrayList<>(List.of(cardA, cardB, cardC));
         Deck<Card> deckFromMutableList = new Deck<>(source);
@@ -54,37 +60,38 @@ class DeckTest {
     // ==================== drawCards ====================
 
     @Test
-    @DisplayName("drawCards: returns the correct cards from the top of the deck")
-    void shouldDrawCorrectCards() {
+    @DisplayName("drawCards: should return the correct cards from the top of the deck")
+    void shouldDrawCorrectCardsFromTop() {
         List<Card> drawn = deck.drawCards(2);
         assertEquals(List.of(cardA, cardB), drawn);
     }
 
     @Test
-    @DisplayName("drawCards: removes drawn cards from the deck")
-    void shouldRemoveCardsFromDeck() {
+    @DisplayName("drawCards: should remove drawn cards from the deck")
+    void shouldRemoveDrawnCardsFromDeck() {
         deck.drawCards(2);
         List<Card> remaining = deck.drawCards(3);
         assertEquals(List.of(cardC, cardD, cardE), remaining);
     }
 
     @Test
-    @DisplayName("drawCards: drawing all cards empties the deck")
-    void shouldThrowIllegalArgumentExceptionWhenDrawingAllCards() {
+    @DisplayName("drawCards: should throw IllegalArgumentException when drawing from empty deck")
+    void shouldThrowWhenDrawingFromEmptyDeck() {
         deck.drawCards(5);
         assertThrows(IllegalArgumentException.class, () -> deck.drawCards(1));
     }
 
     @Test
-    @DisplayName("drawCards: display the correct message when drawing from empty deck")
-    void shouldDisplayCorrectExceptionMessage() {
+    @DisplayName("drawCards: should display correct message when drawing from empty deck")
+    void shouldDisplayCorrectExceptionMessageWhenDeckEmpty() {
         deck.drawCards(5);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> deck.drawCards(1));
-        assertEquals("Cannot draw 1 cards from the deck: 0 cards left", exception.getMessage());
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> deck.drawCards(1));
+        assertEquals("Cannot draw 1 cards from the deck: 0 cards left", ex.getMessage());
     }
 
     @Test
-    @DisplayName("drawCards: drawing zero cards returns an empty list without modifying the deck")
+    @DisplayName("drawCards: should return empty list and leave deck untouched when drawing zero cards")
     void shouldReturnEmptyListWhenDrawingZeroCards() {
         List<Card> drawn = deck.drawCards(0);
         assertTrue(drawn.isEmpty());
@@ -94,23 +101,47 @@ class DeckTest {
     }
 
     @Test
-    @DisplayName("drawCards: drawing more cards than available throws IllegalArgumentException")
-    void shouldThrowIllegalArgumentExceptionWhenDrawingMoreCards() {
+    @DisplayName("drawCards: should throw IllegalArgumentException when drawing more cards than available")
+    void shouldThrowWhenDrawingMoreCardsThanAvailable() {
         assertThrows(IllegalArgumentException.class, () -> deck.drawCards(10));
     }
 
     @Test
-    @DisplayName("drawCards: drawing a negative number of cards throws IllegalArgumentException")
-    void shouldThrowIllegalArgumentExceptionWhenDrawingNegativeCards() {
+    @DisplayName("drawCards: should throw IllegalArgumentException when drawing a negative number of cards")
+    void shouldThrowWhenDrawingNegativeNumberOfCards() {
         assertThrows(IllegalArgumentException.class, () -> deck.drawCards(-1));
     }
 
     @Test
-    @DisplayName("drawCards: exception message contains the number of cards requested and available")
-    void shouldDisplayCorrectNumberOfCardsWhenThrowingException() {
+    @DisplayName("drawCards: exception message should contain requested and available count")
+    void shouldIncludeRequestedAndAvailableCountInExceptionMessage() {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> deck.drawCards(10));
         assertTrue(ex.getMessage().contains("10"));
         assertTrue(ex.getMessage().contains("5"));
+    }
+
+    // ==================== getRemainingCardIds ====================
+
+    @Test
+    @DisplayName("getRemainingCardIds: should return all card ids when no cards have been drawn")
+    void shouldReturnAllCardIdsWhenNoneDrawn() {
+        List<String> ids = deck.getRemainingCardIds();
+        assertEquals(List.of("A", "B", "C", "D", "E"), ids);
+    }
+
+    @Test
+    @DisplayName("getRemainingCardIds: should return remaining card ids after some cards are drawn")
+    void shouldReturnRemainingCardIdsAfterDraw() {
+        deck.drawCards(2);
+        List<String> ids = deck.getRemainingCardIds();
+        assertEquals(List.of("C", "D", "E"), ids);
+    }
+
+    @Test
+    @DisplayName("getRemainingCardIds: should return empty list when all cards are drawn")
+    void shouldReturnEmptyListWhenAllCardsDrawn() {
+        deck.drawCards(5);
+        assertTrue(deck.getRemainingCardIds().isEmpty());
     }
 }
