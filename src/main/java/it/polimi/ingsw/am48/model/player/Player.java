@@ -7,7 +7,6 @@ import it.polimi.ingsw.am48.model.enums.Totem;
 import it.polimi.ingsw.am48.model.snapshot.PlayerSnapshot;
 
 import java.util.Map;
-import java.util.Set;
 
 public class Player {
     private final String nickname;

@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.model.phase;
 
 import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.board.Board;
+import it.polimi.ingsw.am48.model.board.OfferCard;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.delta.TotemPlacedDelta;
 import it.polimi.ingsw.am48.model.game.Game;
@@ -32,12 +33,18 @@ class PlaceTotemPhaseTest {
         playerB = mock(Player.class);
         playerC = mock(Player.class);
 
+        // Mock a normal offer card (not tile A)
+        OfferCard normalOffer = mock(OfferCard.class);
+        when(normalOffer.getLetterId()).thenReturn('B');
+
         when(game.getBoard()).thenReturn(board);
+        when(board.findTrackPosition(any())).thenReturn(normalOffer);
+
         when(playerA.getNickname()).thenReturn("alice");
         when(playerB.getNickname()).thenReturn("bob");
         when(playerC.getNickname()).thenReturn("charlie");
 
-        phase = new PlaceTotemPhase(List.of(playerA, playerB, playerC));
+        phase = new PlaceTotemPhase();
     }
 
     // ==================== placeTotem - validazione ====================
@@ -185,17 +192,15 @@ class PlaceTotemPhaseTest {
     @DisplayName("placeTotem: should query board action order only when all players have placed")
     void shouldQueryBoardActionOrderOnlyWhenAllPlayersHavePlaced() {
         when(game.getNumPlayers()).thenReturn(3);
-        when(board.getPickOrder()).thenReturn(List.of());
+        when(board.getPickOrder()).thenReturn(List.of(playerA, playerB, playerC));
 
         phase.placeTotem(game, playerA, 'B');
         phase.placeTotem(game, playerB, 'C');
 
-        // not all placed yet: getPickOrder must not be called
         verify(board, never()).getPickOrder();
 
         phase.placeTotem(game, playerC, 'D');
 
-        // now all placed: getPickOrder must be called exactly once
         verify(board, times(1)).getPickOrder();
     }
 }

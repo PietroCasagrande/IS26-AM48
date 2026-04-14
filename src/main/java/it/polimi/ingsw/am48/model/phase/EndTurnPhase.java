@@ -5,7 +5,6 @@ import it.polimi.ingsw.am48.model.delta.EndTurnDelta;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.enums.EventType;
 import it.polimi.ingsw.am48.model.game.Game;
-import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.EndTurnPhaseSnapshot;
 import it.polimi.ingsw.am48.model.snapshot.PhaseSnapshot;
 
@@ -39,8 +38,7 @@ public class EndTurnPhase implements GamePhase {
             game.setPhase(endGamePhase);
             deltas.add(endGamePhase.resolveEndGame(game));
         } else {
-            List<Player> playerOrder = game.getBoard().getPlaceOrder();
-            game.setPhase(new PlaceTotemPhase(playerOrder));
+            game.setPhase(new PlaceTotemPhase());
         }
 
         return deltas;

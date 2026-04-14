@@ -7,8 +7,6 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.snapshot.PhaseSnapshot;
 import it.polimi.ingsw.am48.model.snapshot.WaitingPhaseSnapshot;
 
-import java.util.List;
-
 public class WaitingForPlayersPhase implements GamePhase {
     private int requiredPlayer;
 
@@ -24,8 +22,8 @@ public class WaitingForPlayersPhase implements GamePhase {
         Player player = new Player(playerNickname, assignedTotem);
         if (index == requiredPlayer) {
             game.getBoard().setupBoard(playerContext.getPlayers());
-            List <Player> casuallyOrderedPlayers = game.getBoard().getPlaceOrder();
-            game.setPhase(new PlaceTotemPhase(casuallyOrderedPlayers));
+            game.setPhase(new PlaceTotemPhase());
+
         }
         playerContext.addPlayer(player);
     }

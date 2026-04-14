@@ -1,11 +1,7 @@
 package it.polimi.ingsw.am48.model.phase;
 
-import it.polimi.ingsw.am48.model.board.Board;
-import it.polimi.ingsw.am48.model.board.Showed;
-import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.delta.EndGameDelta;
-import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.enums.*;
 import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
@@ -14,8 +10,6 @@ import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.am48.model.strategy;
 
 import it.polimi.ingsw.am48.model.enums.CharacterType;
-import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 
 public class ArtistEventStrategy extends CardStrategy {

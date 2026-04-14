@@ -4,8 +4,6 @@ import it.polimi.ingsw.am48.model.enums.Resource;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 
-import java.util.List;
-
 public class UpdateResourcesStrategy extends CardStrategy{
 
     private final Resource resource;

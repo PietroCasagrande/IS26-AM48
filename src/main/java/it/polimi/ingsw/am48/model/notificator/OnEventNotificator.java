@@ -1,6 +1,5 @@
 package it.polimi.ingsw.am48.model.notificator;
 
-import it.polimi.ingsw.am48.exception.StrategyNotFoundException;
 import it.polimi.ingsw.am48.model.enums.EventType;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
