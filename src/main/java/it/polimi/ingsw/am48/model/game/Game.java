@@ -70,7 +70,7 @@ public class Game {
     }
 
 
-    // Package-private: solo le Phase cambiano fase
+    // Package-private: only Phases set phases
     public void setPhase(GamePhase phase) { this.currentPhase = phase; }
     void setBoard(Board board) { this.board = board; }
     public void incrementTurn() { this.currentTurn++; }
@@ -85,7 +85,7 @@ public class Game {
                 numPlayers,
                 currentTurn,
                 playerSnapshots,
-                // board!=null serve perché durante la WaitingForPlayersPhase il board non è ancora stato creato teoricamente
+                // board!=null is necessary because during WaitingForPlayersPhase the board has not been created yet
                 board != null ? board.toSnapshot() : null,
                 currentPhase.toSnapshot()
         );

@@ -1,15 +1,19 @@
 package it.polimi.ingsw.am48.model.game;
 
 import it.polimi.ingsw.am48.exception.InvalidActionException;
+import it.polimi.ingsw.am48.model.board.Board;
 import it.polimi.ingsw.am48.model.enums.Totem;
 import it.polimi.ingsw.am48.model.phase.GamePhase;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class GameTest {
 
@@ -72,7 +76,7 @@ class GameTest {
         assertEquals(3, game.getCurrentTurn());
     }
 
-    // findWinner should return player with highest points
+    // findWinner should return player with the highest amount of points
     @Test
     void findWinnerShouldReturnHighestScore() {
         Player p1 = new Player("A", Totem.RED);
@@ -100,4 +104,85 @@ class GameTest {
         game.setPhase(mockPhase);
         assertEquals(mockPhase, game.getCurrentPhase());
     }
+    @Test
+    @DisplayName("getNotificatorCenter: should return the notification center instance")
+    void shouldReturnNotificatorCenter() {
+        assertNotNull(game.getNotificatorCenter());
+    }
+
+    @Test
+    @DisplayName("setBoard and getBoard: should correctly handle the board instance")
+    void shouldSetAndGetBoard() {
+        Board mockBoard = mock(Board.class);
+        game.setBoard(mockBoard);
+        assertEquals(mockBoard, game.getBoard());
+    }
+
+    @Test
+    @DisplayName("addPlayer: should delegate call to current phase")
+    void addPlayerShouldDelegateToPhase() {
+        GamePhase mockPhase = mock(GamePhase.class);
+        game.setPhase(mockPhase);
+
+        game.addPlayer("TestPlayer");
+
+        verify(mockPhase).addPlayer(game.getPlayerContext(), game, "TestPlayer");
+    }
+
+    @Test
+    @DisplayName("placeTotem: should delegate call to current phase")
+    void placeTotemShouldDelegateToPhase() {
+        GamePhase mockPhase = mock(GamePhase.class);
+        game.setPhase(mockPhase);
+        Player mockPlayer = mock(Player.class);
+
+        game.placeTotem(mockPlayer, 'A');
+
+        verify(mockPhase).placeTotem(game, mockPlayer, 'A');
+    }
+
+    @Test
+    @DisplayName("takeCard: should delegate call to current phase")
+    void takeCardShouldDelegateToPhase() {
+        GamePhase mockPhase = mock(GamePhase.class);
+        game.setPhase(mockPhase);
+        Player mockPlayer = mock(Player.class);
+
+        game.takeCard(mockPlayer, "card_01");
+
+        verify(mockPhase).takeCard(game, mockPlayer, "card_01");
+    }
+
+    @Test
+    @DisplayName("toSnapshot: should create snapshot with null board when board is not set")
+    void toSnapshotShouldHandleNullBoard() {
+        // Durante WaitingForPlayersPhase la board è null
+        GameSnapshot snapshot = game.toSnapshot();
+
+        assertAll("Snapshot with null board",
+                () -> assertEquals(game.getGameId(), snapshot.getGameId()),
+                () -> assertEquals(game.getCurrentTurn(), snapshot.getCurrentTurn()),
+                () -> assertNull(snapshot.getBoard()),
+                () -> assertNotNull(snapshot.getPlayers())
+        );
+    }
+
+//    @Test
+//    @DisplayName("toSnapshot: should create complete snapshot when board is present")
+//    void toSnapshotShouldIncludeBoard() {
+//        // Arrange
+//        Board mockBoard = mock(Board.class);
+//        game.setBoard(mockBoard);
+//        game.getPlayerContext().addPlayer(new Player("Ilaria", Totem.RED));
+//
+//        // Act
+//        GameSnapshot snapshot = game.toSnapshot();
+//
+//        // Assert
+//        assertAll("Complete snapshot",
+//                () -> assertEquals(1, snapshot.getPlayers().size()),
+//                () -> assertNotNull(snapshot.getBoard()),
+//                () -> assertEquals(game.getGameId(), snapshot.getGameId())
+//        );
+//    }
 }
