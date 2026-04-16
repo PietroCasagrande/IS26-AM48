@@ -40,27 +40,19 @@ public class EventFactory implements BoardFactory<EventCard> {
     private CardStrategy buildStrategy(StrategyDTO dto) {
         switch (dto.effect) {
             case "ArtistEventStrategy": {
-                RegistrationAction reg = (nc, pc, s) -> {
-                    nc.getEventNotificator().attach(EventType.ARTIST_EVENT, s);
-                };
+                RegistrationAction reg = (nc, pc, s) -> {nc.getEventNotificator().attach(EventType.ARTIST_EVENT, s);};
                 return new ArtistEventStrategy(dto.num1, dto.num2, dto.num3, reg);
             }
             case "HuntEventStrategy": {
-                RegistrationAction reg = (nc, pc, s) -> {
-                    nc.getEventNotificator().attach(EventType.HUNTER_EVENT, s);
-                };
+                RegistrationAction reg = (nc, pc, s) -> {nc.getEventNotificator().attach(EventType.HUNTER_EVENT, s);};
                 return new HuntEventStrategy(dto.num1, reg);
             }
             case "ShamanEventStrategy": {
-                RegistrationAction reg = (nc, pc, s) -> {
-                    nc.getEventNotificator().attach(EventType.SHAMAN_EVENT, s);
-                };
+                RegistrationAction reg = (nc, pc, s) -> {nc.getEventNotificator().attach(EventType.SHAMAN_EVENT, s);};
                 return new ShamanEventStrategy(dto.num1, dto.num2, reg);
             }
             case "SustenanceStrategy": {
-                RegistrationAction reg = (nc, pc, s) -> {
-                    nc.getEventNotificator().attach(EventType.PICKER_EVENT, s);
-                };
+                RegistrationAction reg = (nc, pc, s) -> {nc.getEventNotificator().attach(EventType.PICKER_EVENT, s);};
                 return new SustenanceStrategy(dto.num1, reg);
             }
             default:
