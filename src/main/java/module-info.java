@@ -14,11 +14,12 @@ module it.polimi.ingsw.am48 {
     exports it.polimi.ingsw.am48.model.enums;
     exports it.polimi.ingsw.am48.model.delta;
     exports it.polimi.ingsw.am48.model.snapshot;
-    // exports it.polimi.ingsw.am48.model.factory;
     exports it.polimi.ingsw.am48.dto;
     exports it.polimi.ingsw.am48.exception;
     exports it.polimi.ingsw.am48.repository;
     exports it.polimi.ingsw.am48.controller;
 
-    opens it.polimi.ingsw.am48 to com.fasterxml.jackson.databind;
+    opens it.polimi.ingsw.am48.network.messages  to com.fasterxml.jackson.databind;
+    opens it.polimi.ingsw.am48.model.delta        to com.fasterxml.jackson.databind;
+    opens it.polimi.ingsw.am48.model.snapshot     to com.fasterxml.jackson.databind;
 }
