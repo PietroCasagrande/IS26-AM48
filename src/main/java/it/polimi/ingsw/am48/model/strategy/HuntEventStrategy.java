@@ -7,7 +7,7 @@ public class HuntEventStrategy extends CardStrategy {
     // food sempre +1, i pp cambiano
     private int ppPerPlayer;
 
-    protected HuntEventStrategy(int ppPerPlayer, RegistrationAction registration) {
+    public HuntEventStrategy(int ppPerPlayer, RegistrationAction registration) {
         super(registration);
         this.ppPerPlayer = ppPerPlayer;
     }

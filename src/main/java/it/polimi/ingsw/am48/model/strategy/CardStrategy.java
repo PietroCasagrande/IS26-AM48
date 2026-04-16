@@ -6,7 +6,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 public abstract class CardStrategy {
     private final RegistrationAction registration;
 
-    protected CardStrategy(RegistrationAction registration){
+    public CardStrategy(RegistrationAction registration){
         this.registration = registration;
     }
 

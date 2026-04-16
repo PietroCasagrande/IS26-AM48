@@ -30,9 +30,7 @@ public class CharacterFactory implements BoardFactory<CharacterCard> {
                 CharacterType type = CharacterType.valueOf(dto.character);
 
                 CardStrategy strategy = null;
-                if (dto.strategy != null) {
-                    strategy = buildStrategy(dto.strategy);
-                }
+                if (dto.strategy != null) strategy = buildStrategy(dto.strategy);
 
                 characterDeck.add(new CharacterCard(dto.id, era, strategy, type, dto.minPlayers));
             }
@@ -41,31 +39,27 @@ public class CharacterFactory implements BoardFactory<CharacterCard> {
         return characterDeck;
     }
 
-    // da modificare l'UnregisterAction
+    // Creates character's strategy: one-shot strategy, doesn't register to NotificatorCenter (empty lambda)
     private CardStrategy buildStrategy(StrategyDTO dto){
         switch (dto.effect)
             {
-                case "BuilderStrategy": return new BuilderStrategy(dto.num2, dto.num1, buildRegistrationAction(dto.notificator));
+                case "BuilderStrategy": {
+                    return new BuilderStrategy(dto.num2, dto.num1, (nc, pc, s) -> {});
+                }
                 case "InventorStrategy": {
                     Artifact artifact = Artifact.valueOf(dto.artifact);
-                    return new InventorStrategy(artifact, buildRegistrationAction(dto.notificator));
+                    return new InventorStrategy(artifact, (nc, pc, s) -> {});
                 }
                 case "ResourcePerCharStrategy": {
                     Resource resource = Resource.valueOf(dto.resource);
                     CharacterType type = CharacterType.valueOf(dto.character);
-                    return new ResourcePerCharStrategy(resource, dto.num1, type, buildRegistrationAction(dto.notificator));
+                    return new ResourcePerCharStrategy(resource, dto.num1, type, (nc, pc, s) -> {});
                 }
                 case "UpdateResourcesStrategy": {
                     Resource resource = Resource.valueOf(dto.resource);
-                    return new UpdateResourcesStrategy(resource,  dto.num1, buildRegistrationAction(dto.notificator));
+                    return new UpdateResourcesStrategy(resource,  dto.num1, (nc, pc, s) -> {});
                 }
                 default: throw new IllegalArgumentException("Invalid strategy");
             }
-    }
-
-    //da modificare player.getCurrentPlayer()
-    private RegistrationAction buildRegistrationAction(String notificator) {
-        if (notificator.equals("OnPick")) return (nc, player, strategy) -> nc.getPickNotificator().attach(player.getCurrPlayer(), strategy);
-        else throw new IllegalArgumentException("Invalid notificator for CharacterCard strategy");
     }
 }

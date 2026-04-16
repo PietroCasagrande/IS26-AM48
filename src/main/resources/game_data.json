@@ -86,7 +86,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -1,
         "builderPp": 2
       }
@@ -98,7 +97,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -2,
         "builderPp": 0
       }
@@ -110,7 +108,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -1,
         "builderPp": 3
       }
@@ -122,7 +119,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -2,
         "builderPp": 1
       }
@@ -134,7 +130,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -1,
         "builderPp": 4
       }
@@ -146,7 +141,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -2,
         "builderPp": 1
       }
@@ -158,7 +152,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -2,
         "builderPp": 3
       }
@@ -170,7 +163,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -1,
         "builderPp": 2
       }
@@ -182,7 +174,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -2,
         "builderPp": 2
       }
@@ -194,7 +185,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -1,
         "builderPp": 5
       }
@@ -206,7 +196,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -2,
         "builderPp": 3
       }
@@ -218,7 +207,6 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "notificator": "OnPick",
         "buildingDiscount": -1,
         "builderPp": 4
       }
@@ -231,7 +219,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "BREAD"
       }
     },
@@ -242,7 +229,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "LEATHER"
       }
     },
@@ -253,7 +239,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "ARROW"
       }
     },
@@ -264,7 +249,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "CANOE"
       }
     },
@@ -275,7 +259,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "BOWL"
       }
     },
@@ -286,7 +269,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "ROPE"
       }
     },
@@ -297,7 +279,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "FLUTE"
       }
     },
@@ -308,7 +289,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "BOWL"
       }
     },
@@ -319,7 +299,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "ROPE"
       }
     },
@@ -330,7 +309,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "DOLL"
       }
     },
@@ -341,7 +319,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "FLUTE"
       }
     },
@@ -352,7 +329,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "LEATHER"
       }
     },
@@ -363,7 +339,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "HOOK"
       }
     },
@@ -374,7 +349,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "DOLL"
       }
     },
@@ -385,7 +359,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "NECKLACE"
       }
     },
@@ -396,7 +369,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "BREAD"
       }
     },
@@ -407,7 +379,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "HOOK"
       }
     },
@@ -418,7 +389,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "CANOE"
       }
     },
@@ -429,7 +399,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "ARROW"
       }
     },
@@ -440,7 +409,6 @@
       "character": "INVENTOR",
       "strategy": {
         "effect": "InventorStrategy",
-        "notificator": "OnPick",
         "artifact": "NECKLACE"
       }
     },
@@ -458,7 +426,6 @@
       "character": "HUNTER",
       "strategy": {
         "effect": "ResourcePerCharStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": 1,
         "character": "HUNTER"
@@ -471,7 +438,6 @@
       "character": "HUNTER",
       "strategy": {
         "effect": "ResourcePerCharStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": 1,
         "character": "HUNTER"
@@ -508,7 +474,6 @@
       "character": "HUNTER",
       "strategy": {
         "effect": "ResourcePerCharStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": 1,
         "character": "HUNTER"
@@ -521,7 +486,6 @@
       "character": "HUNTER",
       "strategy": {
         "effect": "ResourcePerCharStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": 1,
         "character": "HUNTER"
@@ -534,7 +498,6 @@
       "character": "HUNTER",
       "strategy": {
         "effect": "ResourcePerCharStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": 1,
         "character": "HUNTER"
@@ -547,7 +510,6 @@
       "character": "HUNTER",
       "strategy": {
         "effect": "ResourcePerCharStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": 1,
         "character": "HUNTER"
@@ -572,7 +534,6 @@
       "character": "HUNTER",
       "strategy": {
         "effect": "ResourcePerCharStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": 1,
         "character": "HUNTER"
@@ -585,7 +546,6 @@
       "character": "HUNTER",
       "strategy": {
         "effect": "ResourcePerCharStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": 1,
         "character": "HUNTER"
@@ -599,7 +559,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -611,7 +570,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -623,7 +581,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -635,7 +592,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -647,7 +603,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -659,7 +614,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -671,7 +625,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -683,7 +636,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -695,7 +647,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -707,7 +658,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -719,7 +669,6 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "FOOD",
         "quantity": -3
       }
@@ -732,7 +681,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 1
       }
@@ -744,7 +692,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 2
       }
@@ -756,7 +703,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 1
       }
@@ -768,7 +714,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 2
       }
@@ -780,7 +725,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 2
       }
@@ -792,7 +736,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 2
       }
@@ -804,7 +747,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 1
       }
@@ -816,7 +758,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 2
       }
@@ -828,7 +769,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 2
       }
@@ -840,7 +780,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 3
       }
@@ -852,7 +791,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 3
       }
@@ -864,7 +802,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 2
       }
@@ -876,7 +813,6 @@
       "character": "SHAMAN",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "notificator": "OnPick",
         "resource": "STAR",
         "quantity": 2
       }
@@ -890,7 +826,6 @@
       "eventType": "ARTIST_EVENT",
       "strategy": {
         "effect": "ArtistEventStrategy",
-        "notificator": "OnEvent",
         "threshold": 1,
         "winRes": 1,
         "loseRes": -2
@@ -902,7 +837,6 @@
       "eventType": "HUNTER_EVENT",
       "strategy": {
         "effect": "HuntEventStrategy",
-        "notificator": "OnEvent",
         "ppGained": 1
       }
     },
@@ -912,7 +846,6 @@
       "eventType": "SHAMAN_EVENT",
       "strategy": {
         "effect": "ShamanEventStrategy",
-        "notificator": "OnEvent",
         "ppToMin": -3,
         "ppToMax": 5
       }
@@ -923,7 +856,6 @@
       "eventType": "PICKER_EVENT",
       "strategy": {
         "effect": "SustenanceStrategy",
-        "notificator": "OnEvent",
         "ppLost": 1
       }
     },
@@ -933,7 +865,6 @@
       "eventType": "ARTIST_EVENT",
       "strategy": {
         "effect": "ArtistEventStrategy",
-        "notificator": "OnEvent",
         "threshold": 2,
         "winRes": 2,
         "loseRes": -2
@@ -945,7 +876,6 @@
       "eventType": "HUNTER_EVENT",
       "strategy": {
         "effect": "HuntEventStrategy",
-        "notificator": "OnEvent",
         "ppGained": 2
       }
     },
@@ -955,7 +885,6 @@
       "eventType": "SHAMAN_EVENT",
       "strategy": {
         "effect": "ShamanEventStrategy",
-        "notificator": "OnEvent",
         "ppToMin": -5,
         "ppToMax": 10
       }
@@ -966,7 +895,6 @@
       "eventType": "PICKER_EVENT",
       "strategy": {
         "effect": "SustenanceStrategy",
-        "notificator": "OnEvent",
         "ppLost": 2
       }
     },
@@ -976,7 +904,6 @@
       "eventType": "ARTIST_EVENT",
       "strategy": {
         "effect": "ArtistEventStrategy",
-        "notificator": "OnEvent",
         "threshold": 3,
         "winRes": 3,
         "loseRes": -2
@@ -988,7 +915,6 @@
       "eventType": "HUNTER_EVENT",
       "strategy": {
         "effect": "HuntEventStrategy",
-        "notificator": "OnEvent",
         "ppGained": 3
       }
     },
@@ -998,7 +924,6 @@
       "eventType": "SHAMAN_EVENT",
       "strategy": {
         "effect": "ShamanEventStrategy",
-        "notificator": "OnEvent",
         "ppToMin": -7,
         "ppToMax": 15
       }
@@ -1009,7 +934,6 @@
       "eventType": "PICKER_EVENT",
       "strategy": {
         "effect": "SustenanceStrategy",
-        "notificator": "OnEvent",
         "ppLost": 3
       }
     }
@@ -1020,7 +944,7 @@
       "id": "BLD-01",
       "era": "FIRST",
       "strategy": {
-        "effect": "ExtraFoodIfOnFoodStrategy",
+        "effect": "ExtraFoodOnFoodStrategy",
         "notificator": "OnTotemReturned"
       },
       "foodCost": 3,
@@ -1030,7 +954,7 @@
       "id": "BLD-02",
       "era": "FIRST",
       "strategy": {
-        "effect": "InventorPairStrategy",
+        "effect": "InventorsPairStrategy",
         "notificator": "OnPick"
       },
       "foodCost": 3,
@@ -1041,7 +965,8 @@
       "era": "FIRST",
       "strategy": {
         "effect": "ShamanSafetyStrategy",
-        "notificator": "OnEvent"
+        "notificator": "OnEvent",
+        "eventType": "SHAMAN_EVENT"
       },
       "foodCost": 5,
       "prestigePoints": 2
@@ -1062,6 +987,7 @@
       "strategy": {
         "effect": "ResourcePerCharStrategy",
         "notificator": "OnEvent",
+        "eventType": "PICKER_EVENT",
         "resource": "FOOD_DISCOUNT",
         "quantity": 1,
         "character": "PICKER"
@@ -1075,6 +1001,7 @@
       "strategy": {
         "effect": "ResourcePerCharStrategy",
         "notificator": "OnEvent",
+        "eventType": "PICKER_EVENT",
         "resource": "FOOD_DISCOUNT",
         "quantity": 1,
         "character": "ARTIST"
@@ -1088,6 +1015,7 @@
       "strategy": {
         "effect": "ResourcePerCharStrategy",
         "notificator": "OnEvent",
+        "eventType": "ARTIST_EVENT",
         "resource": "FOOD",
         "quantity": 1,
         "character": "ARTIST"
@@ -1101,6 +1029,7 @@
       "strategy": {
         "effect": "ResourcePerCharStrategy",
         "notificator": "OnEvent",
+        "eventType": "PICKER_EVENT",
         "resource": "FOOD_DISCOUNT",
         "quantity": 1,
         "character": "INVENTOR"
@@ -1126,9 +1055,8 @@
       "strategy": {
         "effect": "HuntEventStrategy",
         "notificator": "OnEvent",
-        "resource": "FOOD",
-        "quantity": 1,
-        "character": "HUNTER"
+        "eventType": "HUNTER_EVENT",
+        "ppGained": 1
       },
       "foodCost": 7,
       "prestigePoints": 2
@@ -1137,7 +1065,7 @@
       "id": "BLD-11",
       "era": "SECOND",
       "strategy": {
-        "effect": "DoubleBuildersPPStrategy",
+        "effect": "DoubleBuilderPPStrategy",
         "notificator": "OnEndGame"
       },
       "foodCost": 6,
@@ -1148,7 +1076,8 @@
       "era": "SECOND",
       "strategy": {
         "effect": "DoubleShamanPPStrategy",
-        "notificator": "OnEvent"
+        "notificator": "OnEvent",
+        "eventType": "SHAMAN_EVENT"
       },
       "foodCost": 7,
       "prestigePoints": 0
@@ -1253,10 +1182,8 @@
       "id": "BLD-21",
       "era": "THIRD",
       "strategy": {
-        "effect": "PickCardStrategy",
-        "notificator": "OnEndOfferPhase",
-        "numUp": 1,
-        "numDown": 0
+        "effect": "ExtraPickStrategy",
+        "notificator": "OnEndOfferPhase"
       },
       "foodCost": 9,
       "prestigePoints": 3

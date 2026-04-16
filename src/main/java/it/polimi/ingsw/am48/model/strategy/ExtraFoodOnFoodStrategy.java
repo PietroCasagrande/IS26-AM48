@@ -5,7 +5,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 
 public class ExtraFoodOnFoodStrategy extends CardStrategy {
 
-    protected ExtraFoodOnFoodStrategy(RegistrationAction registration) {
+    public ExtraFoodOnFoodStrategy(RegistrationAction registration) {
         super(registration);
     }
 

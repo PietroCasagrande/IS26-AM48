@@ -7,7 +7,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 public class InventorsPairStrategy extends CardStrategy {
     int completedPairs;
 
-    protected InventorsPairStrategy(RegistrationAction registration) {
+    public InventorsPairStrategy(RegistrationAction registration) {
         super(registration);
         completedPairs = 0;
     }
