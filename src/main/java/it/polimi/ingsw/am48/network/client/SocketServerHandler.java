@@ -38,7 +38,10 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
                     case "error" -> model.notifyError(msg.getPayload().asText());
                 }
             }
+            // qui connessione persa in modo pulito
+            model.notifyError("connessione al server persa.");
         } catch (IOException e) {
+            // qui invece se l'ha persa in modo brusco
             model.notifyError("connessione al server persa.");
         }
     }
