@@ -1267,65 +1267,51 @@
     {
       "id": "A",
       "minPlayers": 5,
-      "strategy": {
-        "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": 3
-      }
+      "numUp": 0,
+      "numDown": 0,
+      "foodBonus": 3
     },
     {
       "id": "B",
       "minPlayers": 2,
-      "strategy": {
-        "effect": "PickCardStrategy",
-        "numUp": 0,
-        "numDown": 1
-      }
+      "numUp": 0,
+      "numDown": 1,
+      "foodBonus": 0
     },
     {
       "id": "C",
       "minPlayers": 2,
-      "strategy": {
-        "effect": "PickCardStrategy",
-        "numUp": 1,
-        "numDown": 0
-      }
+      "numUp": 1,
+      "numDown": 0,
+      "foodBonus": 0
     },
     {
       "id": "D",
       "minPlayers": 3,
-      "strategy": {
-        "effect": "PickCardStrategy",
-        "numUp": 0,
-        "numDown": 2
-      }
+      "numUp": 0,
+      "numDown": 2,
+      "foodBonus": 0
     },
     {
       "id": "E",
       "minPlayers": 2,
-      "strategy": {
-        "effect": "PickCardStrategy",
-        "numUp": 1,
-        "numDown": 1
-      }
+      "numUp": 1,
+      "numDown": 1,
+      "foodBonus": 0
     },
     {
       "id": "F",
       "minPlayers": 2,
-      "strategy": {
-        "effect": "PickCardStrategy",
-        "numUp": 2,
-        "numDown": 0
-      }
+      "numUp": 2,
+      "numDown": 0,
+      "foodBonus": 0
     },
     {
       "id": "G",
       "minPlayers": 4,
-      "strategy": {
-        "effect": "PickCardStrategy",
-        "numUp": 2,
-        "numDown": 1
-      }
+      "numUp": 2,
+      "numDown": 1,
+      "foodBonus": 0
     }
   ],
 

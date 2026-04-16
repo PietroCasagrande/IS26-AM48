@@ -21,14 +21,23 @@ class OfferTrackFactoryTest {
         dtoA = new OfferCardDTO();
         dtoA.id = 'A';
         dtoA.minPlayers = 2;
+        dtoA.numUp = 1;
+        dtoA.numDown = 0;
+        dtoA.foodBonus = 3;
 
         dtoB = new OfferCardDTO();
         dtoB.id = 'B';
         dtoB.minPlayers = 3;
+        dtoB.numUp = 0;
+        dtoB.numDown = 1;
+        dtoB.foodBonus = 0;
 
         dtoC = new OfferCardDTO();
         dtoC.id = 'C';
         dtoC.minPlayers = 2;
+        dtoC.numUp = 1;
+        dtoC.numDown = 1;
+        dtoC.foodBonus = 0;
     }
 
     // ==================== createCards ====================
@@ -37,24 +46,42 @@ class OfferTrackFactoryTest {
     @DisplayName("createCards: should return one OfferCard per DTO provided")
     void shouldCreateOneCardPerDto() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA, dtoB, dtoC));
-        List<OfferCard> result = factory.createCards(3);
-        assertEquals(3, result.size());
+        assertEquals(3, factory.createCards(3).size());
     }
 
     @Test
-    @DisplayName("createCards: should map char id correctly from DTO")
-    void shouldMapCharIdCorrectly() {
+    @DisplayName("createCards: should map letterId correctly from DTO")
+    void shouldMapLetterIdCorrectly() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
-        OfferCard card = factory.createCards(2).get(0);
-        assertEquals('A', card.getLetterId());
+        assertEquals('A', factory.createCards(2).getFirst().getLetterId());
     }
 
     @Test
     @DisplayName("createCards: should map minPlayers correctly from DTO")
     void shouldMapMinPlayersCorrectly() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoB));
-        OfferCard card = factory.createCards(3).get(0);
-        assertEquals(3, card.getNumPlayers());
+        assertEquals(3, factory.createCards(3).getFirst().getNumPlayers());
+    }
+
+    @Test
+    @DisplayName("createCards: should map numUp correctly from DTO")
+    void shouldMapNumUpCorrectly() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
+        assertEquals(1, factory.createCards(2).getFirst().getNumUp());
+    }
+
+    @Test
+    @DisplayName("createCards: should map numDown correctly from DTO")
+    void shouldMapNumDownCorrectly() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoB));
+        assertEquals(1, factory.createCards(3).getFirst().getNumDown());
+    }
+
+    @Test
+    @DisplayName("createCards: should map foodBonus correctly from DTO")
+    void shouldMapFoodBonusCorrectly() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
+        assertEquals(3, factory.createCards(2).getFirst().getFoodBonus());
     }
 
     @Test
@@ -71,8 +98,7 @@ class OfferTrackFactoryTest {
     @DisplayName("createCards: should return an empty list when given an empty DTO list")
     void shouldReturnEmptyListForEmptyDtoList() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of());
-        List<OfferCard> result = factory.createCards(2);
-        assertTrue(result.isEmpty());
+        assertTrue(factory.createCards(2).isEmpty());
     }
 
     @Test

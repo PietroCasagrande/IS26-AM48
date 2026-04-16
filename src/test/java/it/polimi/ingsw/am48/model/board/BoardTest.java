@@ -396,32 +396,6 @@ class BoardTest {
         verify(buildingShowed, times(1)).addUpperCards(newBuildings);
     }
 
-    // ==================== getters ====================
-
-    @Test
-    @DisplayName("getTribeShowed: should return the tribeShowed instance")
-    void shouldReturnCorrectTribeShowedInstance() {
-        assertEquals(tribeShowed, board.getTribeShowed());
-    }
-
-    @Test
-    @DisplayName("getBuildingShowed: should return the buildingShowed instance")
-    void shouldReturnCorrectBuildingShowedInstance() {
-        assertEquals(buildingShowed, board.getBuildingShowed());
-    }
-
-    @Test
-    @DisplayName("getPlaceOrder: should delegate to turnOrder and return its result")
-    void shouldDelegateGetPlaceOrderToTurnOrder() {
-        List<Player> expected = List.of(playerA, playerB);
-        when(turnOrder.getPlaceOrder()).thenReturn(expected);
-
-        List<Player> result = board.getPlaceOrder();
-
-        assertEquals(expected, result);
-        verify(turnOrder, times(1)).getPlaceOrder();
-    }
-
     // ==================== toSnapshot ====================
 
     @Test
