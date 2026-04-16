@@ -1,6 +1,8 @@
 package it.polimi.ingsw.am48.model.delta;
 
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BuildingCardPickedDelta extends GameDelta{
     private final String playerNickname;
@@ -8,7 +10,12 @@ public class BuildingCardPickedDelta extends GameDelta{
     private final List<String> updatedUpperBuildingIds;
     private final List<String> updatedLowerBuildingIds;
 
-    public BuildingCardPickedDelta(String playerNickname, String cardId, List<String> updatedUpperBuildingIds, List<String> updatedLowerBuildingIds) {
+    @JsonCreator
+    public BuildingCardPickedDelta(
+            @JsonProperty("playerNickname")String playerNickname,
+            @JsonProperty("cardId")String cardId,
+            @JsonProperty("updatedUpperBuildingIds")List<String> updatedUpperBuildingIds,
+            @JsonProperty("updatedLowerBuildingIds")List<String> updatedLowerBuildingIds) {
         this.playerNickname = playerNickname;
         this.cardId = cardId;
         this.updatedUpperBuildingIds = updatedUpperBuildingIds;
