@@ -14,6 +14,8 @@ public class ServerMain {
     private final ExecutorService threadPool;
     private final MesosServer mesosServer;
     private final GameController controller;
+    private ServerSocket serverSocket;
+    private volatile boolean running;
 
     public ServerMain() {
         this.threadPool = Executors.newCachedThreadPool();
@@ -23,18 +25,32 @@ public class ServerMain {
     }
 
     public void start() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        running = true;
+        try {
+            serverSocket = new ServerSocket(PORT);
             System.out.println("Server avviato sulla porta " + PORT);
-            while (true) {
+            while (running) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Nuova connessione accettata");
                 SocketClientHandler handler = new SocketClientHandler(clientSocket, controller, mesosServer);
                 threadPool.execute(handler);
             }
         } catch (IOException e) {
-            System.err.println("Errore nel server: " + e.getMessage());
+            if(!serverSocket.isClosed())
+                System.err.println("Errore nel server: " + e.getMessage());
         } finally {
             threadPool.shutdown();
+        }
+    }
+
+    public void stop() {
+        running = false;
+        try {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close(); // Sblocca la accept() forzando una SocketException
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
