@@ -171,39 +171,4 @@ class MesosServerTest {
         assertDoesNotThrow(() -> server.broadcastSnapshotToGame("P1", mock(GameSnapshot.class)));
         verify(view2).showInitialSnapshot(any());
     }
-
-    // ── broadcastToAll ───────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("broadcastToAll: should call reportError on every connected player")
-    void shouldBroadcastErrorToAllConnectedPlayers() throws Exception {
-        VirtualView view1 = mock(VirtualView.class);
-        VirtualView view2 = mock(VirtualView.class);
-        server.registerClient("P1", view1);
-        server.registerClient("P2", view2);
-
-        server.broadcastToAll("Problemi del server");
-
-        verify(view1).reportError("Problemi del server");
-        verify(view2).reportError("Problemi del server");
-    }
-
-    @Test
-    @DisplayName("broadcastToAll: exception on one view should not stop broadcast to others")
-    void shouldContinueBroadcastToAllIfOneViewThrows() throws Exception {
-        VirtualView view1 = mock(VirtualView.class);
-        VirtualView view2 = mock(VirtualView.class);
-        doThrow(new RuntimeException("disconnesso")).when(view1).reportError(any());
-        server.registerClient("P1", view1);
-        server.registerClient("P2", view2);
-
-        assertDoesNotThrow(() -> server.broadcastToAll("errore globale"));
-        verify(view2).reportError("errore globale");
-    }
-
-    @Test
-    @DisplayName("broadcastToAll: no connected players should not throw")
-    void shouldNotThrowWhenNoPlayersConnected() {
-        assertDoesNotThrow(() -> server.broadcastToAll("messaggio vuoto"));
-    }
 }

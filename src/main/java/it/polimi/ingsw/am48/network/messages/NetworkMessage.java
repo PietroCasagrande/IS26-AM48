@@ -3,7 +3,7 @@ package it.polimi.ingsw.am48.network.messages;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class NetworkMessage {
-    private String type; // es: "joinGame", "gameDelta", "error"
+    private String type; // considerate tipo "joinGame", "gameDelta", "error"
     private JsonNode payload; // Il contenuto dinamico
 
     // costruttori, getter e setter per Jackson

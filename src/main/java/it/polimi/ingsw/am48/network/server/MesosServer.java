@@ -47,16 +47,4 @@ public class MesosServer {
             }
         }
     }
-
-    public void broadcastToAll(String message) {
-        for (VirtualView view : connectedPlayers.values()) {
-            try {
-                view.reportError(message); // O un metodo specifico per broadcast globale
-            } catch (Exception e) {
-
-                // handle
-
-            }
-        }
-    }
 }
