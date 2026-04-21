@@ -82,12 +82,38 @@ class GameManagerTest {
         assertThrows(InvalidActionException.class, () -> manager.placeTotem("Nobody", 'A'));
     }
 
+    // ==================== placeTotem - happy path coverage ====================
+
+    @Test
+    @DisplayName("placeTotem: should reach game.placeTotem and propagate its exception when player is found")
+    void shouldReachPlaceTotemOnGameWhenPlayerIsFound() {
+        // Alice joins a 4-player game: she is in playerToGame, game is in WaitingForPlayersPhase
+        // PlaceTotemPhase is not yet active, so placeTotem on the phase throws
+        manager.joinGame(4, "Alice");
+
+        // getGameByNickname succeeds (line 73 covered), getPlayerByNickname succeeds (line 55 covered),
+        // game.placeTotem delegates to the phase which throws because it is not PlaceTotemPhase
+        assertThrows(Exception.class, () -> manager.placeTotem("Alice", 'B'));
+    }
+
     // ==================== takeCard ====================
 
     @Test
     @DisplayName("takeCard: should throw InvalidActionException for unknown nickname")
     void shouldThrowTakeCardForUnknownNickname() {
         assertThrows(InvalidActionException.class, () -> manager.takeCard("Nobody", "H1"));
+    }
+
+    // ==================== takeCard - happy path coverage ====================
+
+    @Test
+    @DisplayName("takeCard: should reach game.takeCard and propagate its exception when player is found")
+    void shouldReachTakeCardOnGameWhenPlayerIsFound() {
+        // Same reasoning as placeTotem: player is found, phase is not PlayerOfferPhase,
+        // so takeCard on the phase throws
+        manager.joinGame(4, "Alice");
+
+        assertThrows(Exception.class, () -> manager.takeCard("Alice", "ART-01"));
     }
 
     // ==================== findGame ====================
