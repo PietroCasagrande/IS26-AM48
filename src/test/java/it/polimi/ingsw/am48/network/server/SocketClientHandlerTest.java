@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.network.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.am48.controller.GameController;
+import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,7 @@ class SocketClientHandlerTest {
     @Mock private GameController controller;
     @Mock private MesosServer server;
     @Mock private GameSnapshot snapshotMock;
+    @Mock private JoinResult joinResultMock;
     @Mock private GameDelta deltaMock;
 
     private ByteArrayOutputStream outStream;
@@ -45,8 +47,9 @@ class SocketClientHandlerTest {
     void shouldSendSnapshotToClientWhenGameNotFull() throws Exception {
         String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}";
         setupHandlerWithInput(input);
-        when(controller.handleJoinGame(3, "P1")).thenReturn(snapshotMock);
-        when(controller.isGameFull("P1")).thenReturn(false);
+        when(joinResultMock.snapshot()).thenReturn(snapshotMock);
+        when(joinResultMock.gameStarted()).thenReturn(false);
+        when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
 
         handler.run();
 
@@ -60,13 +63,14 @@ class SocketClientHandlerTest {
     void shouldBroadcastSnapshotWhenGameFull() throws Exception {
         String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}";
         setupHandlerWithInput(input);
-        when(controller.handleJoinGame(3, "P1")).thenReturn(snapshotMock);
-        when(controller.isGameFull("P1")).thenReturn(true);
+        when(joinResultMock.snapshot()).thenReturn(snapshotMock);
+        when(joinResultMock.gameStarted()).thenReturn(true);
+        when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
 
         handler.run();
 
         verify(server).registerClient(eq("P1"), eq(handler));
-        verify(server).broadcastSnapshotToGame("P1", snapshotMock);
+        verify(server).broadcastSnapshotToGame(eq("P1"), eq(snapshotMock));
         // The individual showInitialSnapshot is bypassed, handled by broadcast
     }
 
@@ -77,7 +81,9 @@ class SocketClientHandlerTest {
         String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}\n" +
                 "{\"type\":\"placeTotem\",\"payload\":{\"position\":\"A\"}}";
         setupHandlerWithInput(input);
-        when(controller.handleJoinGame(3, "P1")).thenReturn(snapshotMock);
+        when(joinResultMock.snapshot()).thenReturn(snapshotMock);
+        when(joinResultMock.gameStarted()).thenReturn(true);
+        when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
         when(controller.handlePlaceTotem("P1", 'A')).thenReturn(deltaMock);
 
         handler.run();
@@ -91,7 +97,9 @@ class SocketClientHandlerTest {
         String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}\n" +
                 "{\"type\":\"takeCard\",\"payload\":{\"cardId\":\"C123\"}}";
         setupHandlerWithInput(input);
-        when(controller.handleJoinGame(3, "P1")).thenReturn(snapshotMock);
+        when(joinResultMock.snapshot()).thenReturn(snapshotMock);
+        when(joinResultMock.gameStarted()).thenReturn(true);
+        when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
         when(controller.handleTakeCard("P1", "C123")).thenReturn(List.of(deltaMock, deltaMock));
 
         handler.run();
@@ -105,7 +113,9 @@ class SocketClientHandlerTest {
         String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}\n" +
                 "{\"type\":\"placeTotem\",\"payload\":{\"position\":\"X\"}}";
         setupHandlerWithInput(input);
-        when(controller.handleJoinGame(3, "P1")).thenReturn(snapshotMock);
+        when(joinResultMock.snapshot()).thenReturn(snapshotMock);
+        when(joinResultMock.gameStarted()).thenReturn(true);
+        when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
         when(controller.handlePlaceTotem("P1", 'X')).thenThrow(new IllegalStateException("Invalid move"));
 
         handler.run();
