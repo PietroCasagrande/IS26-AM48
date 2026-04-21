@@ -72,7 +72,7 @@ public class Game {
 
     // Package-private: only Phases set phases
     public void setPhase(GamePhase phase) { this.currentPhase = phase; }
-    void setBoard(Board board) { this.board = board; }
+    public void setBoard(Board board) { this.board = board; }
     public void incrementTurn() { this.currentTurn++; }
 
     public GameSnapshot toSnapshot(){

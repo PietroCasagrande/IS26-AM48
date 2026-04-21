@@ -26,10 +26,8 @@ class WaitingForPlayersPhaseTest {
 
     @Mock private Game game;
     @Mock private PlayerContext playerContext;
-    @Mock private Board board;
 
-
-    private static final int REQUIRED = 3; // simula partita da 3 giocatori
+    private static final int REQUIRED = 3;
     private WaitingForPlayersPhase phase;
 
     @BeforeEach
@@ -37,21 +35,23 @@ class WaitingForPlayersPhaseTest {
         phase = new WaitingForPlayersPhase(REQUIRED);
     }
 
-    // toSnapshot
+    // ==================== toSnapshot ====================
+
     @Test
-    @DisplayName("toSnapshot restituisce un WaitingPhaseSnapshot")
-    void toSnapshot_returnsCorrectType() {
+    @DisplayName("toSnapshot: should return a WaitingPhaseSnapshot instance")
+    void shouldReturnCorrectSnapshotType() {
         assertInstanceOf(WaitingPhaseSnapshot.class, phase.toSnapshot());
     }
 
-    // addPlayer – giocatore NON è l'ultimo
+    // ==================== addPlayer - giocatore NON è l'ultimo ====================
+
     @Nested
-    @DisplayName("Quando il giocatore aggiunto NON completa la lobby")
+    @DisplayName("When the added player does NOT complete the lobby")
     class NotLastPlayer {
 
         @Test
-        @DisplayName("Viene creato un Player con il totem corretto (indice 0 → BLACK)")
-        void addPlayer_firstPlayer_assignsFirstTotem() {
+        @DisplayName("should create a Player with the correct totem (index 0)")
+        void shouldAssignFirstTotemToFirstPlayer() {
             when(playerContext.getPlayers()).thenReturn(new ArrayList<>());
 
             phase.addPlayer(playerContext, game, "Alice");
@@ -65,11 +65,11 @@ class WaitingForPlayersPhaseTest {
         }
 
         @Test
-        @DisplayName("Viene creato un Player con il totem corretto (indice 1 → BLUE)")
-        void addPlayer_secondPlayer_assignsSecondTotem() {
-            List<Player> existingPlayers = new ArrayList<>();
-            existingPlayers.add(mock(Player.class));
-            when(playerContext.getPlayers()).thenReturn(existingPlayers);
+        @DisplayName("should create a Player with the correct totem (index 1)")
+        void shouldAssignSecondTotemToSecondPlayer() {
+            List<Player> existing = new ArrayList<>();
+            existing.add(mock(Player.class));
+            when(playerContext.getPlayers()).thenReturn(existing);
 
             phase.addPlayer(playerContext, game, "Bob");
 
@@ -79,68 +79,75 @@ class WaitingForPlayersPhaseTest {
         }
 
         @Test
-        @DisplayName("setupBoard NON viene chiamato")
-        void addPlayer_notLastPlayer_doesNotSetupBoard() {
+        @DisplayName("should not call setBoard or setPhase")
+        void shouldNotTransitionPhaseOrSetBoard() {
             when(playerContext.getPlayers()).thenReturn(new ArrayList<>());
 
             phase.addPlayer(playerContext, game, "Alice");
 
-            verify(game, never()).getBoard();
-        }
-
-        @Test
-        @DisplayName("setPhase NON viene chiamato")
-        void addPlayer_notLastPlayer_doesNotChangePhase() {
-            when(playerContext.getPlayers()).thenReturn(new ArrayList<>());
-
-            phase.addPlayer(playerContext, game, "Alice");
-
+            verify(game, never()).setBoard(any());
             verify(game, never()).setPhase(any());
         }
     }
 
-    // 3. addPlayer – giocatore È l'ultimo (index == requiredPlayer)
+    // ==================== addPlayer - giocatore È l'ultimo ====================
+
     @Nested
-    @DisplayName("Quando il giocatore aggiunto COMPLETA la lobby")
+    @DisplayName("When the added player COMPLETES the lobby")
     class LastPlayer {
 
-        private List<Player> fullLobby;
+        // Nota: addPlayer chiama internamente new BoardBuilder().createBoard(REQUIRED)
+        // che legge game_data.json e costruisce una Board reale. Non è mockabile,
+        // quindi usiamo una Game reale per i test di transizione di fase.
+
+        private Game realGame;
 
         @BeforeEach
-        void setUpFullLobby() {
-            fullLobby = new ArrayList<>();
-            for (int i = 0; i < REQUIRED; i++) {
-                fullLobby.add(mock(Player.class));
-            }
-            when(playerContext.getPlayers()).thenReturn(fullLobby);
-            when(game.getBoard()).thenReturn(board);
+        void setUpRealGame() {
+            realGame = new Game("G-TEST", REQUIRED);
         }
 
         @Test
-        @DisplayName("setupBoard viene chiamato con i giocatori del contesto")
-        void addPlayer_lastPlayer_callsSetupBoard() {
-            phase.addPlayer(playerContext, game, "Charlie");
+        @DisplayName("should add all players and transition to PlaceTotemPhase when lobby is full")
+        void shouldTransitionToPlaceTotemPhaseWhenFull() {
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Alice");
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Bob");
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Charlie");
 
-            verify(board).setupBoard(fullLobby);
+            assertInstanceOf(PlaceTotemPhase.class, realGame.getCurrentPhase());
         }
 
         @Test
-        @DisplayName("setPhase viene chiamato con una PlaceTotemPhase")
-        void addPlayer_lastPlayer_transitionsToPlaceTotemPhase() {
-            phase.addPlayer(playerContext, game, "Charlie");
+        @DisplayName("should set a non-null Board on the game when lobby is full")
+        void shouldSetBoardWhenFull() {
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Alice");
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Bob");
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Charlie");
 
-            ArgumentCaptor<GamePhase> captor = ArgumentCaptor.forClass(GamePhase.class);
-            verify(game).setPhase(captor.capture());
-            assertInstanceOf(PlaceTotemPhase.class, captor.getValue());
+            assertNotNull(realGame.getBoard());
         }
 
         @Test
-        @DisplayName("Il player viene comunque aggiunto al contesto prima del setup")
-        void addPlayer_lastPlayer_playerIsStillAdded() {
-            phase.addPlayer(playerContext, game, "Charlie");
+        @DisplayName("should add all REQUIRED players to the context")
+        void shouldAddAllPlayersToContext() {
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Alice");
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Bob");
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Charlie");
 
-            verify(playerContext).addPlayer(any(Player.class));
+            assertEquals(REQUIRED, realGame.getPlayerContext().getPlayers().size());
         }
 
+        @Test
+        @DisplayName("should assign unique totems to all players")
+        void shouldAssignUniqueTotemsToAllPlayers() {
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Alice");
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Bob");
+            phase.addPlayer(realGame.getPlayerContext(), realGame, "Charlie");
+
+            List<Totem> totems = realGame.getPlayerContext().getPlayers().stream()
+                    .map(Player::getTotem)
+                    .toList();
+            assertEquals(REQUIRED, totems.stream().distinct().count());
+        }
     }
 }
