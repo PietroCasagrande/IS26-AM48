@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.controller;
 
+import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.model.game.GameManager;
@@ -11,17 +12,14 @@ import java.util.List;
 public class GameController {
     private final ModelInterface model;
 
-
-
-    public GameController(GameManager gameManager) {
-        this.model = gameManager;
+    public GameController(ModelInterface model) {
+        this.model = model;
     }
 
     // client si unisce alla partita
-    public GameSnapshot handleJoinGame(int numPlayers, String nickname){
-        model.joinGame(numPlayers, nickname);
-        return model.getSnapshotForNickname(nickname);
-        }
+    public JoinResult handleJoinGame(int numPlayers, String nickname){
+        return model.joinGame(numPlayers, nickname);
+    }
 
     public boolean isGameFull(String nickname) {
         return model.isGameFull(nickname);
@@ -39,5 +37,9 @@ public class GameController {
         List<GameDelta> deltas = model.takeCard(nickname, cardId);
         // TODO: serializzazione Json(?), sincronizzazione(?)
         return deltas;
+    }
+
+    public List<String> getPlayersInGame(String nickname) {
+        return model.getPlayersInGame(nickname);
     }
 }

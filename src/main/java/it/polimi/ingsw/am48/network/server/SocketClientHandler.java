@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.network.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.am48.controller.GameController;
+import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.network.VirtualViewSocket;
@@ -59,13 +60,14 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
                     this.nickname = msg.getPayload().get("nickname").asText();
                     server.registerClient(nickname, this); // Registra la view
 
-                    GameSnapshot snap = controller.handleJoinGame(numPlayers, nickname);
-                    if (controller.isGameFull(nickname)) {
+                    JoinResult result = controller.handleJoinGame(numPlayers, nickname);
+                    if (result.gameStarted()) {
                         // Scenario join game e set up game (1B): broadcast a tutti i player della partita
-                        server.broadcastSnapshotToGame(nickname, snap);
+                        // List<String> recipients = controller.getPlayersInGame(nickname);
+                        server.broadcastSnapshotToGame(nickname, result.snapshot());
                     } else {
                         // Scenario snapshot incompleto (1A): solo a questo client
-                        showInitialSnapshot(snap);
+                        showInitialSnapshot(result.snapshot());
                     }
                     break;
                 case "placeTotem":
