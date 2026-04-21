@@ -94,7 +94,7 @@ class GameDataLoaderTest {
                 .orElseThrow();
         assertNotNull(bui01.strategy);
         assertEquals("BuilderStrategy", bui01.strategy.effect);
-        assertEquals("OnPick", bui01.strategy.notificator);
+        // nota: BuilderStrategy nei character non ha notificator nel JSON aggiornato
     }
 
     @Test
@@ -137,7 +137,7 @@ class GameDataLoaderTest {
     }
 
     @Test
-    @DisplayName("loadData: should deserialize final events as Shaman and Picker type")
+    @DisplayName("loadData: should deserialize last two events as THIRD era SHAMAN and PICKER type")
     void shouldDeserializeLastTwoEventsCorrectly() {
         int size = boardDTO.events.size();
         assertEquals("THIRD", boardDTO.events.get(size - 2).era);
@@ -165,6 +165,7 @@ class GameDataLoaderTest {
         assertEquals(3, bld01.foodCost);
         assertEquals(3, bld01.prestigePoints);
         assertNotNull(bld01.strategy);
+        assertEquals("ExtraFoodOnFoodStrategy", bld01.strategy.effect);
     }
 
     @Test
@@ -177,6 +178,18 @@ class GameDataLoaderTest {
         assertNull(bld20.strategy);
         assertEquals(10, bld20.foodCost);
         assertEquals(25, bld20.prestigePoints);
+    }
+
+    @Test
+    @DisplayName("loadData: should deserialize building BLD-21 with ExtraPickStrategy")
+    void shouldDeserializeBld21WithExtraPickStrategy() {
+        CardDTO bld21 = boardDTO.buildings.stream()
+                .filter(b -> b.id.equals("BLD-21"))
+                .findFirst()
+                .orElseThrow();
+        assertNotNull(bld21.strategy);
+        assertEquals("ExtraPickStrategy", bld21.strategy.effect);
+        assertEquals("OnEndOfferPhase", bld21.strategy.notificator);
     }
 
     @Test
@@ -195,20 +208,41 @@ class GameDataLoaderTest {
     }
 
     @Test
-    @DisplayName("loadData: should correctly deserialize offer card A")
+    @DisplayName("loadData: should correctly deserialize offer card A with foodBonus and numUp/numDown")
     void shouldDeserializeOfferCardACorrectly() {
         OfferCardDTO cardA = boardDTO.offerCards.stream()
                 .filter(o -> o.id == 'A')
                 .findFirst()
                 .orElseThrow();
         assertEquals(5, cardA.minPlayers);
+        assertEquals(3, cardA.foodBonus);
+        assertEquals(0, cardA.numUp);
+        assertEquals(0, cardA.numDown);
+    }
+
+    @Test
+    @DisplayName("loadData: should correctly deserialize offer card G with numUp=2 and numDown=1")
+    void shouldDeserializeOfferCardGCorrectly() {
+        OfferCardDTO cardG = boardDTO.offerCards.stream()
+                .filter(o -> o.id == 'G')
+                .findFirst()
+                .orElseThrow();
+        assertEquals(4, cardG.minPlayers);
+        assertEquals(2, cardG.numUp);
+        assertEquals(1, cardG.numDown);
+        assertEquals(0, cardG.foodBonus);
+    }
+
+    @Test
+    @DisplayName("loadData: should deserialize all offer cards with non-negative numUp and numDown")
+    void shouldDeserializeAllOfferCardsWithValidPickCounts() {
+        boardDTO.offerCards.forEach(o -> {
+            assertTrue(o.numUp >= 0, "numUp should be non-negative for card " + o.id);
+            assertTrue(o.numDown >= 0, "numDown should be non-negative for card " + o.id);
+        });
     }
 
     // ==================== loadData: offerTurnCard ====================
-
-    // NOTE: BoardDTO.offerTurnCard holds the full list from JSON.
-    // The selection of the single entry matching numPlayers happens at factory level (OfferTurnFactory),
-    // so here we verify that all four entries are correctly deserialized.
 
     @Test
     @DisplayName("loadData: should deserialize all four offerTurnCard entries from JSON")
@@ -227,7 +261,7 @@ class GameDataLoaderTest {
     }
 
     @Test
-    @DisplayName("loadData: should correctly deserialize offerTurnCard entry for 2 players")
+    @DisplayName("loadData: should correctly deserialize offerTurnCard for 2 players")
     void shouldDeserializeOfferTurnCardForTwoPlayersCorrectly() {
         OfferTurnCardDTO dto = boardDTO.offerTurnCard.stream()
                 .filter(o -> o.numPlayers == 2)
@@ -238,7 +272,7 @@ class GameDataLoaderTest {
     }
 
     @Test
-    @DisplayName("loadData: should correctly deserialize offerTurnCard entry for 5 players")
+    @DisplayName("loadData: should correctly deserialize offerTurnCard for 5 players")
     void shouldDeserializeOfferTurnCardForFivePlayersCorrectly() {
         OfferTurnCardDTO dto = boardDTO.offerTurnCard.stream()
                 .filter(o -> o.numPlayers == 5)
@@ -260,7 +294,7 @@ class GameDataLoaderTest {
     }
 
     @Test
-    @DisplayName("loadData: should correctly deserialize buildingSetup values for 2 players")
+    @DisplayName("loadData: should correctly deserialize buildingSetup for 2 players")
     void shouldDeserializeBuildingSetupForTwoPlayersCorrectly() {
         Map<Era, Integer> setup = boardDTO.buildingSetup.get(2);
         assertEquals(1, setup.get(Era.FIRST));
@@ -269,7 +303,7 @@ class GameDataLoaderTest {
     }
 
     @Test
-    @DisplayName("loadData: should correctly deserialize buildingSetup values for 5 players")
+    @DisplayName("loadData: should correctly deserialize buildingSetup for 5 players")
     void shouldDeserializeBuildingSetupForFivePlayersCorrectly() {
         Map<Era, Integer> setup = boardDTO.buildingSetup.get(5);
         assertEquals(2, setup.get(Era.FIRST));

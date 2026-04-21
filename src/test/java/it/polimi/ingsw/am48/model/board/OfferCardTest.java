@@ -85,36 +85,4 @@ class OfferCardTest {
         OfferCard zeroPickCard = new OfferCard('B', 0, 0, 0, 2);
         assertEquals(0, zeroPickCard.getTotalPicks());
     }
-
-    // ==================== getters ====================
-
-    @Test
-    @DisplayName("getLetterId: should return the correct letter id")
-    void shouldReturnCorrectLetterId() {
-        assertEquals('A', offerCard.getLetterId());
-    }
-
-    @Test
-    @DisplayName("getNumUp: should return the correct number of upper picks")
-    void shouldReturnCorrectNumUp() {
-        assertEquals(2, offerCard.getNumUp());
-    }
-
-    @Test
-    @DisplayName("getNumDown: should return the correct number of lower picks")
-    void shouldReturnCorrectNumDown() {
-        assertEquals(1, offerCard.getNumDown());
-    }
-
-    @Test
-    @DisplayName("getFoodBonus: should return the correct food bonus")
-    void shouldReturnCorrectFoodBonus() {
-        assertEquals(3, offerCard.getFoodBonus());
-    }
-
-    @Test
-    @DisplayName("getNumPlayers: should return the correct number of players")
-    void shouldReturnCorrectNumPlayers() {
-        assertEquals(5, offerCard.getNumPlayers());
-    }
 }

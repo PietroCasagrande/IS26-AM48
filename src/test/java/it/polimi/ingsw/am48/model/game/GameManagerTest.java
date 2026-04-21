@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.model.game;
 
 import it.polimi.ingsw.am48.exception.InvalidActionException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,53 +16,121 @@ class GameManagerTest {
         manager = new GameManager();
     }
 
-    // joinGame with duplicate nickname should throw
-    // Note: joinGame delegates to WaitingForPlayersPhase.addPlayer which is not yet implemented,
-    // so we catch the UnsupportedOperationException from the phase and test only the nickname check
+    // ==================== joinGame ====================
 
-/*
     @Test
-    void joinGameDuplicateNicknameShouldThrow() {
-        try {
-            manager.joinGame(4, "Pietro");
-        } catch (UnsupportedOperationException ignored) {
-            // WaitingForPlayersPhase.addPlayer not yet implemented
-        }
-        assertThrows(InvalidActionException.class, () ->
-                manager.joinGame(4, "Pietro"));
-    }
- */
-
-    // placeTotem with unknown nickname should throw
-    @Test
-    void placeTotemUnknownNicknameShouldThrow() {
-        assertThrows(InvalidActionException.class, () ->
-                manager.placeTotem("Nobody", 'A'));
+    @DisplayName("joinGame: should throw IllegalArgumentException for numPlayers below minimum")
+    void shouldThrowForNumPlayersBelowMinimum() {
+        assertThrows(IllegalArgumentException.class, () -> manager.joinGame(1, "Alice"));
     }
 
-    // takeCard with unknown nickname should throw
     @Test
-    void takeCardUnknownNicknameShouldThrow() {
-        assertThrows(InvalidActionException.class, () ->
-                manager.takeCard("Nobody", "H1"));
+    @DisplayName("joinGame: should throw IllegalArgumentException for numPlayers above maximum")
+    void shouldThrowForNumPlayersAboveMaximum() {
+        assertThrows(IllegalArgumentException.class, () -> manager.joinGame(6, "Alice"));
     }
 
-    // findGame with unknown gameId should throw
     @Test
-    void findGameUnknownIdShouldThrow() {
-        assertThrows(InvalidActionException.class, () ->
-                manager.findGame("NONEXISTENT"));
+    @DisplayName("joinGame: should throw InvalidActionException for duplicate nickname")
+    void shouldThrowForDuplicateNickname() {
+        manager.joinGame(4, "Pietro");
+        assertThrows(InvalidActionException.class, () -> manager.joinGame(4, "Pietro"));
     }
 
-    // Multiple joins with different nicknames should not throw
     @Test
-    void joinGameDifferentNicknamesShouldNotThrowOnNicknameCheck() {
-        try {
-            manager.joinGame(4, "Pietro");
-        } catch (UnsupportedOperationException ignored) {}
-        try {
-            manager.joinGame(4, "Marco");
-        } catch (UnsupportedOperationException ignored) {}
-        // If we got here without InvalidActionException, nickname check passed for both
+    @DisplayName("joinGame: should add player to waiting game without throwing")
+    void shouldAddPlayerToWaitingGame() {
+        assertDoesNotThrow(() -> manager.joinGame(4, "Alice"));
+    }
+
+    @Test
+    @DisplayName("joinGame: should reuse same waiting game for same numPlayers")
+    void shouldReuseWaitingGameForSameNumPlayers() {
+        manager.joinGame(4, "Alice");
+        manager.joinGame(4, "Bob");
+        assertDoesNotThrow(() -> manager.joinGame(4, "Charlie"));
+    }
+
+    @Test
+    @DisplayName("joinGame: should create a new game when game becomes full and move to active")
+    void shouldMoveGameToActiveWhenFull() {
+        manager.joinGame(2, "Alice");
+        manager.joinGame(2, "Bob");
+
+        assertDoesNotThrow(() -> manager.joinGame(2, "Charlie"));
+    }
+
+    @Test
+    @DisplayName("joinGame: should assign different game ids to different games")
+    void shouldAssignDifferentGameIds() {
+        manager.joinGame(2, "Alice");
+        manager.joinGame(2, "Bob");
+
+        manager.joinGame(2, "Charlie");
+        manager.joinGame(2, "Dave");
+
+        Game game1 = manager.findGame("GAME-1");
+        Game game2 = manager.findGame("GAME-2");
+        assertNotEquals(game1.getGameId(), game2.getGameId());
+    }
+
+    // ==================== placeTotem ====================
+
+    @Test
+    @DisplayName("placeTotem: should throw InvalidActionException for unknown nickname")
+    void shouldThrowPlaceTotemForUnknownNickname() {
+        assertThrows(InvalidActionException.class, () -> manager.placeTotem("Nobody", 'A'));
+    }
+
+    // ==================== placeTotem - happy path coverage ====================
+
+    @Test
+    @DisplayName("placeTotem: should reach game.placeTotem and propagate its exception when player is found")
+    void shouldReachPlaceTotemOnGameWhenPlayerIsFound() {
+        // Alice joins a 4-player game: she is in playerToGame, game is in WaitingForPlayersPhase
+        // PlaceTotemPhase is not yet active, so placeTotem on the phase throws
+        manager.joinGame(4, "Alice");
+
+        // getGameByNickname succeeds (line 73 covered), getPlayerByNickname succeeds (line 55 covered),
+        // game.placeTotem delegates to the phase which throws because it is not PlaceTotemPhase
+        assertThrows(Exception.class, () -> manager.placeTotem("Alice", 'B'));
+    }
+
+    // ==================== takeCard ====================
+
+    @Test
+    @DisplayName("takeCard: should throw InvalidActionException for unknown nickname")
+    void shouldThrowTakeCardForUnknownNickname() {
+        assertThrows(InvalidActionException.class, () -> manager.takeCard("Nobody", "H1"));
+    }
+
+    // ==================== takeCard - happy path coverage ====================
+
+    @Test
+    @DisplayName("takeCard: should reach game.takeCard and propagate its exception when player is found")
+    void shouldReachTakeCardOnGameWhenPlayerIsFound() {
+        // Same reasoning as placeTotem: player is found, phase is not PlayerOfferPhase,
+        // so takeCard on the phase throws
+        manager.joinGame(4, "Alice");
+
+        assertThrows(Exception.class, () -> manager.takeCard("Alice", "ART-01"));
+    }
+
+    // ==================== findGame ====================
+
+    @Test
+    @DisplayName("findGame: should throw InvalidActionException for unknown gameId")
+    void shouldThrowForUnknownGameId() {
+        assertThrows(InvalidActionException.class, () -> manager.findGame("NONEXISTENT"));
+    }
+
+    @Test
+    @DisplayName("findGame: should return the correct active game by id")
+    void shouldReturnCorrectActiveGame() {
+        manager.joinGame(2, "Alice");
+        manager.joinGame(2, "Bob");
+
+        Game found = manager.findGame("GAME-1");
+        assertEquals("GAME-1", found.getGameId());
     }
 }

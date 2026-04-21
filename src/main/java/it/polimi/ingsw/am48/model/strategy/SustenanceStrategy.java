@@ -6,7 +6,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 public class SustenanceStrategy extends CardStrategy {
     private int ppLostPerChar;    // salvato con segno POSITIVO
 
-    protected SustenanceStrategy(int ppLostPerChar, RegistrationAction registration) {
+    public SustenanceStrategy(int ppLostPerChar, RegistrationAction registration) {
         super(registration);
         this.ppLostPerChar = ppLostPerChar;
     }

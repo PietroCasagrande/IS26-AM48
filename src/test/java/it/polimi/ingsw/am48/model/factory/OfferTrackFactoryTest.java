@@ -2,6 +2,9 @@ package it.polimi.ingsw.am48.model.factory;
 
 import it.polimi.ingsw.am48.dto.OfferCardDTO;
 import it.polimi.ingsw.am48.model.board.OfferCard;
+import it.polimi.ingsw.am48.model.board.OfferCardTrack;
+import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.enums.Totem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,59 +24,26 @@ class OfferTrackFactoryTest {
         dtoA = new OfferCardDTO();
         dtoA.id = 'A';
         dtoA.minPlayers = 2;
+        dtoA.numUp = 1;
+        dtoA.numDown = 0;
+        dtoA.foodBonus = 3;
 
         dtoB = new OfferCardDTO();
         dtoB.id = 'B';
         dtoB.minPlayers = 3;
+        dtoB.numUp = 0;
+        dtoB.numDown = 1;
+        dtoB.foodBonus = 0;
 
         dtoC = new OfferCardDTO();
         dtoC.id = 'C';
         dtoC.minPlayers = 2;
+        dtoC.numUp = 1;
+        dtoC.numDown = 1;
+        dtoC.foodBonus = 0;
     }
 
-    // ==================== createCards ====================
-
-    @Test
-    @DisplayName("createCards: should return one OfferCard per DTO provided")
-    void shouldCreateOneCardPerDto() {
-        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA, dtoB, dtoC));
-        List<OfferCard> result = factory.createCards(3);
-        assertEquals(3, result.size());
-    }
-
-    @Test
-    @DisplayName("createCards: should map char id correctly from DTO")
-    void shouldMapCharIdCorrectly() {
-        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
-        OfferCard card = factory.createCards(2).get(0);
-        assertEquals('A', card.getLetterId());
-    }
-
-    @Test
-    @DisplayName("createCards: should map minPlayers correctly from DTO")
-    void shouldMapMinPlayersCorrectly() {
-        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoB));
-        OfferCard card = factory.createCards(3).get(0);
-        assertEquals(3, card.getNumPlayers());
-    }
-
-    @Test
-    @DisplayName("createCards: should preserve insertion order of cards")
-    void shouldPreserveInsertionOrder() {
-        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA, dtoB, dtoC));
-        List<OfferCard> result = factory.createCards(3);
-        assertEquals('A', result.get(0).getLetterId());
-        assertEquals('B', result.get(1).getLetterId());
-        assertEquals('C', result.get(2).getLetterId());
-    }
-
-    @Test
-    @DisplayName("createCards: should return an empty list when given an empty DTO list")
-    void shouldReturnEmptyListForEmptyDtoList() {
-        OfferTrackFactory factory = new OfferTrackFactory(List.of());
-        List<OfferCard> result = factory.createCards(2);
-        assertTrue(result.isEmpty());
-    }
+    // ==================== createCards - validation ====================
 
     @Test
     @DisplayName("createCards: should throw IllegalArgumentException for numPlayers below minimum")
@@ -101,5 +71,115 @@ class OfferTrackFactoryTest {
     void shouldAcceptMaximumValidNumPlayers() {
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
         assertDoesNotThrow(() -> factory.createCards(5));
+    }
+
+    // ==================== createCards - structure ====================
+
+    @Test
+    @DisplayName("createCards: should always return a list with exactly one OfferCardTrack")
+    void shouldReturnListWithExactlyOneOfferCardTrack() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA, dtoB, dtoC));
+        List<OfferCardTrack> result = factory.createCards(3);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    @DisplayName("createCards: should return a non-null OfferCardTrack")
+    void shouldReturnNonNullOfferCardTrack() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
+        assertNotNull(factory.createCards(2).getFirst());
+    }
+
+    @Test
+    @DisplayName("createCards: should return one OfferCardTrack even when DTO list is empty")
+    void shouldReturnOneTrackEvenForEmptyDtoList() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of());
+        List<OfferCardTrack> result = factory.createCards(2);
+        assertEquals(1, result.size());
+    }
+
+    // ==================== createCards - OfferCard mapping ====================
+
+    @Test
+    @DisplayName("createCards: should map letterId 'A' correctly — placeTotem on A should not throw")
+    void shouldMapLetterIdACorrectly() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
+        OfferCardTrack track = factory.createCards(2).getFirst();
+        Player player = new Player("Alice", Totem.RED);
+
+        assertDoesNotThrow(() -> track.placeTotem(player, 'A'));
+    }
+
+    @Test
+    @DisplayName("createCards: should map letterId 'B' correctly — placeTotem on B should not throw")
+    void shouldMapLetterIdBCorrectly() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoB));
+        OfferCardTrack track = factory.createCards(3).getFirst();
+        Player player = new Player("Bob", Totem.BLUE);
+
+        assertDoesNotThrow(() -> track.placeTotem(player, 'B'));
+    }
+
+    @Test
+    @DisplayName("createCards: should throw IllegalArgumentException when placing on an unmapped letter")
+    void shouldThrowForUnmappedLetter() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
+        OfferCardTrack track = factory.createCards(2).getFirst();
+        Player player = new Player("Alice", Totem.RED);
+
+        assertThrows(IllegalArgumentException.class, () -> track.placeTotem(player, 'Z'));
+    }
+
+    @Test
+    @DisplayName("createCards: should map all provided DTOs as slots in the track")
+    void shouldMapAllDtosAsTrackSlots() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA, dtoB, dtoC));
+        OfferCardTrack track = factory.createCards(3).getFirst();
+
+        Player pA = new Player("Alice",   Totem.RED);
+        Player pB = new Player("Bob",     Totem.BLUE);
+        Player pC = new Player("Charlie", Totem.WHITE);
+
+        track.placeTotem(pA, 'A');
+        track.placeTotem(pB, 'B');
+        track.placeTotem(pC, 'C');
+
+        // TreeMap garantisce ordine alfabetico → pickOrder = A, B, C
+        List<Player> order = track.getPickOrder();
+        assertEquals(List.of(pA, pB, pC), order);
+    }
+
+    @Test
+    @DisplayName("createCards: should use a TreeMap — pickOrder follows alphabetical slot order")
+    void shouldUseTreeMapForAlphabeticalOrder() {
+        // Inserisco dtoC prima di dtoA: il TreeMap deve comunque ordinarli A → C
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoC, dtoA));
+        OfferCardTrack track = factory.createCards(2).getFirst();
+
+        Player pA = new Player("Alice",   Totem.RED);
+        Player pC = new Player("Charlie", Totem.WHITE);
+
+        track.placeTotem(pA, 'A');
+        track.placeTotem(pC, 'C');
+
+        List<Player> order = track.getPickOrder();
+        assertEquals(pA, order.get(0)); // A prima di C
+        assertEquals(pC, order.get(1));
+    }
+
+    @Test
+    @DisplayName("createCards: should correctly map numUp, numDown and foodBonus via OfferCard getters")
+    void shouldMapNumUpNumDownFoodBonusCorrectly() {
+        OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoA));
+        OfferCardTrack track = factory.createCards(2).getFirst();
+
+        Player player = new Player("Alice", Totem.RED);
+        track.placeTotem(player, 'A');
+
+        OfferCard card = track.findTrackPosition(player);
+        assertEquals(1, card.getNumUp());
+        assertEquals(0, card.getNumDown());
+        assertEquals(3, card.getFoodBonus());
+        assertEquals(2, card.getNumPlayers());
     }
 }

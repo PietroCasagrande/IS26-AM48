@@ -186,6 +186,18 @@ class ShowedTest {
         assertFalse(showed.diffLastEras());
     }
 
+    // ==================== diffLastEras - branch coverage ====================
+
+    @Test
+    @DisplayName("diffLastEras: should evaluate second condition when upper is non-empty but lower is empty")
+    void shouldReturnFalseWhenUpperNonEmptyAndLowerEmpty() {
+        // Covers the branch: upperList.isEmpty() == false && lowerList.isEmpty() == true
+        showed.addUpperCards(List.of(
+                new CharacterCard("U1", Era.FIRST, null, CharacterType.HUNTER, 2)));
+        // lowerList is empty -> second operand of || is evaluated -> returns false
+        assertFalse(showed.diffLastEras());
+    }
+
     // ==================== registerBottom ====================
 
     @Test
@@ -216,6 +228,45 @@ class ShowedTest {
         NotificatorCenter nc = mock(NotificatorCenter.class);
         PlayerContext playerContext = mock(PlayerContext.class);
         assertDoesNotThrow(() -> showed.registerBottom(nc, playerContext));
+    }
+
+    // ==================== registerBottom - branch coverage ====================
+
+    @Test
+    @DisplayName("registerBottom: should call registerTo on strategy of a single card in lower list")
+    void shouldCallRegisterToWhenLowerListHasOneCard() {
+        NotificatorCenter nc = mock(NotificatorCenter.class);
+        PlayerContext playerContext = mock(PlayerContext.class);
+        CardStrategy strategy = mock(CardStrategy.class);
+
+        showed.addLowerCards(List.of(
+                new CharacterCard("F1", Era.FIRST, strategy, CharacterType.HUNTER, 2)));
+
+        showed.registerBottom(nc, playerContext);
+
+        verify(strategy, times(1)).registerTo(nc, playerContext);
+    }
+
+    @Test
+    @DisplayName("registerBottom: should call strategies in era-ascending order when eras differ")
+    void shouldCallStrategiesInEraAscendingOrder() {
+        NotificatorCenter nc = mock(NotificatorCenter.class);
+        PlayerContext playerContext = mock(PlayerContext.class);
+
+        CardStrategy strategyFirst  = mock(CardStrategy.class);
+        CardStrategy strategyThird  = mock(CardStrategy.class);
+
+        // Add THIRD era card first to verify ascending sort
+        showed.addLowerCards(List.of(
+                new CharacterCard("T1", Era.THIRD, strategyThird, CharacterType.HUNTER, 2),
+                new CharacterCard("F1", Era.FIRST, strategyFirst, CharacterType.HUNTER, 2)));
+
+        showed.registerBottom(nc, playerContext);
+
+        // Verify both are called; order verified via InOrder
+        org.mockito.InOrder inOrder = inOrder(strategyFirst, strategyThird);
+        inOrder.verify(strategyFirst).registerTo(nc, playerContext);
+        inOrder.verify(strategyThird).registerTo(nc, playerContext);
     }
 
     // ==================== takeCard ====================

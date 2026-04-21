@@ -9,6 +9,7 @@ public class StrategyDTO {
     public String artifact;                 //artifact type (inventors only)
     public String resource;                 //resource type
     public String character;                //character on which the strategy would be applied
+    public String eventType;                //event on which building has effect
 
     // Generic payload slots
     @JsonAlias({"buildingDiscount", "quantity", "ppGained", "ppLost", "ppToMin", "threshold", "numUp"})

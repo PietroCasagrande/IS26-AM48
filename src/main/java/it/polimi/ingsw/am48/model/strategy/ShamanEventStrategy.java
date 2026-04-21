@@ -9,7 +9,7 @@ public class ShamanEventStrategy extends CardStrategy {
     private int ppToMin;    // salvati POSITIVI
     private int ppToMax;
 
-    protected ShamanEventStrategy(int ppToMin, int ppToMax, RegistrationAction registration) {
+    public ShamanEventStrategy(int ppToMin, int ppToMax, RegistrationAction registration) {
         super(registration);
         this.ppToMin = ppToMin;
         this.ppToMax = ppToMax;

@@ -11,9 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class GameTest {
 
@@ -24,8 +22,8 @@ class GameTest {
         game = new Game("G1", 3);
     }
 
-    // New game should be empty and not full
     @Test
+    @DisplayName("new game should have correct initial state")
     void newGameShouldBeEmptyAndNotFull() {
         assertEquals("G1", game.getGameId());
         assertEquals(3, game.getNumPlayers());
@@ -34,41 +32,40 @@ class GameTest {
         assertEquals(1, game.getCurrentTurn());
     }
 
-    // getPlayerByNickname should find existing player
     @Test
-    void getPlayerByNicknameShouldFindPlayer() {
+    @DisplayName("getPlayerByNickname: should find existing player")
+    void shouldGetPlayerByNickname() {
         game.getPlayerContext().addPlayer(new Player("Ilaria", Totem.RED));
         Player found = game.getPlayerByNickname("Ilaria");
         assertEquals("Ilaria", found.getNickname());
         assertEquals(Totem.RED, found.getTotem());
     }
 
-    // getPlayerByNickname with unknown name should throw
     @Test
-    void getPlayerByNicknameUnknownShouldThrow() {
-        assertThrows(InvalidActionException.class, () ->
-                game.getPlayerByNickname("Nobody"));
+    @DisplayName("getPlayerByNickname: should throw InvalidActionException for unknown nickname")
+    void shouldThrowForUnknownNickname() {
+        assertThrows(InvalidActionException.class, () -> game.getPlayerByNickname("Nobody"));
     }
 
-    // isFull should return true when player count matches numPlayers
     @Test
-    void isFullShouldReturnTrueWhenFull() {
+    @DisplayName("isFull: should return true when player count matches numPlayers")
+    void shouldReturnTrueWhenFull() {
         game.getPlayerContext().addPlayer(new Player("A", Totem.RED));
         game.getPlayerContext().addPlayer(new Player("B", Totem.BLUE));
         game.getPlayerContext().addPlayer(new Player("C", Totem.WHITE));
         assertTrue(game.isFull());
     }
 
-    // isFull should return false when not enough players
     @Test
-    void isFullShouldReturnFalseWhenNotFull() {
+    @DisplayName("isFull: should return false when not enough players")
+    void shouldReturnFalseWhenNotFull() {
         game.getPlayerContext().addPlayer(new Player("A", Totem.RED));
         assertFalse(game.isFull());
     }
 
-    // incrementTurn should increase turn counter
     @Test
-    void incrementTurnShouldIncrease() {
+    @DisplayName("incrementTurn: should increase the turn counter")
+    void shouldIncrementTurn() {
         assertEquals(1, game.getCurrentTurn());
         game.incrementTurn();
         assertEquals(2, game.getCurrentTurn());
@@ -76,9 +73,9 @@ class GameTest {
         assertEquals(3, game.getCurrentTurn());
     }
 
-    // findWinner should return player with the highest amount of points
     @Test
-    void findWinnerShouldReturnHighestScore() {
+    @DisplayName("findWinner: should return player with highest points")
+    void shouldFindWinnerWithHighestScore() {
         Player p1 = new Player("A", Totem.RED);
         Player p2 = new Player("B", Totem.BLUE);
         Player p3 = new Player("C", Totem.WHITE);
@@ -91,27 +88,28 @@ class GameTest {
         assertEquals("B", game.findWinner().getNickname());
     }
 
-    // findWinner with no players should throw
     @Test
-    void findWinnerWithNoPlayersShouldThrow() {
+    @DisplayName("findWinner: should throw InvalidActionException when no players present")
+    void shouldThrowWhenNoPlayers() {
         assertThrows(InvalidActionException.class, () -> game.findWinner());
     }
 
-    // setPhase should change current phase
     @Test
-    void setPhaseShouldChangePhase() {
+    @DisplayName("setPhase: should change the current phase")
+    void shouldSetPhase() {
         GamePhase mockPhase = mock(GamePhase.class);
         game.setPhase(mockPhase);
         assertEquals(mockPhase, game.getCurrentPhase());
     }
+
     @Test
-    @DisplayName("getNotificatorCenter: should return the notification center instance")
-    void shouldReturnNotificatorCenter() {
+    @DisplayName("getNotificatorCenter: should return a non-null instance")
+    void shouldReturnNonNullNotificatorCenter() {
         assertNotNull(game.getNotificatorCenter());
     }
 
     @Test
-    @DisplayName("setBoard and getBoard: should correctly handle the board instance")
+    @DisplayName("setBoard/getBoard: should correctly store and retrieve the board")
     void shouldSetAndGetBoard() {
         Board mockBoard = mock(Board.class);
         game.setBoard(mockBoard);
@@ -119,8 +117,8 @@ class GameTest {
     }
 
     @Test
-    @DisplayName("addPlayer: should delegate call to current phase")
-    void addPlayerShouldDelegateToPhase() {
+    @DisplayName("addPlayer: should delegate to current phase")
+    void shouldDelegateAddPlayerToPhase() {
         GamePhase mockPhase = mock(GamePhase.class);
         game.setPhase(mockPhase);
 
@@ -130,8 +128,8 @@ class GameTest {
     }
 
     @Test
-    @DisplayName("placeTotem: should delegate call to current phase")
-    void placeTotemShouldDelegateToPhase() {
+    @DisplayName("placeTotem: should delegate to current phase")
+    void shouldDelegatePlaceTotemToPhase() {
         GamePhase mockPhase = mock(GamePhase.class);
         game.setPhase(mockPhase);
         Player mockPlayer = mock(Player.class);
@@ -142,8 +140,8 @@ class GameTest {
     }
 
     @Test
-    @DisplayName("takeCard: should delegate call to current phase")
-    void takeCardShouldDelegateToPhase() {
+    @DisplayName("takeCard: should delegate to current phase")
+    void shouldDelegateTakeCardToPhase() {
         GamePhase mockPhase = mock(GamePhase.class);
         game.setPhase(mockPhase);
         Player mockPlayer = mock(Player.class);
@@ -154,12 +152,11 @@ class GameTest {
     }
 
     @Test
-    @DisplayName("toSnapshot: should create snapshot with null board when board is not set")
-    void toSnapshotShouldHandleNullBoard() {
-        // Durante WaitingForPlayersPhase la board è null
+    @DisplayName("toSnapshot: should produce snapshot with null board before board is set")
+    void shouldHandleNullBoardInSnapshot() {
         GameSnapshot snapshot = game.toSnapshot();
 
-        assertAll("Snapshot with null board",
+        assertAll(
                 () -> assertEquals(game.getGameId(), snapshot.getGameId()),
                 () -> assertEquals(game.getCurrentTurn(), snapshot.getCurrentTurn()),
                 () -> assertNull(snapshot.getBoard()),
@@ -167,22 +164,21 @@ class GameTest {
         );
     }
 
-//    @Test
-//    @DisplayName("toSnapshot: should create complete snapshot when board is present")
-//    void toSnapshotShouldIncludeBoard() {
-//        // Arrange
-//        Board mockBoard = mock(Board.class);
-//        game.setBoard(mockBoard);
-//        game.getPlayerContext().addPlayer(new Player("Ilaria", Totem.RED));
-//
-//        // Act
-//        GameSnapshot snapshot = game.toSnapshot();
-//
-//        // Assert
-//        assertAll("Complete snapshot",
-//                () -> assertEquals(1, snapshot.getPlayers().size()),
-//                () -> assertNotNull(snapshot.getBoard()),
-//                () -> assertEquals(game.getGameId(), snapshot.getGameId())
-//        );
-//    }
+    @Test
+    @DisplayName("toSnapshot: should include board snapshot when board is set")
+    void shouldIncludeBoardInSnapshot() {
+        Board mockBoard = mock(Board.class);
+        when(mockBoard.toSnapshot()).thenReturn(mock(
+                it.polimi.ingsw.am48.model.snapshot.BoardSnapshot.class));
+        game.setBoard(mockBoard);
+        game.getPlayerContext().addPlayer(new Player("Ilaria", Totem.RED));
+
+        GameSnapshot snapshot = game.toSnapshot();
+
+        assertAll(
+                () -> assertEquals(1, snapshot.getPlayers().size()),
+                () -> assertNotNull(snapshot.getBoard()),
+                () -> assertEquals(game.getGameId(), snapshot.getGameId())
+        );
+    }
 }

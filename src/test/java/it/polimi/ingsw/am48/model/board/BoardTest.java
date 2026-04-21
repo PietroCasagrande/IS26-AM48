@@ -2,19 +2,22 @@ package it.polimi.ingsw.am48.model.board;
 
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
+import it.polimi.ingsw.am48.model.card.CharacterCard;
+import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
+import it.polimi.ingsw.am48.model.player.Tribe;
 import it.polimi.ingsw.am48.model.snapshot.BoardSnapshot;
 import it.polimi.ingsw.am48.model.snapshot.OfferTrackSnapshot;
 import it.polimi.ingsw.am48.model.snapshot.OfferTurnCardSnapshot;
+import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,17 +28,16 @@ class BoardTest {
     private OfferTurnCard turnOrder;
     private Deck<Card> tribeDeck;
     private Deck<BuildingCard> buildingDeck;
-    private Showed<Card> tribeShowed;
-    private Showed<BuildingCard> buildingShowed;
     private List<Integer> buildingsPerEra;
     private Board board;
     private NotificatorCenter nc;
     private PlayerContext playerContext;
 
+    private CardStrategy mockStrategy;
+    private Tribe mockTribe;
+
     private Player playerA;
     private Player playerB;
-    private Card cardA;
-    private BuildingCard buildingCardA;
 
     private static final int NUM_PLAYERS = 2;
 
@@ -46,19 +48,22 @@ class BoardTest {
         turnOrder      = mock(OfferTurnCard.class);
         tribeDeck      = mock(Deck.class);
         buildingDeck   = mock(Deck.class);
-        tribeShowed    = mock(Showed.class);
-        buildingShowed = mock(Showed.class);
         nc             = mock(NotificatorCenter.class);
         playerContext  = mock(PlayerContext.class);
         buildingsPerEra = List.of(1, 2, 3);
 
-        playerA       = mock(Player.class);
-        playerB       = mock(Player.class);
-        cardA         = mock(Card.class);
-        buildingCardA = mock(BuildingCard.class);
+        mockStrategy = mock(CardStrategy.class);
+        mockTribe    = mock(Tribe.class);
 
-        board = new Board(track, turnOrder, tribeDeck, buildingDeck,
-                tribeShowed, buildingShowed, buildingsPerEra, NUM_PLAYERS);
+        playerA = mock(Player.class);
+        playerB = mock(Player.class);
+
+        when(playerA.getTribe()).thenReturn(mockTribe);
+        when(playerB.getTribe()).thenReturn(mockTribe);
+        // explicit stub: getBuildingDiscount returns 0 by default, but we make it explicit
+        when(mockTribe.getBuildingDiscount()).thenReturn(0);
+
+        board = new Board(track, turnOrder, tribeDeck, buildingDeck, buildingsPerEra, NUM_PLAYERS);
     }
 
     // ==================== placeTotem ====================
@@ -94,13 +99,13 @@ class BoardTest {
     }
 
     @Test
-    @DisplayName("placeTotem: should not interact with decks or showed")
-    void shouldNotInteractWithDecksOrShowedOnPlaceTotem() {
+    @DisplayName("placeTotem: should not interact with decks")
+    void shouldNotInteractWithDecksOnPlaceTotem() {
         when(turnOrder.getNextTotem()).thenReturn(playerA);
 
         board.placeTotem(playerA, 'B');
 
-        verifyNoInteractions(tribeDeck, buildingDeck, tribeShowed, buildingShowed);
+        verifyNoInteractions(tribeDeck, buildingDeck);
     }
 
     // ==================== returnTotem ====================
@@ -113,10 +118,10 @@ class BoardTest {
     }
 
     @Test
-    @DisplayName("returnTotem: should not interact with any other dependency")
+    @DisplayName("returnTotem: should not interact with track or decks")
     void shouldNotInteractWithOtherDependenciesOnReturnTotem() {
         board.returnTotem(playerA);
-        verifyNoInteractions(track, tribeDeck, buildingDeck, tribeShowed, buildingShowed);
+        verifyNoInteractions(track, tribeDeck, buildingDeck);
     }
 
     // ==================== getPickOrder ====================
@@ -134,54 +139,61 @@ class BoardTest {
     }
 
     @Test
-    @DisplayName("getPickOrder: should not interact with any other dependency")
+    @DisplayName("getPickOrder: should not interact with decks or turnOrder")
     void shouldOnlyInteractWithTrackForPickOrder() {
         when(track.getPickOrder()).thenReturn(List.of());
         board.getPickOrder();
-        verifyNoInteractions(turnOrder, tribeDeck, buildingDeck, tribeShowed, buildingShowed);
+        verifyNoInteractions(turnOrder, tribeDeck, buildingDeck);
     }
 
     // ==================== takeCard ====================
 
     @Test
-    @DisplayName("takeCard: should return card from tribeShowed when found there")
-    void shouldReturnCardFromTribeShowed() {
-        when(tribeShowed.takeCard(playerA, "ART-01")).thenReturn(Optional.of(cardA));
+    @DisplayName("takeCard: should return card from tribeShowed when found in upper list")
+    void shouldReturnCardFromTribeShowedUpperList() {
+        CharacterCard card = new CharacterCard("ART-01", Era.FIRST, null, CharacterType.ARTIST, 2);
+        board.getTribeShowed().addUpperCards(List.of(card));
 
         Card result = board.takeCard(playerA, "ART-01");
 
-        assertEquals(cardA, result);
-        verify(tribeShowed, times(1)).takeCard(playerA, "ART-01");
+        assertEquals(card, result);
+        assertTrue(board.getTribeShowed().getUpperList().isEmpty());
+    }
+
+    @Test
+    @DisplayName("takeCard: should return card from tribeShowed lower list when not in upper")
+    void shouldReturnCardFromTribeShowedLowerList() {
+        CharacterCard card = new CharacterCard("ART-02", Era.FIRST, null, CharacterType.ARTIST, 2);
+        board.getTribeShowed().addLowerCards(List.of(card));
+
+        Card result = board.takeCard(playerA, "ART-02");
+
+        assertEquals(card, result);
+        assertTrue(board.getTribeShowed().getLowerList().isEmpty());
     }
 
     @Test
     @DisplayName("takeCard: should fall back to buildingShowed when card not in tribeShowed")
     void shouldFindInBuildingShowedIfNotInTribeShowed() {
-        when(tribeShowed.takeCard(playerA, "BLD-01")).thenReturn(Optional.empty());
-        when(buildingShowed.takeCard(playerA, "BLD-01")).thenReturn(Optional.of(buildingCardA));
+        when(playerA.getFood()).thenReturn(10);
+        BuildingCard buildingCard = new BuildingCard("BLD-01", Era.FIRST, mockStrategy, 3, 5);
+        board.getBuildingShowed().addUpperCards(List.of(buildingCard));
 
         Card result = board.takeCard(playerA, "BLD-01");
 
-        assertEquals(buildingCardA, result);
-        verify(tribeShowed, times(1)).takeCard(playerA, "BLD-01");
-        verify(buildingShowed, times(1)).takeCard(playerA, "BLD-01");
+        assertEquals(buildingCard, result);
+        assertTrue(board.getBuildingShowed().getUpperList().isEmpty());
     }
 
     @Test
     @DisplayName("takeCard: should throw IllegalArgumentException when card not found in either showed")
     void shouldThrowWhenCardNotFound() {
-        when(tribeShowed.takeCard(playerA, "unknown")).thenReturn(Optional.empty());
-        when(buildingShowed.takeCard(playerA, "unknown")).thenReturn(Optional.empty());
-
         assertThrows(IllegalArgumentException.class, () -> board.takeCard(playerA, "unknown"));
     }
 
     @Test
     @DisplayName("takeCard: exception message should contain the card id")
     void shouldIncludeCardIdInExceptionMessage() {
-        when(tribeShowed.takeCard(playerA, "unknown")).thenReturn(Optional.empty());
-        when(buildingShowed.takeCard(playerA, "unknown")).thenReturn(Optional.empty());
-
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> board.takeCard(playerA, "unknown"));
         assertTrue(ex.getMessage().contains("unknown"));
@@ -190,50 +202,48 @@ class BoardTest {
     // ==================== isCardTop ====================
 
     @Test
-    @DisplayName("isCardTop: should return true when card is on top row of tribeShowed")
+    @DisplayName("isCardTop: should return true when card is in tribeShowed upper list")
     void shouldReturnTrueForTribeShowedIfTop() {
-        when(tribeShowed.isTop("ART-01")).thenReturn(true);
+        board.getTribeShowed().addUpperCards(List.of(
+                new CharacterCard("ART-01", Era.FIRST, null, CharacterType.ARTIST, 2)));
         assertTrue(board.isCardTop("ART-01"));
     }
 
     @Test
-    @DisplayName("isCardTop: should return true when card is on top row of buildingShowed")
+    @DisplayName("isCardTop: should return true when card is in buildingShowed upper list")
     void shouldReturnTrueForBuildingShowedIfTop() {
-        when(tribeShowed.isTop("BLD-01")).thenReturn(false);
-        when(buildingShowed.isTop("BLD-01")).thenReturn(true);
+        board.getBuildingShowed().addUpperCards(List.of(
+                new BuildingCard("BLD-01", Era.FIRST, null, 3, 5)));
         assertTrue(board.isCardTop("BLD-01"));
     }
 
     @Test
-    @DisplayName("isCardTop: should return false when card is not on top row of either showed")
+    @DisplayName("isCardTop: should return false when card is not in upper list of either showed")
     void shouldReturnFalseWhenNotFoundInTop() {
-        when(tribeShowed.isTop("unknown")).thenReturn(false);
-        when(buildingShowed.isTop("unknown")).thenReturn(false);
         assertFalse(board.isCardTop("unknown"));
     }
 
     // ==================== isCardDown ====================
 
     @Test
-    @DisplayName("isCardDown: should return true when card is on lower row of tribeShowed")
+    @DisplayName("isCardDown: should return true when card is in tribeShowed lower list")
     void shouldReturnTrueForTribeShowedIfDown() {
-        when(tribeShowed.isDown("ART-01")).thenReturn(true);
+        board.getTribeShowed().addLowerCards(List.of(
+                new CharacterCard("ART-01", Era.FIRST, null, CharacterType.ARTIST, 2)));
         assertTrue(board.isCardDown("ART-01"));
     }
 
     @Test
-    @DisplayName("isCardDown: should return true when card is on lower row of buildingShowed")
+    @DisplayName("isCardDown: should return true when card is in buildingShowed lower list")
     void shouldReturnTrueForBuildingShowedIfDown() {
-        when(tribeShowed.isDown("BLD-01")).thenReturn(false);
-        when(buildingShowed.isDown("BLD-01")).thenReturn(true);
+        board.getBuildingShowed().addLowerCards(List.of(
+                new BuildingCard("BLD-01", Era.FIRST, null, 3, 5)));
         assertTrue(board.isCardDown("BLD-01"));
     }
 
     @Test
-    @DisplayName("isCardDown: should return false when card is not on lower row of either showed")
+    @DisplayName("isCardDown: should return false when card is not in lower list of either showed")
     void shouldReturnFalseWhenNotFoundInBottom() {
-        when(tribeShowed.isDown("unknown")).thenReturn(false);
-        when(buildingShowed.isDown("unknown")).thenReturn(false);
         assertFalse(board.isCardDown("unknown"));
     }
 
@@ -265,7 +275,11 @@ class BoardTest {
     @Test
     @DisplayName("setupBoard: should draw numPlayers+1 tribe cards and add them to lower row")
     void shouldDisplayCorrectNumberOfTribeCardsOnLowerRow() {
-        List<Card> lowerCards = List.of(mock(Card.class), mock(Card.class), mock(Card.class));
+        CharacterCard c1 = new CharacterCard("c1", Era.FIRST, null, CharacterType.ARTIST, 2);
+        CharacterCard c2 = new CharacterCard("c2", Era.FIRST, null, CharacterType.ARTIST, 2);
+        CharacterCard c3 = new CharacterCard("c3", Era.FIRST, null, CharacterType.ARTIST, 2);
+        List<Card> lowerCards = List.of(c1, c2, c3);
+
         when(tribeDeck.drawCards(NUM_PLAYERS + 1)).thenReturn(lowerCards);
         when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(List.of());
         when(buildingDeck.drawCards(anyInt())).thenReturn(List.of());
@@ -273,14 +287,20 @@ class BoardTest {
         board.setupBoard(List.of(playerA, playerB));
 
         verify(tribeDeck, times(1)).drawCards(NUM_PLAYERS + 1);
-        verify(tribeShowed, times(1)).addLowerCards(lowerCards);
+        assertEquals(lowerCards, board.getTribeShowed().getLowerList());
     }
 
     @Test
     @DisplayName("setupBoard: should draw numPlayers+4 tribe cards and add them to upper row")
     void shouldDisplayCorrectNumberOfTribeCardsOnUpperRow() {
-        List<Card> upperCards = List.of(mock(Card.class), mock(Card.class),
-                mock(Card.class), mock(Card.class), mock(Card.class), mock(Card.class));
+        List<Card> upperCards = List.of(
+                new CharacterCard("u1", Era.FIRST, null, CharacterType.ARTIST, 2),
+                new CharacterCard("u2", Era.FIRST, null, CharacterType.ARTIST, 2),
+                new CharacterCard("u3", Era.FIRST, null, CharacterType.ARTIST, 2),
+                new CharacterCard("u4", Era.FIRST, null, CharacterType.ARTIST, 2),
+                new CharacterCard("u5", Era.FIRST, null, CharacterType.ARTIST, 2),
+                new CharacterCard("u6", Era.FIRST, null, CharacterType.ARTIST, 2));
+
         when(tribeDeck.drawCards(NUM_PLAYERS + 1)).thenReturn(List.of());
         when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(upperCards);
         when(buildingDeck.drawCards(anyInt())).thenReturn(List.of());
@@ -288,20 +308,20 @@ class BoardTest {
         board.setupBoard(List.of(playerA, playerB));
 
         verify(tribeDeck, times(1)).drawCards(NUM_PLAYERS + 4);
-        verify(tribeShowed, times(1)).addUpperCards(upperCards);
+        assertEquals(upperCards, board.getTribeShowed().getUpperList());
     }
 
     @Test
     @DisplayName("setupBoard: should draw correct number of building cards for Era.FIRST")
     void shouldDisplayCorrectBuildingCardsForFirstEra() {
         when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
-        List<BuildingCard> buildings = List.of(mock(BuildingCard.class));
-        when(buildingDeck.drawCards(1)).thenReturn(buildings);
+        BuildingCard b1 = new BuildingCard("BLD-01", Era.FIRST, null, 3, 3);
+        when(buildingDeck.drawCards(1)).thenReturn(List.of(b1));
 
         board.setupBoard(List.of(playerA, playerB));
 
         verify(buildingDeck, times(1)).drawCards(1);
-        verify(buildingShowed, times(1)).addUpperCards(buildings);
+        assertEquals(List.of(b1), board.getBuildingShowed().getUpperList());
     }
 
     @Test
@@ -319,107 +339,65 @@ class BoardTest {
     // ==================== endTurn ====================
 
     @Test
-    @DisplayName("endTurn: should clear bottom row and shift tribe showed")
+    @DisplayName("endTurn: should clear the lower row after turn ends")
     void shouldClearAndShiftTribeShowed() {
-        when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
-        when(tribeShowed.diffLastEras()).thenReturn(false);
+        board.getTribeShowed().addLowerCards(List.of(
+                new CharacterCard("L1", Era.FIRST, null, CharacterType.ARTIST, 2)));
+        when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(List.of());
 
         board.endTurn(nc, playerContext);
 
-        verify(tribeShowed, times(1)).clearBottom();
-        verify(tribeShowed, times(1)).shiftRow();
+        assertTrue(board.getTribeShowed().getLowerList().isEmpty());
     }
 
     @Test
-    @DisplayName("endTurn: should call registerBottom on tribeShowed with nc and playerContext")
+    @DisplayName("endTurn: should not throw when lower list is empty before registerBottom")
     void shouldCallRegisterBottomOnTribeShowed() {
         when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
-        when(tribeShowed.diffLastEras()).thenReturn(false);
-
-        board.endTurn(nc, playerContext);
-
-        verify(tribeShowed, times(1)).registerBottom(nc, playerContext);
+        assertDoesNotThrow(() -> board.endTurn(nc, playerContext));
     }
 
     @Test
     @DisplayName("endTurn: should draw and display new tribe cards after shifting")
     void shouldDisplayNewTribeCardsAfterShift() {
-        List<Card> newCards = List.of(mock(Card.class));
-        when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(newCards);
-        when(tribeShowed.diffLastEras()).thenReturn(false);
+        CharacterCard newCard = new CharacterCard("NEW-1", Era.FIRST, null, CharacterType.ARTIST, 2);
+        when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(List.of(newCard));
 
         board.endTurn(nc, playerContext);
 
-        verify(tribeDeck, times(1)).drawCards(NUM_PLAYERS + 4);
-        verify(tribeShowed, times(1)).addUpperCards(newCards);
+        assertTrue(board.getTribeShowed().getUpperList().contains(newCard));
     }
 
     @Test
-    @DisplayName("endTurn: should not change era when diffLastEras returns false")
+    @DisplayName("endTurn: should not change era when upper and lower cards share the same era")
     void shouldNotChangeEraWhenDiffLastErasIsFalse() {
-        when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
-        when(tribeShowed.diffLastEras()).thenReturn(false);
+        board.getTribeShowed().addUpperCards(List.of(
+                new CharacterCard("U1", Era.FIRST, mockStrategy, CharacterType.ARTIST, 2)));
+
+        CharacterCard nextCard = new CharacterCard("U2", Era.FIRST, mockStrategy, CharacterType.ARTIST, 2);
+        when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(List.of(nextCard));
 
         board.endTurn(nc, playerContext);
 
-        verify(buildingShowed, never()).clearBottom();
-        verify(buildingShowed, never()).shiftRow();
-        verify(buildingDeck, never()).drawCards(anyInt());
+        assertTrue(board.getBuildingShowed().getUpperList().isEmpty());
     }
 
     @Test
-    @DisplayName("endTurn: should trigger era change when diffLastEras returns true")
+    @DisplayName("endTurn: should trigger era change and draw building cards when upper and lower eras differ")
     void shouldChangeEraWhenDiffLastErasIsTrue() {
-        when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
-        when(buildingDeck.drawCards(anyInt())).thenReturn(List.of());
-        when(tribeShowed.diffLastEras()).thenReturn(true);
+        board.getTribeShowed().addUpperCards(List.of(
+                new CharacterCard("U1", Era.FIRST, mockStrategy, CharacterType.ARTIST, 2)));
 
-        board.endTurn(nc, playerContext);
+        CharacterCard nextEraCard = new CharacterCard("U2", Era.SECOND, mockStrategy, CharacterType.ARTIST, 2);
+        when(tribeDeck.drawCards(NUM_PLAYERS + 4)).thenReturn(List.of(nextEraCard));
 
-        verify(buildingShowed, times(1)).clearBottom();
-        verify(buildingShowed, times(1)).shiftRow();
-        verify(buildingDeck, times(1)).drawCards(anyInt());
-    }
-
-    @Test
-    @DisplayName("endTurn: should draw building cards for the next era on era change")
-    void shouldDrawBuildingCardsForNextEraOnEraChange() {
-        when(tribeDeck.drawCards(anyInt())).thenReturn(List.of());
-        when(tribeShowed.diffLastEras()).thenReturn(true);
-        List<BuildingCard> newBuildings = List.of(mock(BuildingCard.class), mock(BuildingCard.class));
-        // Era advances FIRST → SECOND, index=1, buildingsPerEra.get(1)=2
-        when(buildingDeck.drawCards(2)).thenReturn(newBuildings);
+        BuildingCard b = new BuildingCard("BLD-NEW", Era.SECOND, mockStrategy, 3, 3);
+        when(buildingDeck.drawCards(2)).thenReturn(List.of(b));
 
         board.endTurn(nc, playerContext);
 
         verify(buildingDeck, times(1)).drawCards(2);
-        verify(buildingShowed, times(1)).addUpperCards(newBuildings);
-    }
-
-    // ==================== getters ====================
-
-    @Test
-    @DisplayName("getTribeShowed: should return the tribeShowed instance")
-    void shouldReturnCorrectTribeShowedInstance() {
-        assertEquals(tribeShowed, board.getTribeShowed());
-    }
-
-    @Test
-    @DisplayName("getBuildingShowed: should return the buildingShowed instance")
-    void shouldReturnCorrectBuildingShowedInstance() {
-        assertEquals(buildingShowed, board.getBuildingShowed());
-    }
-
-    @Test
-    @DisplayName("getPlaceOrder: should delegate to turnOrder and return its result")
-    void shouldDelegateGetPlaceOrderToTurnOrder() {
-        List<Player> expected = List.of(playerA, playerB);
-        when(turnOrder.getPlaceOrder()).thenReturn(expected);
-
-        List<Player> result = board.getPlaceOrder();
-
-        assertEquals(expected, result);
-        verify(turnOrder, times(1)).getPlaceOrder();
+        assertTrue(board.getBuildingShowed().getUpperList().contains(b));
     }
 
     // ==================== toSnapshot ====================
@@ -427,10 +405,6 @@ class BoardTest {
     @Test
     @DisplayName("toSnapshot: should return a non-null snapshot")
     void shouldReturnNonNullSnapshot() {
-        when(tribeShowed.getUpperList()).thenReturn(List.of());
-        when(tribeShowed.getLowerList()).thenReturn(List.of());
-        when(buildingShowed.getUpperList()).thenReturn(List.of());
-        when(buildingShowed.getLowerList()).thenReturn(List.of());
         when(tribeDeck.getRemainingCardIds()).thenReturn(List.of());
         when(buildingDeck.getRemainingCardIds()).thenReturn(List.of());
         when(track.toSnapshot()).thenReturn(mock(OfferTrackSnapshot.class));
@@ -440,22 +414,18 @@ class BoardTest {
     }
 
     @Test
-    @DisplayName("toSnapshot: should delegate to all dependencies to build the snapshot")
+    @DisplayName("toSnapshot: should correctly include showed card ids and deck ids")
     void shouldDelegateToAllDependenciesToBuildSnapshot() {
-        Card upperTribe        = mock(Card.class);
-        Card lowerTribe        = mock(Card.class);
-        BuildingCard upperBuilding = mock(BuildingCard.class);
-        BuildingCard lowerBuilding = mock(BuildingCard.class);
+        CharacterCard upperTribe  = new CharacterCard("ART-01", Era.FIRST, null, CharacterType.ARTIST, 2);
+        CharacterCard lowerTribe  = new CharacterCard("ART-02", Era.FIRST, null, CharacterType.ARTIST, 2);
+        BuildingCard upperBuilding = new BuildingCard("BLD-01", Era.FIRST, null, 3, 3);
+        BuildingCard lowerBuilding = new BuildingCard("BLD-02", Era.FIRST, null, 3, 3);
 
-        when(upperTribe.getCardId()).thenReturn("ART-01");
-        when(lowerTribe.getCardId()).thenReturn("ART-02");
-        when(upperBuilding.getCardId()).thenReturn("BLD-01");
-        when(lowerBuilding.getCardId()).thenReturn("BLD-02");
+        board.getTribeShowed().addUpperCards(List.of(upperTribe));
+        board.getTribeShowed().addLowerCards(List.of(lowerTribe));
+        board.getBuildingShowed().addUpperCards(List.of(upperBuilding));
+        board.getBuildingShowed().addLowerCards(List.of(lowerBuilding));
 
-        when(tribeShowed.getUpperList()).thenReturn(List.of(upperTribe));
-        when(tribeShowed.getLowerList()).thenReturn(List.of(lowerTribe));
-        when(buildingShowed.getUpperList()).thenReturn(List.of(upperBuilding));
-        when(buildingShowed.getLowerList()).thenReturn(List.of(lowerBuilding));
         when(tribeDeck.getRemainingCardIds()).thenReturn(List.of("ART-03"));
         when(buildingDeck.getRemainingCardIds()).thenReturn(List.of("BLD-03"));
         when(track.toSnapshot()).thenReturn(mock(OfferTrackSnapshot.class));

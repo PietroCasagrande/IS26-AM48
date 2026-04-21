@@ -22,14 +22,13 @@ public class Board {
     private final int numPlayers;
 
     public Board(OfferCardTrack track, OfferTurnCard turnOrder, Deck<Card> tribeDeck,
-                 Deck<BuildingCard> buildingDeck, Showed<Card> tribeShowed, Showed<BuildingCard> buildingsShowed,
-                 List<Integer> buildingsPerEra, int numPlayers) {
+                 Deck<BuildingCard> buildingDeck, List<Integer> buildingsPerEra, int numPlayers) {
         this.track = track;
         this.turnOrder = turnOrder;
         this.tribeDeck = tribeDeck;
         this.buildingDeck = buildingDeck;
-        this.tribeShowed = tribeShowed;
-        this.buildingShowed = buildingsShowed;
+        this.tribeShowed = new Showed<>();
+        this.buildingShowed = new Showed<>();
         this.buildingsPerEra = List.copyOf(buildingsPerEra);
         this.currEra = Era.FIRST;
         this.numPlayers = numPlayers;
