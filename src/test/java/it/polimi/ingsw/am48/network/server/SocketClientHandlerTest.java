@@ -66,11 +66,12 @@ class SocketClientHandlerTest {
         when(joinResultMock.snapshot()).thenReturn(snapshotMock);
         when(joinResultMock.gameStarted()).thenReturn(true);
         when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
+        when(controller.getPlayersInGame("P1")).thenReturn(List.of("P1", "P2", "P3"));
 
         handler.run();
 
         verify(server).registerClient(eq("P1"), eq(handler));
-        verify(server).broadcastSnapshotToGame(eq("P1"), eq(snapshotMock));
+        verify(server).broadcastSnapshotToGame(eq(List.of("P1", "P2", "P3")), eq(snapshotMock));
         // The individual showInitialSnapshot is bypassed, handled by broadcast
     }
 
@@ -85,10 +86,11 @@ class SocketClientHandlerTest {
         when(joinResultMock.gameStarted()).thenReturn(true);
         when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
         when(controller.handlePlaceTotem("P1", 'A')).thenReturn(deltaMock);
+        when(controller.getPlayersInGame("P1")).thenReturn(List.of("P1"));
 
         handler.run();
 
-        verify(server).broadcastToGame("P1", deltaMock);
+        verify(server).broadcastToGame(eq(List.of("P1")), eq(deltaMock));
     }
 
     @Test
@@ -101,10 +103,11 @@ class SocketClientHandlerTest {
         when(joinResultMock.gameStarted()).thenReturn(true);
         when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
         when(controller.handleTakeCard("P1", "C123")).thenReturn(List.of(deltaMock, deltaMock));
+        when(controller.getPlayersInGame("P1")).thenReturn(List.of("P1"));
 
         handler.run();
 
-        verify(server, times(2)).broadcastToGame("P1", deltaMock);
+        verify(server, times(2)).broadcastToGame(eq(List.of("P1")), eq(deltaMock));
     }
 
     @Test

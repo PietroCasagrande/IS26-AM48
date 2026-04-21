@@ -20,7 +20,7 @@ public class ServerMain {
     public ServerMain() {
         this.threadPool = Executors.newCachedThreadPool();
         GameManager gameManager = new GameManager();
-        this.mesosServer = new MesosServer(gameManager);
+        this.mesosServer = new MesosServer();
         this.controller = new GameController(gameManager);
     }
 
