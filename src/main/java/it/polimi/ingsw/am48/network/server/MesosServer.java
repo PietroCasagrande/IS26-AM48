@@ -7,43 +7,42 @@ import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.network.VirtualView;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 public class MesosServer {
     // Map thread-safe per gestire le connessioni concorrenti
     private Map<String, VirtualView> connectedPlayers = new ConcurrentHashMap<>();
-    private GameManager gameManager; // Il root del modello lato server
-
-    public MesosServer(GameManager gameManager) {
-        this.gameManager = gameManager;
-    }
+    // MesosServer non deve conoscere il gameManager del model
 
     public void registerClient(String nickname, VirtualView view) {
         connectedPlayers.put(nickname, view);
     }
 
-    public void broadcastToGame(String nickname, GameDelta delta) {
-        Game game = gameManager.getGameByNickname(nickname);
-        for (Player p : game.getPlayerContext().getPlayers()) {
-            VirtualView view = connectedPlayers.get(p.getNickname());
+    public void broadcastToGame(List<String> recipients, GameDelta delta) {
+        for (String nickname : recipients) {
+            VirtualView view = connectedPlayers.get(nickname);
             if (view != null) {
-                try { view.showGameDelta(delta); } catch (Exception e) {
-
-                    /* handle disconnect */ }
+                try { view.showGameDelta(delta); }
+                catch (Exception e) {
+                    /* handle disconnect */
+                    // unregisterClient(nickname)
+                }
             }
         }
     }
 
     // overload per GameSnapshot (Scenario 1B, joingame e set up partita, snapshot completo)
-    public void broadcastSnapshotToGame(String nickname, GameSnapshot snapshot) {
-        Game game = gameManager.getGameByNickname(nickname);
-        for (Player p : game.getPlayerContext().getPlayers()) {
-            VirtualView view = connectedPlayers.get(p.getNickname());
+    public void broadcastSnapshotToGame(List<String> recipients, GameSnapshot snapshot) {
+        for (String nickname : recipients) {
+            VirtualView view = connectedPlayers.get(nickname);
             if (view != null) {
-                try { view.showInitialSnapshot(snapshot); } catch (Exception e) {
-
-                    /* handle disconnect */ }
+                try { view.showInitialSnapshot(snapshot); }
+                catch (Exception e) {
+                    /* handle disconnect */
+                    // unregisterClient(nickname)
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.model.game;
 
+import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.player.Player;
@@ -31,7 +32,7 @@ public class GameManager implements ModelInterface{
 
     // ModelInterface implementation: joinGame, placeTotem and takeCard methods
     @Override
-    public void joinGame(int numPlayers, String nickname){
+    public JoinResult joinGame(int numPlayers, String nickname){
         synchronized (this) {
             if(playerToGame.containsKey(nickname)){
                 throw new InvalidActionException("Nickname già in uso: " + nickname);
@@ -45,12 +46,16 @@ public class GameManager implements ModelInterface{
         synchronized (game) {
             game.addPlayer(nickname);
             synchronized (this) { playerToGame.put(nickname, game); }
-            if (game.isFull()) {
+
+            boolean started = game.isFull();
+            if (started) {
                 synchronized (this) {
                     waitingGames.remove(numPlayers);
                     activeGames.put(game.getGameId(), game);
                 }
             }
+            GameSnapshot snapshot = game.toSnapshot();
+            return new JoinResult(snapshot, started);
         }
     }
 
@@ -108,6 +113,14 @@ public class GameManager implements ModelInterface{
     @Override
     public boolean isGameFull(String nickname) {
         return getGameByNickname(nickname).isFull();
+    }
+
+    public List<String> getPlayersInGame(String nickname){
+        Game game = getGameByNickname(nickname);
+        return game.getPlayerContext().getPlayers()
+                .stream()
+                .map(Player::getNickname)
+                .toList();
     }
 
     // metodi per la persistenza del server (SaveGame) e per il DB (createGameResult)
