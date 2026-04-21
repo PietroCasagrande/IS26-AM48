@@ -63,23 +63,27 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
                     JoinResult result = controller.handleJoinGame(numPlayers, nickname);
                     if (result.gameStarted()) {
                         // Scenario join game e set up game (1B): broadcast a tutti i player della partita
-                        // List<String> recipients = controller.getPlayersInGame(nickname);
-                        server.broadcastSnapshotToGame(nickname, result.snapshot());
+                        List<String> recipients = controller.getPlayersInGame(nickname);
+                        server.broadcastSnapshotToGame(recipients, result.snapshot());
                     } else {
                         // Scenario snapshot incompleto (1A): solo a questo client
                         showInitialSnapshot(result.snapshot());
                     }
                     break;
+
                 case "placeTotem":
                     char pos = msg.getPayload().get("position").asText().charAt(0);
                     GameDelta delta = controller.handlePlaceTotem(this.nickname, pos);
-                    server.broadcastToGame(this.nickname, delta);
+                    List<String> recipientsTotem = controller.getPlayersInGame(this.nickname);
+                    server.broadcastToGame(recipientsTotem, delta);
                     break;
+
                 case "takeCard":
                     String cardId = msg.getPayload().get("cardId").asText();
                     List<GameDelta> deltas = controller.handleTakeCard(this.nickname, cardId);
+                    List<String> recipientsCard = controller.getPlayersInGame(this.nickname);
                     for (GameDelta d : deltas) {
-                        server.broadcastToGame(this.nickname, d);
+                        server.broadcastToGame(recipientsCard, d);
                     }
                     break;
             }
