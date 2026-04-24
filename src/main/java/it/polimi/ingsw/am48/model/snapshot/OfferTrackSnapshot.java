@@ -5,11 +5,11 @@ import java.util.Map;
 
 public class OfferTrackSnapshot {
     // key = lettera casella ("A", "B", ...), value = colore totem, assente = libera
-    private final Map<String, String> totemPositions;
+    private final Map<Character, String> totemPositions;
 
-    public OfferTrackSnapshot(Map<String, String> totemPositions) {
+    public OfferTrackSnapshot(Map<Character, String> totemPositions) {
         this.totemPositions = totemPositions;
     }
 
-    public Map<String, String> getTotemPositions() { return totemPositions; }
+    public Map<Character, String> getTotemPositions() { return totemPositions; }
 }

@@ -11,7 +11,7 @@ public interface ModelInterface {
     JoinResult joinGame(int numPlayers, String nickname);
 
     // metodi in-game: azioni del giocatore
-    GameDelta placeTotem(String nickname, char position);
+    List<GameDelta> placeTotem(String nickname, char position);
     List<GameDelta> takeCard(String name, String cardId);
 
     GameSnapshot getSnapshotForNickname(String nickname);
