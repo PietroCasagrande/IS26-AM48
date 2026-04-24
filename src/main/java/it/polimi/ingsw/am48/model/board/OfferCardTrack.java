@@ -41,11 +41,11 @@ public class OfferCardTrack {
     }
 
     public OfferTrackSnapshot toSnapshot() {
-        Map<String, String> totemPositions = new HashMap<>();
+        Map<Character, String> totemPositions = new HashMap<>();
         for(Map.Entry<Character, OfferCard> entry : track.entrySet()){
             entry.getValue().getTotem().ifPresent(player ->
                     totemPositions.put(
-                            String.valueOf(entry.getKey()), player.getTotem().name()
+                            entry.getKey(), player.getTotem().name()
                     )
             );
         }
