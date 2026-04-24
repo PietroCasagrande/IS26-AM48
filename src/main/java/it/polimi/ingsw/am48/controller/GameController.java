@@ -26,10 +26,10 @@ public class GameController {
     }
 
     // client piazza il totem
-    public GameDelta handlePlaceTotem(String nickname, char position){
-        GameDelta delta = model.placeTotem(nickname, position);
+    public List<GameDelta> handlePlaceTotem(String nickname, char position){
+        List<GameDelta> deltas = model.placeTotem(nickname, position);
         // TODO: serializzazione Json(?), sincronizzazione(?)
-        return delta;
+        return deltas;
     }
 
     // client prende una carta
