@@ -26,9 +26,9 @@ public class ClientModel {
         //notifyObservers();
     }
 
-//    public void notifyError(String message) {
-//        observers.forEach(o -> o.onError(message));
-//    }
+    public void notifyError(String message) {
+        // observers.forEach(o -> o.onError(message));
+    }
 
     // --- metodi chiamati da applyTo() dei delta ---
 

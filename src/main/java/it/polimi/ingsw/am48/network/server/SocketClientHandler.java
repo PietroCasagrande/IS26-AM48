@@ -73,16 +73,18 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
 
                 case "placeTotem":
                     char pos = msg.getPayload().get("position").asText().charAt(0);
-                    GameDelta delta = controller.handlePlaceTotem(this.nickname, pos);
+                    List<GameDelta> placeTotemDeltas = controller.handlePlaceTotem(this.nickname, pos);
                     List<String> recipientsTotem = controller.getPlayersInGame(this.nickname);
-                    server.broadcastToGame(recipientsTotem, delta);
+                    for (GameDelta d : placeTotemDeltas) {
+                        server.broadcastToGame(recipientsTotem, d);
+                    }
                     break;
 
                 case "takeCard":
                     String cardId = msg.getPayload().get("cardId").asText();
-                    List<GameDelta> deltas = controller.handleTakeCard(this.nickname, cardId);
+                    List<GameDelta> playerOfferDeltas = controller.handleTakeCard(this.nickname, cardId);
                     List<String> recipientsCard = controller.getPlayersInGame(this.nickname);
-                    for (GameDelta d : deltas) {
+                    for (GameDelta d : playerOfferDeltas) {
                         server.broadcastToGame(recipientsCard, d);
                     }
                     break;

@@ -4,7 +4,6 @@ module it.polimi.ingsw.am48 {
     requires java.xml;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
-    requires it.polimi.ingsw.am48;
     exports it.polimi.ingsw.am48.model.game;
     exports it.polimi.ingsw.am48.model.player;
     exports it.polimi.ingsw.am48.model.card;

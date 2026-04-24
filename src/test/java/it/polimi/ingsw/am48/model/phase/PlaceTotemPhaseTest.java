@@ -119,9 +119,9 @@ class PlaceTotemPhaseTest {
         when(game.getNumPlayers()).thenReturn(3);
         when(board.getPickOrder()).thenReturn(List.of());
 
-        GameDelta delta = phase.placeTotem(game, playerA, 'B');
+        List<GameDelta> deltas = phase.placeTotem(game, playerA, 'B');
 
-        assertInstanceOf(TotemPlacedDelta.class, delta);
+        assertInstanceOf(TotemPlacedDelta.class, deltas);
     }
 
     @Test
@@ -130,7 +130,7 @@ class PlaceTotemPhaseTest {
         when(game.getNumPlayers()).thenReturn(3);
         when(board.getPickOrder()).thenReturn(List.of());
 
-        TotemPlacedDelta delta = (TotemPlacedDelta) phase.placeTotem(game, playerA, 'B');
+        TotemPlacedDelta delta = (TotemPlacedDelta) phase.placeTotem(game, playerA, 'B').getFirst();
 
         assertEquals("alice", delta.getPlayerNickname());
     }
