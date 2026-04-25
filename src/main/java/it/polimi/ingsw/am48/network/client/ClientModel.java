@@ -3,31 +3,31 @@ package it.polimi.ingsw.am48.network.client;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ClientModel {
     private ClientGameState state;
-    // private final List<ModelObserver> observers = new ArrayList<>();
+    private final List<ModelObserver> observers = new ArrayList<>();  // valutare di cambiare in LinkedHashSet (mantiene ordine ma evita duplicati), così è impossibile registrare due volte lo stesso oggetto erroneamente
 
-//    public void registerObserver(ModelObserver observer) {
-//        observers.add(observer);
-//    }
+    public void registerObserver(ModelObserver observer) {
+        observers.add(observer);
+    }
 
     // --- inizializzazione ---
 
     public void setInitialState(GameSnapshot snapshot) {
         this.state = ClientGameState.fromSnapshot(snapshot);
-        //notifyObservers();
+        notifyObservers();
     }
 
     public void applyDelta(GameDelta delta) {
         delta.applyTo(this);
-        //notifyObservers();
+        notifyObservers();
     }
 
     public void notifyError(String message) {
-        // observers.forEach(o -> o.onError(message));
+         observers.forEach(o -> o.onError(message));
     }
 
     // --- metodi chiamati da applyTo() dei delta ---
@@ -83,7 +83,7 @@ public class ClientModel {
 
     // --- notifica interna ---
 
-//    private void notifyObservers() {
-//        observers.forEach(o -> o.onStateUpdated(state));
-//    }
+    private void notifyObservers() {
+        observers.forEach(o -> o.onStateUpdated(state));
+    }
 }
