@@ -89,7 +89,7 @@ class SocketClientHandlerTest {
 
         handler.run();
 
-        verify(server).broadcastToGame(eq(List.of("P1")), eq(deltaMock));
+        verify(server, times(2)).broadcastToGame(eq(List.of("P1")), eq(deltaMock));
     }
 
     @Test
