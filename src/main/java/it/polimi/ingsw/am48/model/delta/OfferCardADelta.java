@@ -21,4 +21,12 @@ public class OfferCardADelta extends GameDelta {
         model.returnTotemToTurnCard(playerNickname);
         model.updatePlayerFood(playerNickname, updatedFood);
     }
+
+    public String getPlayerNickname() {
+        return playerNickname;
+    }
+
+    public int getUpdatedFood() {
+        return updatedFood;
+    }
 }

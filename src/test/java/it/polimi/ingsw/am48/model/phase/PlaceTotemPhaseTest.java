@@ -4,9 +4,13 @@ import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.board.Board;
 import it.polimi.ingsw.am48.model.board.OfferCard;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.delta.OfferCardADelta;
 import it.polimi.ingsw.am48.model.delta.TotemPlacedDelta;
 import it.polimi.ingsw.am48.model.game.Game;
+import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
+import it.polimi.ingsw.am48.model.notificator.OnTotemReturnedNotificator;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +36,14 @@ class PlaceTotemPhaseTest {
         playerA = mock(Player.class);
         playerB = mock(Player.class);
         playerC = mock(Player.class);
+
+        PlayerContext mockPlayerContext = mock(PlayerContext.class);
+        NotificatorCenter mockNotificatorCenter = mock(NotificatorCenter.class);
+        OnTotemReturnedNotificator mockTotemReturnedNotificator = mock(OnTotemReturnedNotificator.class);
+
+        when(game.getPlayerContext()).thenReturn(mockPlayerContext);
+        when(game.getNotificatorCenter()).thenReturn(mockNotificatorCenter);
+        when(mockNotificatorCenter.getTotemReturnedNotificator()).thenReturn(mockTotemReturnedNotificator);
 
         // Mock a normal offer card (not tile A)
         OfferCard normalOffer = mock(OfferCard.class);
@@ -119,9 +131,9 @@ class PlaceTotemPhaseTest {
         when(game.getNumPlayers()).thenReturn(3);
         when(board.getPickOrder()).thenReturn(List.of());
 
-        List<GameDelta> deltas = phase.placeTotem(game, playerA, 'B');
+        GameDelta delta = phase.placeTotem(game, playerA, 'B').getFirst();
 
-        assertInstanceOf(TotemPlacedDelta.class, deltas);
+        assertInstanceOf(TotemPlacedDelta.class, delta);
     }
 
     @Test
@@ -141,9 +153,146 @@ class PlaceTotemPhaseTest {
         when(game.getNumPlayers()).thenReturn(3);
         when(board.getPickOrder()).thenReturn(List.of());
 
-        TotemPlacedDelta delta = (TotemPlacedDelta) phase.placeTotem(game, playerA, 'B');
+        TotemPlacedDelta delta = (TotemPlacedDelta) phase.placeTotem(game, playerA, 'B').getFirst();
 
         assertEquals('B', delta.getTileId());
+    }
+
+    // ==================== placeTotem - dimensione lista delta ====================
+
+    @Test
+    @DisplayName("placeTotem: should return list with exactly one delta when player is not the last")
+    void shouldReturnSingleDeltaWhenPlayerIsNotLast() {
+        when(game.getNumPlayers()).thenReturn(3);
+        when(board.getPickOrder()).thenReturn(List.of());
+
+        List<GameDelta> deltas = phase.placeTotem(game, playerA, 'B');
+
+        assertEquals(1, deltas.size());
+        assertInstanceOf(TotemPlacedDelta.class, deltas.getFirst());
+    }
+
+    @Test
+    @DisplayName("placeTotem: should return list with exactly one delta when last player places and nobody is on tile A")
+    void shouldReturnSingleDeltaWhenLastPlayerPlacesAndNoTileA() {
+        // nessuno sulla tessera A - setup restituisce Optional.empty()
+        OfferCard nonATile = mock(OfferCard.class);
+        when(nonATile.getLetterId()).thenReturn('B');
+        when(board.findTrackPosition(any())).thenReturn(nonATile);
+        when(board.getPickOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(game.getNumPlayers()).thenReturn(3);
+
+        phase.placeTotem(game, playerA, 'B');
+        phase.placeTotem(game, playerB, 'C');
+        List<GameDelta> deltas = phase.placeTotem(game, playerC, 'D');
+
+        assertEquals(1, deltas.size());
+        assertInstanceOf(TotemPlacedDelta.class, deltas.getFirst());
+    }
+
+    @Test
+    @DisplayName("placeTotem: should return list with exactly two deltas when last player places and first in order is on tile A")
+    void shouldReturnTwoDeltasWhenLastPlayerPlacesAndFirstIsOnTileA() {
+        // playerA è il primo nell'ordine di pesca ed è sulla tessera A
+        OfferCard tileA = mock(OfferCard.class);
+        when(tileA.getLetterId()).thenReturn('A');
+        when(tileA.getFoodBonus()).thenReturn(3);
+
+        OfferCard tileB = mock(OfferCard.class);
+        when(tileB.getLetterId()).thenReturn('B');
+
+        // findTrackPosition restituisce A solo per playerA
+        when(board.findTrackPosition(playerA)).thenReturn(tileA);
+        when(board.findTrackPosition(playerB)).thenReturn(tileB);
+        when(board.findTrackPosition(playerC)).thenReturn(tileB);
+        when(board.getPickOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(board.getPlaceOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(game.getNumPlayers()).thenReturn(3);
+        when(playerA.getFood()).thenReturn(3);
+
+        phase.placeTotem(game, playerA, 'A');
+        phase.placeTotem(game, playerB, 'B');
+        List<GameDelta> deltas = phase.placeTotem(game, playerC, 'C');
+
+        assertEquals(2, deltas.size());
+    }
+
+    @Test
+    @DisplayName("placeTotem: first delta should be TotemPlacedDelta when tile A is present")
+    void shouldHaveTotemPlacedDeltaFirstWhenTileAIsPresent() {
+        OfferCard tileA = mock(OfferCard.class);
+        when(tileA.getLetterId()).thenReturn('A');
+        when(tileA.getFoodBonus()).thenReturn(3);
+
+        OfferCard tileB = mock(OfferCard.class);
+        when(tileB.getLetterId()).thenReturn('B');
+
+        when(board.findTrackPosition(playerA)).thenReturn(tileA);
+        when(board.findTrackPosition(playerB)).thenReturn(tileB);
+        when(board.findTrackPosition(playerC)).thenReturn(tileB);
+        when(board.getPickOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(board.getPlaceOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(game.getNumPlayers()).thenReturn(3);
+        when(playerA.getFood()).thenReturn(3);
+
+        phase.placeTotem(game, playerA, 'A');
+        phase.placeTotem(game, playerB, 'B');
+        List<GameDelta> deltas = phase.placeTotem(game, playerC, 'C');
+
+        assertInstanceOf(TotemPlacedDelta.class, deltas.get(0));
+    }
+
+    @Test
+    @DisplayName("placeTotem: second delta should be OfferCardADelta when tile A is present")
+    void shouldHaveOfferCardADeltaSecondWhenTileAIsPresent() {
+        OfferCard tileA = mock(OfferCard.class);
+        when(tileA.getLetterId()).thenReturn('A');
+        when(tileA.getFoodBonus()).thenReturn(3);
+
+        OfferCard tileB = mock(OfferCard.class);
+        when(tileB.getLetterId()).thenReturn('B');
+
+        when(board.findTrackPosition(playerA)).thenReturn(tileA);
+        when(board.findTrackPosition(playerB)).thenReturn(tileB);
+        when(board.findTrackPosition(playerC)).thenReturn(tileB);
+        when(board.getPickOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(board.getPlaceOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(game.getNumPlayers()).thenReturn(3);
+        when(playerA.getFood()).thenReturn(3);
+
+        phase.placeTotem(game, playerA, 'A');
+        phase.placeTotem(game, playerB, 'B');
+        List<GameDelta> deltas = phase.placeTotem(game, playerC, 'C');
+
+        assertInstanceOf(OfferCardADelta.class, deltas.get(1));
+    }
+
+    @Test
+    @DisplayName("placeTotem: OfferCardADelta should contain correct nickname and food")
+    void shouldHaveCorrectDataInOfferCardADelta() {
+        OfferCard tileA = mock(OfferCard.class);
+        when(tileA.getLetterId()).thenReturn('A');
+        when(tileA.getFoodBonus()).thenReturn(3);
+
+        OfferCard tileB = mock(OfferCard.class);
+        when(tileB.getLetterId()).thenReturn('B');
+
+        when(board.findTrackPosition(playerA)).thenReturn(tileA);
+        when(board.findTrackPosition(playerB)).thenReturn(tileB);
+        when(board.findTrackPosition(playerC)).thenReturn(tileB);
+        when(board.getPickOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(board.getPlaceOrder()).thenReturn(List.of(playerA, playerB, playerC));
+        when(game.getNumPlayers()).thenReturn(3);
+        when(playerA.getNickname()).thenReturn("alice");
+        when(playerA.getFood()).thenReturn(3);
+
+        phase.placeTotem(game, playerA, 'A');
+        phase.placeTotem(game, playerB, 'B');
+        List<GameDelta> deltas = phase.placeTotem(game, playerC, 'C');
+
+        OfferCardADelta aDelta = (OfferCardADelta) deltas.get(1);
+        assertEquals("alice", aDelta.getPlayerNickname());
+        assertEquals(3, aDelta.getUpdatedFood());
     }
 
     // ==================== placeTotem - transizione di fase ====================
