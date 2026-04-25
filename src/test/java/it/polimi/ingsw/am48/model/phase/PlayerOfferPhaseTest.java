@@ -8,6 +8,7 @@ import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.delta.OfferCardADelta;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.enums.EventType;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -80,6 +82,9 @@ class PlayerOfferPhaseTest {
         when(mockBuildingShowed.getUpperList()).thenReturn(List.of());
         when(mockBuildingShowed.getLowerList()).thenReturn(List.of());
         when(mockGame.findWinner()).thenReturn(p1);
+        when(mockGame.getPlayerContext()).thenReturn(playerContext);
+        when(mockGame.getNotificatorCenter()).thenReturn(mockNotificatorCenter);
+        when(mockNotificatorCenter.getTotemReturnedNotificator()).thenReturn(mockTotemReturnedNotificator);
 
         offerB = new OfferCard('B', 1, 0, 0, 3);
         offerA = new OfferCard('A', 1, 0, 3, 3);
@@ -106,21 +111,95 @@ class PlayerOfferPhaseTest {
     // --- COSTRUTTORE ---
 
     @Test
-    void shouldSkipFirstPlayerAndGiveFoodIfOnCardA() {
-        // se il primo player è sulla tessera A riceve cibo e viene skippato
+    void shouldInitializeWithCorrectDefaults() {
+        // il costruttore inizializza solo lo stato, nessuna logica di gioco
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        // verifica che nessun effetto collaterale sia avvenuto
+        assertEquals(0, p1.getFood());
+        verify(mockBoard, never()).returnTotem(any());
+    }
+
+    // --- METODO SETUP ---
+
+    @Test
+    void shouldGiveFoodAndReturnTotemIfFirstPlayerOnCardA() {
+        // se il primo player è sulla tessera A, setup() assegna cibo e ritorna il totem
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
-        new PlayerOfferPhase(List.of(p1, p2, p3));
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
         assertEquals(3, p1.getFood());
         verify(mockBoard).returnTotem(p1);
     }
 
     @Test
-    void shouldNotSkipFirstPlayerIfNotOnCardA() {
-        // se il primo player non è sulla tessera A non viene skippato
+    void shouldReturnOfferCardADeltaIfFirstPlayerOnCardA() {
+        // setup() restituisce Optional con OfferCardADelta se c'è tessera A
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        Optional<GameDelta> result = phase.setup(mockGame);
+        assertTrue(result.isPresent());
+        assertInstanceOf(OfferCardADelta.class, result.get());
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalIfFirstPlayerNotOnCardA() {
+        // setup() restituisce Optional.empty() se non c'è tessera A
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        new PlayerOfferPhase(List.of(p1, p2, p3));
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        Optional<GameDelta> result = phase.setup(mockGame);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldNotGiveFoodIfFirstPlayerNotOnCardA() {
+        // se il primo player non è sulla tessera A nessun cibo viene assegnato
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
         assertEquals(0, p1.getFood());
-        verify(mockBoard, never()).returnTotem(p1);
+    }
+
+    @Test
+    void shouldNotReturnTotemIfFirstPlayerNotOnCardA() {
+        // se il primo player non è sulla tessera A il totem non viene restituito
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
+        verify(mockBoard, never()).returnTotem(any());
+    }
+
+    @Test
+    void shouldSkipFirstPlayerInActionOrderIfOnCardA() {
+        // se il primo player è sulla tessera A viene skippato - il turno passa a p2
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
+        // p1 è stato skippato, ora tocca a p2
+        Card card = makeCharCard("card1");
+        setupNormalPick(p2, offerB, "card1", card);
+        assertDoesNotThrow(() -> phase.takeCard(mockGame, p2, "card1"));
+    }
+
+    @Test
+    void shouldHaveCorrectNicknameInOfferCardADelta() {
+        // il delta contiene il nickname corretto del player sulla tessera A
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        Optional<GameDelta> result = phase.setup(mockGame);
+        OfferCardADelta delta = (OfferCardADelta) result.get();
+        assertEquals("alice", delta.getPlayerNickname());
+    }
+
+    @Test
+    void shouldHaveCorrectFoodInOfferCardADelta() {
+        // il delta contiene il cibo aggiornato dopo il bonus tessera A
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
+        Optional<GameDelta> result = phase.setup(mockGame);
+        // p1 parte da 0 cibo e riceve 3 dal foodBonus della tessera A e 3 dal piazzamento in prima posizione sulla OfferTurnCard
+        OfferCardADelta delta = (OfferCardADelta) result.get();
+        assertEquals(6, delta.getUpdatedFood());
     }
 
     // --- VALIDAZIONE TURNO ---
