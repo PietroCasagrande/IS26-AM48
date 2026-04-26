@@ -7,7 +7,6 @@ import it.polimi.ingsw.am48.network.VirtualServerRmi;
 import it.polimi.ingsw.am48.network.VirtualViewRmi;
 
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -63,6 +62,5 @@ public class RmiClient extends UnicastRemoteObject implements VirtualViewRmi, Vi
     public void reportError(String errorMessage) throws RemoteException {
         model.notifyError(errorMessage);
     }
-
 
 }

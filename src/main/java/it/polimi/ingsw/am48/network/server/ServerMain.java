@@ -6,11 +6,15 @@ import it.polimi.ingsw.am48.model.game.GameManager;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerMain {
     private static final int PORT = 12345; // Porta del server
+    private static final int RMI_PORT = 1099; // Porta del server tramite RMI
     private final ExecutorService threadPool;
     private final MesosServer mesosServer;
     private final GameController controller;
@@ -26,6 +30,17 @@ public class ServerMain {
 
     public void start() {
         running = true;
+
+        // Avvio RMI prima perché NON è bloccante (a differenza di socket che permane nel loop accept())
+        try {
+            RmiServer rmiServer = new RmiServer(controller, mesosServer);
+            Registry registry = LocateRegistry.createRegistry(RMI_PORT);
+            registry.rebind("MesosServer", rmiServer);
+            System.out.println("RMI Server avviato sulla porta: " + RMI_PORT);
+        } catch (RemoteException e) {
+            System.err.println("Errore avvio RMI: " + e.getMessage());
+        }
+
         try {
             serverSocket = new ServerSocket(PORT);
             System.out.println("Server avviato sulla porta " + PORT);
