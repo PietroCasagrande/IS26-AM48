@@ -35,7 +35,8 @@ public class Game {
     public void addPlayer(String nickname) {
         currentPhase.addPlayer( playerContext,this, nickname);
     }
-    public GameDelta placeTotem(Player player, char position) {
+
+    public List<GameDelta> placeTotem(Player player, char position) {
         return currentPhase.placeTotem(this, player, position);
     }
     public List<GameDelta> takeCard(Player player, String cardId) {

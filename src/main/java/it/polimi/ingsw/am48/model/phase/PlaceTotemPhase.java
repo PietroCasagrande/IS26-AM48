@@ -8,6 +8,7 @@ import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.PhaseSnapshot;
 import it.polimi.ingsw.am48.model.snapshot.PlaceTotemPhaseSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,9 @@ public class PlaceTotemPhase implements GamePhase {
     }
 
     @Override
-    public GameDelta placeTotem(Game game, Player player, char position){
+    public List<GameDelta> placeTotem(Game game, Player player, char position){
+        List<GameDelta> deltas = new ArrayList<>();
+
         // Checks player's turn
         if(this.playersPlaced.contains(player)){
             throw new InvalidActionException("Cannot place totem: your totem is already in place.");
@@ -31,14 +34,18 @@ public class PlaceTotemPhase implements GamePhase {
         game.getBoard().placeTotem(player, position);
         this.playersPlaced.add(player);
 
+        List<String> updatedTurnOrderNicknames = new ArrayList<>(game.getBoard().getPlaceOrder().stream().map(Player::getNickname).toList());
+        deltas.add(new TotemPlacedDelta(player.getNickname(), position, updatedTurnOrderNicknames));
+
         // Checks whether all totems have been placed
         if(this.playersPlaced.size() == game.getNumPlayers()){
             List<Player> trackOrder = game.getBoard().getPickOrder();
-            game.setPhase(new PlayerOfferPhase(trackOrder, game));
+            PlayerOfferPhase playerOfferPhase = new PlayerOfferPhase(trackOrder);
+            game.setPhase(playerOfferPhase);
+            playerOfferPhase.setup(game).ifPresent(deltas::add);  // se setup restituisce un delta lo aggiungiamo alla lista deltas
         }
 
-        // Returns a new game delta
-        return new TotemPlacedDelta(player.getNickname(), position);
+        return deltas;
     }
 
     @Override

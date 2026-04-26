@@ -60,7 +60,7 @@ public class GameManager implements ModelInterface{
     }
 
     @Override
-    public GameDelta placeTotem(String nickname, char position){
+    public List<GameDelta> placeTotem(String nickname, char position){
         Game game = getGameByNickname(nickname);
         synchronized (game) {
             Player player = game.getPlayerByNickname(nickname);

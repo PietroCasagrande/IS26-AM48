@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.model.delta;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import it.polimi.ingsw.am48.network.client.ClientModel;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,      // uso un campo "type" nel JSON
@@ -15,4 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = EndTurnDelta.class,              name = "endTurn"),
         @JsonSubTypes.Type(value = EndGameDelta.class,              name = "endGame"),
 })
-public abstract class GameDelta { }
+
+public abstract class GameDelta {
+    public abstract void applyTo(ClientModel model);
+}

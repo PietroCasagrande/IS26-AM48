@@ -21,7 +21,7 @@ class SnapshotTest {
 
         TribeSnapshot snapshot = tribe.toSnapshot();
 
-        assertEquals(5, snapshot.getFood());
+        assertEquals(5, snapshot.getCurrentFood());
         assertEquals(10, snapshot.getCurrentPrestigePoints());
         assertTrue(snapshot.getArtifacts().containsKey("ARROW"));
         assertEquals(1, snapshot.getCharacterCardIds().size());

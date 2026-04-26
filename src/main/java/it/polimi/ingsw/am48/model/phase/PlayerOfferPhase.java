@@ -8,6 +8,7 @@ import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.delta.BuildingCardPickedDelta;
 import it.polimi.ingsw.am48.model.delta.CharacterCardPickedDelta;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.delta.OfferCardADelta;
 import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.PhaseSnapshot;
@@ -15,6 +16,7 @@ import it.polimi.ingsw.am48.model.snapshot.PlayerOfferPhaseSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class PlayerOfferPhase implements GamePhase {
     private final List<Player> actionOrder;
@@ -23,15 +25,20 @@ public class PlayerOfferPhase implements GamePhase {
     private int picksFromDown;
     private boolean extraPickActive;     // per l'edificio extra pick
     private Player extraPickPlayer;      // chi ha l'edificio
+    private boolean totemReturned;
 
-    public PlayerOfferPhase(List<Player> actionOrder, Game  game) {
-        this.actionOrder = new ArrayList<Player>(actionOrder);
+    public PlayerOfferPhase(List<Player> actionOrder) {
+        this.actionOrder = new ArrayList<>(actionOrder);
         currIdx = 0;
         picksFromUp = 0;
         picksFromDown = 0;
         extraPickActive = false;
         extraPickPlayer = null;
+        totemReturned = false;
+    }
 
+    // controlla se c'è qualcuno sulla tessera A e, in caso affermativo, assegna cibo, ritorna totem e restituisce nuovo delta apposito
+    public Optional<GameDelta> setup(Game game){
         OfferCard firstOffer = game.getBoard().findTrackPosition(actionOrder.getFirst());
 
         if(firstOffer.getLetterId() == 'A'){
@@ -39,7 +46,11 @@ public class PlayerOfferPhase implements GamePhase {
             firstPlayer.updateFood(firstOffer.getFoodBonus());
             handleTotemReturn(game, firstPlayer);
             currIdx++;
+
+            return Optional.of(new OfferCardADelta(firstPlayer.getNickname(), firstPlayer.getFood()));
         }
+
+        return Optional.empty();
     }
 
     @Override
@@ -93,13 +104,11 @@ public class PlayerOfferPhase implements GamePhase {
                     .notify(game.getPlayerContext());
         }
 
-        // 7. Costruisci il delta
-        deltas.add(buildCardDelta(player, selectedCard, game));
-
-        // 8. Se siamo nel extra pick, abbiamo finito
+        // 7. Se siamo nel extra pick, abbiamo finito
         if (extraPickActive) {
 //            extraPickActive = false;
 //            extraPickPlayer = null;
+            deltas.add(buildCardDelta(player, selectedCard, game, totemReturned));  // se siamo all'extraPick dobbiamo costruire il delta, dato che non arriviamo a quello del punto 9
             // Transizione a EndTurnPhase
             EndTurnPhase endPhase = new EndTurnPhase();
             game.setPhase(endPhase);
@@ -107,10 +116,11 @@ public class PlayerOfferPhase implements GamePhase {
             return deltas;
         }
 
-        // 9. Controlla se il giocatore ha finito i suoi pick
+        // 8. Controlla se il giocatore ha finito i suoi pick
         if (picksFromUp + picksFromDown >= currentOffer.getTotalPicks()) {
             // Totem torna sulla tessera ordine di turno
             handleTotemReturn(game, player);
+            totemReturned = true;
 
             // Reset per il prossimo giocatore
             picksFromUp = 0;
@@ -118,8 +128,12 @@ public class PlayerOfferPhase implements GamePhase {
             currIdx++;
         }
 
+        // 9. Costruisci il delta
+        deltas.add(buildCardDelta(player, selectedCard, game, totemReturned));  // dobbiamo costruire delta DOPO l'eventuale ritorno del totem, per via di food/pp aggiornati
+        totemReturned = false;  // rimettiamo a false per prossimo player (in caso il curr l'avesse aggiornato)
+
         // 10. Controlla se il round è finito
-        if (currIdx == actionOrder.size()) {
+        if (currIdx >= actionOrder.size()) {    // non è size()-1 perchè c'è stato currIdx++ oltre l'ultimo player
             // Controlla se qualcuno ha l'edificio "extra pick"
             // OnEndOfferPhaseNotificator controlla e setta il extra
             checkExtraPick(game);
@@ -165,7 +179,7 @@ public class PlayerOfferPhase implements GamePhase {
         // L'edificio "extra pick" è registrato su OnEndOfferPhaseNotificator
         // Controlliamo se c'è un listener
         // Se sì, settiamo extraPickActive ed extraPickPlayer
-        // Il notify dell'OnEndOfferPhaseNotificator non esegue il pick,
+        // La notify di OnEndOfferPhaseNotificator non esegue il pick,
         // setta solo un flag — il pick vero lo fa il player col prossimo takeCard
         game.getPlayerContext().getPlayers().stream()
                 .filter(Player::deservesExtraPick)
@@ -176,17 +190,17 @@ public class PlayerOfferPhase implements GamePhase {
                 });
     }
 
-    private GameDelta buildCardDelta(Player player, Card card, Game game) {
+    private GameDelta buildCardDelta(Player player, Card card, Game game, boolean totemReturned) {
         if (card instanceof BuildingCard) {
             List<String> updatedUpperBuildingsIds = game.getBoard().getBuildingShowed().getUpperList().stream().map(Card::getCardId).toList();
             List<String> updatedLowerBuildingsIds = game.getBoard().getBuildingShowed().getLowerList().stream().map(Card::getCardId).toList();
 
-            return new BuildingCardPickedDelta(player.getNickname(), card.getCardId(),updatedUpperBuildingsIds, updatedLowerBuildingsIds);
+            return new BuildingCardPickedDelta(player.getNickname(), card.getCardId(),updatedUpperBuildingsIds, updatedLowerBuildingsIds, player.getFood(), player.getPoints(), totemReturned);
         }
         List<String> updatedUpperTribeIds = game.getBoard().getTribeShowed().getUpperList().stream().map(Card::getCardId).toList();
         List<String> updatedLowerTribeIds = game.getBoard().getTribeShowed().getLowerList().stream().map(Card::getCardId).toList();
 
-        return new CharacterCardPickedDelta(player.getNickname(), card.getCardId(),updatedUpperTribeIds, updatedLowerTribeIds);
+        return new CharacterCardPickedDelta(player.getNickname(), card.getCardId(),updatedUpperTribeIds, updatedLowerTribeIds, player.getFood(), player.getPoints(), totemReturned);
     }
 
     @Override
