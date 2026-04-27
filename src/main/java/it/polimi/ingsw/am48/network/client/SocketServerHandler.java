@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.network.VirtualServerSocket;
-import it.polimi.ingsw.am48.network.messages.NetworkMessage;
 
 import java.io.*;
 import java.net.Socket;
@@ -28,22 +27,22 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
     // Thread in ascolto dei messaggi dal SERVER
     @Override
     public void run() {
-        try {
-            String line;
-            while ((line = in.readLine()) != null) {
-                NetworkMessage msg = mapper.readValue(line, NetworkMessage.class);
-                switch (msg.getType()) {
-                    case "gameDelta" -> model.applyDelta(mapper.treeToValue(msg.getPayload(), GameDelta.class));
-                    case "initialSnapshot" -> model.setInitialState(mapper.treeToValue(msg.getPayload(), GameSnapshot.class));
-                    case "error" -> model.notifyError(msg.getPayload().asText());
-                }
-            }
-            // qui connessione persa in modo pulito
-            model.notifyError("connessione al server persa.");
-        } catch (IOException e) {
-            // qui invece se l'ha persa in modo brusco
-            model.notifyError("connessione al server persa.");
-        }
+//        try {
+//            String line;
+//            while ((line = in.readLine()) != null) {
+//                NetworkMessage msg = mapper.readValue(line, NetworkMessage.class);
+//                switch (msg.getType()) {
+//                    case "gameDelta" -> model.applyDelta(mapper.treeToValue(msg.getPayload(), GameDelta.class));
+//                    case "initialSnapshot" -> model.setInitialState(mapper.treeToValue(msg.getPayload(), GameSnapshot.class));
+//                    case "error" -> model.notifyError(msg.getPayload().asText());
+//                }
+//            }
+//            // qui connessione persa in modo pulito
+//            model.notifyError("connessione al server persa.");
+//        } catch (IOException e) {
+//            // qui invece se l'ha persa in modo brusco
+//            model.notifyError("connessione al server persa.");
+//        }
     }
 
     @Override
@@ -71,11 +70,11 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
     }
 
     private void sendMessage(String type, JsonNode payload) {
-        try {
-            NetworkMessage msg = new NetworkMessage(type, payload);
-            out.println(mapper.writeValueAsString(msg));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            NetworkMessage msg = new NetworkMessage(type, payload);
+//            out.println(mapper.writeValueAsString(msg));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 }
