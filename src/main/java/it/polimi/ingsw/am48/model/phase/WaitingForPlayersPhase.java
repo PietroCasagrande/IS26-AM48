@@ -16,6 +16,7 @@ public class WaitingForPlayersPhase implements GamePhase {
         this.requiredPlayer = requiredPlayer;
     }
 
+    // TODO: c'è da sistemare l'ordine di alcune chiamate, non ha senso il confronto con l'index non aggiornato
     @Override
     public void addPlayer(PlayerContext playerContext, Game game,String playerNickname){
         int index = playerContext.getPlayers().size();
