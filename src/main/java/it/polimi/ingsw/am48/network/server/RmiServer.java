@@ -3,6 +3,7 @@ package it.polimi.ingsw.am48.network.server;
 import it.polimi.ingsw.am48.controller.GameController;
 import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.network.VirtualServerRmi;
 import it.polimi.ingsw.am48.network.VirtualView;
 import it.polimi.ingsw.am48.network.VirtualViewRmi;
@@ -50,9 +51,11 @@ public class RmiServer extends UnicastRemoteObject implements VirtualServerRmi {
     @Override
     public void placeTotem(String nickname, char position) throws RemoteException {
         try {
-            GameDelta delta = controller.handlePlaceTotem(nickname, position);
+            List<GameDelta> deltas = controller.handlePlaceTotem(nickname, position);
             List<String> recipients = controller.getPlayersInGame(nickname);
-            mesosServer.broadcastToGame(recipients, delta);
+            for(GameDelta d : deltas){
+                mesosServer.broadcastToGame(recipients, d);
+            }
         } catch (Exception e) {
             try { rmiCallbacks.get(nickname).reportError(e.getMessage());}
             catch (Exception ex) { ex.printStackTrace(); }
