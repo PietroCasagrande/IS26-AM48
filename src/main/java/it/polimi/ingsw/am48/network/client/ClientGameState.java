@@ -24,12 +24,23 @@ public class ClientGameState {
         state.gameId = snapshot.getGameId();
         state.currentTurn = snapshot.getCurrentTurn();
         state.currentPhase = snapshot.getPhase().getPhaseName();
-        state.upperRowCardIds = new ArrayList<>(snapshot.getBoard().getUpperRowCardIds());
-        state.lowerRowCardIds = new ArrayList<>(snapshot.getBoard().getLowerRowCardIds());
-        state.buildingUpperIds = new ArrayList<>(snapshot.getBoard().getBuildingUpperRowCardIds());
-        state.buildingLowerIds = new ArrayList<>(snapshot.getBoard().getBuildingLowerRowCardIds());
-        state.offerTrackPositions = new HashMap<>(snapshot.getBoard().getOfferTrack().getTotemPositions());
-        state.offerTurnCardOrder = new ArrayList<>(snapshot.getBoard().getOfferTurnCard().getTotemOrder());
+
+        if(snapshot.getBoard() != null) {
+            state.upperRowCardIds = new ArrayList<>(snapshot.getBoard().getUpperRowCardIds());
+            state.lowerRowCardIds = new ArrayList<>(snapshot.getBoard().getLowerRowCardIds());
+            state.buildingUpperIds = new ArrayList<>(snapshot.getBoard().getBuildingUpperRowCardIds());
+            state.buildingLowerIds = new ArrayList<>(snapshot.getBoard().getBuildingLowerRowCardIds());
+            state.offerTrackPositions = new HashMap<>(snapshot.getBoard().getOfferTrack().getTotemPositions());
+            state.offerTurnCardOrder = new ArrayList<>(snapshot.getBoard().getOfferTurnCard().getTotemOrder());
+        } else {
+            state.upperRowCardIds = new ArrayList<>();
+            state.lowerRowCardIds = new ArrayList<>();
+            state.buildingUpperIds = new ArrayList<>();
+            state.buildingLowerIds = new ArrayList<>();
+            state.offerTrackPositions = new HashMap<>();
+            state.offerTurnCardOrder = new ArrayList<>();
+        }
+
         state.players = new HashMap<>();
         snapshot.getPlayers().forEach(p ->
                 state.players.put(p.getNickname(), ClientPlayerState.fromSnapshot(p))
