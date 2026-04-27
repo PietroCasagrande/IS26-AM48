@@ -29,6 +29,15 @@ public class RmiClient extends UnicastRemoteObject implements VirtualViewRmi, Vi
         this.model = model;
     }
 
+    // Costruttore package-private per i test di RmiClientTest
+    // Testiamo la logica della classe, non la connessione tramite rmi
+    // Per farlo ci serve un costruttore semplificato, senza registry e port
+    RmiClient(VirtualServerRmi server, ClientModel model) throws RemoteException {
+        super();
+        this.server = server;
+        this.model = model;
+    }
+
     // VirtualServer: comandi verso il server dal client
     @Override
     public void joinGame(int numPlayers, String nickname) throws Exception{
