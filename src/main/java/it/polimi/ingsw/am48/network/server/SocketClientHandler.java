@@ -62,6 +62,13 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
     public void setNickname(String nickname) { this.nickname = nickname; }
     public VirtualView getSelfView() { return this; }
 
+    public GameController getController() { return controller; }
+    public MesosServer getServer() { return server; }
+    public String getNickname() { return nickname; }
+    public void setNickname(String nickname) { this.nickname = nickname; }
+    public VirtualView getSelfView() { return this; }
+
+
     // --- Implementazione VirtualViewSocket (invia messaggi AL client) ---
 
     @Override

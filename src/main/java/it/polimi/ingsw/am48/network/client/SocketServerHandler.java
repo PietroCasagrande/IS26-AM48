@@ -5,6 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.network.VirtualServerSocket;
+import it.polimi.ingsw.am48.network.messages.commands.ClientCommand;
+import it.polimi.ingsw.am48.network.messages.commands.JoinGameCommand;
+import it.polimi.ingsw.am48.network.messages.commands.PlaceTotemCommand;
+import it.polimi.ingsw.am48.network.messages.commands.TakeCardCommand;
+import it.polimi.ingsw.am48.network.messages.notifications.ServerNotification;
 
 import java.io.*;
 import java.net.Socket;
@@ -24,57 +29,41 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
         this.model = model;
     }
 
-    // Thread in ascolto dei messaggi dal SERVER
+    // Thread in ascolto delle notifiche dal SERVER
     @Override
     public void run() {
-//        try {
-//            String line;
-//            while ((line = in.readLine()) != null) {
-//                NetworkMessage msg = mapper.readValue(line, NetworkMessage.class);
-//                switch (msg.getType()) {
-//                    case "gameDelta" -> model.applyDelta(mapper.treeToValue(msg.getPayload(), GameDelta.class));
-//                    case "initialSnapshot" -> model.setInitialState(mapper.treeToValue(msg.getPayload(), GameSnapshot.class));
-//                    case "error" -> model.notifyError(msg.getPayload().asText());
-//                }
-//            }
-//            // qui connessione persa in modo pulito
-//            model.notifyError("connessione al server persa.");
-//        } catch (IOException e) {
-//            // qui invece se l'ha persa in modo brusco
-//            model.notifyError("connessione al server persa.");
-//        }
+        try {
+            String line;
+            while ((line = in.readLine()) != null) {
+                ServerNotification notification = mapper.readValue(line, ServerNotification.class);
+                notification.apply(model);
+            }
+            model.notifyError("Connessione al server persa.");
+        } catch (IOException e) {
+            model.notifyError("Connessione al server persa.");
+        }
     }
 
     @Override
     public void joinGame(int numPlayers, String nickname) {
-        var payload = mapper.createObjectNode();
-        payload.put("numPlayers", numPlayers);
-        payload.put("nickname", nickname);
-        sendMessage("joinGame", payload);
+        send(new JoinGameCommand(numPlayers, nickname));
     }
 
     @Override
     public void placeTotem(String nickname, char position) {
-        var payload = mapper.createObjectNode();
-        payload.put("nickname", nickname);
-        payload.put("position", String.valueOf(position));
-        sendMessage("placeTotem", payload);
+        send(new PlaceTotemCommand(position));
     }
 
     @Override
     public void takeCard(String nickname, String cardId) {
-        var payload = mapper.createObjectNode();
-        payload.put("nickname", nickname);
-        payload.put("cardId", cardId);
-        sendMessage("takeCard", payload);
+        send(new TakeCardCommand(cardId));
     }
 
-    private void sendMessage(String type, JsonNode payload) {
-//        try {
-//            NetworkMessage msg = new NetworkMessage(type, payload);
-//            out.println(mapper.writeValueAsString(msg));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+    private void send(ClientCommand command) {
+        try {
+            out.println(mapper.writeValueAsString(command));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
