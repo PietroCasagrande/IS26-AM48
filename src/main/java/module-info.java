@@ -4,6 +4,7 @@ module it.polimi.ingsw.am48 {
     requires java.xml;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
+    requires java.rmi;
     exports it.polimi.ingsw.am48.model.game;
     exports it.polimi.ingsw.am48.model.player;
     exports it.polimi.ingsw.am48.model.card;
@@ -18,6 +19,10 @@ module it.polimi.ingsw.am48 {
     exports it.polimi.ingsw.am48.exception;
     exports it.polimi.ingsw.am48.repository;
     exports it.polimi.ingsw.am48.controller;
+
+    exports it.polimi.ingsw.am48.network to java.rmi;
+    exports it.polimi.ingsw.am48.network.server to java.rmi;
+    exports it.polimi.ingsw.am48.network.client to java.rmi;
 
     opens it.polimi.ingsw.am48.network.messages  to com.fasterxml.jackson.databind;
     opens it.polimi.ingsw.am48.model.delta        to com.fasterxml.jackson.databind;

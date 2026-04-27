@@ -1,9 +1,6 @@
 package it.polimi.ingsw.am48.network.server;
 
 import it.polimi.ingsw.am48.model.delta.GameDelta;
-import it.polimi.ingsw.am48.model.game.Game;
-import it.polimi.ingsw.am48.model.game.GameManager;
-import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.network.VirtualView;
 
@@ -13,7 +10,7 @@ import java.util.Map;
 
 public class MesosServer {
     // Map thread-safe per gestire le connessioni concorrenti
-    private Map<String, VirtualView> connectedPlayers = new ConcurrentHashMap<>();
+    private final Map<String, VirtualView> connectedPlayers = new ConcurrentHashMap<>();
     // MesosServer non deve conoscere il gameManager del model
 
     public void registerClient(String nickname, VirtualView view) {

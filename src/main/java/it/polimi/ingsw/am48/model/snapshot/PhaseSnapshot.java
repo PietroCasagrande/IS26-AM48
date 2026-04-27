@@ -1,7 +1,9 @@
 // PhaseSnapshot.java
 package it.polimi.ingsw.am48.model.snapshot;
 
-public abstract class PhaseSnapshot {
+import java.io.Serializable;
+
+public abstract class PhaseSnapshot implements Serializable {
     private final String phaseName;
 
     protected PhaseSnapshot(String phaseName) {

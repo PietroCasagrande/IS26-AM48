@@ -1,6 +1,8 @@
 package it.polimi.ingsw.am48.model.snapshot;
 
-public class PlayerSnapshot {
+import java.io.Serializable;
+
+public class PlayerSnapshot implements Serializable {
     private final String nickname;
     private final String totemColor;
     private final TribeSnapshot tribe;
