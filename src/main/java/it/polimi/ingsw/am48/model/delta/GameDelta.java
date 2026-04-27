@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 
+import java.io.Serializable;
+
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,      // uso un campo "type" nel JSON
         include = JsonTypeInfo.As.PROPERTY,           // il campo è incluso nel payload
@@ -17,6 +19,6 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
         @JsonSubTypes.Type(value = EndGameDelta.class,              name = "endGame"),
 })
 
-public abstract class GameDelta {
+public abstract class GameDelta implements Serializable {
     public abstract void applyTo(ClientModel model);
 }

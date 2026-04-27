@@ -1,9 +1,10 @@
 // BoardSnapshot.java
 package it.polimi.ingsw.am48.model.snapshot;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class BoardSnapshot {
+public class BoardSnapshot implements Serializable {
     private final List<String> upperRowCardIds;
     private final List<String> lowerRowCardIds;
     private final List<String> buildingUpperRowCardIds;

@@ -1,9 +1,10 @@
 // OfferTurnCardSnapshot.java
 package it.polimi.ingsw.am48.model.snapshot;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class OfferTurnCardSnapshot {
+public class OfferTurnCardSnapshot implements Serializable {
     private final List<String> totemOrder; // lista ordinata di colori totem
 
     public OfferTurnCardSnapshot(List<String> totemOrder) {

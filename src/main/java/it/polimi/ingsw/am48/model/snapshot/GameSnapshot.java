@@ -1,10 +1,11 @@
 package it.polimi.ingsw.am48.model.snapshot;
 
+import java.io.Serializable;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class GameSnapshot {
+public class GameSnapshot implements Serializable {
     private final String gameId;
     private final int numPlayers;
     private final int currentTurn;
