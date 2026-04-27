@@ -24,7 +24,6 @@ module it.polimi.ingsw.am48 {
     exports it.polimi.ingsw.am48.network.server to java.rmi;
     exports it.polimi.ingsw.am48.network.client to java.rmi;
 
-    opens it.polimi.ingsw.am48.network.messages  to com.fasterxml.jackson.databind;
     opens it.polimi.ingsw.am48.model.delta        to com.fasterxml.jackson.databind;
     opens it.polimi.ingsw.am48.model.snapshot     to com.fasterxml.jackson.databind;
     opens it.polimi.ingsw.am48.network.messages.notifications to com.fasterxml.jackson.databind;

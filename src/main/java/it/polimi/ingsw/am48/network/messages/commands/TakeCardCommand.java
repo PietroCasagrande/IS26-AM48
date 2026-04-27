@@ -28,4 +28,8 @@ public class TakeCardCommand extends ClientCommand {
             catch (Exception ex) { ex.printStackTrace(); }
         }
     }
+
+    public String getCardId() {
+        return cardId;
+    }
 }

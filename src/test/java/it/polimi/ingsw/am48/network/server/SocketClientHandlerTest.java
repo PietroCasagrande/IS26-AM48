@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.network.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.am48.controller.GameController;
 import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
@@ -41,10 +42,12 @@ class SocketClientHandlerTest {
         handler = new SocketClientHandler(socket, controller, server);
     }
 
+    // --- joinGame ---
+
     @Test
-    @DisplayName("handleMessage: joinGame when game is not full should send initialSnapshot to client only")
+    @DisplayName("joinGame: when game is not full should send initialSnapshot to client only")
     void shouldSendSnapshotToClientWhenGameNotFull() throws Exception {
-        String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}";
+        String input = "{\"type\":\"joinGame\",\"numPlayers\":3,\"nickname\":\"P1\"}";
         setupHandlerWithInput(input);
         when(joinResultMock.snapshot()).thenReturn(snapshotMock);
         when(joinResultMock.gameStarted()).thenReturn(false);
@@ -58,9 +61,9 @@ class SocketClientHandlerTest {
     }
 
     @Test
-    @DisplayName("handleMessage: joinGame when game is full should broadcast snapshot to entire game")
+    @DisplayName("joinGame: when game is full should broadcast snapshot to entire game")
     void shouldBroadcastSnapshotWhenGameFull() throws Exception {
-        String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}";
+        String input = "{\"type\":\"joinGame\",\"numPlayers\":3,\"nickname\":\"P1\"}";
         setupHandlerWithInput(input);
         when(joinResultMock.snapshot()).thenReturn(snapshotMock);
         when(joinResultMock.gameStarted()).thenReturn(true);
@@ -71,18 +74,18 @@ class SocketClientHandlerTest {
 
         verify(server).registerClient(eq("P1"), eq(handler));
         verify(server).broadcastSnapshotToGame(eq(List.of("P1", "P2", "P3")), eq(snapshotMock));
-        // The individual showInitialSnapshot is bypassed, handled by broadcast
     }
 
+    // --- placeTotem ---
+
     @Test
-    @DisplayName("handleMessage: placeTotem should broadcast gameDelta to game")
+    @DisplayName("placeTotem: should broadcast all deltas to game")
     void shouldBroadcastDeltaOnPlaceTotem() throws Exception {
-        // Setup state by simulating a join first to set nickname
-        String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}\n" +
-                "{\"type\":\"placeTotem\",\"payload\":{\"position\":\"A\"}}";
+        String input = "{\"type\":\"joinGame\",\"numPlayers\":3,\"nickname\":\"P1\"}\n" +
+                "{\"type\":\"placeTotem\",\"position\":\"A\"}";
         setupHandlerWithInput(input);
         when(joinResultMock.snapshot()).thenReturn(snapshotMock);
-        when(joinResultMock.gameStarted()).thenReturn(true);
+        when(joinResultMock.gameStarted()).thenReturn(false);
         when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
         when(controller.handlePlaceTotem("P1", 'A')).thenReturn(List.of(deltaMock, deltaMock));
         when(controller.getPlayersInGame("P1")).thenReturn(List.of("P1"));
@@ -92,14 +95,16 @@ class SocketClientHandlerTest {
         verify(server, times(2)).broadcastToGame(eq(List.of("P1")), eq(deltaMock));
     }
 
+    // --- takeCard ---
+
     @Test
-    @DisplayName("handleMessage: takeCard should broadcast multiple gameDeltas to game")
+    @DisplayName("takeCard: should broadcast multiple deltas to game")
     void shouldBroadcastMultipleDeltasOnTakeCard() throws Exception {
-        String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}\n" +
-                "{\"type\":\"takeCard\",\"payload\":{\"cardId\":\"C123\"}}";
+        String input = "{\"type\":\"joinGame\",\"numPlayers\":3,\"nickname\":\"P1\"}\n" +
+                "{\"type\":\"takeCard\",\"cardId\":\"C123\"}";
         setupHandlerWithInput(input);
         when(joinResultMock.snapshot()).thenReturn(snapshotMock);
-        when(joinResultMock.gameStarted()).thenReturn(true);
+        when(joinResultMock.gameStarted()).thenReturn(false);
         when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
         when(controller.handleTakeCard("P1", "C123")).thenReturn(List.of(deltaMock, deltaMock));
         when(controller.getPlayersInGame("P1")).thenReturn(List.of("P1"));
@@ -109,14 +114,16 @@ class SocketClientHandlerTest {
         verify(server, times(2)).broadcastToGame(eq(List.of("P1")), eq(deltaMock));
     }
 
+    // --- error handling ---
+
     @Test
-    @DisplayName("handleMessage: exception in controller should trigger reportError to client")
+    @DisplayName("exception in controller should send error to client only")
     void shouldSendErrorToClientOnControllerException() throws Exception {
-        String input = "{\"type\":\"joinGame\",\"payload\":{\"numPlayers\":3,\"nickname\":\"P1\"}}\n" +
-                "{\"type\":\"placeTotem\",\"payload\":{\"position\":\"X\"}}";
+        String input = "{\"type\":\"joinGame\",\"numPlayers\":3,\"nickname\":\"P1\"}\n" +
+                "{\"type\":\"placeTotem\",\"position\":\"X\"}";
         setupHandlerWithInput(input);
         when(joinResultMock.snapshot()).thenReturn(snapshotMock);
-        when(joinResultMock.gameStarted()).thenReturn(true);
+        when(joinResultMock.gameStarted()).thenReturn(false);
         when(controller.handleJoinGame(3, "P1")).thenReturn(joinResultMock);
         when(controller.handlePlaceTotem("P1", 'X')).thenThrow(new IllegalStateException("Invalid move"));
 
@@ -127,13 +134,13 @@ class SocketClientHandlerTest {
         verify(server, never()).broadcastToGame(any(), any());
     }
 
+    // --- connection ---
+
     @Test
-    @DisplayName("run: loop terminates and closes socket on IOException/EOF")
+    @DisplayName("run: loop terminates and closes socket on EOF")
     void shouldCloseSocketOnEOF() throws Exception {
-        setupHandlerWithInput(""); // Empty input simulates immediate EOF
-
+        setupHandlerWithInput("");
         handler.run();
-
         verify(socket).close();
     }
 }

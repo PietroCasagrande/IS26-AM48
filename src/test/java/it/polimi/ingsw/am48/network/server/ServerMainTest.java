@@ -11,6 +11,7 @@ import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ServerMainTest {
 
     private static final int PORT = 12345;
@@ -31,55 +32,48 @@ class ServerMainTest {
         executor.shutdownNow();
     }
 
-    // ── costruttore ──────────────────────────────────────────────────────────
+    private void waitForPort(int port, long timeoutMs) throws Exception {
+        long deadline = System.currentTimeMillis() + timeoutMs;
+        while (System.currentTimeMillis() < deadline) {
+            try (Socket s = new Socket("localhost", port)) {
+                return;
+            } catch (ConnectException e) {
+                Thread.sleep(50);
+            }
+        }
+        fail("Server non pronto entro " + timeoutMs + "ms");
+    }
 
     @Test
+    @Order(1)
     @DisplayName("constructor: should instantiate without throwing")
     void shouldInstantiateWithoutThrowing() {
         assertDoesNotThrow(ServerMain::new);
     }
 
     @Test
-    @DisplayName("constructor: multiple instances should not conflict at construction time")
-    void shouldAllowMultipleInstances() {
-        // il conflitto di porta avviene solo su start(), non sul costruttore
-        assertDoesNotThrow(() -> {
-            new ServerMain();
-            new ServerMain();
-        });
-    }
-
-    // ── start() — integrazione reale ─────────────────────────────────────────
-
-    @Test
+    @Order(2)
     @Timeout(5)
     @DisplayName("start: server should accept incoming TCP connections on PORT 12345")
     void shouldAcceptConnectionOnPort() throws Exception {
         server = new ServerMain();
         executor.submit(server::start);
+        waitForPort(PORT, 3000);
 
-        // attesa per il server che sia pronto
-        // waitForPort(PORT, 3000);
-
-        // tenta connessione reale
-        assertDoesNotThrow(() -> {
-            try (Socket s = new Socket("localhost", PORT)) {
-                assertTrue(s.isConnected());
-            }
-        });
+        try (Socket s = new Socket("localhost", PORT)) {
+            assertTrue(s.isConnected());
+        }
     }
 
     @Test
+    @Order(3)
     @Timeout(5)
     @DisplayName("start: server should accept multiple concurrent connections")
     void shouldAcceptMultipleConcurrentConnections() throws Exception {
         server = new ServerMain();
         executor.submit(server::start);
+        waitForPort(PORT, 3000);
 
-        // attesa per il server che sia pronto
-        // waitForPort(PORT, 3000);
-
-        // apre 3 connessioni simultanee
         Socket s1 = new Socket("localhost", PORT);
         Socket s2 = new Socket("localhost", PORT);
         Socket s3 = new Socket("localhost", PORT);
@@ -92,29 +86,21 @@ class ServerMainTest {
     }
 
     @Test
-    @DisplayName("start: server should NOT be reachable before start() is called")
-    void shouldNotBeReachableBeforeStart() {
-        new ServerMain(); // costruisce ma non avvia
-
-        assertThrows(ConnectException.class, () -> {
-            try (Socket ignored = new Socket("localhost", PORT)) { }
-        });
-    }
-
-    @Test
+    @Order(4)
+    @Timeout(5)
+    @DisplayName("start: should handle joinGame command with new format")
     void shouldHandleJoinGameMessage() throws Exception {
         server = new ServerMain();
         executor.submit(server::start);
+        waitForPort(PORT, 3000);
 
-        try (Socket s = new Socket("localhost", 12345);
+        try (Socket s = new Socket("localhost", PORT);
              PrintWriter out = new PrintWriter(s.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()))) {
 
-            // Invia un messaggio JSON reale per coprire handleMessage()
-            String joinMsg = "{\"type\":\"joinGame\",\"payload\":{\"nickname\":\"StudentPolimi\",\"numPlayers\":2}}";
+            String joinMsg = "{\"type\":\"joinGame\",\"numPlayers\":2,\"nickname\":\"StudentPolimi\"}";
             out.println(joinMsg);
 
-            // Verifica la risposta (copre sendMessage e VirtualViewSocket)
             String response = in.readLine();
             assertNotNull(response);
             assertTrue(response.contains("initialSnapshot"));

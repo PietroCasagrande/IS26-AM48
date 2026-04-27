@@ -9,7 +9,7 @@ import javafx.application.Preloader;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = GameDeltaNotification.class, name = "gameDelta"),
         @JsonSubTypes.Type(value = InitialSnapshotNotification.class, name = "initialSnapshot"),
-        @JsonSubTypes.Type(value = Preloader.ErrorNotification.class, name = "error")
+        @JsonSubTypes.Type(value = ErrorNotification.class, name = "error")
 })
 public abstract class ServerNotification {
     public abstract void apply(ClientModel model);
