@@ -8,7 +8,7 @@ public class ErrorNotification extends ServerNotification {
     private String message;
 
     @JsonCreator
-    public ErrorNotification(@JsonProperty("error") String message){
+    public ErrorNotification(@JsonProperty("message") String message){
         this.message = message;
     }
 

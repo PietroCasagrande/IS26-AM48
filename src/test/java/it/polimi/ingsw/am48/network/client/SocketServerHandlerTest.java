@@ -2,14 +2,21 @@ package it.polimi.ingsw.am48.network.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.delta.TotemPlacedDelta;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
+import it.polimi.ingsw.am48.network.messages.notifications.ServerNotification;
+import it.polimi.ingsw.am48.network.messages.notifications.ErrorNotification;
+import it.polimi.ingsw.am48.network.messages.notifications.GameDeltaNotification;
+import it.polimi.ingsw.am48.network.messages.notifications.InitialSnapshotNotification;
+import it.polimi.ingsw.am48.network.messages.commands.ClientCommand;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
 import java.net.*;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.*;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class SocketServerHandlerTest {
@@ -27,11 +34,11 @@ class SocketServerHandlerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        mapper       = new ObjectMapper();
-        mockModel    = mock(ClientModel.class);
-        serverSocket = new ServerSocket(0); // porta OS-assigned, evita conflitti
+        mapper = new ObjectMapper();
+        mockModel = mock(ClientModel.class);
+        serverSocket = new ServerSocket(0);
 
-        acceptExecutor  = Executors.newSingleThreadExecutor();
+        acceptExecutor = Executors.newSingleThreadExecutor();
         handlerExecutor = Executors.newSingleThreadExecutor();
 
         Future<Socket> acceptFuture = acceptExecutor.submit(() -> serverSocket.accept());
@@ -39,7 +46,7 @@ class SocketServerHandlerTest {
         handler = new SocketServerHandler("localhost", serverSocket.getLocalPort(), mockModel);
 
         serverSideConn = acceptFuture.get(2, TimeUnit.SECONDS);
-        serverIn  = new BufferedReader(new InputStreamReader(serverSideConn.getInputStream()));
+        serverIn = new BufferedReader(new InputStreamReader(serverSideConn.getInputStream()));
         serverOut = new PrintWriter(serverSideConn.getOutputStream(), true);
     }
 
@@ -48,128 +55,90 @@ class SocketServerHandlerTest {
         acceptExecutor.shutdownNow();
         handlerExecutor.shutdownNow();
         if (serverSideConn != null) serverSideConn.close();
-        if (serverSocket   != null) serverSocket.close();
+        if (serverSocket != null) serverSocket.close();
     }
 
-    // ── helpers ──────────────────────────────────────────────────────────────
-
-    /** Legge il prossimo NetworkMessage dal lato "server" del test. */
-    private NetworkMessage readFromClient() throws Exception {
-        return mapper.readValue(serverIn.readLine(), NetworkMessage.class);
-    }
-
-    /** Invia un NetworkMessage dal lato "server" verso il handler. */
-    private void sendToHandler(String type, Object payload) throws Exception {
-        NetworkMessage msg = new NetworkMessage(type, mapper.valueToTree(payload));
-        serverOut.println(mapper.writeValueAsString(msg));
-    }
-
-    /** Avvia handler.run() su thread separato. */
     private void startHandlerThread() {
         handlerExecutor.submit(handler);
     }
 
-    // ── joinGame ─────────────────────────────────────────────────────────────
+    /** Legge il prossimo ClientCommand dal lato "server" del test */
+    private ClientCommand readCommandFromClient() throws Exception {
+        return mapper.readValue(serverIn.readLine(), ClientCommand.class);
+    }
+
+    /** Invia una ServerNotification dal lato "server" verso il handler */
+    private void sendNotificationToHandler(ServerNotification notification) throws Exception {
+        serverOut.println(mapper.writeValueAsString(notification));
+    }
+
+    // --- Invio comandi (client → server) ---
 
     @Test
-    @DisplayName("joinGame: should send message with type 'joinGame'")
-    void shouldSendJoinGameType() throws Exception {
+    @DisplayName("joinGame: should send JoinGameCommand with correct type")
+    void shouldSendJoinGameCommand() throws Exception {
         handler.joinGame(3, "Pietro");
-        assertEquals("joinGame", readFromClient().getType());
+        String json = serverIn.readLine();
+        assertTrue(json.contains("\"type\":\"joinGame\""));
+        assertTrue(json.contains("\"numPlayers\":3"));
+        assertTrue(json.contains("\"nickname\":\"Pietro\""));
     }
 
     @Test
-    @DisplayName("joinGame: payload should contain numPlayers and nickname")
-    void shouldSendJoinGamePayload() throws Exception {
+    @DisplayName("joinGame: should deserialize as JoinGameCommand")
+    void shouldDeserializeJoinGameCommand() throws Exception {
         handler.joinGame(3, "Pietro");
-        var payload = readFromClient().getPayload();
-        assertEquals(3,        payload.get("numPlayers").asInt());
-        assertEquals("Pietro", payload.get("nickname").asText());
+        ClientCommand cmd = readCommandFromClient();
+        assertTrue(cmd instanceof it.polimi.ingsw.am48.network.messages.commands.JoinGameCommand);
     }
 
-    // ── placeTotem ───────────────────────────────────────────────────────────
-
     @Test
-    @DisplayName("placeTotem: should send message with type 'placeTotem'")
-    void shouldSendPlaceTotemType() throws Exception {
+    @DisplayName("placeTotem: should send PlaceTotemCommand with correct data")
+    void shouldSendPlaceTotemCommand() throws Exception {
         handler.placeTotem("Pietro", 'A');
-        assertEquals("placeTotem", readFromClient().getType());
+        String json = serverIn.readLine();
+        assertTrue(json.contains("\"type\":\"placeTotem\""));
     }
 
     @Test
-    @DisplayName("placeTotem: payload should contain nickname and position as string")
-    void shouldSendPlaceTotemPayload() throws Exception {
-        handler.placeTotem("Pietro", 'A');
-        var payload = readFromClient().getPayload();
-        assertEquals("Pietro", payload.get("nickname").asText());
-        assertEquals("A",      payload.get("position").asText());
-    }
-
-    // ── takeCard ─────────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("takeCard: should send message with type 'takeCard'")
-    void shouldSendTakeCardType() throws Exception {
+    @DisplayName("takeCard: should send TakeCardCommand with correct data")
+    void shouldSendTakeCardCommand() throws Exception {
         handler.takeCard("Pietro", "char_01");
-        assertEquals("takeCard", readFromClient().getType());
+        String json = serverIn.readLine();
+        assertTrue(json.contains("\"type\":\"takeCard\""));
+        assertTrue(json.contains("\"cardId\":\"char_01\""));
     }
 
-    @Test
-    @DisplayName("takeCard: payload should contain nickname and cardId")
-    void shouldSendTakeCardPayload() throws Exception {
-        handler.takeCard("Pietro", "char_01");
-        var payload = readFromClient().getPayload();
-        assertEquals("Pietro",  payload.get("nickname").asText());
-        assertEquals("char_01", payload.get("cardId").asText());
-    }
-
-    // ── run() — error ────────────────────────────────────────────────────────
+    // --- Ricezione notifiche (server → client) ---
 
     @Test
-    @DisplayName("run: 'error' message should call model.notifyError with payload text")
-    void shouldCallNotifyErrorOnErrorMessage() throws Exception {
+    @DisplayName("run: ErrorNotification should call model.notifyError")
+    void shouldCallNotifyErrorOnErrorNotification() throws Exception {
         startHandlerThread();
 
-        // payload dell'error è un testo semplice
-        sendToHandler("error", "Not your turn");
+        sendNotificationToHandler(new ErrorNotification("Not your turn"));
 
         verify(mockModel, timeout(1000)).notifyError("Not your turn");
     }
 
-    // ── run() — connection lost ───────────────────────────────────────────────
-
     @Test
-    @DisplayName("run: closing server connection should call model.notifyError")
-    void shouldNotifyErrorOnConnectionLost() throws Exception {
+    @DisplayName("run: GameDeltaNotification should call model.applyDelta")
+    void shouldCallApplyDeltaOnGameDeltaNotification() throws Exception {
         startHandlerThread();
 
-        serverSideConn.close(); // simula disconnessione improvvisa
-
-        verify(mockModel, timeout(1000)).notifyError(anyString());
-    }
-
-    // ── run() — gameDelta / initialSnapshot ──────────────────────────────────
-
-    @Test
-    @DisplayName("run: 'gameDelta' message should call model.applyDelta")
-    void shouldCallApplyDeltaOnGameDelta() throws Exception {
-        startHandlerThread();
-
-        sendToHandler("gameDelta", Map.of("type", "totemPlaced",
-                "playerNickname", "Pietro",
-                "tileId", "A"));
+        GameDelta delta = new TotemPlacedDelta("P1", 'A', List.of("P2"));  // ← AGGIUNGI questa riga
+        sendNotificationToHandler(new GameDeltaNotification(delta));
 
         verify(mockModel, timeout(1000)).applyDelta(any(GameDelta.class));
     }
 
     @Test
-    @DisplayName("run: 'initialSnapshot' message should call model.setInitialState")
-    void shouldCallSetInitialStateOnSnapshot() throws Exception {
+    @DisplayName("run: closing connection should call model.notifyError")
+    void shouldNotifyErrorOnConnectionLost() throws Exception {
         startHandlerThread();
 
-        sendToHandler("initialSnapshot", Map.of("gameID", "GAME-1",
-                "numPlayers", 3));
+        serverSideConn.close();
 
-        verify(mockModel, timeout(1000)).setInitialState(any(GameSnapshot.class));
+        verify(mockModel, timeout(1000)).notifyError(anyString());
     }
 }

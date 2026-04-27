@@ -26,4 +26,8 @@ public class PlaceTotemCommand extends ClientCommand {
             try{ handler.getSelfView().reportError(e.getMessage()); }
             catch(Exception ex){ ex.printStackTrace(); } }
     }
+
+    public char getPosition() {
+        return position;
+    }
 }

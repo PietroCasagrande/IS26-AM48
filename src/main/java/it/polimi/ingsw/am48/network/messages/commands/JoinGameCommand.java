@@ -36,4 +36,12 @@ public class JoinGameCommand extends ClientCommand{
             catch (Exception ex) { ex.printStackTrace(); }
         }
     }
+
+    public int getNumPlayers() {
+        return numPlayers;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
 }
