@@ -3,7 +3,6 @@ package it.polimi.ingsw.am48.network.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
-import it.polimi.ingsw.am48.network.messages.NetworkMessage;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
@@ -11,7 +10,6 @@ import java.net.*;
 import java.util.Map;
 import java.util.concurrent.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class SocketServerHandlerTest {

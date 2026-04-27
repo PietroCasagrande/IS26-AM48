@@ -6,7 +6,6 @@ import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.network.VirtualViewSocket;
-import it.polimi.ingsw.am48.network.messages.NetworkMessage;
 
 import java.io.*;
 import java.net.Socket;
