@@ -1,4 +1,4 @@
-package it.polimi.ingsw.am48.network.messages;
+package it.polimi.ingsw.am48.network.messages.notifications;
 
 import it.polimi.ingsw.am48.network.client.ClientModel;
 
