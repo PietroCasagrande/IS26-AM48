@@ -1,9 +1,10 @@
 
 package it.polimi.ingsw.am48.model.snapshot;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class OfferTrackSnapshot {
+public class OfferTrackSnapshot implements Serializable {
     // key = lettera casella ("A", "B", ...), value = colore totem, assente = libera
     private final Map<Character, String> totemPositions;
 

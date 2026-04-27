@@ -1,8 +1,9 @@
 package it.polimi.ingsw.am48.model.snapshot;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PlayerOfferPhaseSnapshot extends PhaseSnapshot {
+public class PlayerOfferPhaseSnapshot extends PhaseSnapshot implements Serializable {
     private final List<String> actionOrderNicknames;
     private final int currIdx;
 

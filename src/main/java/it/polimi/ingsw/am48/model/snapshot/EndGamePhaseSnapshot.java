@@ -1,6 +1,8 @@
 package it.polimi.ingsw.am48.model.snapshot;
 
-public class EndGamePhaseSnapshot extends PhaseSnapshot {
+import java.io.Serializable;
+
+public class EndGamePhaseSnapshot extends PhaseSnapshot implements Serializable {
     public EndGamePhaseSnapshot() {
         super("END_GAME");
     }

@@ -1,10 +1,11 @@
 // TribeSnapshot.java
 package it.polimi.ingsw.am48.model.snapshot;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class TribeSnapshot {
+public class TribeSnapshot implements Serializable {
     private final List<String> characterCardIds;
     private final List<String> buildingCardIds;
     private final Map<String, Integer> artifacts;
