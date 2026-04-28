@@ -13,7 +13,7 @@ public interface GamePhase {
     default void addPlayer(PlayerContext playerContext,Game game, String playerNickname){
         throw new InvalidActionException("Azione non consentita in questa fase");
     }
-    default GameDelta placeTotem(Game game, Player player, char position){
+    default List<GameDelta> placeTotem(Game game, Player player, char position){
         throw new InvalidActionException("Azione non consentita in questa fase");
     }
     default List<GameDelta> takeCard(Game game, Player player, String cardId){

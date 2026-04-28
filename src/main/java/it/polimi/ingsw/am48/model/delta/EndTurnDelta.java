@@ -3,6 +3,9 @@ package it.polimi.ingsw.am48.model.delta;
 
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import it.polimi.ingsw.am48.network.client.ClientModel;
 
 public class EndTurnDelta extends GameDelta {
     private final Map<String, Integer> updatedFood;        // nickname -> cibo aggiornato
@@ -12,19 +15,34 @@ public class EndTurnDelta extends GameDelta {
     private final List<String> newUpperBuildingIds;     // nuovi edifici (se cambio era)
     private final List<String> newLowerBuildingIds;
 
-
-    public EndTurnDelta(Map<String, Integer> updatedFood,
-                        Map<String, Integer> updatedPrestige,
-                        List<String> newUpperTribeIds,
-                        List<String> newLowerTribeIds,
-                        List<String> newUpperBuildingIds,
-                        List<String> newLowerBuildingIds) {
+    @JsonCreator
+    public EndTurnDelta(
+            @JsonProperty("updatedFood")Map<String, Integer> updatedFood,
+            @JsonProperty("updatedPrestige")Map<String, Integer> updatedPrestige,
+            @JsonProperty("newUpperTribeIds")List<String> newUpperTribeIds,
+            @JsonProperty("newLowerTribeIds")List<String> newLowerTribeIds,
+            @JsonProperty("newUpperBuildingIds")List<String> newUpperBuildingIds,
+            @JsonProperty("newLowerBuildingIds")List<String> newLowerBuildingIds) {
         this.updatedFood = updatedFood;
         this.updatedPrestige = updatedPrestige;
         this.newUpperTribeIds = newUpperTribeIds;
         this.newLowerTribeIds = newLowerTribeIds;
         this.newUpperBuildingIds = newUpperBuildingIds;
         this.newLowerBuildingIds = newLowerBuildingIds;
+    }
+
+    // EndTurn modifica showed e food e pp di tutti i giocatori
+    @Override
+    public void applyTo(ClientModel model) {
+        updatedFood.keySet().forEach(nick -> {
+            model.updatePlayerFood(nick, updatedFood.get(nick));
+        });
+
+        updatedPrestige.keySet().forEach(nick -> {
+            model.updatePlayerPoints(nick, updatedPrestige.get(nick));
+        });
+
+        model.updateTribeShowed(newUpperTribeIds, newLowerTribeIds);
     }
 
     // getter per tutti i campi

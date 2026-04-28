@@ -8,6 +8,7 @@ import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.delta.OfferCardADelta;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.enums.EventType;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -80,6 +82,9 @@ class PlayerOfferPhaseTest {
         when(mockBuildingShowed.getUpperList()).thenReturn(List.of());
         when(mockBuildingShowed.getLowerList()).thenReturn(List.of());
         when(mockGame.findWinner()).thenReturn(p1);
+        when(mockGame.getPlayerContext()).thenReturn(playerContext);
+        when(mockGame.getNotificatorCenter()).thenReturn(mockNotificatorCenter);
+        when(mockNotificatorCenter.getTotemReturnedNotificator()).thenReturn(mockTotemReturnedNotificator);
 
         offerB = new OfferCard('B', 1, 0, 0, 3);
         offerA = new OfferCard('A', 1, 0, 3, 3);
@@ -106,21 +111,95 @@ class PlayerOfferPhaseTest {
     // --- COSTRUTTORE ---
 
     @Test
-    void shouldSkipFirstPlayerAndGiveFoodIfOnCardA() {
-        // se il primo player è sulla tessera A riceve cibo e viene skippato
+    void shouldInitializeWithCorrectDefaults() {
+        // il costruttore inizializza solo lo stato, nessuna logica di gioco
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        // verifica che nessun effetto collaterale sia avvenuto
+        assertEquals(0, p1.getFood());
+        verify(mockBoard, never()).returnTotem(any());
+    }
+
+    // --- METODO SETUP ---
+
+    @Test
+    void shouldGiveFoodAndReturnTotemIfFirstPlayerOnCardA() {
+        // se il primo player è sulla tessera A, setup() assegna cibo e ritorna il totem
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
-        new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
         assertEquals(3, p1.getFood());
         verify(mockBoard).returnTotem(p1);
     }
 
     @Test
-    void shouldNotSkipFirstPlayerIfNotOnCardA() {
-        // se il primo player non è sulla tessera A non viene skippato
+    void shouldReturnOfferCardADeltaIfFirstPlayerOnCardA() {
+        // setup() restituisce Optional con OfferCardADelta se c'è tessera A
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        Optional<GameDelta> result = phase.setup(mockGame);
+        assertTrue(result.isPresent());
+        assertInstanceOf(OfferCardADelta.class, result.get());
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalIfFirstPlayerNotOnCardA() {
+        // setup() restituisce Optional.empty() se non c'è tessera A
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        Optional<GameDelta> result = phase.setup(mockGame);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldNotGiveFoodIfFirstPlayerNotOnCardA() {
+        // se il primo player non è sulla tessera A nessun cibo viene assegnato
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
         assertEquals(0, p1.getFood());
-        verify(mockBoard, never()).returnTotem(p1);
+    }
+
+    @Test
+    void shouldNotReturnTotemIfFirstPlayerNotOnCardA() {
+        // se il primo player non è sulla tessera A il totem non viene restituito
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
+        verify(mockBoard, never()).returnTotem(any());
+    }
+
+    @Test
+    void shouldSkipFirstPlayerInActionOrderIfOnCardA() {
+        // se il primo player è sulla tessera A viene skippato - il turno passa a p2
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
+        // p1 è stato skippato, ora tocca a p2
+        Card card = makeCharCard("card1");
+        setupNormalPick(p2, offerB, "card1", card);
+        assertDoesNotThrow(() -> phase.takeCard(mockGame, p2, "card1"));
+    }
+
+    @Test
+    void shouldHaveCorrectNicknameInOfferCardADelta() {
+        // il delta contiene il nickname corretto del player sulla tessera A
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        Optional<GameDelta> result = phase.setup(mockGame);
+        OfferCardADelta delta = (OfferCardADelta) result.get();
+        assertEquals("alice", delta.getPlayerNickname());
+    }
+
+    @Test
+    void shouldHaveCorrectFoodInOfferCardADelta() {
+        // il delta contiene il cibo aggiornato dopo il bonus tessera A
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offerA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        phase.setup(mockGame);
+        Optional<GameDelta> result = phase.setup(mockGame);
+        // p1 parte da 0 cibo e riceve 3 dal foodBonus della tessera A e 3 dal piazzamento in prima posizione sulla OfferTurnCard
+        OfferCardADelta delta = (OfferCardADelta) result.get();
+        assertEquals(6, delta.getUpdatedFood());
     }
 
     // --- VALIDAZIONE TURNO ---
@@ -129,7 +208,7 @@ class PlayerOfferPhaseTest {
     void shouldThrowIfWrongPlayerTakesCard() {
         // player non di turno non può pescare
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         assertThrows(InvalidActionException.class,
                 () -> phase.takeCard(mockGame, p2, "card1"));
     }
@@ -138,7 +217,7 @@ class PlayerOfferPhaseTest {
     void shouldNotThrowIfCorrectPlayerTakesCard() {
         // il player di turno può pescare
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
         assertDoesNotThrow(() -> phase.takeCard(mockGame, p1, "card1"));
@@ -150,7 +229,7 @@ class PlayerOfferPhaseTest {
     void shouldThrowIfCardNotOnBoard() {
         // carta non presente sul tabellone
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
         when(mockBoard.isCardTop("card1")).thenReturn(false);
         when(mockBoard.isCardDown("card1")).thenReturn(false);
@@ -162,7 +241,7 @@ class PlayerOfferPhaseTest {
     void shouldThrowIfExceedsPicksFromTop() {
         // supera il numero di pick consentiti dalla fila superiore
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         Card card1 = makeCharCard("card1");
         Card card2 = makeCharCard("card2");
         setupNormalPick(p1, offerB, "card1", card1);
@@ -178,7 +257,7 @@ class PlayerOfferPhaseTest {
         // supera il numero di pick consentiti dalla fila inferiore
         OfferCard offerOneDown = new OfferCard('B', 0, 1, 0, 3);
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerOneDown);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         Card card1 = makeCharCard("card1");
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerOneDown);
         when(mockBoard.isCardTop("card1")).thenReturn(false);
@@ -197,7 +276,7 @@ class PlayerOfferPhaseTest {
     void shouldAdvanceToNextPlayerAfterAllPicksDone() {
         // dopo che p1 ha finito i pick tocca a p2
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
         phase.takeCard(mockGame, p1, "card1");
@@ -210,7 +289,7 @@ class PlayerOfferPhaseTest {
     void shouldResetPickCountersForNextPlayer() {
         // i contatori di pescate vengono resettati per il prossimo player
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         Card card1 = makeCharCard("card1");
         Card card2 = makeCharCard("card2");
         setupNormalPick(p1, offerB, "card1", card1);
@@ -226,7 +305,7 @@ class PlayerOfferPhaseTest {
     void shouldTransitionToEndTurnPhaseAfterAllPlayersPick() {
         // dopo che tutti i player hanno pescato si transisce a EndTurnPhase
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
         setupEndTurnMocks();
@@ -240,7 +319,7 @@ class PlayerOfferPhaseTest {
     void shouldReturnEndTurnDeltaAfterTransition() {
         // dopo la transizione il delta include anche EndTurnDelta
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
         setupEndTurnMocks();
@@ -254,7 +333,7 @@ class PlayerOfferPhaseTest {
     void shouldResolveAllEventsOnEndTurn() {
         // tutti gli eventi vengono risolti durante EndTurnPhase
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
         setupEndTurnMocks();
@@ -270,7 +349,7 @@ class PlayerOfferPhaseTest {
     void shouldTransitionToEndGameAfterTurn10() {
         // dopo il turno 10 si transisce a EndGamePhase
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
         when(mockGame.getCurrentTurn()).thenReturn(11); // turno 11 → fine partita
@@ -284,7 +363,7 @@ class PlayerOfferPhaseTest {
     void shouldIncrementTurnOnEndTurn() {
         // il turno viene incrementato durante EndTurnPhase
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
         setupEndTurnMocks();
@@ -301,7 +380,7 @@ class PlayerOfferPhaseTest {
         // se un player ha il diritto all'extra pick extraPickActive viene settato
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
         p2.setExtraPickRight();
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
 
@@ -317,7 +396,7 @@ class PlayerOfferPhaseTest {
         // durante l'extra pick solo il player con l'edificio può pescare
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
         p2.setExtraPickRight();
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
 
@@ -332,7 +411,7 @@ class PlayerOfferPhaseTest {
         // durante l'extra pick si può prendere solo dalla fila superiore
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
         p2.setExtraPickRight();
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
 
@@ -348,7 +427,7 @@ class PlayerOfferPhaseTest {
         // dopo l'extra pick si transisce a EndTurnPhase
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
         p2.setExtraPickRight();
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card1 = makeCharCard("card1");
         Card card2 = makeCharCard("card2");
         setupNormalPick(p1, offerB, "card1", card1);
@@ -370,7 +449,7 @@ class PlayerOfferPhaseTest {
     void shouldReturnNonEmptyDeltaAfterTakeCard() {
         // takeCard restituisce sempre almeno un delta
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
 
@@ -383,7 +462,7 @@ class PlayerOfferPhaseTest {
     void shouldReturnCharacterCardPickedDeltaForCharacterCard() {
         // per una CharacterCard il delta è di tipo CharacterCardPickedDelta
         when(mockBoard.findTrackPosition(p1)).thenReturn(offerB);
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3), mockGame);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         Card card = makeCharCard("card1");
         setupNormalPick(p1, offerB, "card1", card);
 

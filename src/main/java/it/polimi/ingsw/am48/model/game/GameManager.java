@@ -1,8 +1,10 @@
 package it.polimi.ingsw.am48.model.game;
 
+import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.repository.GameRepository;
 import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 
@@ -30,42 +32,57 @@ public class GameManager implements ModelInterface{
 
     // ModelInterface implementation: joinGame, placeTotem and takeCard methods
     @Override
-    public void joinGame(int numPlayers, String nickname){
-        if(numPlayers < 2 || numPlayers > 5) {
-            throw new IllegalArgumentException("Invalid number of players: must be between 2 and 5");
+    public JoinResult joinGame(int numPlayers, String nickname){
+        synchronized (this) {
+            if(numPlayers < 2 || numPlayers > 5) {
+                throw new IllegalArgumentException("Invalid number of players: must be between 2 and 5");
+            }
+            if(playerToGame.containsKey(nickname)){
+                throw new InvalidActionException("Nickname già in uso: " + nickname);
+            }
         }
-        if(playerToGame.containsKey(nickname)){
-            throw new InvalidActionException("Nickname già in uso: " + nickname);
+
+        Game game;
+        synchronized (this) {
+            game = findAvailableGame(numPlayers).orElseGet(() -> createGame(numPlayers));
         }
+        synchronized (game) {
+            game.addPlayer(nickname);
+            synchronized (this) { playerToGame.put(nickname, game); }
 
-        Game game = findAvailableGame(numPlayers).orElseGet(() -> createGame(numPlayers));
-
-        game.addPlayer(nickname);
-        playerToGame.put(nickname, game);
-
-        if(game.isFull()){
-            waitingGames.remove(numPlayers);
-            activeGames.put(game.getGameId(), game);
+            boolean started = game.isFull();
+            if (started) {
+                synchronized (this) {
+                    waitingGames.remove(numPlayers);
+                    activeGames.put(game.getGameId(), game);
+                }
+            }
+            GameSnapshot snapshot = game.toSnapshot();
+            return new JoinResult(snapshot, started);
         }
     }
 
     @Override
-    public GameDelta placeTotem(String nickname, char position){
+    public List<GameDelta> placeTotem(String nickname, char position){
         Game game = getGameByNickname(nickname);
-        Player player = game.getPlayerByNickname(nickname);
-        return game.placeTotem(player, position);
+        synchronized (game) {
+            Player player = game.getPlayerByNickname(nickname);
+            return game.placeTotem(player, position);
+        }
     }
 
     @Override
     public List<GameDelta> takeCard(String nickname, String cardId){
         Game game = getGameByNickname(nickname);
-        Player player = game.getPlayerByNickname(nickname);
-        return game.takeCard(player, cardId);
+        synchronized (game) {
+            Player player = game.getPlayerByNickname(nickname);
+            return game.takeCard(player, cardId);
+        }
     }
 
     // Game lookup:
     // metodo getGameByNickname ritorna il game in cui sta giocando il player con nickname passato x parametro
-    private Game getGameByNickname(String nickname){
+    public Game getGameByNickname(String nickname){
         Game game = playerToGame.get(nickname);
         if(game == null){
             throw new InvalidActionException("Nessuna partita trovata per: " + nickname);
@@ -90,6 +107,23 @@ public class GameManager implements ModelInterface{
             throw new InvalidActionException("Partita non trovata: " + gameId);
         }
         return game;
+    }
+    @Override
+    public GameSnapshot getSnapshotForNickname(String nickname) {
+        return getGameByNickname(nickname).toSnapshot();
+    }
+
+    @Override
+    public boolean isGameFull(String nickname) {
+        return getGameByNickname(nickname).isFull();
+    }
+
+    public List<String> getPlayersInGame(String nickname){
+        Game game = getGameByNickname(nickname);
+        return game.getPlayerContext().getPlayers()
+                .stream()
+                .map(Player::getNickname)
+                .toList();
     }
 
     // metodi per la persistenza del server (SaveGame) e per il DB (createGameResult)

@@ -266,7 +266,7 @@ class OfferCardTrackTest {
         OfferTrackSnapshot snapshot = offerCardTrack.toSnapshot();
 
         assertEquals(1, snapshot.getTotemPositions().size());
-        assertEquals("RED", snapshot.getTotemPositions().get("A"));
+        assertEquals("RED", snapshot.getTotemPositions().get('A'));
     }
 
     @Test
@@ -285,7 +285,7 @@ class OfferCardTrackTest {
         OfferTrackSnapshot snapshot = offerCardTrack.toSnapshot();
 
         assertEquals(2, snapshot.getTotemPositions().size());
-        assertEquals("RED",  snapshot.getTotemPositions().get("A"));
-        assertEquals("BLUE", snapshot.getTotemPositions().get("B"));
+        assertEquals("RED",  snapshot.getTotemPositions().get('A'));
+        assertEquals("BLUE", snapshot.getTotemPositions().get('B'));
     }
 }

@@ -1,7 +1,11 @@
 package it.polimi.ingsw.am48.controller;
 
+import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.game.Game;
+import it.polimi.ingsw.am48.model.game.GameManager;
 import it.polimi.ingsw.am48.model.game.ModelInterface;
+import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 
 import java.util.List;
 
@@ -13,22 +17,29 @@ public class GameController {
     }
 
     // client si unisce alla partita
-    void handleJoinGame(int numPlayers, String nickname){
-        model.joinGame(numPlayers, nickname);
-        // TODO: check se il game è full(?), eventualmente inviare SnapShot(?)
+    public JoinResult handleJoinGame(int numPlayers, String nickname){
+        return model.joinGame(numPlayers, nickname);
+    }
+
+    public boolean isGameFull(String nickname) {
+        return model.isGameFull(nickname);
     }
 
     // client piazza il totem
-    GameDelta handlePlaceTotem(String nickname, char position){
-        GameDelta delta = model.placeTotem(nickname, position);
+    public List<GameDelta> handlePlaceTotem(String nickname, char position){
+        List<GameDelta> deltas = model.placeTotem(nickname, position);
         // TODO: serializzazione Json(?), sincronizzazione(?)
-        return delta;
+        return deltas;
     }
 
     // client prende una carta
-    List<GameDelta> handleTakeCard(String nickname, String cardId){
+    public List<GameDelta> handleTakeCard(String nickname, String cardId){
         List<GameDelta> deltas = model.takeCard(nickname, cardId);
         // TODO: serializzazione Json(?), sincronizzazione(?)
         return deltas;
+    }
+
+    public List<String> getPlayersInGame(String nickname) {
+        return model.getPlayersInGame(nickname);
     }
 }
