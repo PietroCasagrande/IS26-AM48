@@ -23,7 +23,9 @@ public class OfferTrackFactory implements BoardFactory<OfferCardTrack>{
         Map<Character, OfferCard> map = new TreeMap<>();
 
         for (OfferCardDTO dto : this.track) {
-            map.put(dto.id, new OfferCard(dto.id, dto.numUp, dto.numDown, dto.foodBonus, dto.minPlayers));
+            if(dto.minPlayers <= numPlayers){
+                map.put(dto.id, new OfferCard(dto.id, dto.numUp, dto.numDown, dto.foodBonus, dto.minPlayers));
+            }
         }
         offerTrack.add(new OfferCardTrack(map));
 

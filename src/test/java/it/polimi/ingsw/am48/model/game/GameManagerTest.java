@@ -1,9 +1,16 @@
 package it.polimi.ingsw.am48.model.game;
 
 import it.polimi.ingsw.am48.exception.InvalidActionException;
+import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.game.Game;
+import it.polimi.ingsw.am48.model.phase.PlayerOfferPhase;
+import it.polimi.ingsw.am48.model.phase.PlaceTotemPhase;
+import it.polimi.ingsw.am48.model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,6 +87,72 @@ class GameManagerTest {
     @DisplayName("placeTotem: should throw InvalidActionException for unknown nickname")
     void shouldThrowPlaceTotemForUnknownNickname() {
         assertThrows(InvalidActionException.class, () -> manager.placeTotem("Nobody", 'A'));
+    }
+
+    @Test
+    @DisplayName("joinGame: should create board and switch to PlaceTotemPhase when game becomes full")
+    void shouldCreateBoardAndSwitchToPlaceTotemPhaseWhenFull() {
+        manager.joinGame(2, "Alice");
+        manager.joinGame(2, "Bob");
+
+        Game game = manager.getGameByNickname("Alice");
+        assertTrue(game.isFull());
+        assertNotNull(game.getBoard());
+        assertNotNull(game.toSnapshot().getBoard());
+        assertTrue(game.getCurrentPhase() instanceof PlaceTotemPhase);
+        assertEquals(2, manager.getPlayersInGame("Alice").size());
+    }
+
+    @Test
+    @DisplayName("placeTotem: after all players place totems game should transition to PlayerOfferPhase")
+    void shouldTransitionToPlayerOfferPhaseAfterAllTotemsPlaced() {
+        manager.joinGame(2, "Alice");
+        manager.joinGame(2, "Bob");
+
+        Game game = manager.getGameByNickname("Alice");
+        List<Player> placeOrder = game.getBoard().getPlaceOrder();
+
+        manager.placeTotem(placeOrder.get(0).getNickname(), 'C');
+        manager.placeTotem(placeOrder.get(0).getNickname(), 'B');
+
+        assertTrue(game.getCurrentPhase() instanceof PlayerOfferPhase);
+        assertEquals(2, game.getBoard().getPickOrder().size());
+    }
+
+    @Test
+    @DisplayName("takeCard: current player can take a top card during PlayerOfferPhase")
+    void shouldAllowCurrentPlayerToTakeTopCardDuringPlayerOfferPhase() {
+        manager.joinGame(2, "Alice");
+        manager.joinGame(2, "Bob");
+
+        Game game = manager.getGameByNickname("Alice");
+        List<Player> placeOrder = game.getBoard().getPlaceOrder();
+        manager.placeTotem(placeOrder.get(0).getNickname(), 'C');
+        manager.placeTotem(placeOrder.get(0).getNickname(), 'B');
+
+        String currentPlayer = game.getBoard().getPickOrder().get(0).getNickname();
+        String topCardId = game.getBoard().getTribeShowed().getLowerList().get(0).getCardId();
+
+        List<GameDelta> deltas = manager.takeCard(currentPlayer, topCardId);
+
+        assertFalse(deltas.isEmpty());
+        assertTrue(game.getBoard().getTribeShowed().getUpperList().stream()
+                .noneMatch(card -> card.getCardId().equals(topCardId)));
+    }
+
+    @Test
+    @DisplayName("takeCard: should throw when requested card is not on the board")
+    void shouldThrowWhenTakeCardNotOnBoard() {
+        manager.joinGame(2, "Alice");
+        manager.joinGame(2, "Bob");
+
+        Game game = manager.getGameByNickname("Alice");
+        List<Player> placeOrder = game.getBoard().getPlaceOrder();
+        manager.placeTotem(placeOrder.get(0).getNickname(), 'C');
+        manager.placeTotem(placeOrder.get(0).getNickname(), 'B');
+
+        String currentPlayer = game.getBoard().getPickOrder().get(0).getNickname();
+        assertThrows(InvalidActionException.class, () -> manager.takeCard(currentPlayer, "INVALID_CARD_ID"));
     }
 
     // ==================== placeTotem - happy path coverage ====================
