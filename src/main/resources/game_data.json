@@ -1,0 +1,1274 @@
+{
+  "characters": [
+    {
+      "id": "ART-01",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-02",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-03",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-04",
+      "era": "FIRST",
+      "minPlayers": 3,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-05",
+      "era": "FIRST",
+      "minPlayers": 4,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-06",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-07",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-08",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-09",
+      "era": "SECOND",
+      "minPlayers": 3,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-10",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-11",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-12",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "ARTIST"
+    },
+    {
+      "id": "ART-13",
+      "era": "THIRD",
+      "minPlayers": 5,
+      "character": "ARTIST"
+    },
+
+    {
+      "id": "BUI-01",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -1,
+        "builderPp": 2
+      }
+    },
+    {
+      "id": "BUI-02",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -2,
+        "builderPp": 0
+      }
+    },
+    {
+      "id": "BUI-03",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -1,
+        "builderPp": 3
+      }
+    },
+    {
+      "id": "BUI-04",
+      "era": "FIRST",
+      "minPlayers": 5,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -2,
+        "builderPp": 1
+      }
+    },
+    {
+      "id": "BUI-05",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -1,
+        "builderPp": 4
+      }
+    },
+    {
+      "id": "BUI-06",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -2,
+        "builderPp": 1
+      }
+    },
+    {
+      "id": "BUI-07",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -2,
+        "builderPp": 3
+      }
+    },
+    {
+      "id": "BUI-08",
+      "era": "SECOND",
+      "minPlayers": 3,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -1,
+        "builderPp": 2
+      }
+    },
+    {
+      "id": "BUI-09",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -2,
+        "builderPp": 2
+      }
+    },
+    {
+      "id": "BUI-10",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -1,
+        "builderPp": 5
+      }
+    },
+    {
+      "id": "BUI-11",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -2,
+        "builderPp": 3
+      }
+    },
+    {
+      "id": "BUI-12",
+      "era": "THIRD",
+      "minPlayers": 5,
+      "character": "BUILDER",
+      "strategy": {
+        "effect": "BuilderStrategy",
+        "buildingDiscount": -1,
+        "builderPp": 4
+      }
+    },
+
+    {
+      "id": "INV-01",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "BREAD"
+      }
+    },
+    {
+      "id": "INV-02",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "LEATHER"
+      }
+    },
+    {
+      "id": "INV-03",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "ARROW"
+      }
+    },
+    {
+      "id": "INV-04",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "CANOE"
+      }
+    },
+    {
+      "id": "INV-05",
+      "era": "FIRST",
+      "minPlayers": 4,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "BOWL"
+      }
+    },
+    {
+      "id": "INV-06",
+      "era": "FIRST",
+      "minPlayers": 4,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "ROPE"
+      }
+    },
+    {
+      "id": "INV-07",
+      "era": "FIRST",
+      "minPlayers": 4,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "FLUTE"
+      }
+    },
+    {
+      "id": "INV-08",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "BOWL"
+      }
+    },
+    {
+      "id": "INV-09",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "ROPE"
+      }
+    },
+    {
+      "id": "INV-10",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "DOLL"
+      }
+    },
+    {
+      "id": "INV-11",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "FLUTE"
+      }
+    },
+    {
+      "id": "INV-12",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "LEATHER"
+      }
+    },
+    {
+      "id": "INV-13",
+      "era": "SECOND",
+      "minPlayers": 4,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "HOOK"
+      }
+    },
+    {
+      "id": "INV-14",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "DOLL"
+      }
+    },
+    {
+      "id": "INV-15",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "NECKLACE"
+      }
+    },
+    {
+      "id": "INV-16",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "BREAD"
+      }
+    },
+    {
+      "id": "INV-17",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "HOOK"
+      }
+    },
+    {
+      "id": "INV-18",
+      "era": "THIRD",
+      "minPlayers": 3,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "CANOE"
+      }
+    },
+    {
+      "id": "INV-19",
+      "era": "THIRD",
+      "minPlayers": 3,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "ARROW"
+      }
+    },
+    {
+      "id": "INV-20",
+      "era": "THIRD",
+      "minPlayers": 4,
+      "character": "INVENTOR",
+      "strategy": {
+        "effect": "InventorStrategy",
+        "artifact": "NECKLACE"
+      }
+    },
+
+    {
+      "id": "HUN-01",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "HUNTER"
+    },
+    {
+      "id": "HUN-02",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "HUNTER",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "HUNTER"
+      }
+    },
+    {
+      "id": "HUN-03",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "HUNTER",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "HUNTER"
+      }
+    },
+    {
+      "id": "HUN-04",
+      "era": "FIRST",
+      "minPlayers": 3,
+      "character": "HUNTER"
+    },
+    {
+      "id": "HUN-05",
+      "era": "FIRST",
+      "minPlayers": 3,
+      "character": "HUNTER"
+    },
+    {
+      "id": "HUN-06",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "HUNTER"
+    },
+    {
+      "id": "HUN-07",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "HUNTER"
+    },
+    {
+      "id": "HUN-08",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "HUNTER",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "HUNTER"
+      }
+    },
+    {
+      "id": "HUN-09",
+      "era": "SECOND",
+      "minPlayers": 3,
+      "character": "HUNTER",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "HUNTER"
+      }
+    },
+    {
+      "id": "HUN-10",
+      "era": "SECOND",
+      "minPlayers": 4,
+      "character": "HUNTER",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "HUNTER"
+      }
+    },
+    {
+      "id": "HUN-11",
+      "era": "SECOND",
+      "minPlayers": 5,
+      "character": "HUNTER",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "HUNTER"
+      }
+    },
+    {
+      "id": "HUN-12",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "HUNTER"
+    },
+    {
+      "id": "HUN-13",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "HUNTER"
+    },
+    {
+      "id": "HUN-14",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "HUNTER",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "HUNTER"
+      }
+    },
+    {
+      "id": "HUN-15",
+      "era": "THIRD",
+      "minPlayers": 5,
+      "character": "HUNTER",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "HUNTER"
+      }
+    },
+
+    {
+      "id": "PIC-01",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-02",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-03",
+      "era": "FIRST",
+      "minPlayers": 3,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-04",
+      "era": "FIRST",
+      "minPlayers": 5,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-05",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-06",
+      "era": "SECOND",
+      "minPlayers": 3,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-07",
+      "era": "SECOND",
+      "minPlayers": 4,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-08",
+      "era": "SECOND",
+      "minPlayers": 5,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-09",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-10",
+      "era": "THIRD",
+      "minPlayers": 4,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+    {
+      "id": "PIC-11",
+      "era": "THIRD",
+      "minPlayers": 5,
+      "character": "PICKER",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "FOOD",
+        "quantity": -3
+      }
+    },
+
+    {
+      "id": "SHA-01",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 1
+      }
+    },
+    {
+      "id": "SHA-02",
+      "era": "FIRST",
+      "minPlayers": 2,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-03",
+      "era": "FIRST",
+      "minPlayers": 4,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 1
+      }
+    },
+    {
+      "id": "SHA-04",
+      "era": "FIRST",
+      "minPlayers": 5,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-05",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-06",
+      "era": "SECOND",
+      "minPlayers": 2,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-07",
+      "era": "SECOND",
+      "minPlayers": 5,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 1
+      }
+    },
+    {
+      "id": "SHA-08",
+      "era": "SECOND",
+      "minPlayers": 5,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-09",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-10",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 3
+      }
+    },
+    {
+      "id": "SHA-11",
+      "era": "THIRD",
+      "minPlayers": 2,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 3
+      }
+    },
+    {
+      "id": "SHA-12",
+      "era": "THIRD",
+      "minPlayers": 3,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-13",
+      "era": "THIRD",
+      "minPlayers": 4,
+      "character": "SHAMAN",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "resource": "STAR",
+        "quantity": 2
+      }
+    }
+  ],
+
+  "events": [
+    {
+      "id": "EVA-01",
+      "era": "FIRST",
+      "eventType": "ARTIST_EVENT",
+      "strategy": {
+        "effect": "ArtistEventStrategy",
+        "threshold": 1,
+        "winRes": 1,
+        "loseRes": -2
+      }
+    },
+    {
+      "id": "EVH-01",
+      "era": "FIRST",
+      "eventType": "HUNTER_EVENT",
+      "strategy": {
+        "effect": "HuntEventStrategy",
+        "ppGained": 1
+      }
+    },
+    {
+      "id": "EVS-01",
+      "era": "FIRST",
+      "eventType": "SHAMAN_EVENT",
+      "strategy": {
+        "effect": "ShamanEventStrategy",
+        "ppToMin": -3,
+        "ppToMax": 5
+      }
+    },
+    {
+      "id": "EVP-01",
+      "era": "FIRST",
+      "eventType": "PICKER_EVENT",
+      "strategy": {
+        "effect": "SustenanceStrategy",
+        "ppLost": 1
+      }
+    },
+    {
+      "id": "EVA-02",
+      "era": "SECOND",
+      "eventType": "ARTIST_EVENT",
+      "strategy": {
+        "effect": "ArtistEventStrategy",
+        "threshold": 2,
+        "winRes": 2,
+        "loseRes": -2
+      }
+    },
+    {
+      "id": "EVH-02",
+      "era": "SECOND",
+      "eventType": "HUNTER_EVENT",
+      "strategy": {
+        "effect": "HuntEventStrategy",
+        "ppGained": 2
+      }
+    },
+    {
+      "id": "EVS-02",
+      "era": "SECOND",
+      "eventType": "SHAMAN_EVENT",
+      "strategy": {
+        "effect": "ShamanEventStrategy",
+        "ppToMin": -5,
+        "ppToMax": 10
+      }
+    },
+    {
+      "id": "EVP-02",
+      "era": "SECOND",
+      "eventType": "PICKER_EVENT",
+      "strategy": {
+        "effect": "SustenanceStrategy",
+        "ppLost": 2
+      }
+    },
+    {
+      "id": "EVA-03",
+      "era": "THIRD",
+      "eventType": "ARTIST_EVENT",
+      "strategy": {
+        "effect": "ArtistEventStrategy",
+        "threshold": 3,
+        "winRes": 3,
+        "loseRes": -2
+      }
+    },
+    {
+      "id": "EVH-03",
+      "era": "THIRD",
+      "eventType": "HUNTER_EVENT",
+      "strategy": {
+        "effect": "HuntEventStrategy",
+        "ppGained": 3
+      }
+    },
+    {
+      "id": "EVS-03",
+      "era": "THIRD",
+      "eventType": "SHAMAN_EVENT",
+      "strategy": {
+        "effect": "ShamanEventStrategy",
+        "ppToMin": -7,
+        "ppToMax": 15
+      }
+    },
+    {
+      "id": "EVP-03",
+      "era": "THIRD",
+      "eventType": "PICKER_EVENT",
+      "strategy": {
+        "effect": "SustenanceStrategy",
+        "ppLost": 3
+      }
+    }
+  ],
+
+  "buildings": [
+    {
+      "id": "BLD-01",
+      "era": "FIRST",
+      "strategy": {
+        "effect": "ExtraFoodOnFoodStrategy",
+        "notificator": "OnTotemReturned"
+      },
+      "foodCost": 3,
+      "prestigePoints": 3
+    },
+    {
+      "id": "BLD-02",
+      "era": "FIRST",
+      "strategy": {
+        "effect": "InventorsPairStrategy",
+        "notificator": "OnPick"
+      },
+      "foodCost": 3,
+      "prestigePoints": 4
+    },
+    {
+      "id": "BLD-03",
+      "era": "FIRST",
+      "strategy": {
+        "effect": "ShamanSafetyStrategy",
+        "notificator": "OnEvent",
+        "eventType": "SHAMAN_EVENT"
+      },
+      "foodCost": 5,
+      "prestigePoints": 2
+    },
+    {
+      "id": "BLD-04",
+      "era": "FIRST",
+      "strategy": {
+        "effect": "AllSetFoodStrategy",
+        "notificator": "OnPick"
+      },
+      "foodCost": 4,
+      "prestigePoints": 3
+    },
+    {
+      "id": "BLD-05",
+      "era": "FIRST",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEvent",
+        "eventType": "PICKER_EVENT",
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 1,
+        "character": "PICKER"
+      },
+      "foodCost": 4,
+      "prestigePoints": 4
+    },
+    {
+      "id": "BLD-06",
+      "era": "FIRST",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEvent",
+        "eventType": "PICKER_EVENT",
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 1,
+        "character": "ARTIST"
+      },
+      "foodCost": 5,
+      "prestigePoints": 3
+    },
+    {
+      "id": "BLD-07",
+      "era": "SECOND",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEvent",
+        "eventType": "ARTIST_EVENT",
+        "resource": "FOOD",
+        "quantity": 1,
+        "character": "ARTIST"
+      },
+      "foodCost": 5,
+      "prestigePoints": 6
+    },
+    {
+      "id": "BLD-08",
+      "era": "SECOND",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEvent",
+        "eventType": "PICKER_EVENT",
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 1,
+        "character": "INVENTOR"
+      },
+      "foodCost": 7,
+      "prestigePoints": 4
+    },
+    {
+      "id": "BLD-09",
+      "era": "SECOND",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "notificator": "OnEndGame",
+        "resource": "PRESTIGE_POINT",
+        "quantity": 6
+      },
+      "foodCost": 5,
+      "prestigePoints": 6
+    },
+    {
+      "id": "BLD-10",
+      "era": "SECOND",
+      "strategy": {
+        "effect": "HuntEventStrategy",
+        "notificator": "OnEvent",
+        "eventType": "HUNTER_EVENT",
+        "ppGained": 1
+      },
+      "foodCost": 7,
+      "prestigePoints": 2
+    },
+    {
+      "id": "BLD-11",
+      "era": "SECOND",
+      "strategy": {
+        "effect": "DoubleBuilderPPStrategy",
+        "notificator": "OnEndGame"
+      },
+      "foodCost": 6,
+      "prestigePoints": 4
+    },
+    {
+      "id": "BLD-12",
+      "era": "SECOND",
+      "strategy": {
+        "effect": "DoubleShamanPPStrategy",
+        "notificator": "OnEvent",
+        "eventType": "SHAMAN_EVENT"
+      },
+      "foodCost": 7,
+      "prestigePoints": 0
+    },
+    {
+      "id": "BLD-13",
+      "era": "SECOND",
+      "strategy": {
+        "effect": "UpdateResourcesStrategy",
+        "notificator": "OnPick",
+        "resource": "STAR",
+        "quantity": 3
+      },
+      "foodCost": 6,
+      "prestigePoints": 4
+    },
+    {
+      "id": "BLD-14",
+      "era": "THIRD",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEndGame",
+        "resource": "PRESTIGE_POINT",
+        "quantity": 4,
+        "character": "BUILDER"
+      },
+      "foodCost": 6,
+      "prestigePoints": 3
+    },
+    {
+      "id": "BLD-15",
+      "era": "THIRD",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEndGame",
+        "resource": "PRESTIGE_POINT",
+        "quantity": 2,
+        "character": "INVENTOR"
+      },
+      "foodCost": 6,
+      "prestigePoints": 6
+    },
+    {
+      "id": "BLD-16",
+      "era": "THIRD",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEndGame",
+        "resource": "PRESTIGE_POINT",
+        "quantity": 4,
+        "character": "SHAMAN"
+      },
+      "foodCost": 7,
+      "prestigePoints": 4
+    },
+    {
+      "id": "BLD-17",
+      "era": "THIRD",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEndGame",
+        "resource": "PRESTIGE_POINT",
+        "quantity": 4,
+        "character": "ARTIST"
+      },
+      "foodCost": 7,
+      "prestigePoints": 4
+    },
+    {
+      "id": "BLD-18",
+      "era": "THIRD",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEndGame",
+        "resource": "PRESTIGE_POINT",
+        "quantity": 4,
+        "character": "PICKER"
+      },
+      "foodCost": 7,
+      "prestigePoints": 6
+    },
+    {
+      "id": "BLD-19",
+      "era": "THIRD",
+      "strategy": {
+        "effect": "ResourcePerCharStrategy",
+        "notificator": "OnEndGame",
+        "resource": "PRESTIGE_POINT",
+        "quantity": 3,
+        "character": "HUNTER"
+      },
+      "foodCost": 8,
+      "prestigePoints": 8
+    },
+    {
+      "id": "BLD-20",
+      "era": "THIRD",
+      "foodCost": 10,
+      "prestigePoints": 25
+    },
+    {
+      "id": "BLD-21",
+      "era": "THIRD",
+      "strategy": {
+        "effect": "ExtraPickStrategy",
+        "notificator": "OnEndOfferPhase"
+      },
+      "foodCost": 9,
+      "prestigePoints": 3
+    }
+  ],
+  
+  "offerCards": [
+    {
+      "id": "A",
+      "minPlayers": 5,
+      "numUp": 0,
+      "numDown": 0,
+      "foodBonus": 3
+    },
+    {
+      "id": "B",
+      "minPlayers": 2,
+      "numUp": 0,
+      "numDown": 1,
+      "foodBonus": 0
+    },
+    {
+      "id": "C",
+      "minPlayers": 2,
+      "numUp": 1,
+      "numDown": 0,
+      "foodBonus": 0
+    },
+    {
+      "id": "D",
+      "minPlayers": 3,
+      "numUp": 0,
+      "numDown": 2,
+      "foodBonus": 0
+    },
+    {
+      "id": "E",
+      "minPlayers": 2,
+      "numUp": 1,
+      "numDown": 1,
+      "foodBonus": 0
+    },
+    {
+      "id": "F",
+      "minPlayers": 2,
+      "numUp": 2,
+      "numDown": 0,
+      "foodBonus": 0
+    },
+    {
+      "id": "G",
+      "minPlayers": 4,
+      "numUp": 2,
+      "numDown": 1,
+      "foodBonus": 0
+    }
+  ],
+
+  "offerTurnCard": [
+    {
+      "numPlayers": 2,
+      "foodRewards": [1,0,1],
+      "ppPenalty": 2
+    },
+    {
+      "numPlayers": 3,
+      "foodRewards": [2,0,1],
+      "ppPenalty": 2
+    },
+    {
+      "numPlayers": 4,
+      "foodRewards": [2,1,1],
+      "ppPenalty": 2
+    },
+    {
+      "numPlayers": 5,
+      "foodRewards": [3,1,1],
+      "ppPenalty": 2
+    }
+  ],
+
+  "buildingSetup": {
+    "2": {"FIRST": 1, "SECOND": 2, "THIRD": 3},
+    "3": {"FIRST": 2, "SECOND": 2, "THIRD": 4},
+    "4": {"FIRST": 2, "SECOND": 3, "THIRD": 4},
+    "5": {"FIRST": 2, "SECOND": 3, "THIRD": 5}
+  }
+}
