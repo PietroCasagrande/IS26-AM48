@@ -34,6 +34,9 @@ public class GameManager implements ModelInterface{
     @Override
     public JoinResult joinGame(int numPlayers, String nickname){
         synchronized (this) {
+            if(numPlayers < 2 || numPlayers > 5) {
+                throw new IllegalArgumentException("Invalid number of players: must be between 2 and 5");
+            }
             if(playerToGame.containsKey(nickname)){
                 throw new InvalidActionException("Nickname già in uso: " + nickname);
             }
