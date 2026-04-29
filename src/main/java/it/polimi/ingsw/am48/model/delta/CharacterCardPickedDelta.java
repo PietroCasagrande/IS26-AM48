@@ -43,9 +43,11 @@ public class CharacterCardPickedDelta extends GameDelta{
         }
     }
 
-    // forse non servono più?
     public String getPlayerNickname() { return playerNickname; }
     public String getCardId() { return cardId; }
-    public List<String> getUpdatedUpperRowIds() { return updatedUpperTribeIds; }
-    public List<String> getUpdatedLowerRowIds() { return updatedLowerTribeIds; }
+    public List<String> getUpdatedUpperTribeIds() { return updatedUpperTribeIds; }
+    public List<String> getUpdatedLowerTribeIds() { return updatedLowerTribeIds; }
+    public int getUpdatedFood() { return updatedFood; }
+    public int getUpdatedPoints() { return updatedPoints; }
+    public boolean isTotemReturned() { return totemReturned; }
 }

@@ -150,9 +150,9 @@ class EndTurnPhaseTest {
         List<GameDelta> deltas = phase.endTurn(game);
         EndTurnDelta delta = (EndTurnDelta) deltas.get(0);
 
-        assertNotNull(delta.getNewUpperRowIds());
-        assertNotNull(delta.getNewLowerRowIds());
-        assertNotNull(delta.getNewBuildingUpperRowIds());
-        assertNotNull(delta.getNewBuildingLowerRowIds());
+        assertNotNull(delta.getNewUpperTribeIds());
+        assertNotNull(delta.getNewLowerTribeIds());
+        assertNotNull(delta.getNewUpperBuildingIds());
+        assertNotNull(delta.getNewLowerBuildingIds());
     }
 }

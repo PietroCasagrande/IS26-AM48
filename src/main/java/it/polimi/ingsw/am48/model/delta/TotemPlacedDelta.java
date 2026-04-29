@@ -29,4 +29,7 @@ public class TotemPlacedDelta extends GameDelta{
 
     public String getPlayerNickname(){ return playerNickname; }
     public char getTileId(){ return tileId; }
+    public List<String> getUpdatedOfferTurnCardOrder() {
+        return updatedOfferTurnCardOrder;
+    }
 }

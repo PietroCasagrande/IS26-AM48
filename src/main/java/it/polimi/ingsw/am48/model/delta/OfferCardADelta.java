@@ -25,7 +25,6 @@ public class OfferCardADelta extends GameDelta {
     public String getPlayerNickname() {
         return playerNickname;
     }
-
     public int getUpdatedFood() {
         return updatedFood;
     }

@@ -43,9 +43,11 @@ public class BuildingCardPickedDelta extends GameDelta{
         }
     }
 
-    // getter anche qui per tutti i campi, teoricamente vengono usati dal controller
-    public String getPlayerNickname() { return playerNickname; }
-    public String getCardId() { return cardId; }
-    public List<String> getUpdatedUpperRowIds() { return updatedUpperBuildingIds; }
-    public List<String> getUpdatedLowerRowIds() { return updatedLowerBuildingIds; }
+    public String getPlayerNickname() {return playerNickname;}
+    public String getCardId() {return cardId;}
+    public List<String> getUpdatedUpperBuildingIds() {return updatedUpperBuildingIds;}
+    public List<String> getUpdatedLowerBuildingIds() {return updatedLowerBuildingIds;}
+    public int getUpdatedFood() {return updatedFood;}
+    public int getUpdatedPoints() {return updatedPoints;}
+    public boolean isTotemReturned() {return totemReturned;}
 }

@@ -48,8 +48,8 @@ public class EndTurnDelta extends GameDelta {
     // getter per tutti i campi
     public Map<String, Integer> getUpdatedFood() { return updatedFood; }
     public Map<String, Integer> getUpdatedPrestige() { return updatedPrestige; }
-    public List<String> getNewUpperRowIds() { return newUpperTribeIds; }
-    public List<String> getNewLowerRowIds() { return newLowerTribeIds; }
-    public List<String> getNewBuildingUpperRowIds() { return newUpperBuildingIds; }
-    public List<String> getNewBuildingLowerRowIds() { return newLowerBuildingIds; }
+    public List<String> getNewUpperTribeIds() { return newUpperTribeIds; }
+    public List<String> getNewLowerTribeIds() { return newLowerTribeIds; }
+    public List<String> getNewUpperBuildingIds() { return newUpperBuildingIds; }
+    public List<String> getNewLowerBuildingIds() { return newLowerBuildingIds; }
 }

@@ -31,7 +31,6 @@ public class EndGameDelta extends GameDelta{
     public Map<String, Integer> getFinalScores() {
         return finalScores;
     }
-
     public String getWinnerNickname() {
         return winnerNickname;
     }
