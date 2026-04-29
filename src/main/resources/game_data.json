@@ -559,8 +559,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -570,8 +570,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -581,8 +581,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -592,8 +592,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -603,8 +603,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -614,8 +614,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -625,8 +625,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -636,8 +636,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -647,8 +647,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -658,8 +658,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
     {
@@ -669,8 +669,8 @@
       "character": "PICKER",
       "strategy": {
         "effect": "UpdateResourcesStrategy",
-        "resource": "FOOD",
-        "quantity": -3
+        "resource": "FOOD_DISCOUNT",
+        "quantity": 3
       }
     },
 
