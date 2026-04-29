@@ -48,7 +48,9 @@ public class Showed<T extends Card>{
         List<T> sortedCards = this.lowerList.stream()
                 .sorted((c1, c2) -> Integer.compare(c1.getEra().getIndex(), c2.getEra().getIndex()))
                 .toList();
-        for(T card : sortedCards) card.getStrategy().registerTo(nc, playerContext);
+        for(T card : sortedCards)
+            if (card.getStrategy() != null)
+                card.getStrategy().registerTo(nc, playerContext);
     }
 
     public void clearBottom(){
