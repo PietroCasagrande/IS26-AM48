@@ -54,9 +54,9 @@ public class Board {
 
     // Takes the requested card from the showed
     // throwing exception is necessary to return a Card instead of an Optional<Card>
-    public Card takeCard(Player player, String cardId){
-        return this.tribeShowed.takeCard(player, cardId)
-                .or(() -> this.buildingShowed.takeCard(player, cardId))
+    public Card takeCard(PlayerContext playerContext, String cardId){
+        return this.tribeShowed.takeCard(playerContext, cardId)
+                .or(() -> this.buildingShowed.takeCard(playerContext, cardId))
                 .orElseThrow(() -> new IllegalArgumentException("Card " + cardId + " not found"));
     }
 

@@ -65,13 +65,13 @@ public class Showed<T extends Card>{
     }
 
     // takeCard is used inside of Board's method "takeCard(player, cardId)"
-    public Optional<T> takeCard(Player player, String cardId){
+    public Optional<T> takeCard(PlayerContext playerContext, String cardId){
         // search the cardId in the upperList first
         Iterator<T> upperIt = upperList.iterator();
         while(upperIt.hasNext()){
             T card = upperIt.next();
             if(card.getCardId().equals(cardId)){
-                card.acquire(player);
+                card.acquire(playerContext);
                 upperIt.remove();
                 return Optional.of(card);
             }
@@ -82,7 +82,7 @@ public class Showed<T extends Card>{
         while(lowerIt.hasNext()){
             T card = lowerIt.next();
             if(card.getCardId().equals(cardId)){
-                card.acquire(player);
+                card.acquire(playerContext);
                 lowerIt.remove();
                 return Optional.of(card);
             }

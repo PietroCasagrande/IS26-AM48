@@ -3,6 +3,7 @@ package it.polimi.ingsw.am48.model.card;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
 public class CharacterCard extends Card {
@@ -21,8 +22,9 @@ public class CharacterCard extends Card {
     public int getMinPlayers() { return minPlayers; }
 
     @Override
-    public void acquire(Player player) {
-        player.addToTribe(this);
+    public void acquire(PlayerContext playerContext) {
+        playerContext.getCurrPlayer().addToTribe(this);
+        if(this.strategy != null) this.strategy.effect(playerContext);
     }
 
 }

@@ -86,7 +86,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -1,
+        "buildingDiscount": 1,
         "builderPp": 2
       }
     },
@@ -97,7 +97,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -2,
+        "buildingDiscount": 2,
         "builderPp": 0
       }
     },
@@ -108,7 +108,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -1,
+        "buildingDiscount": 1,
         "builderPp": 3
       }
     },
@@ -130,7 +130,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -1,
+        "buildingDiscount": 1,
         "builderPp": 4
       }
     },
@@ -141,7 +141,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -2,
+        "buildingDiscount": 2,
         "builderPp": 1
       }
     },
@@ -152,7 +152,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -2,
+        "buildingDiscount": 2,
         "builderPp": 3
       }
     },
@@ -163,7 +163,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -1,
+        "buildingDiscount": 1,
         "builderPp": 2
       }
     },
@@ -174,7 +174,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -2,
+        "buildingDiscount": 2,
         "builderPp": 2
       }
     },
@@ -185,7 +185,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -1,
+        "buildingDiscount": 1,
         "builderPp": 5
       }
     },
@@ -196,7 +196,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -2,
+        "buildingDiscount": 2,
         "builderPp": 3
       }
     },
@@ -207,7 +207,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -1,
+        "buildingDiscount": 1,
         "builderPp": 4
       }
     },

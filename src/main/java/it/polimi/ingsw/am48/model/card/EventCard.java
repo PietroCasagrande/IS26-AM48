@@ -4,6 +4,7 @@ import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.enums.EventType;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
 public class EventCard extends Card{
@@ -18,7 +19,7 @@ public class EventCard extends Card{
     public EventType getEventType() { return eventType; }
 
     @Override
-    public void acquire(Player player) {
+    public void acquire(PlayerContext playerContext) {
         // Le EventCard non vengono acquisite dal giocatore
         throw new InvalidActionException("EventCard can not be acquired.");
     }

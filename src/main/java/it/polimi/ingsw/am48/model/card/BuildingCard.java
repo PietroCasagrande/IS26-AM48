@@ -4,6 +4,7 @@ import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.board.Showed;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.strategy.CardStrategy;
 
 import java.util.List;
@@ -24,7 +25,8 @@ public class BuildingCard extends Card{
     public int getPrestigePoints() { return prestigePoints; }
 
     @Override
-    public void acquire(Player player) {
+    public void acquire(PlayerContext playerContext) {
+        Player player = playerContext.getCurrPlayer();
         int actualCost = Math.max(0, this.foodCost - player.getTribe().getBuildingDiscount());
         if(player.getFood() < actualCost){
             throw new InvalidActionException(

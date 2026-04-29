@@ -74,6 +74,9 @@ public class PlayerOfferPhase implements GamePhase {
             }
         }
 
+        // Sets current player in PlayerContext
+        game.getPlayerContext().setCurrPlayer(player);
+
         // 2. Trova la tessera offerta del giocatore corrente
         OfferCard currentOffer = game.getBoard().findTrackPosition(player);
 
@@ -82,10 +85,7 @@ public class PlayerOfferPhase implements GamePhase {
             validatePick(game.getBoard(), cardId, currentOffer);
         }
 
-        // 4. Prendi la carta dal board (acquire + rimuovi da showed)
-        Card selectedCard = game.getBoard().takeCard(player, cardId);
-
-        // 5. Aggiorna contatori
+        // 4. Aggiorna contatori
         if (!extraPickActive) {
             if (game.getBoard().isCardTop(cardId)) {
                 picksFromUp++;
@@ -93,6 +93,10 @@ public class PlayerOfferPhase implements GamePhase {
                 picksFromDown++;
             }
         }
+
+
+        // 5. Prendi la carta dal board (acquire + rimuovi da showed)
+        Card selectedCard = game.getBoard().takeCard(game.getPlayerContext(), cardId);
 
         // 6. Registra la strategy della carta al notificator
         if (selectedCard.getStrategy() != null) {
@@ -119,7 +123,7 @@ public class PlayerOfferPhase implements GamePhase {
         // 8. Controlla se il giocatore ha finito i suoi pick
         if (picksFromUp + picksFromDown >= currentOffer.getTotalPicks()) {
             // Totem torna sulla tessera ordine di turno
-            handleTotemReturn(game, player);
+            handleTotemReturn(game, currentOffer.returnTotem().get());
             totemReturned = true;
 
             // Reset per il prossimo giocatore
