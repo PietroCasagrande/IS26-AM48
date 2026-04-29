@@ -253,8 +253,8 @@ class OfferCardTrackTest {
     @Test
     @DisplayName("toSnapshot: should include totem entry for each occupied slot")
     void shouldIncludeTotemEntryForEachOccupiedSlot() {
-        // player on A, totem name = "RED"
-        when(playerA.getTotem()).thenReturn(Totem.RED);
+        // player on A, nickname "Alice"
+        when(playerA.getNickname()).thenReturn("Alice");
         when(offerCardA.getTotem()).thenReturn(Optional.of(playerA));
         when(offerCardB.getTotem()).thenReturn(Optional.empty());
         when(offerCardC.getTotem()).thenReturn(Optional.empty());
@@ -266,14 +266,14 @@ class OfferCardTrackTest {
         OfferTrackSnapshot snapshot = offerCardTrack.toSnapshot();
 
         assertEquals(1, snapshot.getTotemPositions().size());
-        assertEquals("RED", snapshot.getTotemPositions().get('A'));
+        assertEquals("Alice", snapshot.getTotemPositions().get('A'));
     }
 
     @Test
-    @DisplayName("toSnapshot: should map each occupied slot to the correct totem name")
+    @DisplayName("toSnapshot: should map each occupied slot to the correct player nickname")
     void shouldMapEachOccupiedSlotToCorrectTotemName() {
-        when(playerA.getTotem()).thenReturn(Totem.RED);
-        when(playerB.getTotem()).thenReturn(Totem.BLUE);
+        when(playerA.getNickname()).thenReturn("Alice");
+        when(playerB.getNickname()).thenReturn("Bob");
         when(offerCardA.getTotem()).thenReturn(Optional.of(playerA));
         when(offerCardB.getTotem()).thenReturn(Optional.of(playerB));
         when(offerCardC.getTotem()).thenReturn(Optional.empty());
@@ -285,7 +285,7 @@ class OfferCardTrackTest {
         OfferTrackSnapshot snapshot = offerCardTrack.toSnapshot();
 
         assertEquals(2, snapshot.getTotemPositions().size());
-        assertEquals("RED",  snapshot.getTotemPositions().get('A'));
-        assertEquals("BLUE", snapshot.getTotemPositions().get('B'));
+        assertEquals("Alice",  snapshot.getTotemPositions().get('A'));
+        assertEquals("Bob", snapshot.getTotemPositions().get('B'));
     }
 }

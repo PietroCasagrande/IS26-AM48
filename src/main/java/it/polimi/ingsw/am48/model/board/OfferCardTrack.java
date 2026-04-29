@@ -45,7 +45,7 @@ public class OfferCardTrack {
         for(Map.Entry<Character, OfferCard> entry : track.entrySet()){
             entry.getValue().getTotem().ifPresent(player ->
                     totemPositions.put(
-                            entry.getKey(), player.getTotem().name()
+                            entry.getKey(), player.getNickname()
                     )
             );
         }

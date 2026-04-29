@@ -308,23 +308,23 @@ class OfferTurnCardTest {
     }
 
     @Test
-    @DisplayName("toSnapshot: should return snapshot with correct totem names in order")
+    @DisplayName("toSnapshot: should return snapshot with correct nicknames in order")
     void shouldReturnSnapshotWithCorrectTotemNamesInOrder() {
-        when(player1.getTotem()).thenReturn(Totem.RED);
-        when(player2.getTotem()).thenReturn(Totem.BLUE);
+        when(player1.getNickname()).thenReturn("Alice");
+        when(player2.getNickname()).thenReturn("Bob");
 
         offerTurnCard.returnTotem(player1);
         offerTurnCard.returnTotem(player2);
 
         OfferTurnCardSnapshot snapshot = offerTurnCard.toSnapshot();
 
-        assertEquals(List.of("RED", "BLUE"), snapshot.getTotemOrder());
+        assertEquals(List.of("Alice", "Bob"), snapshot.getTotemOrder());
     }
 
     @Test
     @DisplayName("toSnapshot: should reflect order changes after removeNextTotem")
     void shouldReflectOrderAfterRemoveNextTotem() {
-        when(player2.getTotem()).thenReturn(Totem.BLUE);
+        when(player2.getNickname()).thenReturn("Bob");
 
         offerTurnCard.returnTotem(player1);
         offerTurnCard.returnTotem(player2);
@@ -332,6 +332,6 @@ class OfferTurnCardTest {
 
         OfferTurnCardSnapshot snapshot = offerTurnCard.toSnapshot();
 
-        assertEquals(List.of("BLUE"), snapshot.getTotemOrder());
+        assertEquals(List.of("Bob"), snapshot.getTotemOrder());
     }
 }
