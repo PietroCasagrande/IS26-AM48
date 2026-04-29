@@ -1,6 +1,9 @@
 // TribeSnapshot.java
 package it.polimi.ingsw.am48.model.snapshot;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +19,17 @@ public class TribeSnapshot implements Serializable {
     private final int builderPoints;
     private final int buildingPoints;
 
-    public TribeSnapshot(List<String> characterCardIds, List<String> buildingCardIds,
-                         Map<String, Integer> artifacts, int currentFood, int currentPrestigePoints,
-                         int shamanStars, int buildingDiscount, int builderPoints,
-                         int buildingPoints) {
+    @JsonCreator
+    public TribeSnapshot(
+            @JsonProperty("characterCardIds") List<String> characterCardIds,
+            @JsonProperty("buildingCardIds") List<String> buildingCardIds,
+            @JsonProperty("artifacts") Map<String, Integer> artifacts,
+            @JsonProperty("currentFood") int currentFood,
+            @JsonProperty("currentPrestigePoints") int currentPrestigePoints,
+            @JsonProperty("shamanStars") int shamanStars,
+            @JsonProperty("buildingDiscount") int buildingDiscount,
+            @JsonProperty("builderPoints") int builderPoints,
+            @JsonProperty("buildingPoints") int buildingPoints) {
         this.characterCardIds = characterCardIds;
         this.buildingCardIds = buildingCardIds;
         this.artifacts = artifacts;

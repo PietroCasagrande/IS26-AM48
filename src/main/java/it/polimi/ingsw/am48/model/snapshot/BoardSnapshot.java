@@ -1,6 +1,9 @@
 // BoardSnapshot.java
 package it.polimi.ingsw.am48.model.snapshot;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,11 +17,16 @@ public class BoardSnapshot implements Serializable {
     private final OfferTrackSnapshot offerTrack;
     private final OfferTurnCardSnapshot offerTurnCard;
 
-    public BoardSnapshot(List<String> upperRowCardIds, List<String> lowerRowCardIds,
-                         List<String> buildingUpperRowCardIds, List<String> buildingLowerRowCardIds,
-                         List<String> tribeDeckRemainingIds,
-                         List<String> buildingDeckRemainingIds,
-                         OfferTrackSnapshot offerTrack, OfferTurnCardSnapshot offerTurnCard) {
+    @JsonCreator
+    public BoardSnapshot(
+            @JsonProperty("upperRowCardIds") List<String> upperRowCardIds,
+            @JsonProperty("lowerRowCardIds") List<String> lowerRowCardIds,
+            @JsonProperty("buildingUpperRowCardIds") List<String> buildingUpperRowCardIds,
+            @JsonProperty("buildingLowerRowCardIds") List<String> buildingLowerRowCardIds,
+            @JsonProperty("tribeDeckRemainingIds") List<String> tribeDeckRemainingIds,
+            @JsonProperty("buildingDeckRemainingIds") List<String> buildingDeckRemainingIds,
+            @JsonProperty("offerTrack") OfferTrackSnapshot offerTrack,
+            @JsonProperty("offerTurnCard") OfferTurnCardSnapshot offerTurnCard) {
         this.upperRowCardIds = upperRowCardIds;
         this.lowerRowCardIds = lowerRowCardIds;
         this.buildingUpperRowCardIds = buildingUpperRowCardIds;
