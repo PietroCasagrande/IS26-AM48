@@ -5,6 +5,7 @@ import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Era;
+import it.polimi.ingsw.am48.model.enums.Totem;
 import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
@@ -39,6 +40,10 @@ class BoardTest {
     private Player playerA;
     private Player playerB;
 
+    // Real player and context used for takeCard tests
+    private Player realPlayer;
+    private PlayerContext realPlayerContext;
+
     private static final int NUM_PLAYERS = 2;
 
     @BeforeEach
@@ -60,8 +65,12 @@ class BoardTest {
 
         when(playerA.getTribe()).thenReturn(mockTribe);
         when(playerB.getTribe()).thenReturn(mockTribe);
-        // explicit stub: getBuildingDiscount returns 0 by default, but we make it explicit
         when(mockTribe.getBuildingDiscount()).thenReturn(0);
+
+        realPlayer = new Player("Alice", Totem.RED);
+        realPlayerContext = new PlayerContext();
+        realPlayerContext.addPlayer(realPlayer);
+        realPlayerContext.setCurrPlayer(realPlayer);
 
         board = new Board(track, turnOrder, tribeDeck, buildingDeck, buildingsPerEra, NUM_PLAYERS);
     }
@@ -149,12 +158,12 @@ class BoardTest {
     // ==================== takeCard ====================
 
     @Test
-    @DisplayName("takeCard: should return card from tribeShowed when found in upper list")
+    @DisplayName("takeCard: should return card from tribeShowed upper list")
     void shouldReturnCardFromTribeShowedUpperList() {
         CharacterCard card = new CharacterCard("ART-01", Era.FIRST, null, CharacterType.ARTIST, 2);
         board.getTribeShowed().addUpperCards(List.of(card));
 
-        Card result = board.takeCard(playerA, "ART-01");
+        Card result = board.takeCard(realPlayerContext, "ART-01");
 
         assertEquals(card, result);
         assertTrue(board.getTribeShowed().getUpperList().isEmpty());
@@ -166,7 +175,7 @@ class BoardTest {
         CharacterCard card = new CharacterCard("ART-02", Era.FIRST, null, CharacterType.ARTIST, 2);
         board.getTribeShowed().addLowerCards(List.of(card));
 
-        Card result = board.takeCard(playerA, "ART-02");
+        Card result = board.takeCard(realPlayerContext, "ART-02");
 
         assertEquals(card, result);
         assertTrue(board.getTribeShowed().getLowerList().isEmpty());
@@ -175,11 +184,11 @@ class BoardTest {
     @Test
     @DisplayName("takeCard: should fall back to buildingShowed when card not in tribeShowed")
     void shouldFindInBuildingShowedIfNotInTribeShowed() {
-        when(playerA.getFood()).thenReturn(10);
+        realPlayer.updateFood(10);
         BuildingCard buildingCard = new BuildingCard("BLD-01", Era.FIRST, mockStrategy, 3, 5);
         board.getBuildingShowed().addUpperCards(List.of(buildingCard));
 
-        Card result = board.takeCard(playerA, "BLD-01");
+        Card result = board.takeCard(realPlayerContext, "BLD-01");
 
         assertEquals(buildingCard, result);
         assertTrue(board.getBuildingShowed().getUpperList().isEmpty());
@@ -188,14 +197,15 @@ class BoardTest {
     @Test
     @DisplayName("takeCard: should throw IllegalArgumentException when card not found in either showed")
     void shouldThrowWhenCardNotFound() {
-        assertThrows(IllegalArgumentException.class, () -> board.takeCard(playerA, "unknown"));
+        assertThrows(IllegalArgumentException.class,
+                () -> board.takeCard(realPlayerContext, "unknown"));
     }
 
     @Test
     @DisplayName("takeCard: exception message should contain the card id")
     void shouldIncludeCardIdInExceptionMessage() {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> board.takeCard(playerA, "unknown"));
+                () -> board.takeCard(realPlayerContext, "unknown"));
         assertTrue(ex.getMessage().contains("unknown"));
     }
 

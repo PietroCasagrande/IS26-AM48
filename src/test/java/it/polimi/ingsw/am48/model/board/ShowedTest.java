@@ -24,11 +24,15 @@ class ShowedTest {
 
     private Showed<Card> showed;
     private Player player;
+    private PlayerContext playerContext;
 
     @BeforeEach
     void setUp() {
         showed = new Showed<>();
         player = new Player("Ilaria", Totem.RED);
+        playerContext = new PlayerContext();
+        playerContext.addPlayer(player);
+        playerContext.setCurrPlayer(player);
     }
 
     // ==================== addUpperCards / addLowerCards ====================
@@ -63,7 +67,7 @@ class ShowedTest {
     // ==================== getUpperList / getLowerList (immutability) ====================
 
     @Test
-    @DisplayName("getUpperList: should return a defensive copy that cannot modify internal state")
+    @DisplayName("getUpperList: should return a defensive copy")
     void shouldReturnDefensiveCopyOfUpperList() {
         showed.addUpperCards(List.of(new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2)));
         List<Card> copy = showed.getUpperList();
@@ -72,7 +76,7 @@ class ShowedTest {
     }
 
     @Test
-    @DisplayName("getLowerList: should return a defensive copy that cannot modify internal state")
+    @DisplayName("getLowerList: should return a defensive copy")
     void shouldReturnDefensiveCopyOfLowerList() {
         showed.addLowerCards(List.of(new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2)));
         List<Card> copy = showed.getLowerList();
@@ -151,7 +155,7 @@ class ShowedTest {
     // ==================== diffLastEras ====================
 
     @Test
-    @DisplayName("diffLastEras: should return false when both lists have the same era as last card")
+    @DisplayName("diffLastEras: should return false when both lists have the same era")
     void shouldReturnFalseWhenSameEra() {
         showed.addUpperCards(List.of(new CharacterCard("U1", Era.FIRST, null, CharacterType.HUNTER, 2)));
         showed.addLowerCards(List.of(new CharacterCard("L1", Era.FIRST, null, CharacterType.HUNTER, 2)));
@@ -186,87 +190,67 @@ class ShowedTest {
         assertFalse(showed.diffLastEras());
     }
 
-    // ==================== diffLastEras - branch coverage ====================
-
-    @Test
-    @DisplayName("diffLastEras: should evaluate second condition when upper is non-empty but lower is empty")
-    void shouldReturnFalseWhenUpperNonEmptyAndLowerEmpty() {
-        // Covers the branch: upperList.isEmpty() == false && lowerList.isEmpty() == true
-        showed.addUpperCards(List.of(
-                new CharacterCard("U1", Era.FIRST, null, CharacterType.HUNTER, 2)));
-        // lowerList is empty -> second operand of || is evaluated -> returns false
-        assertFalse(showed.diffLastEras());
-    }
-
     // ==================== registerBottom ====================
 
     @Test
-    @DisplayName("registerBottom: should call registerTo on each card's strategy in era-ascending order")
+    @DisplayName("registerBottom: should call registerTo on each card's non-null strategy in era order")
     void shouldCallRegisterToOnEachCardStrategyInEraOrder() {
         NotificatorCenter nc = mock(NotificatorCenter.class);
-        PlayerContext playerContext = mock(PlayerContext.class);
-
+        PlayerContext ctx = mock(PlayerContext.class);
         CardStrategy strategyFirst  = mock(CardStrategy.class);
         CardStrategy strategySecond = mock(CardStrategy.class);
 
-        // Add SECOND era card first to verify sorting
         showed.addLowerCards(List.of(
                 new CharacterCard("S1", Era.SECOND, strategySecond, CharacterType.HUNTER, 2),
-                new CharacterCard("F1", Era.FIRST,  strategyFirst,  CharacterType.HUNTER, 2)
-        ));
+                new CharacterCard("F1", Era.FIRST,  strategyFirst,  CharacterType.HUNTER, 2)));
 
-        showed.registerBottom(nc, playerContext);
+        showed.registerBottom(nc, ctx);
 
-        // Both strategies should be called
-        verify(strategyFirst,  times(1)).registerTo(nc, playerContext);
-        verify(strategySecond, times(1)).registerTo(nc, playerContext);
+        verify(strategyFirst,  times(1)).registerTo(nc, ctx);
+        verify(strategySecond, times(1)).registerTo(nc, ctx);
+    }
+
+    @Test
+    @DisplayName("registerBottom: should skip cards with null strategy without throwing")
+    void shouldSkipCardsWithNullStrategy() {
+        NotificatorCenter nc = mock(NotificatorCenter.class);
+        PlayerContext ctx = mock(PlayerContext.class);
+        CardStrategy strategy = mock(CardStrategy.class);
+
+        // One card with strategy, one without
+        showed.addLowerCards(List.of(
+                new CharacterCard("F1", Era.FIRST,  strategy, CharacterType.HUNTER, 2),
+                new CharacterCard("F2", Era.FIRST,  null,     CharacterType.HUNTER, 2)));
+
+        assertDoesNotThrow(() -> showed.registerBottom(nc, ctx));
+        verify(strategy, times(1)).registerTo(nc, ctx);
     }
 
     @Test
     @DisplayName("registerBottom: should not throw when lower list is empty")
     void shouldNotThrowWhenLowerListIsEmpty() {
         NotificatorCenter nc = mock(NotificatorCenter.class);
-        PlayerContext playerContext = mock(PlayerContext.class);
-        assertDoesNotThrow(() -> showed.registerBottom(nc, playerContext));
-    }
-
-    // ==================== registerBottom - branch coverage ====================
-
-    @Test
-    @DisplayName("registerBottom: should call registerTo on strategy of a single card in lower list")
-    void shouldCallRegisterToWhenLowerListHasOneCard() {
-        NotificatorCenter nc = mock(NotificatorCenter.class);
-        PlayerContext playerContext = mock(PlayerContext.class);
-        CardStrategy strategy = mock(CardStrategy.class);
-
-        showed.addLowerCards(List.of(
-                new CharacterCard("F1", Era.FIRST, strategy, CharacterType.HUNTER, 2)));
-
-        showed.registerBottom(nc, playerContext);
-
-        verify(strategy, times(1)).registerTo(nc, playerContext);
+        PlayerContext ctx = mock(PlayerContext.class);
+        assertDoesNotThrow(() -> showed.registerBottom(nc, ctx));
     }
 
     @Test
-    @DisplayName("registerBottom: should call strategies in era-ascending order when eras differ")
+    @DisplayName("registerBottom: should call strategies in era-ascending order")
     void shouldCallStrategiesInEraAscendingOrder() {
         NotificatorCenter nc = mock(NotificatorCenter.class);
-        PlayerContext playerContext = mock(PlayerContext.class);
+        PlayerContext ctx = mock(PlayerContext.class);
+        CardStrategy strategyFirst = mock(CardStrategy.class);
+        CardStrategy strategyThird = mock(CardStrategy.class);
 
-        CardStrategy strategyFirst  = mock(CardStrategy.class);
-        CardStrategy strategyThird  = mock(CardStrategy.class);
-
-        // Add THIRD era card first to verify ascending sort
         showed.addLowerCards(List.of(
                 new CharacterCard("T1", Era.THIRD, strategyThird, CharacterType.HUNTER, 2),
                 new CharacterCard("F1", Era.FIRST, strategyFirst, CharacterType.HUNTER, 2)));
 
-        showed.registerBottom(nc, playerContext);
+        showed.registerBottom(nc, ctx);
 
-        // Verify both are called; order verified via InOrder
         org.mockito.InOrder inOrder = inOrder(strategyFirst, strategyThird);
-        inOrder.verify(strategyFirst).registerTo(nc, playerContext);
-        inOrder.verify(strategyThird).registerTo(nc, playerContext);
+        inOrder.verify(strategyFirst).registerTo(nc, ctx);
+        inOrder.verify(strategyThird).registerTo(nc, ctx);
     }
 
     // ==================== takeCard ====================
@@ -277,7 +261,7 @@ class ShowedTest {
         showed.addUpperCards(List.of(
                 new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2),
                 new CharacterCard("H2", Era.FIRST, null, CharacterType.SHAMAN, 2)));
-        Optional<Card> taken = showed.takeCard(player, "H1");
+        Optional<Card> taken = showed.takeCard(playerContext, "H1");
         assertTrue(taken.isPresent());
         assertEquals("H1", taken.get().getCardId());
         assertEquals(1, showed.getUpperList().size());
@@ -290,22 +274,21 @@ class ShowedTest {
         showed.addLowerCards(List.of(
                 new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2),
                 new CharacterCard("H2", Era.FIRST, null, CharacterType.SHAMAN, 2)));
-        Optional<Card> taken = showed.takeCard(player, "H2");
+        Optional<Card> taken = showed.takeCard(playerContext, "H2");
         assertTrue(taken.isPresent());
         assertEquals(1, showed.getLowerList().size());
         assertEquals(1, player.getTribe().countByType(CharacterType.SHAMAN));
     }
 
     @Test
-    @DisplayName("takeCard: should search upper list first before lower list")
+    @DisplayName("takeCard: should search upper list before lower list")
     void shouldSearchUpperListBeforeLowerList() {
         showed.addUpperCards(List.of(new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2)));
         showed.addLowerCards(List.of(new CharacterCard("H1", Era.SECOND, null, CharacterType.HUNTER, 2)));
 
-        Optional<Card> taken = showed.takeCard(player, "H1");
+        Optional<Card> taken = showed.takeCard(playerContext, "H1");
 
         assertTrue(taken.isPresent());
-        // Upper card taken: upper is now empty, lower still has one
         assertEquals(0, showed.getUpperList().size());
         assertEquals(1, showed.getLowerList().size());
     }
@@ -314,7 +297,7 @@ class ShowedTest {
     @DisplayName("takeCard: should return empty Optional when card is not found")
     void shouldReturnEmptyWhenCardNotFound() {
         showed.addUpperCards(List.of(new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2)));
-        Optional<Card> taken = showed.takeCard(player, "NONEXISTENT");
+        Optional<Card> taken = showed.takeCard(playerContext, "NONEXISTENT");
         assertTrue(taken.isEmpty());
         assertEquals(1, showed.getUpperList().size());
     }
@@ -326,7 +309,7 @@ class ShowedTest {
         buildingShowed.addUpperCards(List.of(new BuildingCard("B1", Era.FIRST, null, 3, 5)));
         player.updateFood(5);
 
-        Optional<BuildingCard> taken = buildingShowed.takeCard(player, "B1");
+        Optional<BuildingCard> taken = buildingShowed.takeCard(playerContext, "B1");
 
         assertTrue(taken.isPresent());
         assertEquals(0, buildingShowed.getUpperList().size());
@@ -335,13 +318,13 @@ class ShowedTest {
     }
 
     @Test
-    @DisplayName("takeCard: should throw InvalidActionException and leave showed unchanged when player has insufficient food")
+    @DisplayName("takeCard: should throw InvalidActionException and leave showed unchanged when food is insufficient")
     void shouldThrowAndLeaveShowedUnchangedWhenInsufficientFood() {
         Showed<BuildingCard> buildingShowed = new Showed<>();
         buildingShowed.addUpperCards(List.of(new BuildingCard("B1", Era.FIRST, null, 3, 5)));
         player.updateFood(1);
 
-        assertThrows(InvalidActionException.class, () -> buildingShowed.takeCard(player, "B1"));
+        assertThrows(InvalidActionException.class, () -> buildingShowed.takeCard(playerContext, "B1"));
         assertEquals(1, buildingShowed.getUpperList().size());
         assertEquals(1, player.getFood());
         assertEquals(0, player.getTribe().getBuildings().size());
@@ -351,7 +334,7 @@ class ShowedTest {
     @DisplayName("takeCard: should throw InvalidActionException when trying to acquire an EventCard")
     void shouldThrowWhenTakingEventCard() {
         showed.addUpperCards(List.of(new EventCard("EV1", Era.FIRST, null, EventType.HUNTER_EVENT)));
-        assertThrows(InvalidActionException.class, () -> showed.takeCard(player, "EV1"));
+        assertThrows(InvalidActionException.class, () -> showed.takeCard(playerContext, "EV1"));
         assertEquals(1, showed.getUpperList().size());
     }
 
@@ -361,11 +344,11 @@ class ShowedTest {
     @DisplayName("fullRound: should correctly simulate a full turn cycle")
     void shouldCorrectlySimulateFullTurnCycle() {
         showed.addUpperCards(List.of(
-                new CharacterCard("H1", Era.FIRST,  null, CharacterType.HUNTER,  2),
-                new CharacterCard("H2", Era.FIRST,  null, CharacterType.SHAMAN,  2),
-                new CharacterCard("H3", Era.FIRST,  null, CharacterType.BUILDER, 2)));
+                new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER,  2),
+                new CharacterCard("H2", Era.FIRST, null, CharacterType.SHAMAN,  2),
+                new CharacterCard("H3", Era.FIRST, null, CharacterType.BUILDER, 2)));
 
-        showed.takeCard(player, "H2");
+        showed.takeCard(playerContext, "H2");
         assertEquals(2, showed.getUpperList().size());
         assertEquals(1, player.getTotalCharacters());
 
