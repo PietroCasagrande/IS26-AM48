@@ -1,6 +1,6 @@
 package it.polimi.ingsw.am48.network.client;
 
-import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.delta.*;
 import it.polimi.ingsw.am48.model.snapshot.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -355,5 +355,201 @@ class ClientModelTest {
         model.setInitialState(mockSnapshot);
         model.applyDelta(mock(GameDelta.class));
         verify(mockObserver, times(2)).onStateUpdated(any());
+    }
+
+    // --- FINE TURNO: 2 delta nell'ordine corretto ---
+
+    @Test
+    void shouldApplyCharacterPickedDeltaThenEndTurnDeltaInCorrectOrder() {
+        // verifica che applicando i 2 delta nell'ordine corretto lo stato finale sia coerente
+        model.setInitialState(mockSnapshot);
+
+        // delta 1: il player pesca una carta personaggio, il totem ritorna
+        CharacterCardPickedDelta pickDelta = new CharacterCardPickedDelta(
+                "alice", "newCard",
+                List.of("c10", "c11"), List.of("c12"),
+                6, 5, true // food aggiornato=6, points=5, totemReturned=true
+        );
+
+        // delta 2: fine turno con cibo e punti aggiornati per tutti
+        EndTurnDelta endTurnDelta = new EndTurnDelta(
+                Map.of("alice", 4, "bob", 2),   // food dopo sustenance
+                Map.of("alice", 5, "bob", 3),   // prestige aggiornato
+                List.of("c20", "c21"), List.of("c22"),
+                List.of("b10"), List.of()
+        );
+
+        // applica nell'ordine corretto
+        model.applyDelta(pickDelta);
+        model.applyDelta(endTurnDelta);
+
+        // verifica che il pick sia stato applicato
+        assertTrue(model.getState().getPlayer("alice").getCharacterCardIds().contains("newCard"));
+
+        // verifica che endturn abbia sovrascritto food e points
+        assertEquals(4, model.getState().getPlayer("alice").getFood());
+        assertEquals(5, model.getState().getPlayer("alice").getPoints());
+        assertEquals(2, model.getState().getPlayer("bob").getFood());
+        assertEquals(3, model.getState().getPlayer("bob").getPoints());
+
+        // verifica showed aggiornate da endturn
+        assertEquals(List.of("c20", "c21"), model.getState().getUpperRowCardIds());
+        assertEquals(List.of("c22"), model.getState().getLowerRowCardIds());
+        assertEquals(List.of("b10"), model.getState().getBuildingUpperIds());
+
+        // verifica totem tornato sulla turn card
+        assertTrue(model.getState().getOfferTurnCardOrder().contains("alice"));
+    }
+
+    @Test
+    void shouldApplyBuildingPickedDeltaThenEndTurnDeltaInCorrectOrder() {
+        // stesso scenario ma con BuildingCard
+        model.setInitialState(mockSnapshot);
+
+        BuildingCardPickedDelta pickDelta = new BuildingCardPickedDelta(
+                "alice", "newBuilding",
+                List.of("b10"), List.of("b11"),
+                1, 5, true // food=1 dopo pagamento edificio, points=5, totemReturned
+        );
+
+        EndTurnDelta endTurnDelta = new EndTurnDelta(
+                Map.of("alice", 0, "bob", 2),
+                Map.of("alice", 5, "bob", 0),
+                List.of("c20"), List.of("c21"),
+                List.of("b10"), List.of()
+        );
+
+        model.applyDelta(pickDelta);
+        model.applyDelta(endTurnDelta);
+
+        // verifica building aggiunto
+        assertTrue(model.getState().getPlayer("alice").getBuildingCardIds().contains("newBuilding"));
+
+        // verifica endturn ha sovrascritto i valori
+        assertEquals(0, model.getState().getPlayer("alice").getFood());
+        assertEquals(5, model.getState().getPlayer("alice").getPoints());
+
+        // verifica totem tornato
+        assertTrue(model.getState().getOfferTurnCardOrder().contains("alice"));
+    }
+
+    @Test
+    void shouldNotAffectOtherPlayersPickWhenApplyingPickDelta() {
+        // il pick di alice non deve cambiare lo stato di bob
+        model.setInitialState(mockSnapshot);
+
+        CharacterCardPickedDelta pickDelta = new CharacterCardPickedDelta(
+                "alice", "newCard",
+                List.of("c10"), List.of("c11"),
+                6, 5, false
+        );
+
+        model.applyDelta(pickDelta);
+
+        assertFalse(model.getState().getPlayer("bob").getCharacterCardIds().contains("newCard"));
+        assertEquals(0, model.getState().getPlayer("bob").getFood());
+    }
+
+// --- FINE PARTITA: 3 delta nell'ordine corretto ---
+
+    @Test
+    void shouldApplyAllThreeDeltasInCorrectOrderOnGameEnd() {
+        // verifica il flusso completo fine partita: pick → endturn → endgame
+        model.setInitialState(mockSnapshot);
+
+        CharacterCardPickedDelta pickDelta = new CharacterCardPickedDelta(
+                "alice", "lastCard",
+                List.of(), List.of(),
+                6, 5, true
+        );
+
+        EndTurnDelta endTurnDelta = new EndTurnDelta(
+                Map.of("alice", 4, "bob", 2),
+                Map.of("alice", 10, "bob", 7),
+                List.of(), List.of(),
+                List.of(), List.of()
+        );
+
+        EndGameDelta endGameDelta = new EndGameDelta(
+                Map.of("alice", 25, "bob", 18),
+                "alice"
+        );
+
+        // applica nell'ordine corretto
+        model.applyDelta(pickDelta);
+        model.applyDelta(endTurnDelta);
+        model.applyDelta(endGameDelta);
+
+        // verifica carta aggiunta da pickDelta
+        assertTrue(model.getState().getPlayer("alice").getCharacterCardIds().contains("lastCard"));
+
+        // verifica che endGameDelta abbia sovrascritto i punti finali
+        assertEquals(25, model.getState().getPlayer("alice").getPoints());
+        assertEquals(18, model.getState().getPlayer("bob").getPoints());
+    }
+
+    @Test
+    void shouldOverwriteEndTurnPointsWithEndGamePoints() {
+        // endgame sovrascrive i punti di endturn con i punteggi finali
+        model.setInitialState(mockSnapshot);
+
+        EndTurnDelta endTurnDelta = new EndTurnDelta(
+                Map.of("alice", 4, "bob", 2),
+                Map.of("alice", 10, "bob", 7), // punti dopo eventi
+                List.of(), List.of(), List.of(), List.of()
+        );
+
+        EndGameDelta endGameDelta = new EndGameDelta(
+                Map.of("alice", 25, "bob", 18), // punti finali dopo calcolo endgame
+                "alice"
+        );
+
+        model.applyDelta(endTurnDelta);
+        model.applyDelta(endGameDelta);
+
+        // i punti finali devono essere quelli di endgame, non di endturn
+        assertEquals(25, model.getState().getPlayer("alice").getPoints());
+        assertEquals(18, model.getState().getPlayer("bob").getPoints());
+    }
+
+    @Test
+    void shouldApplyEndGameDeltaToAllPlayers() {
+        // endgame aggiorna i punti di tutti i player, non solo del vincitore
+        model.setInitialState(mockSnapshot);
+
+        EndGameDelta endGameDelta = new EndGameDelta(
+                Map.of("alice", 25, "bob", 18),
+                "alice"
+        );
+
+        model.applyDelta(endGameDelta);
+
+        assertEquals(25, model.getState().getPlayer("alice").getPoints());
+        assertEquals(18, model.getState().getPlayer("bob").getPoints());
+    }
+
+    @Test
+    void shouldReverseDeltaOrderResultInIncorrectState() {
+        // se i delta vengono applicati nell'ordine sbagliato lo stato finale è diverso
+        model.setInitialState(mockSnapshot);
+
+        EndTurnDelta endTurnDelta = new EndTurnDelta(
+                Map.of("alice", 4, "bob", 2),
+                Map.of("alice", 10, "bob", 7),
+                List.of("c20"), List.of(), List.of(), List.of()
+        );
+
+        EndGameDelta endGameDelta = new EndGameDelta(
+                Map.of("alice", 25, "bob", 18),
+                "alice"
+        );
+
+        // ordine invertito: endgame prima, endturn dopo
+        model.applyDelta(endGameDelta);
+        model.applyDelta(endTurnDelta);
+
+        // endturn sovrascrive endgame → stato sbagliato
+        assertEquals(10, model.getState().getPlayer("alice").getPoints()); // endturn ha sovrascritto
+        assertNotEquals(25, model.getState().getPlayer("alice").getPoints());
     }
 }

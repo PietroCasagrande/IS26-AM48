@@ -7,10 +7,7 @@ import it.polimi.ingsw.am48.model.board.Showed;
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
-import it.polimi.ingsw.am48.model.delta.BuildingCardPickedDelta;
-import it.polimi.ingsw.am48.model.delta.CharacterCardPickedDelta;
-import it.polimi.ingsw.am48.model.delta.GameDelta;
-import it.polimi.ingsw.am48.model.delta.OfferCardADelta;
+import it.polimi.ingsw.am48.model.delta.*;
 import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Era;
 import it.polimi.ingsw.am48.model.enums.EventType;
@@ -588,5 +585,37 @@ class PlayerOfferPhaseTest {
 
         PlayerOfferPhaseSnapshot snapshot = (PlayerOfferPhaseSnapshot) phase.toSnapshot();
         assertEquals(1, snapshot.getCurrIdx());
+    }
+
+    @Test
+    void shouldReturnThreeDeltasInCorrectOrderOnLastCardOfLastTurn() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
+        Card card = makeCharCard("card1");
+        setupNormalPickB(p1, "card1", card); // ← usa il nuovo helper
+        when(mockGame.getCurrentTurn()).thenReturn(11);
+        when(mockBoard.getPlaceOrder()).thenReturn(List.of(p1, p2, p3));
+
+        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "card1");
+
+        assertEquals(3, deltas.size());
+        assertInstanceOf(CharacterCardPickedDelta.class, deltas.get(0));
+        assertInstanceOf(EndTurnDelta.class, deltas.get(1));
+        assertInstanceOf(EndGameDelta.class, deltas.get(2));
+    }
+
+    @Test
+    void shouldReturnThreeDeltasWithBuildingDeltaFirstWhenBuildingCardPicked() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
+        BuildingCard building = makeBuildingCard("b1"); // ← usa il nuovo helper
+        setupNormalPick(p1, 'B', 1, 0, 0, "b1", building); // ← firma corretta
+        when(mockGame.getCurrentTurn()).thenReturn(11);
+        when(mockBoard.getPlaceOrder()).thenReturn(List.of(p1, p2, p3));
+
+        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "b1");
+
+        assertEquals(3, deltas.size());
+        assertInstanceOf(BuildingCardPickedDelta.class, deltas.get(0));
+        assertInstanceOf(EndTurnDelta.class, deltas.get(1));
+        assertInstanceOf(EndGameDelta.class, deltas.get(2));
     }
 }
