@@ -122,5 +122,6 @@ public class ClientGameState {
     public Map<Character, String> getOfferTrackPositions() { return Collections.unmodifiableMap(offerTrackPositions); }
     public List<String> getOfferTurnCardOrder() { return Collections.unmodifiableList(offerTurnCardOrder); }
     public ClientPlayerState getPlayer(String nickname) { return players.get(nickname); }
+    public Map<String, ClientPlayerState> getPlayers() { return Collections.unmodifiableMap(players); }
     public Collection<ClientPlayerState> getAllPlayers() { return Collections.unmodifiableCollection(players.values()); }
 }

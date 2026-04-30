@@ -43,6 +43,7 @@ public class EndTurnDelta extends GameDelta {
         });
 
         model.updateTribeShowed(newUpperTribeIds, newLowerTribeIds);
+        model.updateBuildingShowed(newUpperBuildingIds, newLowerBuildingIds);
     }
 
     // getter per tutti i campi
