@@ -40,6 +40,7 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
             }
             model.notifyError("Connessione al server persa.");
         } catch (IOException e) {
+            e.printStackTrace();
             model.notifyError("Connessione al server persa.");
         }
     }
