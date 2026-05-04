@@ -3,7 +3,7 @@ package it.polimi.ingsw.am48.network.messages.notifications;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.polimi.ingsw.am48.network.client.ClientModel;
-import javafx.application.Preloader;
+
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
