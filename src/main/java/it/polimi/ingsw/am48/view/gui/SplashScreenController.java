@@ -5,19 +5,20 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
+
+import java.io.IOException;
 
 public class SplashScreenController {
 
     @FXML
     public StackPane root;
-    @FXML
-    public ImageView backgroundImage;
     @FXML
     public VBox textBox;
     @FXML
@@ -62,5 +63,19 @@ public class SplashScreenController {
 
         System.out.println("Input ricevuto! Qui caricheremo il MenuIniziale.fxml");
         // Prossimamente qui inseriremo la chiamata al SceneManager
+
+        try{
+            // Carichiamo il file del menu
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("mesos-menu.fxml"));
+            Parent mainMenu = loader.load();
+
+            // Prendiamo la scena attuale dal rootPane (lo StackPane della Splash)
+            Scene scene = root.getScene();
+
+            // Sostituiamo il contenuto della scena con il Menu
+            scene.setRoot(mainMenu);
+        } catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }
