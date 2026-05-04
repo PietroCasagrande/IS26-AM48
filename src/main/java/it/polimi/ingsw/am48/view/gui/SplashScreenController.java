@@ -58,24 +58,12 @@ public class SplashScreenController {
     }
 
     private void passaAlMenu() {
-        // Fermiamo l'animazione per non sprecare memoria
-        if (pulse != null) pulse.stop();
+        MesosMenuController menuController = (MesosMenuController) SceneManager.changeScene("mesos-menu.fxml");
 
-        System.out.println("Input ricevuto! Qui caricheremo il MenuIniziale.fxml");
-        // Prossimamente qui inseriremo la chiamata al SceneManager
-
-        try{
-            // Carichiamo il file del menu
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("mesos-menu.fxml"));
-            Parent mainMenu = loader.load();
-
-            // Prendiamo la scena attuale dal rootPane (lo StackPane della Splash)
-            Scene scene = root.getScene();
-
-            // Sostituiamo il contenuto della scena con il Menu
-            scene.setRoot(mainMenu);
-        } catch(IOException e){
-            e.printStackTrace();
+        // Passiamo i riferimenti al nuovo controller
+        if (menuController != null) {
+            menuController.setServer(server);
+            menuController.setModel(model);
         }
     }
 }

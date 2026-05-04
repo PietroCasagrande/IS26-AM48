@@ -44,7 +44,7 @@
     <children>
         <VBox fx:id="textBox" alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0">
             <children>
-                <Label fx:id="pressAnyButtonLabel" text="Press any button to play" textFill="#fff3e0">
+                <Label fx:id="pressAnyButtonLabel" text="Click to play" textFill="#fff3e0">
                     <font>
                         <Font name="Papyrus" size="40.0" />
                     </font>

@@ -23,14 +23,14 @@ public class GUIViewFxml extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("splash-screen.fxml"));
-        Parent root = loader.load();
+        SceneManager.setup(stage, server, model);
 
-        SplashScreenController controller = loader.getController();
-        controller.setServer(server);
-        controller.setModel(model);
+        SplashScreenController controller = (SplashScreenController) SceneManager.changeScene("splash-screen.fxml");
+        if (controller != null) {
+            controller.setServer(server);
+            controller.setModel(model);
+        }
 
-        stage.setScene(new Scene(root, 1280, 720));
         stage.setTitle("MESOS");
         stage.setOnCloseRequest(e -> {
             Platform.exit();
