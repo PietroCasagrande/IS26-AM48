@@ -29,23 +29,22 @@ public class EndTurnPhase implements GamePhase {
         // turn increment
         game.incrementTurn();
 
-        // endTurnDelta added to deltas list
-        deltas.add(buildEndTurnDelta(game));
-
         // end game check
         if(game.getCurrentTurn() > 10){
             EndGamePhase endGamePhase = new EndGamePhase();
             game.setPhase(endGamePhase);
+            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), game.getCurrentPhase().toSnapshot().getPhaseName()));
             deltas.add(endGamePhase.resolveEndGame(game));
         } else {
             game.setPhase(new PlaceTotemPhase());
+            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), game.getCurrentPhase().toSnapshot().getPhaseName()));
         }
 
         return deltas;
     }
 
 
-    private EndTurnDelta buildEndTurnDelta(Game game) {
+    private EndTurnDelta buildEndTurnDelta(Game game, int newTurn, String newPhase) {
         // Updated resources for each player (after events)
         Map<String, Integer> updatedFood = new HashMap<>();
         Map<String, Integer> updatedPrestige = new HashMap<>();
@@ -70,7 +69,9 @@ public class EndTurnPhase implements GamePhase {
                 newUpperRowIds,
                 newLowerRowIds,
                 newBuildingUpperIds,
-                newBuildingLowerIds
+                newBuildingLowerIds,
+                newTurn,
+                newPhase
         );
     }
 
