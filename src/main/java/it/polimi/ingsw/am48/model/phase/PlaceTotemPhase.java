@@ -41,10 +41,10 @@ public class PlaceTotemPhase implements GamePhase {
             List<Player> trackOrder = game.getBoard().getPickOrder();
             PlayerOfferPhase playerOfferPhase = new PlayerOfferPhase(trackOrder);
             game.setPhase(playerOfferPhase);
-            deltas.add(new TotemPlacedDelta(player.getNickname(), position, updatedTurnOrderNicknames, "PlayerOfferPhase"));
+            deltas.add(new TotemPlacedDelta(player.getNickname(), position, updatedTurnOrderNicknames, "PLAYER_OFFER"));
             playerOfferPhase.setup(game).ifPresent(deltas::add);  // se setup restituisce un delta lo aggiungiamo alla lista deltas
         }
-        else deltas.add(new TotemPlacedDelta(player.getNickname(), position, updatedTurnOrderNicknames, "PlaceTotemPhase"));
+        else deltas.add(new TotemPlacedDelta(player.getNickname(), position, updatedTurnOrderNicknames, "PLACE_TOTEM"));
 
         return deltas;
     }
