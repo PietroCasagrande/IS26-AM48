@@ -12,6 +12,11 @@ import java.rmi.registry.Registry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// To run the server with maven, write
+//      mvn exec:java -Dexec.mainClass="it.polimi.ingsw.am48.network.server.ServerMain"
+// on the terminal, before starting ClientMain on another terminal window.
+// Remember to compile after any change before starting the server.
+
 public class ServerMain {
     private static final int PORT = 12345; // Porta del server
     private static final int RMI_PORT = 1099; // Porta del server tramite RMI

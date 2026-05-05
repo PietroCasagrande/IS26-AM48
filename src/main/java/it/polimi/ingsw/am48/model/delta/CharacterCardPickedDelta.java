@@ -44,7 +44,6 @@ public class CharacterCardPickedDelta extends GameDelta{
         if (totemReturned) {
             model.returnTotemToTurnCard(playerNickname);
         }
-
         model.setPhase(currentPhase);
     }
 
@@ -55,4 +54,5 @@ public class CharacterCardPickedDelta extends GameDelta{
     public int getUpdatedFood() { return updatedFood; }
     public int getUpdatedPoints() { return updatedPoints; }
     public boolean isTotemReturned() { return totemReturned; }
+    public String getCurrentPhase() { return currentPhase; }
 }

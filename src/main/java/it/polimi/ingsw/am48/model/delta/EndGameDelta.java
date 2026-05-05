@@ -23,6 +23,7 @@ public class EndGameDelta extends GameDelta{
     // EndGame modifica pp di tutti i giocatori
     @Override
     public void applyTo(ClientModel model) {
+        // System.out.println("DEBUG EndGameDelta: winner=" + winnerNickname + ", scores=" + finalScores);
         finalScores.keySet().forEach(nick -> {
             model.updatePlayerPoints(nick, finalScores.get(nick));
         });
