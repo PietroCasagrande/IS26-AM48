@@ -1,0 +1,43 @@
+.button-menu {
+    /* Gradiente dall'arancione al rosso scuro */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+    
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+    
+    /* Bordi più arrotondati, organici */
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+    
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+    
+    -fx-padding: 12px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 10, 0, 0, 5);
+}
+
+.button-menu:hover {
+    /* Il gradiente diventa più acceso e luminoso */
+    -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
+    -fx-cursor: hand;
+    /* L'ombra diventa un "bagliore" arancione */
+    -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
+}
+
+.button-menu-fire:pressed {
+    /* Colori bruciati per il click */
+    -fx-background-color: linear-gradient(to bottom, #873600, #581845);
+    -fx-translate-y: 3px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 2);
+}
+
+#root {
+    -fx-background-image: url("../images/background.png");
+    -fx-background-size: cover; /* Questo è il comando magico! */
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}

@@ -5,6 +5,7 @@ module it.polimi.ingsw.am48 {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
     requires java.rmi;
+    requires java.desktop;
     exports it.polimi.ingsw.am48.model.game;
     exports it.polimi.ingsw.am48.model.player;
     exports it.polimi.ingsw.am48.model.card;
@@ -19,6 +20,7 @@ module it.polimi.ingsw.am48 {
     exports it.polimi.ingsw.am48.exception;
     exports it.polimi.ingsw.am48.repository;
     exports it.polimi.ingsw.am48.controller;
+    exports it.polimi.ingsw.am48.view.gui;
 
     exports it.polimi.ingsw.am48.network to java.rmi;
     exports it.polimi.ingsw.am48.network.server to java.rmi;
@@ -28,4 +30,5 @@ module it.polimi.ingsw.am48 {
     opens it.polimi.ingsw.am48.model.snapshot     to com.fasterxml.jackson.databind;
     opens it.polimi.ingsw.am48.network.messages.notifications to com.fasterxml.jackson.databind;
     opens it.polimi.ingsw.am48.network.messages.commands to com.fasterxml.jackson.databind;
+    opens it.polimi.ingsw.am48.view.gui to javafx.graphics, javafx.fxml;
 }
