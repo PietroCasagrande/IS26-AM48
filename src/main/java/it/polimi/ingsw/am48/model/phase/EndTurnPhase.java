@@ -24,7 +24,7 @@ public class EndTurnPhase implements GamePhase {
         }
 
         // board update after solving events
-        game.getBoard().endTurn(game.getNotificatorCenter(), game.getPlayerContext());
+        if(game.getCurrentTurn() < 10) game.getBoard().endTurn(game.getNotificatorCenter(), game.getPlayerContext());
 
         // turn increment
         game.incrementTurn();

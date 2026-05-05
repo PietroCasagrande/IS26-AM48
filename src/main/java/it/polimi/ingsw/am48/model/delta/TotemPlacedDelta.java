@@ -28,7 +28,6 @@ public class TotemPlacedDelta extends GameDelta{
     public void applyTo(ClientModel model) {
         model.updateOfferTurnCardOrder(updatedOfferTurnCardOrder);
         model.placeTotemOnTrack(tileId, playerNickname);
-
         model.setPhase(currentPhase);
     }
 
@@ -37,4 +36,5 @@ public class TotemPlacedDelta extends GameDelta{
     public List<String> getUpdatedOfferTurnCardOrder() {
         return updatedOfferTurnCardOrder;
     }
+    public String getCurrentPhase() { return currentPhase; }
 }

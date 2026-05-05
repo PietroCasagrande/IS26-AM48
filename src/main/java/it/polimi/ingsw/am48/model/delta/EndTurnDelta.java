@@ -62,4 +62,6 @@ public class EndTurnDelta extends GameDelta {
     public List<String> getNewLowerTribeIds() { return newLowerTribeIds; }
     public List<String> getNewUpperBuildingIds() { return newUpperBuildingIds; }
     public List<String> getNewLowerBuildingIds() { return newLowerBuildingIds; }
+    public int getCurrentTurn() { return currentTurn; }
+    public String getCurrentPhase() { return currentPhase; }
 }

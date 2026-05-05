@@ -85,18 +85,20 @@ public class PlayerOfferPhase implements GamePhase {
             validatePick(game.getBoard(), cardId, currentOffer);
         }
 
-        // 4. Aggiorna contatori
+        // Determina la posizione PRIMA di prendere la carta (serve dopo per il counter)
+        boolean isTop = !extraPickActive && game.getBoard().isCardTop(cardId);
+
+        // Prende la carta dal board - se lancia eccezione, i contatori non vengono toccati
+        Card selectedCard = game.getBoard().takeCard(game.getPlayerContext(), cardId);
+
+        // Aggiorna contatori solamente dopo che takeCard è andato a buon fine
         if (!extraPickActive) {
-            if (game.getBoard().isCardTop(cardId)) {
+            if (isTop) {
                 picksFromUp++;
             } else {
                 picksFromDown++;
             }
         }
-
-
-        // 5. Prendi la carta dal board (acquire + rimuovi da showed)
-        Card selectedCard = game.getBoard().takeCard(game.getPlayerContext(), cardId);
 
         // 6. Registra la strategy della carta al notificator
         if (selectedCard.getStrategy() != null) {

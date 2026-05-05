@@ -55,4 +55,5 @@ public class BuildingCardPickedDelta extends GameDelta{
     public int getUpdatedFood() {return updatedFood;}
     public int getUpdatedPoints() {return updatedPoints;}
     public boolean isTotemReturned() {return totemReturned;}
+    public String getCurrentPhase() { return currentPhase; }
 }
