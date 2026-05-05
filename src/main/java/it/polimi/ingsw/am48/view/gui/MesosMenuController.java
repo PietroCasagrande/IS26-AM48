@@ -5,8 +5,7 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
-import java.awt.*;
+import javafx.scene.control.Button;
 
 public class MesosMenuController {
 
@@ -38,6 +37,16 @@ public class MesosMenuController {
 
     @FXML
     public void initialize() {
-        //TODO
+    }
+
+    @FXML
+    public void handlePlay() {
+        LoadingLobbyController loadingLobby = (LoadingLobbyController) SceneManager.changeScene("loading-lobby.fxml");
+
+        // Passiamo i riferimenti al nuovo controller
+        if (loadingLobby != null) {
+            loadingLobby.setServer(server);
+            loadingLobby.setModel(model);
+        }
     }
 }

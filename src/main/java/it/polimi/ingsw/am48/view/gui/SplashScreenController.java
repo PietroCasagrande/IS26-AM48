@@ -5,15 +5,10 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import javafx.scene.control.Label;
-
-import java.io.IOException;
 
 public class SplashScreenController {
 
@@ -50,14 +45,14 @@ public class SplashScreenController {
         pulse.play();
 
         // 2. Ci mettiamo in ascolto del click del mouse
-        root.setOnMouseClicked(event -> passaAlMenu());
+        root.setOnMouseClicked(event -> handleMenu());
 
         // 3. Ci mettiamo in ascolto della tastiera
         root.setFocusTraversable(true);
-        root.setOnKeyPressed(event -> passaAlMenu());
+        root.setOnKeyPressed(event -> handleMenu());
     }
 
-    private void passaAlMenu() {
+    private void handleMenu() {
         MesosMenuController menuController = (MesosMenuController) SceneManager.changeScene("mesos-menu.fxml");
 
         // Passiamo i riferimenti al nuovo controller
