@@ -83,6 +83,8 @@ public class ClientModel {
         state.incrementTurn(newTurn);
     }
 
+    public void setWinnerNickname(String winnerNickname) { state.setWinnerNickname(winnerNickname); }
+
     // --- getter per la view ---
 
     public ClientGameState getState() { return state; }

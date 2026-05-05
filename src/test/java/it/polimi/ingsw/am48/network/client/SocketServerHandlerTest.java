@@ -126,7 +126,7 @@ class SocketServerHandlerTest {
     void shouldCallApplyDeltaOnGameDeltaNotification() throws Exception {
         startHandlerThread();
 
-        GameDelta delta = new TotemPlacedDelta("P1", 'A', List.of("P2"));  // ← AGGIUNGI questa riga
+        GameDelta delta = new TotemPlacedDelta("P1", 'A', List.of("P2"), "PlaceTotem");  // ← AGGIUNGI questa riga
         sendNotificationToHandler(new GameDeltaNotification(delta));
 
         verify(mockModel, timeout(1000)).applyDelta(any(GameDelta.class));

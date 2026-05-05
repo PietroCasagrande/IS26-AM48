@@ -13,6 +13,7 @@ public class CharacterCardPickedDelta extends GameDelta{
     private final int updatedFood;
     private final int updatedPoints;
     private final boolean totemReturned;
+    private final String currentPhase;
 
     @JsonCreator
     public CharacterCardPickedDelta(
@@ -22,7 +23,8 @@ public class CharacterCardPickedDelta extends GameDelta{
             @JsonProperty("updatedLowerTribeIds") List<String> updatedLowerTribeIds,
             @JsonProperty("updatedFood") int updatedFood,
             @JsonProperty("updatedPoints") int updatedPoints,
-            @JsonProperty("totemReturned") boolean totemReturned ){
+            @JsonProperty("totemReturned") boolean totemReturned,
+            @JsonProperty("currentPhase") String currentPhase){
         this.playerNickname = playerNickname;
         this.cardId = cardId;
         this.updatedUpperTribeIds = updatedUpperTribeIds;
@@ -30,6 +32,7 @@ public class CharacterCardPickedDelta extends GameDelta{
         this.updatedFood = updatedFood;
         this.updatedPoints = updatedPoints;
         this.totemReturned = totemReturned;
+        this.currentPhase = currentPhase;
     }
 
     @Override
@@ -41,6 +44,8 @@ public class CharacterCardPickedDelta extends GameDelta{
         if (totemReturned) {
             model.returnTotemToTurnCard(playerNickname);
         }
+
+        model.setPhase(currentPhase);
     }
 
     public String getPlayerNickname() { return playerNickname; }

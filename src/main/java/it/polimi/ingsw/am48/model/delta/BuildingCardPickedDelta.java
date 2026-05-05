@@ -13,6 +13,7 @@ public class BuildingCardPickedDelta extends GameDelta{
     private final int updatedFood;        // cibo dopo pagamento edificio e ritorno totem
     private final int updatedPoints;      // pp dopo eventuale penalità cibo
     private final boolean totemReturned;  // true se il player ha finito i suoi pick
+    private final String currentPhase;
 
     @JsonCreator
     public BuildingCardPickedDelta(
@@ -22,7 +23,8 @@ public class BuildingCardPickedDelta extends GameDelta{
             @JsonProperty("updatedLowerBuildingIds")List<String> updatedLowerBuildingIds,
             @JsonProperty("updatedFood") int updatedFood,
             @JsonProperty("updatedPoints") int updatedPoints,
-            @JsonProperty("totemReturned") boolean totemReturned) {
+            @JsonProperty("totemReturned") boolean totemReturned,
+            @JsonProperty("currentPhase") String currentPhase) {
         this.playerNickname = playerNickname;
         this.cardId = cardId;
         this.updatedUpperBuildingIds = updatedUpperBuildingIds;
@@ -30,6 +32,7 @@ public class BuildingCardPickedDelta extends GameDelta{
         this.updatedFood = updatedFood;
         this.updatedPoints = updatedPoints;
         this.totemReturned = totemReturned;
+        this.currentPhase = currentPhase;
     }
 
     @Override
@@ -41,6 +44,8 @@ public class BuildingCardPickedDelta extends GameDelta{
         if (totemReturned) {
             model.returnTotemToTurnCard(playerNickname);
         }
+
+        model.setPhase(currentPhase);
     }
 
     public String getPlayerNickname() {return playerNickname;}

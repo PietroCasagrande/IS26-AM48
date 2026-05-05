@@ -14,6 +14,8 @@ public class EndTurnDelta extends GameDelta {
     private final List<String> newLowerTribeIds;             // carte spostate nella fila inferiore
     private final List<String> newUpperBuildingIds;     // nuovi edifici (se cambio era)
     private final List<String> newLowerBuildingIds;
+    private final int currentTurn;
+    private final String currentPhase;
 
     @JsonCreator
     public EndTurnDelta(
@@ -22,18 +24,23 @@ public class EndTurnDelta extends GameDelta {
             @JsonProperty("newUpperTribeIds")List<String> newUpperTribeIds,
             @JsonProperty("newLowerTribeIds")List<String> newLowerTribeIds,
             @JsonProperty("newUpperBuildingIds")List<String> newUpperBuildingIds,
-            @JsonProperty("newLowerBuildingIds")List<String> newLowerBuildingIds) {
+            @JsonProperty("newLowerBuildingIds")List<String> newLowerBuildingIds,
+            @JsonProperty("currentTurn") int currentTurn,
+            @JsonProperty("currentPhase") String currentPhase) {
         this.updatedFood = updatedFood;
         this.updatedPrestige = updatedPrestige;
         this.newUpperTribeIds = newUpperTribeIds;
         this.newLowerTribeIds = newLowerTribeIds;
         this.newUpperBuildingIds = newUpperBuildingIds;
         this.newLowerBuildingIds = newLowerBuildingIds;
+        this.currentTurn = currentTurn;
+        this.currentPhase = currentPhase;
     }
 
     // EndTurn modifica showed e food e pp di tutti i giocatori
     @Override
     public void applyTo(ClientModel model) {
+        model.setPhase("EndTurnPhase");
         updatedFood.keySet().forEach(nick -> {
             model.updatePlayerFood(nick, updatedFood.get(nick));
         });
@@ -41,9 +48,11 @@ public class EndTurnDelta extends GameDelta {
         updatedPrestige.keySet().forEach(nick -> {
             model.updatePlayerPoints(nick, updatedPrestige.get(nick));
         });
-
         model.updateTribeShowed(newUpperTribeIds, newLowerTribeIds);
         model.updateBuildingShowed(newUpperBuildingIds, newLowerBuildingIds);
+
+        model.setPhase(currentPhase);
+        model.incrementTurn(currentTurn);
     }
 
     // getter per tutti i campi

@@ -110,11 +110,16 @@ public class ClientGameState {
         this.currentTurn = newTurn;
     }
 
+    public void setWinnerNickname(String winnerNickname) {
+        this.winnerNickname = winnerNickname;
+    }
+
     // --- getters per la view ---
 
     public String getGameId() { return gameId; }
     public int getCurrentTurn() { return currentTurn; }
     public String getCurrentPhase() { return currentPhase; }
+    public String getWinnerNickname() { return winnerNickname; }
     public List<String> getUpperRowCardIds() { return Collections.unmodifiableList(upperRowCardIds); }
     public List<String> getLowerRowCardIds() { return Collections.unmodifiableList(lowerRowCardIds); }
     public List<String> getBuildingUpperIds() { return Collections.unmodifiableList(buildingUpperIds); }
