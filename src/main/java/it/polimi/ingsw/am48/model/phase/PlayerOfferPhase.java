@@ -112,10 +112,10 @@ public class PlayerOfferPhase implements GamePhase {
         if (extraPickActive) {
 //            extraPickActive = false;
 //            extraPickPlayer = null;
-            deltas.add(buildCardDelta(player, selectedCard, game, totemReturned));  // se siamo all'extraPick dobbiamo costruire il delta, dato che non arriviamo a quello del punto 9
             // Transizione a EndTurnPhase
             EndTurnPhase endPhase = new EndTurnPhase();
             game.setPhase(endPhase);
+            deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "EndTurnPhase"));  // se siamo all'extraPick dobbiamo costruire il delta, dato che non arriviamo a quello del punto 9
             deltas.addAll(endPhase.endTurn(game));
             return deltas;
         }
@@ -144,14 +144,14 @@ public class PlayerOfferPhase implements GamePhase {
                 // Nessun extra: transizione a EndTurnPhase
                 EndTurnPhase endPhase = new EndTurnPhase();
                 game.setPhase(endPhase);
-                deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, game.getCurrentPhase().toSnapshot().getPhaseName()));
+                deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "EndTurnPhase"));
                 deltas.addAll(endPhase.endTurn(game));
             }
             // Se extraPickActive, la fase resta PlayerOfferPhase
             // e aspetta il takeCard del extra player
-            else deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, game.getCurrentPhase().toSnapshot().getPhaseName()));
+            else deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "PlayerOfferPhase"));
         }
-        else deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, game.getCurrentPhase().toSnapshot().getPhaseName()));
+        else deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "PlayerOfferPhase"));
 
         totemReturned = false;  // rimettiamo a false per prossimo player (in caso il curr l'avesse aggiornato)
 

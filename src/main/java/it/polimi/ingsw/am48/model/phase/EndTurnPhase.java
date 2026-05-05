@@ -33,11 +33,11 @@ public class EndTurnPhase implements GamePhase {
         if(game.getCurrentTurn() > 10){
             EndGamePhase endGamePhase = new EndGamePhase();
             game.setPhase(endGamePhase);
-            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), game.getCurrentPhase().toSnapshot().getPhaseName()));
+            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "EndGamePhase"));
             deltas.add(endGamePhase.resolveEndGame(game));
         } else {
             game.setPhase(new PlaceTotemPhase());
-            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), game.getCurrentPhase().toSnapshot().getPhaseName()));
+            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "PlaceTotemPhase"));
         }
 
         return deltas;
