@@ -162,6 +162,12 @@ public class PlayerOfferPhase implements GamePhase {
         if (!isTop && !isDown) {
             throw new InvalidActionException("La carta non è sul tabellone.");
         }
+        if (isTop && offer.getNumUp() == 0)
+            throw new InvalidActionException("Non puoi pescare dalla fila superiore");
+
+        if (isDown && offer.getNumDown() == 0)
+            throw new InvalidActionException("Non puoi pescare dalla fila inferiore");
+
         if (isTop && picksFromUp >= offer.getNumUp()) {
             throw new InvalidActionException("Hai già pescato il massimo dalla fila superiore.");
         }

@@ -21,6 +21,6 @@ public class EventCard extends Card{
     @Override
     public void acquire(PlayerContext playerContext) {
         // Le EventCard non vengono acquisite dal giocatore
-        throw new InvalidActionException("EventCard can not be acquired.");
+        throw new InvalidActionException("La carta evento non può essere acquisita");
     }
 }
