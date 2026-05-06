@@ -1,6 +1,6 @@
 package it.polimi.ingsw.am48.view.gui;
 
-import it.polimi.ingsw.am48.network.VirtualServerRmi;
+import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
@@ -24,10 +24,10 @@ public class MesosMenuController {
     @FXML
     private Button buttonExit;
 
-    private VirtualServerRmi server;
+    private VirtualServer server;
     private ClientModel model;
 
-    public void setServer(VirtualServerRmi server) {
+    public void setServer(VirtualServer server) {
         this.server = server;
     }
 
@@ -41,12 +41,12 @@ public class MesosMenuController {
 
     @FXML
     public void handlePlay() {
-        LoadingLobbyController loadingLobby = (LoadingLobbyController) SceneManager.changeScene("loading-lobby.fxml");
+        JoinGameController joinGameScene = (JoinGameController) SceneManager.changeScene("join-game-screen.fxml");
 
         // Passiamo i riferimenti al nuovo controller
-        if (loadingLobby != null) {
-            loadingLobby.setServer(server);
-            loadingLobby.setModel(model);
+        if (joinGameScene != null) {
+            joinGameScene.setServer(server);
+            joinGameScene.setModel(model);
         }
     }
 }

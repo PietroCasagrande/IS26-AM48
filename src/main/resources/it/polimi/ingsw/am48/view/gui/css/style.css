@@ -1,39 +1,6 @@
-.button-menu {
-    /* Gradiente dall'arancione al rosso scuro */
-    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
-    
-    /* Testo bianco crema */
-    -fx-text-fill: #FFF3E0;
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-font-family: "System";
-    
-    /* Bordi più arrotondati, organici */
-    -fx-background-radius: 25px;
-    -fx-border-radius: 25px;
-    
-    /* Bordo dorato */
-    -fx-border-color: #F5B041;
-    -fx-border-width: 2px;
-    
-    -fx-padding: 12px 40px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
-}
-
-.button-menu:hover {
-    /* Il gradiente diventa più acceso e luminoso */
-    -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
-    -fx-cursor: hand;
-    /* L'ombra diventa un "bagliore" arancione */
-    -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
-}
-
-.button-menu-fire:pressed {
-    /* Colori bruciati per il click */
-    -fx-background-color: linear-gradient(to bottom, #873600, #581845);
-    -fx-translate-y: 3px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 2);
-}
+/* ======================================================================================== */
+/*                                      ROOTS (STACK PANELS)                                */
+/* ======================================================================================== */
 
 #root {
     -fx-background-image: url("../images/background.png");
@@ -60,6 +27,148 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0.5, 0, 0);
 }
 
+#rootJoinGame {
+    -fx-background-image: url("../images/background-with-characters.jpeg");
+    -fx-background-size: cover;
+}
+
+
+/* ======================================================================================== */
+/*                                          BUTTONS                                         */
+/* ======================================================================================== */
+
+/* ======================================== FIRE BUTTONS ================================== */
+
+.button-menu-fire {
+    /* Gradiente dall'arancione al rosso scuro */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+
+    /* Bordi più arrotondati, organici */
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 12px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+.button-menu-fire:hover {
+    /* Il gradiente diventa più acceso e luminoso */
+    -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
+    -fx-cursor: hand;
+    /* L'ombra diventa un "bagliore" arancione */
+    -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
+}
+
+.button-menu-fire:armed,
+.button-menu-fire:focused {
+    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    -fx-background-insets: 0;
+
+    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    /* Il tuo stile di selezione */
+    -fx-border-color: #FFCA71;
+    -fx-border-width: 2px;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-font-size: 22px;
+
+    /* Bagliore */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 5);
+}
+
+/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+.button-menu-fire:pressed {
+    -fx-background-color: #d35400;
+    -fx-background-insets: 0;
+}
+
+/* =================================== NIGHT BUTTONS ====================================== */
+
+.button-menu-night {
+    /* Gradiente dal ciano al violetto */
+    -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+
+    /* Bordi più arrotondati, organici */
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 12px 30px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+.button-menu-night:hover {
+    /* Il gradiente diventa più acceso e luminoso */
+    -fx-background-color: linear-gradient(to bottom, #115f88, #70334f);
+    -fx-cursor: hand;
+    /* L'ombra diventa un "bagliore" arancione */
+    -fx-effect: dropshadow(three-pass-box, rgb(2, 67, 99), 20, 0, 0, 0);
+}
+
+/* ======================================================================================== */
+/*                                 TOGGLE BUTTON GROUP                                      */
+/* ======================================================================================== */
+
+/* Questo serve a resettare TUTTI gli stati che Scene Builder sporca di azzurro */
+.button-menu-night:selected,
+.button-menu-night:focused,
+.button-menu-night:selected:focused {
+    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
+
+    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    -fx-background-insets: 0;
+
+    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    /* Il tuo stile di selezione */
+    -fx-border-color: #FFCA71;
+    -fx-border-width: 4px;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-font-size: 16px;
+
+    /* Bagliore */
+    -fx-effect: dropshadow(three-pass-box, rgba(17, 95, 136, 0.8), 15, 0, 0, 0);
+}
+
+/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+.button-menu-night:pressed {
+    -fx-background-color: #024363;
+    -fx-background-insets: 0;
+}
+
+/* ======================================================================================== */
+/*                                          TEXT                                            */
+/* ======================================================================================== */
+
 /* Stile per la scritta "Waiting" */
 .waiting-text {
     -fx-font-family: "Papyrus", "System";      /* Mantieni lo stile Mesos */
@@ -73,4 +182,49 @@
     -fx-font-size: 18px;
     -fx-text-fill: #ffcc00;                    /* Giallo ambra per evidenziare il dato */
     -fx-letter-spacing: 2px;
+}
+
+/* ======================================================================================== */
+/*                                          TEXT FIELD                                      */
+/* ======================================================================================== */
+
+.nickname-text-field {
+    /* Il gradiente principale */
+    -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
+
+    /* FORZATURA 1: Applichiamo il raggio a tutti i possibili strati di background di JavaFX */
+    -fx-background-radius: 25px, 25px, 25px, 25px;
+
+    /* FORZATURA 2: Azzeriamo tutti gli insets per evitare angoli squadrati "fantasma" */
+    -fx-background-insets: 0, 0, 0, 0;
+
+    -fx-text-fill: #FFF3E0;
+    -fx-prompt-text-fill: rgba(255, 243, 224, 0.5);
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+    -fx-border-radius: 25px;
+
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+/* Forziamo anche lo stato di focus per evitare che torni rettangolare quando scrivi */
+.nickname-text-field:focused {
+    -fx-background-color: linear-gradient(to bottom, #03567d, #6e2448);
+
+    /* Ripetiamo la forzatura del raggio e degli insets */
+    -fx-background-radius: 25px, 25px, 25px, 25px;
+    -fx-background-insets: 0, 0, 0, 0;
+
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    /* Eliminiamo i rettangoli azzurri di sistema */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }

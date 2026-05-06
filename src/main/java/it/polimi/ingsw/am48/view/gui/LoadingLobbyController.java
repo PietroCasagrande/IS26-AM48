@@ -1,6 +1,6 @@
 package it.polimi.ingsw.am48.view.gui;
 
-import it.polimi.ingsw.am48.network.VirtualServerRmi;
+import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.animation.*;
 import javafx.fxml.FXML;
@@ -20,10 +20,10 @@ public class LoadingLobbyController {
     @FXML
     private ImageView totem;
 
-    private VirtualServerRmi server;
+    private VirtualServer server;
     private ClientModel model;
 
-    public void setServer(VirtualServerRmi server) {
+    public void setServer(VirtualServer server) {
         this.server = server;
     }
 
