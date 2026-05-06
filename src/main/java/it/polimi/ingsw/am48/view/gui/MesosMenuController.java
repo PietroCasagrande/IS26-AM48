@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.view.gui;
 
 import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.ClientModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -78,5 +79,14 @@ public class MesosMenuController {
         // Nasconde il manuale e torna al menu
         rulesOverlay.setVisible(false);
         menuContainer.setVisible(true);
+    }
+
+    @FXML
+    private void handleExit() {
+        // Chiude l'applicazione JavaFX
+        Platform.exit();
+
+        // Termina il processo Java
+        System.exit(0);
     }
 }
