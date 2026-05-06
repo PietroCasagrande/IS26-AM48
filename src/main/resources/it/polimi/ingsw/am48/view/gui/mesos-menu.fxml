@@ -53,7 +53,7 @@
                         <Button fx:id="buttonPlay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Play Game" onAction="#handlePlay"/>
                         <Button fx:id="buttonHowToPLay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="How to Play" onAction="#handleHowToPlay" />
                         <Button fx:id="buttonSettings" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Settings" />
-                        <Button fx:id="buttonExit" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Exit" />
+                        <Button fx:id="buttonExit" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Exit" onAction="#handleExit" />
                     </children>
                     <padding><Insets top="100.0" /></padding>
                 </VBox>
