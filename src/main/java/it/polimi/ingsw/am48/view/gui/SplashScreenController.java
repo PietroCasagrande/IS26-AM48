@@ -1,6 +1,6 @@
 package it.polimi.ingsw.am48.view.gui;
 
-import it.polimi.ingsw.am48.network.VirtualServerRmi;
+import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -21,10 +21,10 @@ public class SplashScreenController {
 
     private FadeTransition pulse;
 
-    private VirtualServerRmi server;
+    private VirtualServer server;
     private ClientModel model;
 
-    public void setServer(VirtualServerRmi server) {
+    public void setServer(VirtualServer server) {
         this.server = server;
     }
 

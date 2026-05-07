@@ -46,10 +46,10 @@
                 <VBox fx:id="titleBox" prefHeight="200.0" prefWidth="100.0" />
                 <VBox fx:id="buttonBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
                     <children>
-                        <Button fx:id="buttonPlay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Play Game" textAlignment="CENTER" onAction="#handlePlay"/>
-                        <Button fx:id="buttonHowToPLay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="How to Play" textAlignment="CENTER" />
-                        <Button fx:id="buttonSettings" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Settings" textAlignment="CENTER" />
-                        <Button fx:id="buttonExit" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Exit" textAlignment="CENTER" />
+                        <Button fx:id="buttonPlay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="PLAY GAME" textAlignment="CENTER" onAction="#handlePlay"/>
+                        <Button fx:id="buttonHowToPLay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="HOW TO PLAY" textAlignment="CENTER" />
+                        <Button fx:id="buttonSettings" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="SETTINGS" textAlignment="CENTER" />
+                        <Button fx:id="buttonExit" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="EXIT" textAlignment="CENTER" />
                     </children>
                     <padding>
                         <Insets top="100.0" />

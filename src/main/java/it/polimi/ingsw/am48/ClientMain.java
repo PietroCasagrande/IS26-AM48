@@ -4,7 +4,9 @@ import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.RmiClient;
 import it.polimi.ingsw.am48.network.client.SocketServerHandler;
+import it.polimi.ingsw.am48.view.gui.GUIViewFxml;
 import it.polimi.ingsw.am48.view.tui.CLIView;
+import javafx.application.Application;
 
 import java.util.Scanner;
 
@@ -53,7 +55,7 @@ public class ClientMain {
         // ── 3. View type ──────────────────────────────────────────────────────
         System.out.println("View type:");
         System.out.println("  1) TUI  (terminal)");
-        System.out.println("  2) GUI  (JavaFX)  — not yet implemented");
+        System.out.println("  2) GUI  (JavaFX)");
         System.out.print("Choice [1]: ");
         String viewInput = sc.nextLine().trim();
         int viewChoice = viewInput.isBlank() ? 1 : Integer.parseInt(viewInput);
@@ -94,11 +96,11 @@ public class ClientMain {
         if (viewChoice == 1) {
             // TUI: run() blocks on stdin until the user quits.
             new CLIView(server, clientModel).run();
-
-        } else {
-            // GUI: placeholder until JavaFX view is implemented.
-            System.out.println("GUI not yet implemented. Launching TUI as fallback.");
-            new CLIView(server, clientModel).run();
+        }
+        else if(viewChoice == 2) {
+            GUIViewFxml.setModel(clientModel);
+            GUIViewFxml.setServer(server);
+            Application.launch(GUIViewFxml.class, args);
         }
     }
 }

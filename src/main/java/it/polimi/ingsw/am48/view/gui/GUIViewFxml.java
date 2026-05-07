@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.view.gui;
 
+import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.VirtualServerRmi;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.application.Application;
@@ -10,10 +11,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class GUIViewFxml extends Application {
-    private static VirtualServerRmi server;
+    private static VirtualServer server;
     private static ClientModel model;
 
-    public static void setServer(VirtualServerRmi server) {
+    public static void setServer(VirtualServer server) {
         GUIViewFxml.server = server;
     }
 
