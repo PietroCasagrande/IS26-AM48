@@ -1,7 +1,5 @@
 package it.polimi.ingsw.am48.view.gui;
 
-import it.polimi.ingsw.am48.network.VirtualServer;
-import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,13 +9,22 @@ import java.io.IOException;
 
 public class SceneManager {
     private static Stage stage;
-    private static VirtualServer server; // Riferimento al server
-    private static ClientModel model;  // Riferimento al model
+    private static Object server; // Riferimento al server
+    private static Object model;  // Riferimento al model
+    private static String nickname; // Nickname del giocatore locale
 
-    public static void setup(Stage primaryStage, VirtualServer s, ClientModel m) {
+    public static void setup(Stage primaryStage, Object s, Object m) {
         stage = primaryStage;
         server = s;
         model = m;
+    }
+
+    public static void setNickname(String nick) {
+        nickname = nick;
+    }
+
+    public static String getNickname() {
+        return nickname;
     }
 
     public static Object changeScene(String fxmlPath) {
