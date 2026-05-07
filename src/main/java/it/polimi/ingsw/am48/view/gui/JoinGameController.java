@@ -1,8 +1,9 @@
 package it.polimi.ingsw.am48.view.gui;
 
-import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.network.VirtualServer;
+import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientModel;
+import it.polimi.ingsw.am48.network.client.ModelObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -10,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class JoinGameController {
+public class JoinGameController implements ModelObserver {
     @FXML
     private StackPane rootJoinGame;
     @FXML
@@ -41,6 +42,7 @@ public class JoinGameController {
 
     public void setModel(ClientModel model) {
         this.model = model;
+        this.model.registerObserver(this);
     }
 
     @FXML
@@ -57,8 +59,41 @@ public class JoinGameController {
         // Maximum 15 characters for nickname
         nicknameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.length() > 15) {
-                nicknameTextField.setText(oldValue); // Impedisce di scrivere più di 15 caratteri
+                nicknameTextField.setText(oldValue);
             }
+        });
+    }
+
+     @Override
+     public void onStateUpdated(ClientGameState state){
+         if ("WAITING_FOR_PLAYERS".equals(state.getCurrentPhase())) {
+             LoadingLobbyController loadingLobby = (LoadingLobbyController) SceneManager.changeScene("loading-lobby.fxml");
+             if (loadingLobby != null) {
+                 loadingLobby.setServer(server);
+                 loadingLobby.setModel(model);
+             }
+         }
+         else if("PLACE_TOTEM".equals(state.getCurrentPhase())) {
+             //TODO show game board scene
+             System.out.println("Game full. Starting...");
+         }
+         else {
+             System.out.println("Generic error occurred. Cannot set in waiting for players state.");
+         }
+     }
+
+    @Override
+    public void onError(String message) {
+        Platform.runLater(() -> {
+            joinBox.setDisable(false);
+            nicknameTextField.setStyle("-fx-border-color: #ff4444; -fx-border-width: 3px;");
+
+            // Shows error message as an alert
+            showErrorMessage(message);
+
+            // Focus on nickname textfield to rewrite user's nickname
+            nicknameTextField.requestFocus();
+            nicknameTextField.selectAll();
         });
     }
 
@@ -69,41 +104,21 @@ public class JoinGameController {
             int numPlayers = (Integer) selectedButton.getUserData();
             String nickname = nicknameTextField.getText();
 
-            // Debug
-            System.out.println("Partenza per " + numPlayers + " giocatori. Nick: " + nickname);
-            // Qui caricherai la scena successiva passandogli i dati
-
             // Calls joinGame method
             try{
-                this.server.joinGame(numPlayers, nickname);
-                LoadingLobbyController loadingLobby = (LoadingLobbyController) SceneManager.changeScene("loading-lobby.fxml");
-
-                // Passiamo i riferimenti al nuovo controller
-                if (loadingLobby != null) {
-                    loadingLobby.setServer(server);
-                    loadingLobby.setModel(model);
-                }
-            } catch (IllegalArgumentException e){
-                System.out.println(e.getMessage());
-                nicknameTextField.setStyle("-fx-border-color: #ff4444; -fx-border-width: 3px;");
-
-                // 2. Mostra un messaggio di errore (puoi usare una Label dedicata o un Alert)
-                showErrorMessage("Il nickname '" + nickname + "' è già occupato. Scegline un altro!");
-
-                // 3. Riporta il focus sulla textfield per far riscrivere subito l'utente
-                nicknameTextField.requestFocus();
-                nicknameTextField.selectAll();
-            } catch (Exception e) {
-                System.out.println("Generic error occurred.");
+                server.joinGame(numPlayers, nickname);
+                joinBox.setDisable(true);
+            } catch (Exception e){
+                System.out.println("Generic connection error occurred. Please try again.");
             }
         }
     }
 
     private void showErrorMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Errore di Accesso");
-        alert.setHeaderText(null); // Rimuove l'intestazione per renderlo più pulito
+        alert.setTitle("Login error: this nickname is already in use");
+        alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait(); // Blocca l'interfaccia finché l'utente non preme OK
+        alert.showAndWait();
     }
 }
