@@ -1,0 +1,589 @@
+{
+  "characters": [
+    {
+      "id": "BUI-01",
+      "stats": {
+        "buildingDiscount": 1,
+        "builderPp": 2
+      }
+    },
+    {
+      "id": "BUI-02",
+      "stats": {
+        "buildingDiscount": 2,
+        "builderPp": 0
+      }
+    },
+    {
+      "id": "BUI-03",
+      "stats": {
+        "buildingDiscount": 1,
+        "builderPp": 3
+      }
+    },
+    {
+      "id": "BUI-04",
+      "stats": {
+        "buildingDiscount": -2,
+        "builderPp": 1
+      }
+    },
+    {
+      "id": "BUI-05",
+      "stats": {
+        "buildingDiscount": 1,
+        "builderPp": 4
+      }
+    },
+    {
+      "id": "BUI-06",
+      "stats": {
+        "buildingDiscount": 2,
+        "builderPp": 1
+      }
+    },
+    {
+      "id": "BUI-07",
+      "stats": {
+        "buildingDiscount": 2,
+        "builderPp": 3
+      }
+    },
+    {
+      "id": "BUI-08",
+      "stats": {
+        "buildingDiscount": 1,
+        "builderPp": 2
+      }
+    },
+    {
+      "id": "BUI-09",
+      "stats": {
+        "buildingDiscount": 2,
+        "builderPp": 2
+      }
+    },
+    {
+      "id": "BUI-10",
+      "stats": {
+        "buildingDiscount": 1,
+        "builderPp": 5
+      }
+    },
+    {
+      "id": "BUI-11",
+      "stats": {
+        "buildingDiscount": 2,
+        "builderPp": 3
+      }
+    },
+    {
+      "id": "BUI-12",
+      "stats": {
+        "buildingDiscount": 1,
+        "builderPp": 4
+      }
+    },
+    {
+      "id": "INV-01",
+      "stats": {
+        "artifact": "BREAD"
+      }
+    },
+    {
+      "id": "INV-02",
+      "stats": {
+        "artifact": "LEATHER"
+      }
+    },
+    {
+      "id": "INV-03",
+      "stats": {
+        "artifact": "ARROW"
+      }
+    },
+    {
+      "id": "INV-04",
+      "stats": {
+        "artifact": "CANOE"
+      }
+    },
+    {
+      "id": "INV-05",
+      "stats": {
+        "artifact": "BOWL"
+      }
+    },
+    {
+      "id": "INV-06",
+      "stats": {
+        "artifact": "ROPE"
+      }
+    },
+    {
+      "id": "INV-07",
+      "stats": {
+        "artifact": "FLUTE"
+      }
+    },
+    {
+      "id": "INV-08",
+      "stats": {
+        "artifact": "BOWL"
+      }
+    },
+    {
+      "id": "INV-09",
+      "stats": {
+        "artifact": "ROPE"
+      }
+    },
+    {
+      "id": "INV-10",
+      "stats": {
+        "artifact": "DOLL"
+      }
+    },
+    {
+      "id": "INV-11",
+      "stats": {
+        "artifact": "FLUTE"
+      }
+    },
+    {
+      "id": "INV-12",
+      "stats": {
+        "artifact": "LEATHER"
+      }
+    },
+    {
+      "id": "INV-13",
+      "stats": {
+        "artifact": "HOOK"
+      }
+    },
+    {
+      "id": "INV-14",
+      "stats": {
+        "artifact": "DOLL"
+      }
+    },
+    {
+      "id": "INV-15",
+      "stats": {
+        "artifact": "NECKLACE"
+      }
+    },
+    {
+      "id": "INV-16",
+      "stats": {
+        "artifact": "BREAD"
+      }
+    },
+    {
+      "id": "INV-17",
+      "stats": {
+        "artifact": "HOOK"
+      }
+    },
+    {
+      "id": "INV-18",
+      "stats": {
+        "artifact": "CANOE"
+      }
+    },
+    {
+      "id": "INV-19",
+      "stats": {
+        "artifact": "ARROW"
+      }
+    },
+    {
+      "id": "INV-20",
+      "stats": {
+        "artifact": "NECKLACE"
+      }
+    },
+    {
+      "id": "HUN-02",
+      "stats": {
+        "resource": "FOOD"
+      }
+    },
+    {
+      "id": "HUN-03",
+      "stats": {
+        "resource": "FOOD"
+      }
+    },
+    {
+      "id": "HUN-08",
+      "stats": {
+        "resource": "FOOD"
+      }
+    },
+    {
+      "id": "HUN-09",
+      "stats": {
+        "resource": "FOOD"
+      }
+    },
+    {
+      "id": "HUN-10",
+      "stats": {
+        "resource": "FOOD"
+      }
+    },
+    {
+      "id": "HUN-11",
+      "stats": {
+        "resource": "FOOD"
+      }
+    },
+    {
+      "id": "HUN-14",
+      "stats": {
+        "resource": "FOOD"
+      }
+    },
+    {
+      "id": "HUN-15",
+      "stats": {
+        "resource": "FOOD"
+      }
+    },
+    {
+      "id": "SHA-01",
+      "stats": {
+        "quantity": 1
+      }
+    },
+    {
+      "id": "SHA-02",
+      "stats": {
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-03",
+      "stats": {
+        "quantity": 1
+      }
+    },
+    {
+      "id": "SHA-04",
+      "stats": {
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-05",
+      "stats": {
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-06",
+      "stats": {
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-07",
+      "stats": {
+        "quantity": 1
+      }
+    },
+    {
+      "id": "SHA-08",
+      "stats": {
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-09",
+      "stats": {
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-10",
+      "stats": {
+        "quantity": 3
+      }
+    },
+    {
+      "id": "SHA-11",
+      "stats": {
+        "quantity": 3
+      }
+    },
+    {
+      "id": "SHA-12",
+      "stats": {
+        "quantity": 2
+      }
+    },
+    {
+      "id": "SHA-13",
+      "stats": {
+        "quantity": 2
+      }
+    }
+  ],
+
+  "events": [
+    {
+      "id": "EVA-01",
+      "stats": {
+        "threshold": 1,
+        "winRes": 1,
+        "loseRes": -2
+      }
+    },
+    {
+      "id": "EVH-01",
+      "stats": {
+        "ppGained": 1
+      }
+    },
+    {
+      "id": "EVS-01",
+      "stats": {
+        "ppToMin": -3,
+        "ppToMax": 5
+      }
+    },
+    {
+      "id": "EVP-01",
+      "stats": {
+        "ppLost": 1
+      }
+    },
+    {
+      "id": "EVA-02",
+      "stats": {
+        "threshold": 2,
+        "winRes": 2,
+        "loseRes": -2
+      }
+    },
+    {
+      "id": "EVH-02",
+      "stats": {
+        "ppGained": 2
+      }
+    },
+    {
+      "id": "EVS-02",
+      "stats": {
+        "ppToMin": -5,
+        "ppToMax": 10
+      }
+    },
+    {
+      "id": "EVP-02",
+      "stats": {
+        "ppLost": 2
+      }
+    },
+    {
+      "id": "EVA-03",
+      "stats": {
+        "threshold": 3,
+        "winRes": 3,
+        "loseRes": -2
+      }
+    },
+    {
+      "id": "EVH-03",
+      "stats": {
+        "ppGained": 3
+      }
+    },
+    {
+      "id": "EVS-03",
+      "stats": {
+        "ppToMin": -7,
+        "ppToMax": 15
+      }
+    },
+    {
+      "id": "EVP-03",
+      "stats": {
+        "ppLost": 3
+      }
+    }
+  ],
+
+  "buildings": [
+    {
+      "id": "BLD-01",
+      "description": "Ottieni 1 CIBO in più quando torni sulla griglia",
+      "stats": {
+        "foodCost": 3,
+        "prestigePoints": 3
+      }
+    },
+    {
+      "id": "BLD-02",
+      "description": "Per ogni coppia di INVENTORI che prendi, ottieni 3 CIBO",
+      "stats": {
+        "foodCost": 3,
+        "prestigePoints": 4
+      }
+    },
+    {
+      "id": "BLD-03",
+      "description": "Protegge la tribù dagli effetti negativi dagli Eventi RITUALE SCIAMANICO ",
+      "stats": {
+        "foodCost": 5,
+        "prestigePoints": 2
+      }
+    },
+    {
+      "id": "BLD-04",
+      "description": "Ottieni 5 CIBO ogni volta che completi un set di personaggi",
+      "stats": {
+        "foodCost": 4,
+        "prestigePoints": 3
+      }
+    },
+    {
+      "id": "BLD-05",
+      "description": "Durante l'Evento SOSTENTAMENTO, ogni RACCOGLITORE offre uno sconto extra di 1 CIBO",
+      "stats": {
+        "foodCost": 4,
+        "prestigePoints": 4
+      }
+    },
+    {
+      "id": "BLD-06",
+      "description": "Durante l'Evento SOSTENTAMENTO, ogni ARTISTA offre uno sconto extra di 1 CIBO",
+      "stats": {
+        "foodCost": 5,
+        "prestigePoints": 3
+      }
+    },
+    {
+      "id": "BLD-07",
+      "description": "Durante l'Evento PITTURE RUPESTRI, ogni ARTISTA offre 1 CIBO",
+      "stats": {
+        "foodCost": 5,
+        "prestigePoints": 6
+      }
+    },
+    {
+      "id": "BLD-08",
+      "description": "Durante l'Evento SOSTENTAMENTO, ogni INVENTORE offre uno sconto extra di 1 CIBO",
+      "stats": {
+        "foodCost": 7,
+        "prestigePoints": 4
+      }
+    },
+    {
+      "id": "BLD-09",
+      "description": "Ottieni 6 PUNTI PRESTIGIO ogni volta che completi un set di personaggi",
+      "stats": {
+        "foodCost": 5,
+        "prestigePoints": 6
+      }
+    },
+    {
+      "id": "BLD-10",
+      "description": "Durante l'Evento CACCIA, ogni CACCIATORE offre 1 CIBO e 1 PUNTO PRESTIGIO",
+      "stats": {
+        "foodCost": 7,
+        "prestigePoints": 2
+      }
+    },
+    {
+      "id": "BLD-11",
+      "description": "Raddoppia i PUNTI PRESTIGIO ricevuti dai COSTRUTTORI",
+      "stats": {
+        "foodCost": 6,
+        "prestigePoints": 4
+      }
+    },
+    {
+      "id": "BLD-12",
+      "description": "Raddoppia i PUNTI PRESTIGIO ricevuti negli Eventi RITUALE SCIAMANICO",
+      "stats": {
+        "foodCost": 7,
+        "prestigePoints": 0
+      }
+    },
+    {
+      "id": "BLD-13",
+      "description": "Ricevi 3 STELLE",
+      "stats": {
+        "foodCost": 6,
+        "prestigePoints": 4
+      }
+    },
+    {
+      "id": "BLD-14",
+      "description": "Quadruplica i PUNTI PRESTIGIO ricevuti dai COSTRUTTORI",
+      "stats": {
+        "foodCost": 6,
+        "prestigePoints": 3
+      }
+    },
+    {
+      "id": "BLD-15",
+      "description": "Ricevi 2 PUNTI PRESTIGIO per ogni INVENTORE",
+      "stats": {
+        "foodCost": 6,
+        "prestigePoints": 6
+      }
+    },
+    {
+      "id": "BLD-16",
+      "description": "Ricevi 4 PUNTI PRESTIGIO per ogni SCIAMANO",
+      "stats": {
+        "foodCost": 7,
+        "prestigePoints": 4
+      }
+    },
+    {
+      "id": "BLD-17",
+      "description": "Ricevi 4 PUNTI PRESTIGIO per ogni ARTISTA",
+      "stats": {
+        "foodCost": 7,
+        "prestigePoints": 4
+      }
+    },
+    {
+      "id": "BLD-18",
+      "description": "Ricevi 4 PUNTI PRESTIGIO per ogni RACCOGLITORE",
+      "stats": {
+        "foodCost": 7,
+        "prestigePoints": 6
+      }
+    },
+    {
+      "id": "BLD-19",
+      "description": "Ricevi 3 PUNTI PRESTIGIO per ogni CACCIATORE",
+      "stats": {
+        "foodCost": 8,
+        "prestigePoints": 8
+      }
+    },
+    {
+      "id": "BLD-20",
+      "description": "Ricevi 25 PUNTI PRESTIGIO",
+      "stats": {
+        "foodCost": 10,
+        "prestigePoints": 25
+      }
+    },
+    {
+      "id": "BLD-21",
+      "description": "Quando tutti hanno terminato il turno, puoi pescare una carta in più dalla fila superiore",
+      "stats": {
+        "foodCost": 9,
+        "prestigePoints": 3
+      }
+    }
+  ]
+}
