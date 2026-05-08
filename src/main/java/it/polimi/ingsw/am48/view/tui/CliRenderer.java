@@ -152,6 +152,24 @@ public class CliRenderer {
         System.out.println();
     }
 
+    // Renders the full details of a card on demand (used by the "info" command)
+    public void renderCardInfo(String cardId){
+        String label = cardRegistry.getLabel(cardId);
+        String description = cardRegistry.getDescription(cardId);
+
+        System.out.println("\n── Card Info ────────────────────────");
+        System.out.println("  " + cardId
+                + (label.isEmpty() ? "" : "  [" + label + "]"));
+
+        if (!description.isEmpty()) {
+            System.out.println("  Effect: " + description);
+        } else {
+            System.out.println("  (no additional info available)");
+        }
+        System.out.println();
+        System.out.print("> ");
+    }
+
     /*
      * Renders the help message listing all available commands.
      */
@@ -164,6 +182,7 @@ public class CliRenderer {
               show                           — reprint the current game state
               players                        — show only the player list
               help                           — show this message
+              info                           — show full details of a card
               quit                           — exit the server
             """);
     }

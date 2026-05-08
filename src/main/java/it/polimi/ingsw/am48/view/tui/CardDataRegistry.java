@@ -18,6 +18,7 @@ public class CardDataRegistry {
     // Maps cardId -> compact display label, e.g. "food", "arrow", "★★", "cost:5 pp:3"
     private final Map<String, String> labels = new HashMap<>();
 
+    private final Map<String, String> descriptions = new HashMap<>();
     /*
      * Loads and parses client_data.json from the classpath.
      * Called once at client startup.
@@ -42,6 +43,11 @@ public class CardDataRegistry {
     // Returns a compact label for the given card ID, or empty string if unknown.
     public String getLabel(String cardId) {
         return labels.getOrDefault(cardId, "");
+    }
+
+    // Returns the full description for a building card, or empty string if not found
+    public String getDescription(String cardId) {
+        return descriptions.getOrDefault(cardId, "");
     }
 
     // -------------------------------------------------------------------------
@@ -72,6 +78,11 @@ public class CardDataRegistry {
             String id = node.get("id").asText();
             JsonNode stats = node.get("stats");
             labels.put(id, buildBuildingLabel(stats));
+
+            // save full description for "info" command
+            if(node.has("description")) {
+                descriptions.put(id, node.get("description").asText());
+            }
         }
     }
 
