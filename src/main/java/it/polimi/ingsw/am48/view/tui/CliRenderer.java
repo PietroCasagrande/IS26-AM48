@@ -4,6 +4,7 @@ import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * Handles all terminal output for the TUI. Responsibilities:
@@ -15,6 +16,12 @@ import java.util.Set;
  * It only reads ClientGameState and writes to System.out / System.err.
  */
 public class CliRenderer {
+
+    private final CardDataRegistry cardRegistry;
+
+    public CliRenderer() {
+        this.cardRegistry = new CardDataRegistry();
+    }
 
     /*
      * Full state rendering:
@@ -166,12 +173,18 @@ public class CliRenderer {
     // -------------------------------------------------------------------------
 
     /*
-     * Formats a list of card IDs for display.
-     * Returns "(empty)" if the list is null or empty.
+     * Formats a list of card IDs into a compact inline string.
+     * Appends the registry label in brackets when available.
      */
     private String formatCardList(java.util.List<String> ids) {
         if (ids == null || ids.isEmpty()) return "(empty)";
-        return String.join(", ", ids);
+
+        return ids.stream()
+                .map(id -> {
+                    String label = cardRegistry.getLabel(id);
+                    return label.isEmpty() ? id : id + " [" + label + "]";
+                })
+                .collect(Collectors.joining("  |  "));
     }
 
     /*
