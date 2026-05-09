@@ -128,6 +128,7 @@ public class CLIView implements ModelObserver {
             case "players" -> handlePlayers();
             case "help"    -> renderer.renderHelp();
             case "quit"    -> handleQuit();
+            case "info"    -> handleInfo(cmd.args());
             case ""        -> {}  // blank line — just reprint the prompt
             default        -> System.out.println("Unknown command. Type 'help' for the list.");
         }
@@ -249,6 +250,20 @@ public class CLIView implements ModelObserver {
                 )
         );
     }
+
+    /*
+     * Handles: info <cardId>
+     * Prints full details of the given card, including building description if available.
+     */
+    private void handleInfo(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Usage: info <cardId>");
+            return;
+        }
+        renderer.renderCardInfo(args[0]);
+    }
+
+
 
     /*
      * Handles: quit
