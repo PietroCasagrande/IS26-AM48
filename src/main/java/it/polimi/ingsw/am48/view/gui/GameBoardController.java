@@ -15,9 +15,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 
 import java.util.List;
@@ -41,7 +39,8 @@ public class GameBoardController implements ModelObserver {
     // Board center
     @FXML private HBox upper_row, lower_row;
     @FXML private HBox deckable_sup, building_sup, deckable_inf, building_inf;
-    @FXML private VBox offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG;
+    @FXML private VBox offerTurnCard, offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG;
+    @FXML private VBox deck;
 
     private VirtualServer server;
     private ClientModel model;
@@ -50,6 +49,17 @@ public class GameBoardController implements ModelObserver {
     private VBox[] offerCards;
     private VBox[] opponentBoxes;
     private Label[] opponentLabels;
+    private ImageView[] opponentAvatars;
+
+    // Variabili di stato per la meccanica del Totem e configurazione board
+    private boolean isMyTotemSelected = false;
+    private int currentPlayerCount = 0;
+
+    // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
+    private int currentEra = 0;
+
+    // Ordine colori assegnati in base all'ingresso
+    private final String[] totemColors = {"blue", "red", "black", "white", "yellow"};
 
     @FXML
     public void initialize() {
@@ -58,6 +68,7 @@ public class GameBoardController implements ModelObserver {
         offerCards = new VBox[]{ offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG };
         opponentBoxes = new VBox[]{ left_player, right_player, topLeft_player, topRight_player };
         opponentLabels = new Label[]{ labelLeft, labelRight, labelTopLeft, labelTopRight };
+        opponentAvatars = new ImageView[]{ avatarLeft, avatarRight, avatarTopLeft, avatarTopRight };
 
         for (VBox b : opponentBoxes) b.setVisible(false);
 
@@ -76,13 +87,155 @@ public class GameBoardController implements ModelObserver {
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
             if (myNickname == null) myNickname = SceneManager.getNickname();
+
+            int numPlayers = state.getPlayers().size();
+            // Aggiorna la board solo se il numero di giocatori cambia (o al primo caricamento)
+            if (numPlayers > 0 && this.currentPlayerCount != numPlayers) {
+                updateBoardConfiguration(numPlayers);
+            }
+
+            // updateDeckEra(state.getCurrentEra()); DA GESTIRE!!!
             updatePlayerInfo(state);
             updateBoardRows(state);
             updateOfferCards(state);
+            updateTotemGrid(state);
             updateMyHand(state);
             updateTokens(state);
         });
     }
+
+    private void updateDeckEra(int era) {
+        if (this.currentEra == era) return; // Evita di riapplicare lo stile se l'era non è cambiata
+        this.currentEra = era;
+
+        // Rimuove le classi precedenti per evitare conflittti
+        deck.getStyleClass().removeAll("deck-era1", "deck-era2", "deck-era3");
+
+        // Aggiunge la classe corrispondente all'era
+        switch (era) {
+            case 1 -> deck.getStyleClass().add("deck-era1");
+            case 2 -> deck.getStyleClass().add("deck-era2");
+            case 3 -> deck.getStyleClass().add("deck-era3");
+        }
+    }
+
+    // ─────────────────────── Helper per Colori Totem ───────────────────────
+
+    private String getTotemPath(String nickname, ClientGameState state) {
+        // Otteniamo la lista dei nickname per trovare l'indice di ingresso
+        List<String> entryOrder = state.getPlayers().values().stream()
+                .map(ClientPlayerState::getNickname)
+                .toList();
+
+        int index = entryOrder.indexOf(nickname);
+        if (index < 0 || index >= totemColors.length) return "";
+
+        String color = totemColors[index];
+        return "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
+    }
+
+    // ─────────────────────── Configurazioni Dinamiche Board ───────────────────────
+
+    private double computeDisplayedH(Image img, double fitWidth) {
+        if (img == null || img.isError() || img.getWidth() == 0) return 180;
+        return img.getHeight() * (fitWidth / img.getWidth());
+    }
+
+    private void updateBoardConfiguration(int numPlayers) {
+        this.currentPlayerCount = numPlayers;
+
+        String gridImagePath = "/it/polimi/ingsw/am48/view/gui/images/offerTurnCards/offerTurnCard" + numPlayers + ".png";
+        try {
+            Image bgImage = new Image(getClass().getResourceAsStream(gridImagePath));
+            if (!bgImage.isError()) {
+                BackgroundImage bgi = new BackgroundImage(
+                        bgImage,
+                        BackgroundRepeat.NO_REPEAT,
+                        BackgroundRepeat.NO_REPEAT,
+                        BackgroundPosition.CENTER,
+                        new BackgroundSize(95, computeDisplayedH(bgImage, 95), false, false, false, false)                );
+                offerTurnCard.setBackground(new Background(bgi));
+            }
+        } catch (Exception e) {
+            System.err.println("Errore caricamento griglia turni: " + gridImagePath);
+        }
+
+        // Gestione visibilità slot offerta in base alle regole di Mesos
+        offerCardA.setVisible(numPlayers == 5);
+        offerCardA.setManaged(numPlayers == 5);
+
+        offerCardD.setVisible(numPlayers >= 3);
+        offerCardD.setManaged(numPlayers >= 3);
+
+        offerCardG.setVisible(numPlayers >= 4);
+        offerCardG.setManaged(numPlayers >= 4);
+    }
+
+    private void updateTotemGrid(ClientGameState state) {
+        offerTurnCard.getChildren().clear();
+
+        List<String> orderList = state.getOfferTurnCardOrder();
+        if (orderList == null || orderList.isEmpty()) return;
+
+        String currentPhase = state.getCurrentPhase();
+        boolean isPlaceTotemPhase = "PLACE_TOTEM".equals(currentPhase);
+        boolean isMyTurn = isPlaceTotemPhase
+                && !orderList.isEmpty()
+                && myNickname.equals(orderList.get(0));
+
+        int numSlots = currentPlayerCount > 0 ? currentPlayerCount : orderList.size();
+
+        // Calcola l'altezza reale dell'immagine quando scalata a 95px di larghezza
+        String gridImagePath = "/it/polimi/ingsw/am48/view/gui/images/offerTurnCards/offerTurnCard" + numSlots + ".png";
+        double displayedH = 180.0; // fallback
+        try {
+            Image gridImg = new Image(getClass().getResourceAsStream(gridImagePath));
+            if (!gridImg.isError()) {
+                displayedH = computeDisplayedH(gridImg, 95);
+            }
+        } catch (Exception ignored) {}
+
+        double vboxH = 180.0; // HBox.fillHeight=true → il VBox è sempre 180px
+        double topOffset = Math.max(0, (vboxH - displayedH) / 2.0);
+        double slotH = displayedH / numSlots;
+
+        offerTurnCard.setSpacing(0);
+        offerTurnCard.setPadding(new Insets(topOffset, 0, 0, 0));
+        offerTurnCard.setAlignment(Pos.TOP_CENTER);
+
+        for (int i = 0; i < numSlots; i++) {
+            StackPane slotPane = new StackPane();
+            slotPane.setPrefHeight(slotH);
+            slotPane.setMinHeight(slotH);
+            slotPane.setMaxHeight(slotH);
+            slotPane.setAlignment(Pos.CENTER);
+
+            if (i < orderList.size()) {
+                String nick = orderList.get(i);
+                ImageView totemImg = new ImageView();
+                try {
+                    String path = getTotemPath(nick, state);
+                    if (!path.isEmpty())
+                        totemImg.setImage(new Image(getClass().getResourceAsStream(path)));
+                } catch (Exception e) {
+                    System.err.println("Impossibile caricare totem: " + nick);
+                }
+                totemImg.setPreserveRatio(true);
+                totemImg.setFitHeight(slotH * 0.72);
+
+                if (nick.equals(myNickname) && isMyTurn) {
+                    totemImg.getStyleClass().add("totem-selectable");
+                    totemImg.setOnMouseClicked(e -> {
+                        isMyTotemSelected = true;
+                        totemImg.setStyle("-fx-effect: dropshadow(gaussian, #ffd700, 15, 0.5, 0, 0);");
+                    });
+                }
+                slotPane.getChildren().add(totemImg);
+            }
+            offerTurnCard.getChildren().add(slotPane);
+        }
+    }
+
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
 
@@ -97,12 +250,20 @@ public class GameBoardController implements ModelObserver {
 
             Label label = opponentLabels[slot];
             VBox box = opponentBoxes[slot];
+            ImageView avatar = opponentAvatars[slot];
 
             label.setText(player.getNickname());
             box.setVisible(true);
 
-            // Uso un Tooltip avanzato invece di aggiungere nodi al VBox:
-            // Questo evita che la UI "salti" quando passi il mouse sul nome.
+            String totemPath = getTotemPath(player.getNickname(), state);
+            try {
+                avatar.setImage(new Image(getClass().getResourceAsStream(totemPath)));
+                avatar.setFitHeight(60);
+                avatar.setPreserveRatio(true);
+            } catch (Exception e) {
+                System.err.println("Impossibile caricare avatar per " + player.getNickname());
+            }
+
             setupPlayerTooltip(label, player);
             slot++;
         }
@@ -114,7 +275,6 @@ public class GameBoardController implements ModelObserver {
         container.setPadding(new Insets(10));
         container.setStyle("-fx-background-color: #2b2b2b; -fx-border-color: #ffd700; -fx-border-width: 2;");
 
-        // Aggiunge le immagini delle carte al tooltip
         addCardsToContainer(container, player.getCharacterCardIds(), 80);
         addCardsToContainer(container, player.getBuildingCardIds(), 80);
 
@@ -154,17 +314,47 @@ public class GameBoardController implements ModelObserver {
             VBox offerBox = offerCards[i];
             offerBox.getChildren().clear();
 
+            String bgPath = "/it/polimi/ingsw/am48/view/gui/images/offerCards/offerCard" + letter + ".png";
+            try {
+                Image bgImage = new Image(getClass().getResourceAsStream(bgPath));
+                if (!bgImage.isError()) {
+                    BackgroundImage bgi = new BackgroundImage(
+                            bgImage,
+                            BackgroundRepeat.NO_REPEAT,
+                            BackgroundRepeat.NO_REPEAT,
+                            BackgroundPosition.CENTER,
+                            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false)
+                    );
+                    offerBox.setBackground(new Background(bgi));
+                }
+            } catch (Exception e) {
+                System.err.println("Errore caricamento offer card: " + bgPath);
+            }
+
             if (positions.containsKey(letter)) {
-                Label lbl = new Label(positions.get(letter));
-                lbl.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold;");
-                offerBox.getChildren().add(lbl);
-            } else {
-                offerBox.getChildren().add(new Label(String.valueOf(letter)));
+                String playerNick = positions.get(letter);
+                ImageView totemOnTrack = new ImageView();
+                String path = getTotemPath(playerNick, state);
+
+                try {
+                    totemOnTrack.setImage(new Image(getClass().getResourceAsStream(path)));
+                    totemOnTrack.setFitHeight(50);
+                    totemOnTrack.setPreserveRatio(true);
+                    offerBox.setAlignment(Pos.TOP_CENTER);
+                    offerBox.setPadding(new Insets(22, 0, 0, 0));
+                    offerBox.getChildren().add(totemOnTrack);
+                } catch (Exception e) {
+                    Label lbl = new Label(playerNick);
+                    lbl.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold;");
+                    offerBox.setAlignment(Pos.TOP_CENTER);
+                    offerBox.setPadding(new Insets(22, 0, 0, 0));
+                    offerBox.getChildren().add(lbl);
+                }
             }
         }
     }
 
-    // ─────────────────────── Utilities ───────────────────────
+    // ─────────────────────── Utilities & Handlers ───────────────────────
 
     private void updateMyHand(ClientGameState state) {
         ClientPlayerState myState = state.getPlayer(myNickname);
@@ -188,7 +378,6 @@ public class GameBoardController implements ModelObserver {
 
     private ImageView createCardImageView(String cardId, boolean clickable) {
         ImageView img = new ImageView();
-        // Nota: Assicurati che il percorso inizi con / e sia corretto rispetto ai resources
         String path = "/it/polimi/ingsw/am48/view/gui/images/cards/" + cardId + ".png";
 
         try {
@@ -202,7 +391,7 @@ public class GameBoardController implements ModelObserver {
         img.setFitHeight(120);
 
         if (clickable) {
-            img.getStyleClass().add("card-hover"); // Aggiungi questo nel tuo CSS per l'effetto ingrandimento
+            img.getStyleClass().add("card-hover");
             img.setOnMouseClicked(e -> handleCardClick(cardId));
         }
         return img;
@@ -223,9 +412,23 @@ public class GameBoardController implements ModelObserver {
     }
 
     private void handleOfferCardClick(char letter) {
-        if (server != null) {
-            try { server.placeTotem(myNickname, letter); }
-            catch (Exception ex) { ex.printStackTrace(); }
+        if (server == null || model == null || model.getState() == null) return;
+
+        if (!"PLACE_TOTEM".equals(model.getState().getCurrentPhase())) {
+            System.out.println("Azione non consentita in questa fase!");
+            return;
+        }
+
+        if (!isMyTotemSelected) {
+            System.out.println("Seleziona prima il tuo totem dalla griglia!");
+            return;
+        }
+
+        try {
+            server.placeTotem(myNickname, letter);
+            isMyTotemSelected = false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

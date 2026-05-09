@@ -1,4 +1,3 @@
-
 package it.polimi.ingsw.am48.view.gui;
 
 import it.polimi.ingsw.am48.network.VirtualServer;
@@ -25,35 +24,21 @@ public class GUIViewFxml extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        // Inizializzazione dello SceneManager con i riferimenti necessari [cite: 2]
         SceneManager.setup(stage, server, model);
 
-        // Se il model è null (test locale), viene creato un ClientModel di test
-        if (model == null) {
-            System.out.println("Attenzione: model null, inizializzo un ClientModel di test.");
-            model = new ClientModel();
-        }
-
-        // Caricamento della scena della board di gioco [cite: 2]
-        // Ritorna il controller associato al file FXML [cite: 2]
-        Object controller = SceneManager.changeScene("game-board.fxml");
-
-        if (controller instanceof GameBoardController gameBoardController) {
-            // Iniezione delle dipendenze nel controller della board 
-            gameBoardController.setServer(server);
-            gameBoardController.setModel(model);
-        } else {
-            System.err.println("Errore: Il controller caricato non è GameBoardController!");
+        Object controller = SceneManager.changeScene("splash-screen.fxml");
+        if (controller instanceof SplashScreenController splashScreenController) {
+            splashScreenController.setServer(server);
+            splashScreenController.setModel(model);
         }
 
         stage.setTitle("MESOS");
 
-        // Gestione della chiusura pulita dell'applicazione
+        // Gestione della chiusura dell'applicazione
         stage.setOnCloseRequest(e -> {
             Platform.exit();
             System.exit(0);
         });
-
         stage.show();
     }
 }
