@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.network.client;
 
+import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 
 import java.util.*;
@@ -16,6 +17,7 @@ public class ClientGameState {
     private Map<Character, String> offerTrackPositions; // lettera -> nickname
     private List<String> offerTurnCardOrder;            // ordine turno attuale
     private String winnerNickname;
+    private List<GameResult> leaderboard;
 
     // --- costruzione da snapshot ---
 
@@ -114,6 +116,8 @@ public class ClientGameState {
         this.winnerNickname = winnerNickname;
     }
 
+    public void setLeaderboard(List<GameResult> leaderboard) {this.leaderboard = leaderboard; }
+
     // --- getters per la view ---
 
     public String getGameId() { return gameId; }
@@ -129,4 +133,5 @@ public class ClientGameState {
     public ClientPlayerState getPlayer(String nickname) { return players.get(nickname); }
     public Map<String, ClientPlayerState> getPlayers() { return Collections.unmodifiableMap(players); }
     public Collection<ClientPlayerState> getAllPlayers() { return Collections.unmodifiableCollection(players.values()); }
+    public List<GameResult> getLeaderboard() {return Collections.unmodifiableList(leaderboard); }
 }
