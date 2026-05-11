@@ -18,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,8 @@ public class GameBoardController implements ModelObserver {
     // Board center
     @FXML private HBox upper_row, lower_row;
     @FXML private HBox deckable_sup, building_sup, deckable_inf, building_inf;
-    @FXML private VBox offerTurnCard, offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG;
+    @FXML private Pane offerTurnCard;
+    @FXML private VBox offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG;
     @FXML private VBox deck;
 
     private VirtualServer server;
@@ -58,8 +60,22 @@ public class GameBoardController implements ModelObserver {
     // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
     private int currentEra = 0;
 
+    // Ordine iniziale completo dei totem (per mantenere slot fissi quando alcuni vengono rimossi)
+    private List<String> initialTotemOrder;
+
     // Ordine colori assegnati in base all'ingresso
     private final String[] totemColors = {"blue", "red", "black", "white", "yellow"};
+
+
+    // MODIFICA QUI per ajustare la posizione verticale di ogni totem:
+    private static final double[][] SLOT_CENTER_FRACTIONS = {
+            {},
+            {},
+            {0.311, 0.451},                       // 2 players
+            {0.260, 0.435, 0.600},                // 3 players
+            {0.222, 0.397, 0.570, 0.710},         // 4 players
+            {0.146, 0.320, 0.494, 0.667, 0.807}   // 5 players
+    };
 
     @FXML
     public void initialize() {
@@ -108,7 +124,7 @@ public class GameBoardController implements ModelObserver {
         if (this.currentEra == era) return; // Evita di riapplicare lo stile se l'era non è cambiata
         this.currentEra = era;
 
-        // Rimuove le classi precedenti per evitare conflittti
+        // Rimuove le classi precedenti per evitare conflitti
         deck.getStyleClass().removeAll("deck-era1", "deck-era2", "deck-era3");
 
         // Aggiunge la classe corrispondente all'era
@@ -143,6 +159,7 @@ public class GameBoardController implements ModelObserver {
 
     private void updateBoardConfiguration(int numPlayers) {
         this.currentPlayerCount = numPlayers;
+        this.initialTotemOrder = null;
 
         String gridImagePath = "/it/polimi/ingsw/am48/view/gui/images/offerTurnCards/offerTurnCard" + numPlayers + ".png";
         try {
@@ -177,6 +194,10 @@ public class GameBoardController implements ModelObserver {
         List<String> orderList = state.getOfferTurnCardOrder();
         if (orderList == null || orderList.isEmpty()) return;
 
+        if (initialTotemOrder == null) {
+            initialTotemOrder = new ArrayList<>(orderList);
+        }
+
         String currentPhase = state.getCurrentPhase();
         boolean isPlaceTotemPhase = "PLACE_TOTEM".equals(currentPhase);
         boolean isMyTurn = isPlaceTotemPhase
@@ -199,19 +220,42 @@ public class GameBoardController implements ModelObserver {
         double topOffset = Math.max(0, (vboxH - displayedH) / 2.0);
         double slotH = displayedH / numSlots;
 
-        offerTurnCard.setSpacing(0);
-        offerTurnCard.setPadding(new Insets(topOffset, 0, 0, 0));
-        offerTurnCard.setAlignment(Pos.TOP_CENTER);
+        double[] slotFractions = (numSlots >= 2 && numSlots <= 5) ? SLOT_CENTER_FRACTIONS[numSlots] : null;
+        double totemSize = slotH * 0.72;
 
         for (int i = 0; i < numSlots; i++) {
             StackPane slotPane = new StackPane();
-            slotPane.setPrefHeight(slotH);
-            slotPane.setMinHeight(slotH);
-            slotPane.setMaxHeight(slotH);
             slotPane.setAlignment(Pos.CENTER);
 
-            if (i < orderList.size()) {
-                String nick = orderList.get(i);
+            double slotCenterY;
+            if (slotFractions != null && i < slotFractions.length) {
+                slotCenterY = topOffset + slotFractions[i] * displayedH;
+            } else {
+                slotCenterY = topOffset + slotH * (i + 0.5);
+            }
+
+            double slotSize = totemSize * 1.10;
+            slotPane.setPrefHeight(slotSize);
+            slotPane.setMinHeight(slotSize);
+            slotPane.setMaxHeight(slotSize);
+
+            slotPane.setPrefWidth(95);
+            slotPane.setMinWidth(95);
+            slotPane.setMaxWidth(95);
+
+            slotPane.setLayoutY(slotCenterY - slotSize / 2.0);
+
+            // Ogni giocatore ha uno slot fisso in base all'ordine iniziale,
+            // anche dopo che alcuni totem sono stati rimossi
+            String nick = null;
+            if (initialTotemOrder != null && i < initialTotemOrder.size()) {
+                String slotPlayer = initialTotemOrder.get(i);
+                if (orderList.contains(slotPlayer)) {
+                    nick = slotPlayer;
+                }
+            }
+
+            if (nick != null) {
                 ImageView totemImg = new ImageView();
                 try {
                     String path = getTotemPath(nick, state);
@@ -221,7 +265,7 @@ public class GameBoardController implements ModelObserver {
                     System.err.println("Impossibile caricare totem: " + nick);
                 }
                 totemImg.setPreserveRatio(true);
-                totemImg.setFitHeight(slotH * 0.72);
+                totemImg.setFitHeight(totemSize);
 
                 if (nick.equals(myNickname) && isMyTurn) {
                     totemImg.getStyleClass().add("totem-selectable");
