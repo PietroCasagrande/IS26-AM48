@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class GameSnapshot implements Serializable {
     private final String gameId;
     private final int numPlayers;
+    private final String currPlayerNickname;
     private final int currentTurn;
     private final List<PlayerSnapshot> players;
     private final BoardSnapshot board;
@@ -17,12 +18,14 @@ public class GameSnapshot implements Serializable {
     public GameSnapshot(
             @JsonProperty("gameID") String gameId,
             @JsonProperty("numPlayers") int numPlayers,
+            @JsonProperty("currPlayerNickname") String currPlayerNickname,
             @JsonProperty("currentTurn") int currentTurn,
             @JsonProperty("players") List<PlayerSnapshot> players,
             @JsonProperty("board") BoardSnapshot board,
             @JsonProperty("phase") PhaseSnapshot phase) {
         this.gameId = gameId;
         this.numPlayers = numPlayers;
+        this.currPlayerNickname = currPlayerNickname;
         this.currentTurn = currentTurn;
         this.players = players;
         this.board = board;
@@ -31,6 +34,7 @@ public class GameSnapshot implements Serializable {
 
     public String getGameId() { return gameId; }
     public int getNumPlayers() { return numPlayers; }
+    public String getCurrPlayerNickname() { return currPlayerNickname; }
     public int getCurrentTurn() { return currentTurn; }
     public List<PlayerSnapshot> getPlayers() { return players; }
     public BoardSnapshot getBoard() { return board; }

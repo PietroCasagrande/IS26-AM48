@@ -81,9 +81,12 @@ public class Game {
                 .map(Player::toSnapshot)
                 .toList();
 
+        String currPlayerNickname = playerContext.getCurrPlayer().getNickname();
+
         return new GameSnapshot(
                 gameId,
                 numPlayers,
+                currPlayerNickname,
                 currentTurn,
                 playerSnapshots,
                 // board!=null is necessary because during WaitingForPlayersPhase the board has not been created yet
