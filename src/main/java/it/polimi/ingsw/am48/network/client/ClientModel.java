@@ -1,6 +1,7 @@
 package it.polimi.ingsw.am48.network.client;
 
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 
 import java.util.LinkedHashSet;
@@ -84,6 +85,8 @@ public class ClientModel {
     }
 
     public void setWinnerNickname(String winnerNickname) { state.setWinnerNickname(winnerNickname); }
+
+    public void setLeaderboard(List<GameResult> leaderboard) { state.setLeaderboard(leaderboard);}
 
     // --- getter per la view ---
 

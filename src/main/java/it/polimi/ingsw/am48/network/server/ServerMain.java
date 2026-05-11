@@ -2,6 +2,8 @@ package it.polimi.ingsw.am48.network.server;
 
 import it.polimi.ingsw.am48.controller.GameController;
 import it.polimi.ingsw.am48.model.game.GameManager;
+import it.polimi.ingsw.am48.repository.GameRepository;
+import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -25,10 +27,14 @@ public class ServerMain {
     private final GameController controller;
     private ServerSocket serverSocket;
     private volatile boolean running;
+    // GameRepository gameRepository = new JsonGameRepository(...);
+    // LeaderboardRepository leaderboardRepository = new MySqlLeaderboardRepository(...);
 
     public ServerMain() {
         this.threadPool = Executors.newCachedThreadPool();
-        GameManager gameManager = new GameManager();
+        // parametri da sostituire
+        GameManager gameManager = new GameManager(null, null);
+        // GameManager gameManager = new GameManager(JsonGameRepository, MySqlLeaderboardRepository);
         this.mesosServer = new MesosServer();
         this.controller = new GameController(gameManager);
     }

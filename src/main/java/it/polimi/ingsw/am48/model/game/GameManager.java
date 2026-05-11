@@ -3,11 +3,13 @@ package it.polimi.ingsw.am48.model.game;
 import it.polimi.ingsw.am48.dto.JoinResult;
 import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.delta.LeaderboardDelta;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.repository.GameRepository;
 import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,14 +22,17 @@ public class GameManager implements ModelInterface{
     private int nextGameId;
 
     // repository per le funzionalità avanzate
-    private GameRepository gameRepository;
-    private LeaderboardRepository leaderboardRepository;
+    private final GameRepository gameRepository;
+    private final LeaderboardRepository leaderboardRepository;
 
-    public GameManager(){
+    public GameManager(GameRepository gameRepository, LeaderboardRepository leaderboardRepository){
         this.activeGames = new HashMap<>();
         this.waitingGames = new HashMap<>();
         this.playerToGame = new HashMap<>();
         this.nextGameId = 1;
+
+        this.gameRepository = gameRepository;
+        this.leaderboardRepository = leaderboardRepository;
     }
 
     // ModelInterface implementation: joinGame, placeTotem and takeCard methods
@@ -76,7 +81,26 @@ public class GameManager implements ModelInterface{
         Game game = getGameByNickname(nickname);
         synchronized (game) {
             Player player = game.getPlayerByNickname(nickname);
-            return game.takeCard(player, cardId);
+            List<GameDelta> deltas = game.takeCard(player, cardId);
+
+            if(game.getCurrentTurn() > 10){
+                LocalDateTime now = LocalDateTime.now();
+
+                game.getPlayerContext().getPlayers().forEach(p -> {
+                    leaderboardRepository.saveResult(new GameResult(
+                            game.getGameId(),
+                            p.getNickname(),
+                            p.getPoints(),
+                            game.getNumPlayers(),
+                            now
+                    ));
+                });
+
+                List<GameResult> leaderboard = leaderboardRepository.getLeaderboard(game.getNumPlayers());
+                deltas.add(new LeaderboardDelta(leaderboard));
+            }
+
+            return deltas;
         }
     }
 

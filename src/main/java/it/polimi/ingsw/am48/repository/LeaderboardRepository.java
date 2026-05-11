@@ -7,5 +7,4 @@ import java.util.List;
 public interface LeaderboardRepository {
     void saveResult(GameResult result);
     List<GameResult> getLeaderboard(int numPlayers);
-    List<GameResult> getGlobalLeaderboard();
 }
