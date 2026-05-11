@@ -7,6 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -132,7 +133,7 @@
                     <!-- Fila centrale: offer track + deck -->
                     <HBox fx:id="centerBoard" alignment="CENTER" spacing="4.0"
                           prefHeight="180.0">
-                        <VBox fx:id="offerTurnCard" alignment="CENTER"
+                        <Pane fx:id="offerTurnCard"
                               prefHeight="180.0" prefWidth="95.0"/>
                         <!-- Posizioni A–G offer track -->
                         <VBox fx:id="offerCardA" alignment="CENTER"
