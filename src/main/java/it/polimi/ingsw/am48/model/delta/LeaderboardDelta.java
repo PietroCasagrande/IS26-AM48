@@ -5,9 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class LeaderboardDelta extends GameDelta{
+public class LeaderboardDelta extends GameDelta implements Serializable {
     private final List<GameResult> leaderboard;
 
     @JsonCreator
@@ -19,4 +20,6 @@ public class LeaderboardDelta extends GameDelta{
     public void applyTo(ClientModel model){
         model.setLeaderboard(leaderboard);
     }
+
+    public List<GameResult> getLeaderboard() { return leaderboard; }
 }
