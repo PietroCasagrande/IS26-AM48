@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class OfferTrackSnapshot implements Serializable {
-    // key = lettera casella ("A", "B", ...), value = colore totem, assente = libera
+    // key = lettera casella ("A", "B", ...), value = nickname player, assente = libera
     private final Map<Character, String> totemPositions;
 
     @JsonCreator
