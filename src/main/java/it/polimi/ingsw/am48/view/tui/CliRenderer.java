@@ -1,9 +1,11 @@
 package it.polimi.ingsw.am48.view.tui;
 
+import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
 import it.polimi.ingsw.am48.view.CardDataRegistry;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -143,14 +145,21 @@ public class CliRenderer {
 
     /*
      * Renders a game-over screen with the final scores.
-     * The only parameter is winnerNickname, which is the nickname of the winner
+     * The only parameter is state, from which we'll get all the attributes needed.
      */
-    public void renderGameOver(String winnerNickname) {
+    public void renderGameOver(ClientGameState state) {
         System.out.println("\n╔══════════════════════════════════╗");
         System.out.println("║           GAME  OVER             ║");
         System.out.println("╚══════════════════════════════════╝");
-        System.out.println("  Winner: " + winnerNickname);
+        System.out.println("  Winner: " + state.getWinnerNickname());
         System.out.println();
+        System.out.println("── Final Scores ────────────────────────");
+        state.getAllPlayers().stream()
+                .sorted((a,b) -> Integer.compare(b.getPoints(), a.getPoints()))
+                .forEach(p -> System.out.println("  " + p.getNickname() + "  -->  " + p.getPoints()));
+        System.out.println();
+        System.out.println("  Type 'leaderboard' to see the historical rankings.");
+        System.out.println("\n> ");
     }
 
     // Renders the full details of a card on demand (used by the "info" command)
@@ -171,6 +180,26 @@ public class CliRenderer {
         System.out.print("> ");
     }
 
+    // Renders the historical table of results for the games with the specified num of players
+    public void renderLeaderboard(List<GameResult> leaderboard) {
+        System.out.println("\n── Historical Leaderboard ───────────────────────");
+        System.out.printf("  %-4s  %-20s  %-8s  %-10s%n", "#", "Nickname", "Score", "Date");
+        System.out.println("  ────────────────────────────────────────────────");
+        int rank = 1;
+        for (GameResult r : leaderboard) {
+            System.out.printf("  %-4d  %-20s  %-8d  %-10s%n",
+                    rank++,
+                    r.getPlayerNickname(),
+                    r.getFinalScore(),
+                    r.getGameDate().toLocalDate()
+            );
+        }
+        System.out.println();
+        System.out.println("  Type 'quit' to exit the server.");
+        System.out.println();
+        System.out.print("> ");
+    }
+
     /*
      * Renders the help message listing all available commands.
      */
@@ -182,8 +211,9 @@ public class CliRenderer {
               take <cardId>                  — take a card from the showed rows
               show                           — reprint the current game state
               players                        — show only the player list
+              info <cardId>                  — show full details of a card
+              leaderboard                    — show historical rankings after the game ends
               help                           — show this message
-              info                           — show full details of a card
               quit                           — exit the server
             """);
     }

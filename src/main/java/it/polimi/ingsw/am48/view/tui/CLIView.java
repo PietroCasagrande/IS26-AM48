@@ -74,8 +74,14 @@ public class CLIView implements ModelObserver {
      */
     @Override
     public void onStateUpdated(ClientGameState state) {
-        if ("END_GAME".equals(state.getCurrentPhase()) && state.getWinnerNickname()!=null) {
-            renderer.renderGameOver(state.getWinnerNickname());  // passa winnerNickname
+        if ("END_GAME".equals(state.getCurrentPhase())) {
+            if(state.getWinnerNickname() != null && state.getLeaderboard().isEmpty()){
+                // first update: EndGameDelta is arrived, LeaderboardState not yet
+                renderer.renderGameOver(state);
+            } else if (!state.getLeaderboard().isEmpty()) {
+                System.out.println("  Leaderboard ready. Type 'leaderboard' to view it.");
+                System.out.println("\n> ");
+            }
             return;
         }
         renderer.renderState(state, localNickname);
@@ -126,9 +132,10 @@ public class CLIView implements ModelObserver {
             case "take"    -> handleTake(cmd.args());
             case "show"    -> handleShow();
             case "players" -> handlePlayers();
+            case "info"    -> handleInfo(cmd.args());
+            case "leaderboard" -> handleLeaderboard();
             case "help"    -> renderer.renderHelp();
             case "quit"    -> handleQuit();
-            case "info"    -> handleInfo(cmd.args());
             case ""        -> {}  // blank line — just reprint the prompt
             default        -> System.out.println("Unknown command. Type 'help' for the list.");
         }
@@ -263,7 +270,18 @@ public class CLIView implements ModelObserver {
         renderer.renderCardInfo(args[0]);
     }
 
-
+    /*
+     * Handles: leaderboard
+     * Prints the historical table of results stored on server's database
+     */
+    private void handleLeaderboard() {
+        ClientGameState state = clientModel.getState();
+        if(state == null || state.getLeaderboard().isEmpty()) {
+            System.out.println("No leaderboard available yet.");
+            return;
+        }
+        renderer.renderLeaderboard(state.getLeaderboard());
+    }
 
     /*
      * Handles: quit
