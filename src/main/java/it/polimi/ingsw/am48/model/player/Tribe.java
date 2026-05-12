@@ -187,9 +187,45 @@ public class Tribe {
                 currentFood,
                 currentPrestigePoints,
                 shamanStars,
+                foodDiscount,
+                shamanSafety,
+                shamanDoubling,
+                extraFoodRight,
+                extraPickRight
                 buildingDiscount,
                 builderPoints,
                 buildingPoints
         );
+    }
+
+    public static Tribe fromSnapshot(TribeSnapshot snapshot, Map<String, Card> cardMap) {
+        Tribe tribe = new Tribe();
+
+        for (String id : snapshot.getCharacterCardIds()) {
+            CharacterCard card = (CharacterCard) cardMap.get(id);
+            tribe.characters.get(card.getType()).add(card);
+        }
+
+        for (String id : snapshot.getBuildingCardIds()) {
+            tribe.buildings.add((BuildingCard) cardMap.get(id));
+        }
+
+        snapshot.getArtifacts().forEach((key, val) ->
+                tribe.artifacts.put(Artifact.valueOf(key), val)
+        );
+
+        tribe.currentFood = snapshot.getCurrentFood();
+        tribe.currentPrestigePoints = snapshot.getCurrentPrestigePoints();
+        tribe.shamanStars = snapshot.getShamanStars();
+        tribe.buildingDiscount = snapshot.getBuildingDiscount();
+        tribe.builderPoints = snapshot.getBuilderPoints();
+        tribe.buildingPoints = snapshot.getBuildingPoints();
+        tribe.foodDiscount = snapshot.getFoodDiscount();
+        tribe.shamanSafety = snapshot.getShamanSafety();
+        tribe.shamanDoubling = snapshot.getShamanDoubling();
+        tribe.extraFoodRight = snapshot.getExtraFoodRight();
+        tribe.extraPickRight = snapshot.getExtraPickRight();
+
+        return tribe;
     }
 }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.am48.model.player;
 
 import it.polimi.ingsw.am48.model.card.BuildingCard;
+import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.card.CharacterCard;
 import it.polimi.ingsw.am48.model.enums.Artifact;
 import it.polimi.ingsw.am48.model.enums.Totem;
@@ -19,24 +20,32 @@ public class Player {
         this.tribe = new Tribe();
     }
 
+    // costruttore aggiuntivo --> usato solo da fromSnapshot
+    private Player(String nickname, Totem totem, Tribe tribe) {
+        this.nickname = nickname;
+        this.totem = totem;
+        this.tribe = tribe;
+    }
+
     // getter nickname e totem
+
     public String getNickname(){ return nickname; }
     public Totem getTotem(){ return totem; }
-
     // getter e setter direttamente da player, non passiamo per getTribe()
+
     public int getPoints() { return this.tribe.getCurrentPrestigePoints(); }
     public int getFood() { return this.tribe.getCurrentFood(); }
     public void updatePoints(int points) { this.tribe.updateCurrentPrestigePoints(points); }
     public void updateFood(int food) { this.tribe.updateCurrentFood(food); }
-
     // metodo utilizzato nelle strategy per aggiornare statistiche di tribe
+
     public Tribe getTribe() { return this.tribe; }    // forse non serve più avendo aggiunto i getter per ogni attributo
     public int getTotalCharacters() { return this.tribe.getTotalCharacters(); }
-
     // metodo per pagare cibo e perdere punti in caso di cibo insufficiente
-    public void payFood(int food, int ppPerFood){this.tribe.payFood(food, ppPerFood); }
 
+    public void payFood(int food, int ppPerFood){this.tribe.payFood(food, ppPerFood); }
     // per non concatenare getTribe().set(), altrimenti demetra si arrabbia
+
     public void addToTribe(CharacterCard card) { this.tribe.addToTribe(card); }
     public void addToTribe(BuildingCard card) { this.tribe.addToTribe(card); }
     public int getFoodDiscount() { return tribe.getFoodDiscount(); }
@@ -67,4 +76,11 @@ public class Player {
                 tribe.toSnapshot()
         );
     }
+
+    public static Player fromSnapshot(PlayerSnapshot snapshot, Map<String, Card> cardMap) {
+        Totem totem = Totem.valueOf(snapshot.getTotemColor());
+        Tribe tribe = Tribe.fromSnapshot(snapshot.getTribe(), cardMap);
+        return new Player(snapshot.getNickname(), totem, tribe);
+    }
+
 }

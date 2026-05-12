@@ -2,7 +2,10 @@ package it.polimi.ingsw.am48.model.game;
 
 import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.board.Board;
+import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.factory.BoardBuilder;
+import it.polimi.ingsw.am48.model.factory.CardMapBuilder;
 import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
 import it.polimi.ingsw.am48.model.phase.GamePhase;
 import it.polimi.ingsw.am48.model.phase.WaitingForPlayersPhase;
@@ -12,11 +15,12 @@ import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.model.snapshot.PlayerSnapshot;
 
 import java.util.List;
+import java.util.Map;
 
 public class Game {
     private final String gameId;
     private final int numPlayers;
-    private final PlayerContext playerContext;
+    private PlayerContext playerContext;
     private Board board;
     private final NotificatorCenter notificatorCenter;
     private GamePhase currentPhase;
@@ -93,5 +97,22 @@ public class Game {
                 board != null ? board.toSnapshot() : null,
                 currentPhase.toSnapshot()
         );
+    }
+
+    public static Game fromSnapshot(GameSnapshot snapshot){
+        Map<String, Card> cardMap = CardMapBuilder.buildCardMap(snapshot.getNumPlayers());
+
+        Game game = new Game(snapshot.getGameId(), snapshot.getNumPlayers());
+        game.board = Board.fromSnapshot(snapshot.getBoard());
+        game.playerContext = PlayerContext.fromSnapshot(snapshot.getPlayerContext(), cardMap);
+        game.currentPhase = GamePhase.fromSnapshot(snapshot.getPhase());
+        game.currentTurn = snapshot.getCurrentTurn();
+
+        // registriamo nuovamente le strategy dei buildings di tutti i player, altrimenti non verranno mai notificate (characters non si registrano)
+        game.playerContext.getPlayers().forEach(p -> {
+            p.getTribe().getBuildings().forEach(b -> b.getStrategy().registerTo(game.notificatorCenter, game.playerContext));
+        });
+
+        return game;
     }
 }
