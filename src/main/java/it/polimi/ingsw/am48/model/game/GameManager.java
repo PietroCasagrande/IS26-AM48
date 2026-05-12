@@ -25,6 +25,11 @@ public class GameManager implements ModelInterface{
     private final GameRepository gameRepository;
     private final LeaderboardRepository leaderboardRepository;
 
+    // default constructor needed for mvn test to run while implementing additional-features
+    public GameManager() {
+        this(null, null);
+    }
+
     public GameManager(GameRepository gameRepository, LeaderboardRepository leaderboardRepository){
         this.activeGames = new HashMap<>();
         this.waitingGames = new HashMap<>();
