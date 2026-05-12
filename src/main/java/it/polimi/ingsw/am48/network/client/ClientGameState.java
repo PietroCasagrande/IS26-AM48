@@ -17,7 +17,7 @@ public class ClientGameState {
     private Map<Character, String> offerTrackPositions; // lettera -> nickname
     private List<String> offerTurnCardOrder;            // ordine turno attuale
     private String winnerNickname;
-    private List<GameResult> leaderboard;
+    private List<GameResult> leaderboard = new ArrayList<>();
 
     // --- costruzione da snapshot ---
 
