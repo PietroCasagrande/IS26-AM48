@@ -12,6 +12,7 @@ import it.polimi.ingsw.am48.network.messages.notifications.ErrorNotification;
 import it.polimi.ingsw.am48.network.messages.notifications.GameDeltaNotification;
 import it.polimi.ingsw.am48.network.messages.notifications.InitialSnapshotNotification;
 import it.polimi.ingsw.am48.network.messages.notifications.ServerNotification;
+import it.polimi.ingsw.am48.utils.JsonMapper;
 
 import java.io.*;
 import java.net.Socket;
@@ -32,7 +33,7 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
         this.server = server;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new PrintWriter(socket.getOutputStream(), true);
-        this.mapper = new ObjectMapper();
+        this.mapper = JsonMapper.get();
     }
 
     @Override

@@ -4,6 +4,7 @@ import it.polimi.ingsw.am48.controller.GameController;
 import it.polimi.ingsw.am48.model.game.GameManager;
 import it.polimi.ingsw.am48.repository.GameRepository;
 import it.polimi.ingsw.am48.repository.LeaderboardRepository;
+import it.polimi.ingsw.am48.repository.MySqlLeaderboardRepository;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -27,13 +28,14 @@ public class ServerMain {
     private final GameController controller;
     private ServerSocket serverSocket;
     private volatile boolean running;
-    // GameRepository gameRepository = new JsonGameRepository(...);
-    // LeaderboardRepository leaderboardRepository = new MySqlLeaderboardRepository(...);
+    // private final JsonGameRepository gameRepository;
+    private final MySqlLeaderboardRepository leaderboardRepository;
 
     public ServerMain() {
         this.threadPool = Executors.newCachedThreadPool();
-        // parametri da sostituire
-        GameManager gameManager = new GameManager(null, null);
+        // this.gameRepository = new JsonGameRepository();
+        this.leaderboardRepository = new MySqlLeaderboardRepository();
+        GameManager gameManager = new GameManager(null, leaderboardRepository);
         // GameManager gameManager = new GameManager(JsonGameRepository, MySqlLeaderboardRepository);
         this.mesosServer = new MesosServer();
         this.controller = new GameController(gameManager);
@@ -71,6 +73,7 @@ public class ServerMain {
 
     public void stop() {
         running = false;
+        leaderboardRepository.close();
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close(); // Sblocca la accept() forzando una SocketException
