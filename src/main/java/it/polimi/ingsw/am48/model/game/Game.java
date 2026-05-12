@@ -101,11 +101,15 @@ public class Game {
 
     public static Game fromSnapshot(GameSnapshot snapshot){
         Map<String, Card> cardMap = CardMapBuilder.buildCardMap(snapshot.getNumPlayers());
-
         Game game = new Game(snapshot.getGameId(), snapshot.getNumPlayers());
-        game.board = Board.fromSnapshot(snapshot.getBoard());
+
         game.playerContext = PlayerContext.fromSnapshot(snapshot.getPlayerContext(), cardMap);
+        List<Player> players = game.playerContext.getPlayers();
+
+        game.board = Board.fromSnapshot(snapshot.getBoard(), cardMap,  players);
+
         game.currentPhase = GamePhase.fromSnapshot(snapshot.getPhase());
+
         game.currentTurn = snapshot.getCurrentTurn();
 
         // registriamo nuovamente le strategy dei buildings di tutti i player, altrimenti non verranno mai notificate (characters non si registrano)

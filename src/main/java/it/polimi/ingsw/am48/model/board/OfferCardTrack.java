@@ -1,12 +1,13 @@
 package it.polimi.ingsw.am48.model.board;
 
+import com.sun.source.tree.Tree;
+import it.polimi.ingsw.am48.dto.BoardDTO;
+import it.polimi.ingsw.am48.dto.OfferCardDTO;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.OfferTrackSnapshot;
+import it.polimi.ingsw.am48.utils.GameDataLoader;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class OfferCardTrack {
     private final Map<Character, OfferCard> track;  // Must be a TreeMap to guarantee OfferCard order
@@ -51,5 +52,31 @@ public class OfferCardTrack {
         }
 
         return new OfferTrackSnapshot(totemPositions);
+    }
+
+    public static OfferCardTrack fromSnapshot(OfferTrackSnapshot snapshot, int numPlayers, List<Player> players) {
+        // Ricostruisce le OfferCard dal JSON (struttura fissa, non cambia)
+        BoardDTO dto = new GameDataLoader().loadData();
+        Map<Character, OfferCard> trackMap = new TreeMap<>();
+        for (OfferCardDTO offerDto : dto.offerCards) {
+            if (offerDto.minPlayers <= numPlayers) {
+                trackMap.put(offerDto.id, new OfferCard(
+                        offerDto.id, offerDto.numUp, offerDto.numDown,
+                        offerDto.foodBonus, offerDto.minPlayers
+                ));
+            }
+        }
+
+        // Applica i totem presenti al momento del salvataggio
+        for (Map.Entry<Character, String> entry : snapshot.getTotemPositions().entrySet()) {
+            char space = entry.getKey();
+            String nickname = entry.getValue();
+            Player player = players.stream()
+                    .filter(p -> p.getNickname().equals(nickname))
+                    .findFirst().orElseThrow();
+            trackMap.get(space).placeTotem(player);
+        }
+
+        return new OfferCardTrack(trackMap);
     }
 }
