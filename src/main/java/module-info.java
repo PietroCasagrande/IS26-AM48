@@ -6,6 +6,9 @@ module it.polimi.ingsw.am48 {
     requires com.fasterxml.jackson.databind;
     requires java.rmi;
     requires java.desktop;
+    requires com.zaxxer.hikari;
+    requires java.sql;
+    requires com.fasterxml.jackson.datatype.jsr310;
     requires javafx.graphics;
     exports it.polimi.ingsw.am48.model.game;
     exports it.polimi.ingsw.am48.model.player;
