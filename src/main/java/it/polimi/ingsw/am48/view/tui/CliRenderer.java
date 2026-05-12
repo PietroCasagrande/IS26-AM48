@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.view.tui;
 
 import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
+import it.polimi.ingsw.am48.view.CardDataRegistry;
 
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.am48.view.tui;
+package it.polimi.ingsw.am48.view;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +19,7 @@ public class CardDataRegistry {
     private final Map<String, String> labels = new HashMap<>();
 
     private final Map<String, String> descriptions = new HashMap<>();
+    private final Map<String, String> imagePaths = new HashMap<>();
     /*
      * Loads and parses client_data.json from the classpath.
      * Called once at client startup.
@@ -50,6 +51,8 @@ public class CardDataRegistry {
         return descriptions.getOrDefault(cardId, "");
     }
 
+    public Map<String, String> getImagePaths() {return imagePaths;}
+
     // -------------------------------------------------------------------------
     // Parsers — one per card family
     // -------------------------------------------------------------------------
@@ -60,6 +63,7 @@ public class CardDataRegistry {
             String id = node.get("id").asText();
             JsonNode stats = node.get("stats");
             labels.put(id, buildCharacterLabel(stats));
+            imagePaths.put(id, node.get("imagePath").asText());
         }
     }
 
@@ -69,6 +73,7 @@ public class CardDataRegistry {
             String id = node.get("id").asText();
             JsonNode stats = node.get("stats");
             labels.put(id, buildEventLabel(stats));
+            imagePaths.put(id, node.get("imagePath").asText());
         }
     }
 
@@ -78,6 +83,7 @@ public class CardDataRegistry {
             String id = node.get("id").asText();
             JsonNode stats = node.get("stats");
             labels.put(id, buildBuildingLabel(stats));
+            imagePaths.put(id, node.get("imagePath").asText());
 
             // save full description for "info" command
             if(node.has("description")) {

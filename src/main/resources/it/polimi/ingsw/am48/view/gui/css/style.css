@@ -34,7 +34,7 @@
 
 .rootTribe {
     /* Sostituisci con il path della tua immagine di sfondo */
-    -fx-background-image: url("../images/background-no-title-cut.png");
+    -fx-background-image: url("../images/background-no-title.png");
     -fx-background-size: cover;
     -fx-background-position: center center;
 }
@@ -76,8 +76,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
 }
 
-.button-menu-fire:armed,
-.button-menu-fire:focused {
+.button-menu-fire:armed {
     /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
     -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
 
