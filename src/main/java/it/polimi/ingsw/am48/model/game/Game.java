@@ -16,6 +16,7 @@ import it.polimi.ingsw.am48.model.snapshot.PlayerSnapshot;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Game {
     private final String gameId;
@@ -25,6 +26,7 @@ public class Game {
     private final NotificatorCenter notificatorCenter;
     private GamePhase currentPhase;
     private int currentTurn;
+    private Set<String> reconnectedPlayers;
 
     public Game(String gameId, int numPlayers) {
         this.gameId = gameId;
@@ -74,6 +76,17 @@ public class Game {
                 .orElseThrow(() -> new InvalidActionException("Nessun giocatore in partita."));
     }
 
+    // segna il giocatore come riconnesso
+    public void markReconnected(String nickname) {
+        reconnectedPlayers.add(nickname);
+    }
+
+    // true se tutti i player della partita si sono riconnessi
+    public boolean allPlayersReconnected() {
+        return playerContext.getPlayers().stream()
+                .map(Player::getNickname)
+                .allMatch(reconnectedPlayers::contains);
+    }
 
     // Package-private: only Phases set phases
     public void setPhase(GamePhase phase) { this.currentPhase = phase; }
@@ -85,14 +98,11 @@ public class Game {
                 .map(Player::toSnapshot)
                 .toList();
 
-        String currPlayerNickname = playerContext.getCurrPlayer().getNickname();
-
         return new GameSnapshot(
                 gameId,
                 numPlayers,
-                currPlayerNickname,
+                playerContext.toSnapshot(),
                 currentTurn,
-                playerSnapshots,
                 // board!=null is necessary because during WaitingForPlayersPhase the board has not been created yet
                 board != null ? board.toSnapshot() : null,
                 currentPhase.toSnapshot()
@@ -108,7 +118,7 @@ public class Game {
 
         game.board = Board.fromSnapshot(snapshot.getBoard(), cardMap,  players);
 
-        game.currentPhase = GamePhase.fromSnapshot(snapshot.getPhase());
+        game.currentPhase = GamePhase.fromSnapshot(snapshot.getPhase(), players, game.numPlayers);
 
         game.currentTurn = snapshot.getCurrentTurn();
 
