@@ -2,55 +2,55 @@
   "characters": [
     {
       "id": "ART-01",
-      "imagePath": "/gui/images/cards/characters/artist/artist-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-female.jpg"
     },
     {
       "id": "ART-02",
-      "imagePath": "/gui/images/cards/characters/artist/artist-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-male.jpg"
     },
     {
       "id": "ART-03",
-      "imagePath": "/gui/images/cards/characters/artist/artist-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-female.jpg"
     },
     {
       "id": "ART-04",
-      "imagePath": "/gui/images/cards/characters/artist/artist-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-male.jpg"
     },
     {
       "id": "ART-05",
-      "imagePath": "/gui/images/cards/characters/artist/artist-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-female.jpg"
     },
     {
       "id": "ART-06",
-      "imagePath": "/gui/images/cards/characters/artist/artist-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-male.jpg"
     },
     {
       "id": "ART-07",
-      "imagePath": "/gui/images/cards/characters/artist/artist-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-female.jpg"
     },
     {
       "id": "ART-08",
-      "imagePath": "/gui/images/cards/characters/artist/artist-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-male.jpg"
     },
     {
       "id": "ART-09",
-      "imagePath": "/gui/images/cards/characters/artist/artist-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-female.jpg"
     },
     {
       "id": "ART-10",
-      "imagePath": "/gui/images/cards/characters/artist/artist-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-female.jpg"
     },
     {
       "id": "ART-11",
-      "imagePath": "/gui/images/cards/characters/artist/artist-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-male.jpg"
     },
     {
       "id": "ART-12",
-      "imagePath": "/gui/images/cards/characters/artist/artist-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-female.jpg"
     },
     {
       "id": "ART-13",
-      "imagePath": "/gui/images/cards/characters/artist/artist-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/artist/artist-male.jpg"
     },
 
     {
@@ -59,7 +59,7 @@
         "buildingDiscount": 1,
         "builderPp": 2
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder2-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder2-1.jpg"
     },
     {
       "id": "BUI-02",
@@ -67,7 +67,7 @@
         "buildingDiscount": 2,
         "builderPp": 0
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder0-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder0-2.jpg"
     },
     {
       "id": "BUI-03",
@@ -75,7 +75,7 @@
         "buildingDiscount": 1,
         "builderPp": 3
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder3-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder3-1.jpg"
     },
     {
       "id": "BUI-04",
@@ -83,7 +83,7 @@
         "buildingDiscount": 2,
         "builderPp": 1
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder1-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder1-2.jpg"
     },
     {
       "id": "BUI-05",
@@ -91,7 +91,7 @@
         "buildingDiscount": 1,
         "builderPp": 4
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder4-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder4-1.jpg"
     },
     {
       "id": "BUI-06",
@@ -99,7 +99,7 @@
         "buildingDiscount": 2,
         "builderPp": 1
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder1-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder1-2.jpg"
     },
     {
       "id": "BUI-07",
@@ -107,7 +107,7 @@
         "buildingDiscount": 2,
         "builderPp": 3
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder3-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder3-2.jpg"
     },
     {
       "id": "BUI-08",
@@ -115,7 +115,7 @@
         "buildingDiscount": 1,
         "builderPp": 2
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder2-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder2-1.jpg"
     },
     {
       "id": "BUI-09",
@@ -123,7 +123,7 @@
         "buildingDiscount": 2,
         "builderPp": 2
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder2-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder2-2.jpg"
     },
     {
       "id": "BUI-10",
@@ -131,7 +131,7 @@
         "buildingDiscount": 1,
         "builderPp": 5
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder5-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder5-1.jpg"
     },
     {
       "id": "BUI-11",
@@ -139,7 +139,7 @@
         "buildingDiscount": 2,
         "builderPp": 3
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder3-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder3-2.jpg"
     },
     {
       "id": "BUI-12",
@@ -147,274 +147,274 @@
         "buildingDiscount": 1,
         "builderPp": 4
       },
-      "imagePath": "/gui/images/cards/characters/builder/builder4-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/builder/builder4-1.jpg"
     },
     {
       "id": "INV-01",
       "stats": {
         "artifact": "BREAD"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-bread.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-bread.jpg"
     },
     {
       "id": "INV-02",
       "stats": {
         "artifact": "LEATHER"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-leather.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-leather.jpg"
     },
     {
       "id": "INV-03",
       "stats": {
         "artifact": "ARROW"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-arrow.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-arrow.jpg"
     },
     {
       "id": "INV-04",
       "stats": {
         "artifact": "CANOE"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-canoe.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-canoe.jpg"
     },
     {
       "id": "INV-05",
       "stats": {
         "artifact": "BOWL"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-bowl.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-bowl.jpg"
     },
     {
       "id": "INV-06",
       "stats": {
         "artifact": "ROPE"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-rope.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-rope.jpg"
     },
     {
       "id": "INV-07",
       "stats": {
         "artifact": "FLUTE"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-flute.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-flute.jpg"
     },
     {
       "id": "INV-08",
       "stats": {
         "artifact": "BOWL"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-bowl.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-bowl.jpg"
     },
     {
       "id": "INV-09",
       "stats": {
         "artifact": "ROPE"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-rope.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-rope.jpg"
     },
     {
       "id": "INV-10",
       "stats": {
         "artifact": "DOLL"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-doll.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-doll.jpg"
     },
     {
       "id": "INV-11",
       "stats": {
         "artifact": "FLUTE"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-flute.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-flute.jpg"
     },
     {
       "id": "INV-12",
       "stats": {
         "artifact": "LEATHER"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-leather.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-leather.jpg"
     },
     {
       "id": "INV-13",
       "stats": {
         "artifact": "HOOK"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-hook.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-hook.jpg"
     },
     {
       "id": "INV-14",
       "stats": {
         "artifact": "DOLL"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-doll.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-doll.jpg"
     },
     {
       "id": "INV-15",
       "stats": {
         "artifact": "NECKLACE"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-necklace.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-necklace.jpg"
     },
     {
       "id": "INV-16",
       "stats": {
         "artifact": "BREAD"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-bread.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-bread.jpg"
     },
     {
       "id": "INV-17",
       "stats": {
         "artifact": "HOOK"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-hook.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-hook.jpg"
     },
     {
       "id": "INV-18",
       "stats": {
         "artifact": "CANOE"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-canoe.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-canoe.jpg"
     },
     {
       "id": "INV-19",
       "stats": {
         "artifact": "ARROW"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-arrow.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-arrow.jpg"
     },
     {
       "id": "INV-20",
       "stats": {
         "artifact": "NECKLACE"
       },
-      "imagePath": "/gui/images/cards/characters/inventor/inventor-necklace.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/inventor/inventor-necklace.jpg"
     },
 
     {
       "id": "HUN-01",
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-male.jpg"
     },
     {
       "id": "HUN-02",
       "stats": {
         "resource": "FOOD"
       },
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-male-bonus.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-male-bonus.jpg"
     },
     {
       "id": "HUN-03",
       "stats": {
         "resource": "FOOD"
       },
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-female-bonus.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-female-bonus.jpg"
     },
     {
       "id": "HUN-04",
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-male.jpg"
     },
     {
       "id": "HUN-05",
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-female.jpg"
     },
     {
       "id": "HUN-06",
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-female.jpg"
     },
     {
       "id": "HUN-07",
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-male.jpg"
     },
     {
       "id": "HUN-08",
       "stats": {
         "resource": "FOOD"
       },
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-male-bonus.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-male-bonus.jpg"
     },
     {
       "id": "HUN-09",
       "stats": {
         "resource": "FOOD"
       },
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-female-bonus.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-female-bonus.jpg"
     },
     {
       "id": "HUN-10",
       "stats": {
         "resource": "FOOD"
       },
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-female-bonus.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-female-bonus.jpg"
     },
     {
       "id": "HUN-11",
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-male.jpg"
     },
     {
       "id": "HUN-12",
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-male.jpg"
     },
     {
       "id": "HUN-13",
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-female.jpg"
     },
     {
       "id": "HUN-14",
       "stats": {
         "resource": "FOOD"
       },
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-male-bonus.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-male-bonus.jpg"
     },
     {
       "id": "HUN-15",
       "stats": {
         "resource": "FOOD"
       },
-      "imagePath": "/gui/images/cards/characters/hunter/hunter-female-bonus.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/hunter/hunter-female-bonus.jpg"
     },
 
     {
       "id": "PIC-01",
-      "imagePath": "/gui/images/cards/characters/picker/picker-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-female.jpg"
     },
     {
       "id": "PIC-02",
-      "imagePath": "/gui/images/cards/characters/picker/picker-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-male.jpg"
     },
     {
       "id": "PIC-03",
-      "imagePath": "/gui/images/cards/characters/picker/picker-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-female.jpg"
     },
     {
       "id": "PIC-04",
-      "imagePath": "/gui/images/cards/characters/picker/picker-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-male.jpg"
     },
     {
       "id": "PIC-05",
-      "imagePath": "/gui/images/cards/characters/picker/picker-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-female.jpg"
     },
     {
       "id": "PIC-06",
-      "imagePath": "/gui/images/cards/characters/picker/picker-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-male.jpg"
     },
     {
       "id": "PIC-07",
-      "imagePath": "/gui/images/cards/characters/picker/picker-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-female.jpg"
     },
     {
       "id": "PIC-08",
-      "imagePath": "/gui/images/cards/characters/picker/picker-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-male.jpg"
     },
     {
       "id": "PIC-09",
-      "imagePath": "/gui/images/cards/characters/picker/picker-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-female.jpg"
     },
     {
       "id": "PIC-10",
-      "imagePath": "/gui/images/cards/characters/picker/picker-male.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-male.jpg"
     },
     {
       "id": "PIC-11",
-      "imagePath": "/gui/images/cards/characters/picker/picker-female.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/picker/picker-female.jpg"
     },
 
     {
@@ -422,91 +422,91 @@
       "stats": {
         "quantity": 1
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman1.jpg"
     },
     {
       "id": "SHA-02",
       "stats": {
         "quantity": 2
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman2.jpg"
     },
     {
       "id": "SHA-03",
       "stats": {
         "quantity": 1
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman1.jpg"
     },
     {
       "id": "SHA-04",
       "stats": {
         "quantity": 2
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman2.jpg"
     },
     {
       "id": "SHA-05",
       "stats": {
         "quantity": 2
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman2.jpg"
     },
     {
       "id": "SHA-06",
       "stats": {
         "quantity": 2
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman2.jpg"
     },
     {
       "id": "SHA-07",
       "stats": {
         "quantity": 1
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman1.jpg"
     },
     {
       "id": "SHA-08",
       "stats": {
         "quantity": 2
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman2.jpg"
     },
     {
       "id": "SHA-09",
       "stats": {
         "quantity": 2
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman2.jpg"
     },
     {
       "id": "SHA-10",
       "stats": {
         "quantity": 3
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman3.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman3.jpg"
     },
     {
       "id": "SHA-11",
       "stats": {
         "quantity": 3
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman3.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman3.jpg"
     },
     {
       "id": "SHA-12",
       "stats": {
         "quantity": 2
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman2.jpg"
     },
     {
       "id": "SHA-13",
       "stats": {
         "quantity": 2
       },
-      "imagePath": "/gui/images/cards/characters/shaman/shaman2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/characters/shaman/shaman2.jpg"
     }
   ],
 
@@ -518,14 +518,14 @@
         "winRes": 1,
         "loseRes": -2
       },
-      "imagePath": "/gui/images/cards/events/artist-event-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/artist-event-1.jpg"
     },
     {
       "id": "EVH-01",
       "stats": {
         "ppGained": 1
       },
-      "imagePath": "/gui/images/cards/events/hunter-event-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/hunter-event-1.jpg"
     },
     {
       "id": "EVS-01",
@@ -533,14 +533,14 @@
         "ppToMin": -3,
         "ppToMax": 5
       },
-      "imagePath": "/gui/images/cards/events/shaman-event-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/shaman-event-1.jpg"
     },
     {
       "id": "EVP-01",
       "stats": {
         "ppLost": 1
       },
-      "imagePath": "/gui/images/cards/events/picker-event-1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/picker-event-1.jpg"
     },
     {
       "id": "EVA-02",
@@ -549,14 +549,14 @@
         "winRes": 2,
         "loseRes": -2
       },
-      "imagePath": "/gui/images/cards/events/artist-event-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/artist-event-2.jpg"
     },
     {
       "id": "EVH-02",
       "stats": {
         "ppGained": 2
       },
-      "imagePath": "/gui/images/cards/events/hunter-event-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/hunter-event-2.jpg"
     },
     {
       "id": "EVS-02",
@@ -564,14 +564,14 @@
         "ppToMin": -5,
         "ppToMax": 10
       },
-      "imagePath": "/gui/images/cards/events/shaman-event-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/shaman-event-2.jpg"
     },
     {
       "id": "EVP-02",
       "stats": {
         "ppLost": 2
       },
-      "imagePath": "/gui/images/cards/events/picker-event-2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/picker-event-2.jpg"
     },
     {
       "id": "EVA-03",
@@ -580,14 +580,14 @@
         "winRes": 3,
         "loseRes": -2
       },
-      "imagePath": "/gui/images/cards/events/artist-event-3.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/artist-event-3.jpg"
     },
     {
       "id": "EVH-03",
       "stats": {
         "ppGained": 3
       },
-      "imagePath": "/gui/images/cards/events/hunter-event-3.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/hunter-event-3.jpg"
     },
     {
       "id": "EVS-03",
@@ -595,14 +595,14 @@
         "ppToMin": -7,
         "ppToMax": 15
       },
-      "imagePath": "/gui/images/cards/events/shaman-event-3.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/shaman-event-3.jpg"
     },
     {
       "id": "EVP-03",
       "stats": {
         "ppLost": 3
       },
-      "imagePath": "/gui/images/cards/events/picker-event-3.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/events/picker-event-3.jpg"
     }
   ],
 
@@ -614,7 +614,7 @@
         "foodCost": 3,
         "prestigePoints": 3
       },
-      "imagePath": "/gui/images/cards/buildings/building1.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building1.jpg"
     },
     {
       "id": "BLD-02",
@@ -623,7 +623,7 @@
         "foodCost": 3,
         "prestigePoints": 4
       },
-      "imagePath": "/gui/images/cards/buildings/building2.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building2.jpg"
     },
     {
       "id": "BLD-03",
@@ -632,7 +632,7 @@
         "foodCost": 5,
         "prestigePoints": 2
       },
-      "imagePath": "/gui/images/cards/buildings/building3.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building3.jpg"
     },
     {
       "id": "BLD-04",
@@ -641,7 +641,7 @@
         "foodCost": 4,
         "prestigePoints": 3
       },
-      "imagePath": "/gui/images/cards/buildings/building4.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building4.jpg"
     },
     {
       "id": "BLD-05",
@@ -650,7 +650,7 @@
         "foodCost": 4,
         "prestigePoints": 4
       },
-      "imagePath": "/gui/images/cards/buildings/building5.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building5.jpg"
     },
     {
       "id": "BLD-06",
@@ -659,7 +659,7 @@
         "foodCost": 5,
         "prestigePoints": 3
       },
-      "imagePath": "/gui/images/cards/buildings/building6.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building6.jpg"
     },
     {
       "id": "BLD-07",
@@ -668,7 +668,7 @@
         "foodCost": 5,
         "prestigePoints": 6
       },
-      "imagePath": "/gui/images/cards/buildings/building7.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building7.jpg"
     },
     {
       "id": "BLD-08",
@@ -677,7 +677,7 @@
         "foodCost": 7,
         "prestigePoints": 4
       },
-      "imagePath": "/gui/images/cards/buildings/building8.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building8.jpg"
     },
     {
       "id": "BLD-09",
@@ -686,7 +686,7 @@
         "foodCost": 5,
         "prestigePoints": 6
       },
-      "imagePath": "/gui/images/cards/buildings/building9.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building9.jpg"
     },
     {
       "id": "BLD-10",
@@ -695,7 +695,7 @@
         "foodCost": 7,
         "prestigePoints": 2
       },
-      "imagePath": "/gui/images/cards/buildings/building10.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building10.jpg"
     },
     {
       "id": "BLD-11",
@@ -704,7 +704,7 @@
         "foodCost": 6,
         "prestigePoints": 4
       },
-      "imagePath": "/gui/images/cards/buildings/building11.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building11.jpg"
     },
     {
       "id": "BLD-12",
@@ -712,7 +712,7 @@
       "stats": {
         "foodCost": 7,
         "prestigePoints": 0
-      },"imagePath": "/gui/images/cards/buildings/building12.jpg"
+      },"imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building12.jpg"
     },
     {
       "id": "BLD-13",
@@ -721,7 +721,7 @@
         "foodCost": 6,
         "prestigePoints": 4
       },
-      "imagePath": "/gui/images/cards/buildings/building13.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building13.jpg"
     },
     {
       "id": "BLD-14",
@@ -730,7 +730,7 @@
         "foodCost": 6,
         "prestigePoints": 3
       },
-      "imagePath": "/gui/images/cards/buildings/building14.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building14.jpg"
     },
     {
       "id": "BLD-15",
@@ -739,7 +739,7 @@
         "foodCost": 6,
         "prestigePoints": 6
       },
-      "imagePath": "/gui/images/cards/buildings/building15.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building15.jpg"
     },
     {
       "id": "BLD-16",
@@ -748,7 +748,7 @@
         "foodCost": 7,
         "prestigePoints": 4
       },
-      "imagePath": "/gui/images/cards/buildings/building16.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building16.jpg"
     },
     {
       "id": "BLD-17",
@@ -757,7 +757,7 @@
         "foodCost": 7,
         "prestigePoints": 4
       },
-      "imagePath": "/gui/images/cards/buildings/building17.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building17.jpg"
     },
     {
       "id": "BLD-18",
@@ -766,7 +766,7 @@
         "foodCost": 7,
         "prestigePoints": 6
       },
-      "imagePath": "/gui/images/cards/buildings/building18.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building18.jpg"
     },
     {
       "id": "BLD-19",
@@ -775,7 +775,7 @@
         "foodCost": 8,
         "prestigePoints": 8
       },
-      "imagePath": "/gui/images/cards/buildings/building19.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building19.jpg"
     },
     {
       "id": "BLD-20",
@@ -784,7 +784,7 @@
         "foodCost": 10,
         "prestigePoints": 25
       },
-      "imagePath": "/gui/images/cards/buildings/building20.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building20.jpg"
     },
     {
       "id": "BLD-21",
@@ -793,7 +793,7 @@
         "foodCost": 9,
         "prestigePoints": 3
       },
-      "imagePath": "/gui/images/cards/buildings/building21.jpg"
+      "imagePath": "/it/polimi/ingsw/am48/view/gui/images/cards/buildings/building21.jpg"
     }
   ]
 }

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.am48.view.gui;
 
+import it.polimi.ingsw.am48.network.VirtualServer;
+import it.polimi.ingsw.am48.network.client.ClientModel;
+import it.polimi.ingsw.am48.view.CardDataRegistry;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,14 +12,18 @@ import java.io.IOException;
 
 public class SceneManager {
     private static Stage stage;
-    private static Object server; // Riferimento al server
-    private static Object model;  // Riferimento al model
+    private static VirtualServer server; // Riferimento al server
+    private static ClientModel model;  // Riferimento al model
+    private static CardDataRegistry cardData;
+    private static ImageCache imageCache;
     private static String nickname; // Nickname del giocatore locale
 
-    public static void setup(Stage primaryStage, Object s, Object m) {
+    public static void setup(Stage primaryStage, VirtualServer s, ClientModel m) {
         stage = primaryStage;
         server = s;
         model = m;
+        cardData = new CardDataRegistry();
+        imageCache = new ImageCache(cardData.getImagePaths());
     }
 
     public static void setNickname(String nick) {
