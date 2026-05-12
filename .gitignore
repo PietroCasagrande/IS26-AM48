@@ -39,3 +39,6 @@ build/
 
 .idea
 target
+
+### MySql username and password ###
+src/main/resources/db.properties
