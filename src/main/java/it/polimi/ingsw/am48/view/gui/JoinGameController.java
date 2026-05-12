@@ -74,8 +74,11 @@ public class JoinGameController implements ModelObserver {
              }
          }
          else if("PLACE_TOTEM".equals(state.getCurrentPhase())) {
-             //TODO show game board scene
-             System.out.println("Game full. Starting...");
+             GameBoardController loadingLobby = (GameBoardController) SceneManager.changeScene("game-board.fxml");
+             if (loadingLobby != null) {
+                 loadingLobby.setServer(server);
+                 loadingLobby.setModel(model);
+             }
          }
          else {
              System.out.println("Generic error occurred. Cannot set in waiting for players state.");
