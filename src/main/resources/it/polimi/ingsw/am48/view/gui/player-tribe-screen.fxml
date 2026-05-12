@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="rootTribe" prefHeight="500.0" prefWidth="900.0" stylesheets="@../gui/css/style.css"
+            styleClass="rootTribe"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+
+    <top>
+        <VBox fx:id="playerTribeBox" BorderPane.alignment="CENTER">
+            <children>
+                <BorderPane fx:id="titlePane">
+                    <center>
+                        <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" maxHeight="1.7976931348623157E308" styleClass="tribe-main-title" text="...'s Tribe" BorderPane.alignment="CENTER">
+                            <BorderPane.margin>
+                                <Insets bottom="5.0" left="0.0" right="5.0" top="0.0" />
+                            </BorderPane.margin>
+                        </Label>
+                    </center>
+                    <right>
+                        <Button fx:id="exitButton" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="button-exit" text="X" BorderPane.alignment="CENTER">
+                            <BorderPane.margin>
+                                <Insets bottom="5.0" right="0.0" top="0.0" />
+                            </BorderPane.margin>
+                        </Button>
+                    </right>
+                </BorderPane>
+
+                <GridPane fx:id="charactersPane" prefHeight="40.0">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <padding>
+                        <Insets right="15.0" />
+                    </padding>
+                    <children>
+                        <Label fx:id="artistsLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="tribe-character-title" text="ARTISTS" />
+
+                        <Label fx:id="buildersLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="tribe-character-title" text="BUILDERS" GridPane.columnIndex="1" />
+
+                        <Label fx:id="huntersLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="tribe-character-title" text="HUNTERS" GridPane.columnIndex="2" />
+
+                        <Label fx:id="inventorsLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="tribe-character-title" text="INVENTORS" GridPane.columnIndex="3" />
+
+                        <Label fx:id="pickersLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="tribe-character-title" text="PICKERS" GridPane.columnIndex="4" />
+
+                        <Label fx:id="shamansLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="tribe-character-title" text="SHAMANS" GridPane.columnIndex="5" />
+
+                        <Label fx:id="buildingsLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="tribe-character-title" text="BUILDINGS" GridPane.columnIndex="6" />
+                    </children>
+                </GridPane>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fx:id="tribeScroll" fitToWidth="true" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+            <content>
+                <GridPane fx:id="tribeGrid">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                        <ColumnConstraints percentWidth="14.2857" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints vgrow="ALWAYS" />
+                    </rowConstraints>
+                    <children>
+
+                        <VBox fx:id="artistsColumn" alignment="TOP_CENTER" spacing="5.0" styleClass="tribe-column" GridPane.columnIndex="0">
+                            <padding>
+                                <Insets bottom="30.0" top="10.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox fx:id="buildersColumn" alignment="TOP_CENTER" spacing="5.0" styleClass="tribe-column" GridPane.columnIndex="1">
+                            <padding>
+                                <Insets bottom="30.0" top="10.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox fx:id="huntersColumn" alignment="TOP_CENTER" spacing="5.0" styleClass="tribe-column" GridPane.columnIndex="2">
+                            <padding>
+                                <Insets bottom="30.0" top="10.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox fx:id="inventorsColumn" alignment="TOP_CENTER" spacing="5.0" styleClass="tribe-column" GridPane.columnIndex="3">
+                            <padding>
+                                <Insets bottom="30.0" top="10.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox fx:id="pickersColumn" alignment="TOP_CENTER" spacing="5.0" styleClass="tribe-column" GridPane.columnIndex="4">
+                            <padding>
+                                <Insets bottom="30.0" top="10.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox fx:id="shamansColumn" alignment="TOP_CENTER" spacing="5.0" styleClass="tribe-column" GridPane.columnIndex="5">
+                            <padding>
+                                <Insets bottom="30.0" top="10.0" />
+                            </padding>
+                        </VBox>
+
+                        <VBox fx:id="buildingsColumn" alignment="TOP_CENTER" spacing="5.0" styleClass="tribe-column-last" GridPane.columnIndex="6">
+                            <padding>
+                                <Insets bottom="30.0" top="10.0" />
+                            </padding>
+                        </VBox>
+
+                    </children>
+                </GridPane>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

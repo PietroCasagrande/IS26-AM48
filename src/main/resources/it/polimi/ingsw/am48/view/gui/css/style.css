@@ -32,6 +32,13 @@
     -fx-background-size: cover;
 }
 
+.rootTribe {
+    /* Sostituisci con il path della tua immagine di sfondo */
+    -fx-background-image: url("../images/background-no-title-cut.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
 
 /* ======================================================================================== */
 /*                                          BUTTONS                                         */
@@ -94,6 +101,61 @@
 
 /* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
 .button-menu-fire:pressed {
+    -fx-background-color: #d35400;
+    -fx-background-insets: 0;
+}
+
+/* ======================================== EXIT BUTTON ================================== */
+
+.button-exit {
+    /* Gradiente dall'arancione al rosso scuro */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 5px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+.button-exit:hover {
+    /* Il gradiente diventa più acceso e luminoso */
+    -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
+    -fx-cursor: hand;
+    /* L'ombra diventa un "bagliore" arancione */
+    -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
+}
+
+.button-exit:armed,
+.button-exit:focused {
+    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    -fx-background-insets: 0;
+
+    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    /* Il tuo stile di selezione */
+    -fx-border-color: #FFCA71;
+    -fx-border-width: 2px;
+    -fx-font-size: 22px;
+
+    /* Bagliore */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 5);
+}
+
+/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+.button-exit:pressed {
     -fx-background-color: #d35400;
     -fx-background-insets: 0;
 }
@@ -177,6 +239,52 @@
     -fx-font-weight: bold;
 }
 
+/* ======================================== PLAYER TRIBE TITLE ================================== */
+
+.tribe-main-title {
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+
+    /* Bordi più arrotondati, organici */
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 5px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+/* ======================================== CHARACTERS TYPE LABELS ================================== */
+
+.tribe-character-title {
+    -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+
+    /* Bordi più arrotondati, organici */
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 5px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
 /* Stile per il conteggio giocatori */
 .player-count-text {
     -fx-font-size: 18px;
@@ -227,4 +335,33 @@
     /* Eliminiamo i rettangoli azzurri di sistema */
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+}
+
+
+/* 2. Trucco Magico: Rende la "finestra" dello ScrollPane totalmente trasparente */
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+/* 3. Le Corsie / Colonne delle carte */
+.tribe-column {
+    /* Uno sfondo nero semi-trasparente per far leggere bene le carte sopra lo sfondo globale */
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+
+    /* Bordo SOLO a destra (Top Right Bottom Left) con il tuo color oro */
+    -fx-border-color: transparent #F5B041 transparent transparent;
+    -fx-border-width: 0 2px 0 0;
+
+    /* Un tocco di stile: linea tratteggiata per un effetto più "antico" (opzionale) */
+    -fx-border-style: dotted;
+}
+
+/* L'ultima colonna a destra non deve avere il bordo, altrimenti sbatte contro la barra di scorrimento */
+.tribe-column-last {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-border-width: 0;
 }
