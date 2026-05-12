@@ -18,6 +18,7 @@ import java.util.Optional;
 public class GameManager implements ModelInterface{
     private final Map<String, Game> activeGames;
     private final Map<Integer, Game> waitingGames;
+    private final Map<String, Game> crashedGames;
     private final Map<String, Game> playerToGame;
     private int nextGameId;
 
@@ -33,6 +34,7 @@ public class GameManager implements ModelInterface{
     public GameManager(GameRepository gameRepository, LeaderboardRepository leaderboardRepository){
         this.activeGames = new HashMap<>();
         this.waitingGames = new HashMap<>();
+        this.crashedGames = new HashMap<>();
         this.playerToGame = new HashMap<>();
         this.nextGameId = 1;
 
@@ -43,6 +45,17 @@ public class GameManager implements ModelInterface{
     // ModelInterface implementation: joinGame, placeTotem and takeCard methods
     @Override
     public JoinResult joinGame(int numPlayers, String nickname){
+
+        // controlliamo se questa join è una riconnessione post-crash o meno
+        synchronized (this) {
+            if (playerToGame.containsKey(nickname)) {
+                Game game = playerToGame.get(nickname);
+                if (crashedGames.containsValue(game)) {
+                    return handleReconnect(nickname, game);
+                }
+                throw new InvalidActionException("Nickname già in uso: " + nickname);
+            }
+        }
         synchronized (this) {
             if(numPlayers < 2 || numPlayers > 5) {
                 throw new IllegalArgumentException("Invalid number of players: must be between 2 and 5");
@@ -66,6 +79,7 @@ public class GameManager implements ModelInterface{
                     waitingGames.remove(numPlayers);
                     activeGames.put(game.getGameId(), game);
                 }
+                gameRepository.save(game.getGameId(), game.toSnapshot());
             }
             GameSnapshot snapshot = game.toSnapshot();
             return new JoinResult(snapshot, started);
@@ -77,7 +91,9 @@ public class GameManager implements ModelInterface{
         Game game = getGameByNickname(nickname);
         synchronized (game) {
             Player player = game.getPlayerByNickname(nickname);
-            return game.placeTotem(player, position);
+            List<GameDelta> deltas = game.placeTotem(player, position);
+            gameRepository.save(game.getGameId(), game.toSnapshot());
+            return deltas;
         }
     }
 
@@ -87,6 +103,7 @@ public class GameManager implements ModelInterface{
         synchronized (game) {
             Player player = game.getPlayerByNickname(nickname);
             List<GameDelta> deltas = game.takeCard(player, cardId);
+            gameRepository.save(game.getGameId(), game.toSnapshot());
 
             if(game.getCurrentTurn() > 10){
                 LocalDateTime now = LocalDateTime.now();
@@ -103,6 +120,7 @@ public class GameManager implements ModelInterface{
 
                 List<GameResult> leaderboard = leaderboardRepository.getLeaderboard(game.getNumPlayers());
                 deltas.add(new LeaderboardDelta(leaderboard));
+                gameRepository.delete(game.getGameId());
             }
 
             return deltas;
@@ -128,6 +146,36 @@ public class GameManager implements ModelInterface{
         Game game = new Game(gameId, numPlayers);
         waitingGames.put(numPlayers, game);
         return game;
+    }
+
+    private JoinResult handleReconnect(String nickname, Game game) {
+        synchronized (game) {
+            game.markReconnected(nickname); // segna il giocatore come riconnesso
+
+            boolean allReconnected = game.allPlayersReconnected();
+            if (allReconnected) {
+                synchronized (this) {
+                    crashedGames.remove(game.getGameId());
+                    activeGames.put(game.getGameId(), game);
+                }
+            }
+
+            // manda sempre lo snapshot corrente — sia che tutti siano riconnessi o no
+            return new JoinResult(game.toSnapshot(), allReconnected);
+        }
+    }
+
+    public void loadCrashedGames() {
+        for (String gameId : gameRepository.listActiveGameIds()) {
+            gameRepository.load(gameId).ifPresent(snapshot -> {
+                Game game = Game.fromSnapshot(snapshot);
+                crashedGames.put(gameId, game);
+                // popola anche playerToGame così getGameByNickname funziona
+                game.getPlayerContext().getPlayers().forEach(p ->
+                        playerToGame.put(p.getNickname(), game)
+                );
+            });
+        }
     }
 
     public Game findGame(String gameId){
