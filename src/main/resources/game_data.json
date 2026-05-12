@@ -119,7 +119,7 @@
       "character": "BUILDER",
       "strategy": {
         "effect": "BuilderStrategy",
-        "buildingDiscount": -2,
+        "buildingDiscount": 2,
         "builderPp": 1
       }
     },
@@ -507,13 +507,7 @@
       "id": "HUN-11",
       "era": "SECOND",
       "minPlayers": 5,
-      "character": "HUNTER",
-      "strategy": {
-        "effect": "ResourcePerCharStrategy",
-        "resource": "FOOD",
-        "quantity": 1,
-        "character": "HUNTER"
-      }
+      "character": "HUNTER"
     },
     {
       "id": "HUN-12",
