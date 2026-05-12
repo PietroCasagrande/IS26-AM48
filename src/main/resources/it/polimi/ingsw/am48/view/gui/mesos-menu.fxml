@@ -50,10 +50,10 @@
                 <VBox fx:id="titleBox" prefHeight="200.0" prefWidth="100.0" />
                 <VBox fx:id="buttonBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
                     <children>
-                        <Button fx:id="buttonPlay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Play Game" onAction="#handlePlay"/>
-                        <Button fx:id="buttonHowToPLay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="How to Play" onAction="#handleHowToPlay" />
-                        <Button fx:id="buttonSettings" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Settings" />
-                        <Button fx:id="buttonExit" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu" text="Exit" onAction="#handleExit" />
+                        <Button fx:id="buttonPlay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="Play Game" onAction="#handlePlay"/>
+                        <Button fx:id="buttonHowToPLay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="How to Play" onAction="#handleHowToPlay" />
+                        <Button fx:id="buttonSettings" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="Settings" />
+                        <Button fx:id="buttonExit" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="Exit" onAction="#handleExit" />
                     </children>
                     <padding><Insets top="100.0" /></padding>
                 </VBox>
@@ -67,7 +67,7 @@
                     <children>
                         <!-- Bottone per tornare indietro in alto -->
                         <Button text="TORNA AL MENU" onAction="#handleCloseRules"
-                                styleClass="button-menu" style="-fx-margin-bottom: 20;" />
+                                styleClass="button-menu-fire" style="-fx-margin-bottom: 20;" />
 
                         <!-- Le 8 pagine del manuale di Mesos -->
                         <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
@@ -96,7 +96,7 @@
                         </ImageView>
 
                         <!-- Il bottone in fondo -->
-                        <Button text="TORNA AL MENU" onAction="#handleCloseRules" styleClass="button-menu" />
+                        <Button text="TORNA AL MENU" onAction="#handleCloseRules" styleClass="button-menu-fire" />
                     </children>
                     <padding>
                         <Insets bottom="50.0" left="50.0" right="50.0" top="30.0" />
