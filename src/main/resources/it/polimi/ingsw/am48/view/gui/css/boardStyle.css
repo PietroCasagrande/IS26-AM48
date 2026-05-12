@@ -1,0 +1,68 @@
+/* ======================================================================================== */
+/*                                      ROOTS (STACK PANELS)                                */
+/* ======================================================================================== */
+
+#rootboard {
+    -fx-background-image: url("../images/background-game-board.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+/* ======================================================================================== */
+/* GAME OBJECTS & TOKENS                                  */
+/* ======================================================================================== */
+
+.token {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 20, 0.5, 0, 0);
+}
+
+.totem-selectable {
+    -fx-cursor: hand;
+}
+
+.totem-selectable:hover {
+    -fx-scale-x: 1.15;
+    -fx-scale-y: 1.15;
+}
+
+.opponent-label {
+    -fx-text-fill: #FFD700;
+    -fx-effect: dropshadow(gaussian, black, 5, 0.6, 1, 1);
+    -fx-background-color: #00000080;
+    -fx-background-radius: 8px;
+    -fx-padding: 4px 10px;
+    -fx-font-weight: bold;
+}
+
+.opponent-label:hover {
+    -fx-text-fill: #FFF3E0;
+    -fx-effect: dropshadow(gaussian, #FFD700, 10, 0.5, 0, 0);
+}
+
+/* ======================================================================================== */
+/* DECKS & ERAS                                           */
+/* ======================================================================================== */
+
+/* --- Gestione dinamica del mazzo per Ere --- */
+#deck {
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.deck-era1 {
+    -fx-background-image: url("../images/deckEra/deckFirstEra.png");
+}
+
+.deck-era2 {
+    -fx-background-image: url("../images/deckEra/deckSecondEra.png");
+}
+
+.deck-era3 {
+    -fx-background-image: url("../images/deckEra/deckThirdEra.png");
+}

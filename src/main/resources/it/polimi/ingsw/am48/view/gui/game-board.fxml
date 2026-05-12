@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 
 <StackPane fx:id="rootboard" id="rootboard"
-           stylesheets="@css/style.css"
+           stylesheets="@css/style.css, @css/boardStyle.css"
            xmlns="http://javafx.com/javafx/17"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.polimi.ingsw.am48.view.gui.GameBoardController">
@@ -58,7 +58,7 @@
                                     <image><Image url="@images/summary_card.png"/></image>
                                 </ImageView>
                                 <Button fx:id="bottone_avanti" mnemonicParsing="false"
-                                        text="AVANTI" prefWidth="180.0" styleClass="button-menu" />
+                                        text="AVANTI" prefWidth="180.0" styleClass="button-menu-fire" />
                             </children>
                         </VBox>
                     </children>
