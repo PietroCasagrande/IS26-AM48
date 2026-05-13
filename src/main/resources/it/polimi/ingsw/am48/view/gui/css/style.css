@@ -284,6 +284,18 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
 }
 
+/* --- STILE MINI (Quando è incastrato in basso) --- */
+/* Il CSS legge: "Trova le .tribe-label che si trovano DENTRO .mini-mode" */
+.mini-mode .tribe-character-title {
+    -fx-font-size: 10px; /* Font molto più piccolo! */
+    -fx-padding: 2px;    /* Margini ridotti */
+}
+
+/* Puoi fare la stessa cosa per rimpicciolire anche le immagini delle carte!
+.mini-mode .card-image {
+    -fx-fit-width: 90px; /* Rimpicciolisce la larghezza delle carte in modalità mini
+} */
+
 /* Stile per il conteggio giocatori */
 .player-count-text {
     -fx-font-size: 18px;
@@ -336,6 +348,9 @@
     -fx-faint-focus-color: transparent;
 }
 
+/* ======================================================================================== */
+/*                                          SCROLL PANE                                     */
+/* ======================================================================================== */
 
 /* 2. Trucco Magico: Rende la "finestra" dello ScrollPane totalmente trasparente */
 .scroll-pane > .viewport {
@@ -345,6 +360,48 @@
     -fx-background-color: transparent;
     -fx-control-inner-background: transparent;
 }
+
+/* ====================================== SCROLL BAR DESIGN ================================= */
+
+/* 2. Sfondo del "binario" in cui scorre la barra */
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color: rgba(0, 0, 0, 0.4); /* Sfondo scuro semi-trasparente */
+    -fx-border-color: #F5B041; /* Bordino dorato */
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+/* 3. Il cursore vero e proprio (Thumb) con i colori del tuo fuoco */
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+    -fx-background-radius: 10px;
+    -fx-background-insets: 2px; /* Lascia un po' di respiro dal bordo del binario */
+}
+
+/* Effetto Hover quando ci passi sopra col mouse */
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
+    -fx-cursor: hand;
+}
+
+/* 4. Nascondiamo le freccine default alle estremità (Stile UI Moderna) */
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0px; /* Le rimpicciolisce a zero */
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " "; /* Toglie la forma del triangolo */
+    -fx-padding: 0px;
+}
+
+/* ====================================== CARD COLUMN DESIGN ================================= */
 
 /* 3. Le Corsie / Colonne delle carte */
 .tribe-column {

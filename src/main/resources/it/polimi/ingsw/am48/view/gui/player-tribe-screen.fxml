@@ -80,7 +80,8 @@
     </top>
 
     <center>
-        <ScrollPane fx:id="tribeScroll" fitToWidth="true" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+        <ScrollPane fx:id="tribeScroll" fitToWidth="true" styleClass="scroll-pane"
+                    BorderPane.alignment="CENTER" vbarPolicy="ALWAYS">
             <content>
                 <GridPane fx:id="tribeGrid">
                     <columnConstraints>

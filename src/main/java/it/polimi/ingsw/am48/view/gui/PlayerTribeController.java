@@ -128,6 +128,18 @@ public class PlayerTribeController {
         if (buildingsColumn != null) buildingsColumn.getChildren().clear();
     }
 
+    public void setEmbeddedMode() {
+
+        // 1. Rendiamo invisibile la barra
+        titlePane.setVisible(false);
+
+        // 2. Diciamo a JavaFX di far "collassare" lo spazio.
+        // Senza questo, avresti un buco vuoto in alto!
+        titlePane.setManaged(false);
+
+        // 3. Aggiungiamo una classe CSS speciale a tutta la schermata (vedi step 2)
+        rootTribe.getStyleClass().add("mini-mode");
+    }
 
     @FXML
     public void handleExit() {

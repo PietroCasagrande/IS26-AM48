@@ -66,23 +66,26 @@ public class JoinGameController implements ModelObserver {
 
      @Override
      public void onStateUpdated(ClientGameState state){
-         if ("WAITING_FOR_PLAYERS".equals(state.getCurrentPhase())) {
-             LoadingLobbyController loadingLobby = (LoadingLobbyController) SceneManager.changeScene("loading-lobby.fxml");
-             if (loadingLobby != null) {
-                 loadingLobby.setServer(server);
-                 loadingLobby.setModel(model);
+         Platform.runLater(() -> {
+             if ("WAITING_FOR_PLAYERS".equals(state.getCurrentPhase())) {
+                 LoadingLobbyController loadingLobby = (LoadingLobbyController) SceneManager.changeScene("loading-lobby.fxml");
+                 if (loadingLobby != null) {
+                     loadingLobby.setServer(server);
+                     loadingLobby.setModel(model);
+                 }
              }
-         }
-         else if("PLACE_TOTEM".equals(state.getCurrentPhase())) {
-             GameBoardController loadingLobby = (GameBoardController) SceneManager.changeScene("game-board.fxml");
-             if (loadingLobby != null) {
-                 loadingLobby.setServer(server);
-                 loadingLobby.setModel(model);
+             else if("PLACE_TOTEM".equals(state.getCurrentPhase())) {
+                 GameBoardController gameBoardScene = (GameBoardController) SceneManager.changeScene("game-board.fxml");
+                 if (gameBoardScene != null) {
+                     gameBoardScene.setServer(server);
+                     gameBoardScene.setModel(model);
+                     gameBoardScene.setupHandBox();
+                 }
              }
-         }
-         else {
-             System.out.println("Generic error occurred. Cannot set in waiting for players state.");
-         }
+             else {
+                 System.out.println("Generic error occurred. Cannot set in waiting for players state.");
+             }
+         });
      }
 
     @Override

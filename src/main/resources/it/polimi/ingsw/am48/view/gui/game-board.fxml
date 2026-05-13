@@ -27,7 +27,12 @@
                         <ScrollPane fx:id="myHandBox"
                                     fitToHeight="true"
                                     prefHeight="210.0" prefWidth="750.0"
-                                    vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" />
+                                    vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" >
+                        <content>
+                            <!-- L'fx:id qui è la chiave di tutto! -->
+                            <fx:include fx:id="playerTribe" source="player-tribe-screen.fxml" />
+                        </content>
+                        </ScrollPane>
 
                         <VBox fx:id="token" alignment="CENTER_LEFT"
                               prefHeight="210.0" prefWidth="160.0" spacing="20.0">

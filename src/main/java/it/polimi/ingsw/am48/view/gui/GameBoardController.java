@@ -5,6 +5,7 @@ import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ModelObserver;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
+import it.polimi.ingsw.am48.view.CardDataRegistry;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -28,6 +29,7 @@ public class GameBoardController implements ModelObserver {
 
     // Bottom area
     @FXML private ScrollPane myHandBox;
+    @FXML private PlayerTribeController playerTribeController;
     @FXML private Label prestigeCount;
     @FXML private Label foodCount;
     @FXML private Button bottone_avanti;
@@ -47,6 +49,8 @@ public class GameBoardController implements ModelObserver {
     private VirtualServer server;
     private ClientModel model;
     private String myNickname;
+    private CardDataRegistry cardData;
+    private ImageCache imageCache;
 
     private VBox[] offerCards;
     private VBox[] opponentBoxes;
@@ -137,6 +141,20 @@ public class GameBoardController implements ModelObserver {
             case 2 -> deck.getStyleClass().add("deck-era2");
             case 3 -> deck.getStyleClass().add("deck-era3");
         }
+    }
+
+    public void setupHandBox() {
+        if (playerTribeController != null) {
+            playerTribeController.setServer(this.server);
+            playerTribeController.setModel(this.model);
+            playerTribeController.setDependencies(this.cardData, this.imageCache);
+
+            playerTribeController.setEmbeddedMode();
+            playerTribeController.initialize(this.myNickname);
+        }
+        else System.out.println("errore");
+
+        // TODO Fai lo stesso per le altre carte della Board
     }
 
     // ─────────────────────── Helper per Colori Totem ───────────────────────
