@@ -26,7 +26,7 @@ public class GUIViewFxml extends Application {
     public void start(Stage stage) throws Exception {
         SceneManager.setup(stage, server, model);
 
-        Object controller = SceneManager.changeScene("splash-screen.fxml");
+        Object controller = SceneManager.changeScene("game-board.fxml");
         if (controller instanceof SplashScreenController splashScreenController) {
             splashScreenController.setServer(server);
             splashScreenController.setModel(model);

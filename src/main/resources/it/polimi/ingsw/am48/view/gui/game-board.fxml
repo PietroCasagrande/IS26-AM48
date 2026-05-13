@@ -118,7 +118,7 @@
             <!-- CENTER: board -->
             <center>
                 <VBox fx:id="boardTable" alignment="CENTER" spacing="5.0"
-                      BorderPane.alignment="CENTER">
+                      BorderPane.alignment="CENTER" styleClass="glass-box">
 
                     <HBox fx:id="upper_row" alignment="CENTER" spacing="10.0"
                           prefHeight="130.0">

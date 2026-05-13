@@ -3,7 +3,7 @@
 /* ======================================================================================== */
 
 #rootboard {
-    -fx-background-image: url("../images/background-game-board.png");
+    -fx-background-image: url("../images/background-game-board.jpeg");
     -fx-background-size: cover;
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
@@ -67,6 +67,22 @@
     -fx-background-image: url("../images/deckEra/deckThirdEra.png");
 }
 
+.glass-box {
+    /* Disegna la linea bianca semi-trasparente */
+    -fx-border-color: rgba(255, 255, 255, 0.7);
+    -fx-border-width: 2px;
+
+    /* Arrotonda gli angoli esattamente come nel vostro disegno */
+    -fx-border-radius: 30px;
+
+    /* OPZIONALE MA CONSIGLIATO: scurisce leggermente l'interno del box
+       per rendere le carte e il testo molto più leggibili rispetto allo sfondo */
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-background-radius: 30px;
+
+    /* Margine interno per non far attaccare le carte al bordo bianco */
+    -fx-padding: 15px;
+}
 
 /* ======================================================================================== */
 /*                                      LEADERBOARD                                         */
