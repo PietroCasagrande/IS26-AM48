@@ -148,6 +148,23 @@ public class BoardCenterController {
         }
     }
 
+    // Update Deck Era
+    public void changeEra(int era){
+        if(this.deckContainer != null) deckContainer.getChildren().clear();
+
+        String deckPath = "/it/polimi/ingsw/am48/view/gui/images/deckEra/deckEra" + era + ".png";
+        Image deckImage = new Image(getClass().getResourceAsStream(deckPath));
+
+        if (!deckImage.isError()) {
+            ImageView deckView = new ImageView(deckImage);
+            deckView.fitHeightProperty().bind(boardCenterRoot.heightProperty().multiply(0.35).multiply(0.8));
+            deckView.setPreserveRatio(true);
+            deckContainer.getChildren().add(deckView);
+        } else {
+            System.err.println("Immagine mazzo non trovata per Era: " + era + ". Path cercato: " + deckPath);
+        }
+    }
+
     //TODO
     // Sposta solo i totem sui 7 slot già preparati
     private void updateOfferTrackTotems(ClientGameState state) {

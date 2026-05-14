@@ -56,15 +56,15 @@
 }
 
 .deck-era1 {
-    -fx-background-image: url("../images/deckEra/deckFirstEra.png");
+    -fx-background-image: url("../images/deckEra/deckEra1.png");
 }
 
 .deck-era2 {
-    -fx-background-image: url("../images/deckEra/deckSecondEra.png");
+    -fx-background-image: url("../images/deckEra/deckEra2.png");
 }
 
 .deck-era3 {
-    -fx-background-image: url("../images/deckEra/deckThirdEra.png");
+    -fx-background-image: url("../images/deckEra/deckEra3.png");
 }
 
 .glass-box {

@@ -8,9 +8,9 @@
           fx:controller="it.polimi.ingsw.am48.view.gui.BoardCenterController">
 
     <rowConstraints>
-        <RowConstraints percentHeight="40.0" valignment="CENTER" />
+        <RowConstraints percentHeight="35.0" valignment="CENTER" />
         <RowConstraints percentHeight="30.0" valignment="CENTER" />
-        <RowConstraints percentHeight="40.0" valignment="CENTER" />
+        <RowConstraints percentHeight="35.0" valignment="CENTER" />
     </rowConstraints>
 
     <columnConstraints>

@@ -127,6 +127,7 @@ public class GameBoardController implements ModelObserver {
             boardCenterController.initialize(this.server, this.model, this.myNickname);
             boardCenterController.setDependencies(this.imageCache);
             boardCenterController.update(this.model.getState());
+            boardCenterController.changeEra(1);
         }
     }
 
@@ -134,13 +135,13 @@ public class GameBoardController implements ModelObserver {
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
+            //TODO if (this.currentEra == era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
                 return;
             }
 
             /*
-            // updateDeckEra(state.getCurrentEra()); DA GESTIRE!!!
             updatePlayerInfo(state);
             updateBoardRows(state);
             updateOfferCards(state);
@@ -151,18 +152,8 @@ public class GameBoardController implements ModelObserver {
     }
 
     private void updateDeckEra(int era) {
-        if (this.currentEra == era) return; // Evita di riapplicare lo stile se l'era non è cambiata
         this.currentEra = era;
-
-        // Rimuove le classi precedenti per evitare conflitti
-        deck.getStyleClass().removeAll("deck-era1", "deck-era2", "deck-era3");
-
-        // Aggiunge la classe corrispondente all'era
-        switch (era) {
-            case 1 -> deck.getStyleClass().add("deck-era1");
-            case 2 -> deck.getStyleClass().add("deck-era2");
-            case 3 -> deck.getStyleClass().add("deck-era3");
-        }
+        this.boardCenterController.changeEra(this.currentEra);
     }
 
     // ─────────────────────── Helper per Colori Totem ───────────────────────
