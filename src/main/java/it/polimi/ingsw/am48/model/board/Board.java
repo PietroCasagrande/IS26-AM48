@@ -156,12 +156,19 @@ public class Board {
     public static Board fromSnapshot(BoardSnapshot snapshot, Map<String, Card> cardMap, List<Player> players){
         List<Card> tribeDeck = new ArrayList<>();
         for(String id : snapshot.getTribeDeckRemainingIds()){
-            tribeDeck.add(cardMap.get(id));
+            Card card = cardMap.get(id);
+            if (card == null) {
+                throw new IllegalStateException("Errore critico: Il character con ID " + id + " non è presente nel salvataggio sul disco!");
+            }
+            tribeDeck.add(card);
         }
-
         List<BuildingCard> buildingDeck = new ArrayList<>();
         for(String id : snapshot.getBuildingDeckRemainingIds()){
-            buildingDeck.add((BuildingCard) cardMap.get(id));
+            Card card = cardMap.get(id);
+            if (card == null) {
+                throw new IllegalStateException("Errore critico: Il building con ID " + id + " non è presente nel salvataggio sul disco!");
+            }
+            buildingDeck.add((BuildingCard) card);
         }
 
         Board board = new Board(

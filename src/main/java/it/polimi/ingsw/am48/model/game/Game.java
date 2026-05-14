@@ -14,6 +14,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.model.snapshot.PlayerSnapshot;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,7 @@ public class Game {
         this.notificatorCenter = new NotificatorCenter();
         this.currentTurn = 1;
         this.currentPhase = new WaitingForPlayersPhase(numPlayers);
+        this.reconnectedPlayers = new HashSet<>();
     }
 
     // Methods exposed to the controller
