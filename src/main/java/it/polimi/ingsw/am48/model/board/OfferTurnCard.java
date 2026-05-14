@@ -75,7 +75,7 @@ public class OfferTurnCard {
     public static OfferTurnCard fromSnapshot(OfferTurnCardSnapshot snapshot, List<Player> players) {
         // ricostruisce foodRewards e ppPenalty dal JSON
         BoardDTO dto = new GameDataLoader().loadData();
-        OfferTurnCard card = new OfferTurnFactory(dto.offerTurnCard).createCards(numPlayers).getFirst();
+        OfferTurnCard card = new OfferTurnFactory(dto.offerTurnCard).createCards(players.size()).getFirst();
 
         // Ripristina l'ordine dai nickname salvati nello snapshot
         for (String nickname : snapshot.getTotemOrder()) {

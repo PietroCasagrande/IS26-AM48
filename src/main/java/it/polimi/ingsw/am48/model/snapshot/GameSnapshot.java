@@ -16,7 +16,7 @@ public class GameSnapshot implements Serializable {
 
     @JsonCreator
     public GameSnapshot(
-            @JsonProperty("gameID") String gameId,
+            @JsonProperty("gameId") String gameId,
             @JsonProperty("numPlayers") int numPlayers,
             @JsonProperty("playerContext")  PlayerContextSnapshot playerContext,
             @JsonProperty("currentTurn") int currentTurn,

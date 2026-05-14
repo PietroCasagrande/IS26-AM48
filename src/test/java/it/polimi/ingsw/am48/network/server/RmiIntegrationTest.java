@@ -6,6 +6,8 @@ import it.polimi.ingsw.am48.model.game.GameManager;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
 import it.polimi.ingsw.am48.network.client.RmiClient;
+import it.polimi.ingsw.am48.repository.GameRepository;
+import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 import org.junit.jupiter.api.*;
 
 import java.rmi.registry.LocateRegistry;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 // Integration Test per RMI che verifica la connessione, ovvero:
@@ -32,11 +36,14 @@ class RmiIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        GameManager gameManager = new GameManager();
+        GameRepository mockRepo = mock(GameRepository.class);
+        when(mockRepo.listActiveGameIds()).thenReturn(List.of());
+        LeaderboardRepository mockLeaderboard = mock(LeaderboardRepository.class);
+
+        GameManager gameManager = new GameManager(mockRepo, mockLeaderboard);
         MesosServer mesosServer = new MesosServer();
         GameController controller = new GameController(gameManager);
         RmiServer rmiServer = new RmiServer(controller, mesosServer);
-
         registry.rebind("MesosServer", rmiServer);
     }
 

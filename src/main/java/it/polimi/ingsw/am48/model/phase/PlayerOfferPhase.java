@@ -237,6 +237,6 @@ public class PlayerOfferPhase implements GamePhase {
                 .map(Player::getNickname)
                 .toList();
 
-        return new PlayerOfferPhaseSnapshot(orderNicknames, currIdx, picksFromUp, picksFromDown, extraPickActive, extraPickPlayer.getNickname(), totemReturned);
+        return new PlayerOfferPhaseSnapshot(orderNicknames, currIdx, picksFromUp, picksFromDown, extraPickActive, extraPickPlayer != null ? extraPickPlayer.getNickname() : null, totemReturned);
     }
 }

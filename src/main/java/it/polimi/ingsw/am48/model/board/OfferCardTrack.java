@@ -1,6 +1,5 @@
 package it.polimi.ingsw.am48.model.board;
 
-import com.sun.source.tree.Tree;
 import it.polimi.ingsw.am48.dto.BoardDTO;
 import it.polimi.ingsw.am48.dto.OfferCardDTO;
 import it.polimi.ingsw.am48.model.player.Player;

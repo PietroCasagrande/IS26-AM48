@@ -7,6 +7,8 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
 import it.polimi.ingsw.am48.network.client.RmiClient;
 import it.polimi.ingsw.am48.network.client.SocketServerHandler;
+import it.polimi.ingsw.am48.repository.GameRepository;
+import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 import org.junit.jupiter.api.*;
 
 import java.net.ServerSocket;
@@ -18,6 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Timeout(30)
 class GameFlowIntegrationTest {
@@ -35,7 +39,11 @@ class GameFlowIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        GameManager gameManager = new GameManager();
+        GameRepository mockRepo = mock(GameRepository.class);
+        when(mockRepo.listActiveGameIds()).thenReturn(List.of());
+        LeaderboardRepository mockLeaderboard = mock(LeaderboardRepository.class);
+        GameManager gameManager = new GameManager(mockRepo, mockLeaderboard);
+
         MesosServer mesosServer = new MesosServer();
         GameController controller = new GameController(gameManager);
 
