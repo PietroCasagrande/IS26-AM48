@@ -34,6 +34,8 @@ public class SceneManager {
         return nickname;
     }
 
+    public static ImageCache getImageCache() {return imageCache;}
+
     public static Object changeScene(String fxmlPath) {
         try {
             FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(fxmlPath));

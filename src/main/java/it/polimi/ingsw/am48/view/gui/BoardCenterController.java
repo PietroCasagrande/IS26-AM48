@@ -16,7 +16,7 @@ import java.util.*;
 public class BoardCenterController {
 
     //Root
-    @FXML private VBox boardCenterRoot;
+    @FXML private GridPane boardCenterRoot;
 
     // Contenitori Righe Carte
     @FXML private HBox upperCharacterRow;
@@ -42,6 +42,7 @@ public class BoardCenterController {
         this.server = server;
         this.model = model;
         this.myNickname = myNickname;
+
         Platform.runLater(() -> {
             if (this.model != null && this.model.getState() != null) {
                 int numPlayers = this.model.getState().getPlayers().size();
@@ -114,17 +115,17 @@ public class BoardCenterController {
     //TODO
     // --- METODI DI UPDATE (Chiamati ad ogni aggiornamento dal Server) ---
     public void update(ClientGameState state) {
-        updateCardRow(upperCharacterRow, state.getUpperRowCardIds());
-        updateCardRow(upperBuildingRow, state.getBuildingUpperIds());
-        updateCardRow(lowerCharacterRow, state.getLowerRowCardIds());
-        updateCardRow(lowerBuildingRow, state.getBuildingLowerIds());
+        renderCards(upperCharacterRow, state.getUpperRowCardIds());
+        renderCards(upperBuildingRow, state.getBuildingUpperIds());
+        renderCards(lowerCharacterRow, state.getLowerRowCardIds());
+        renderCards(lowerBuildingRow, state.getBuildingLowerIds());
 
-        updateOfferTrackTotems(state);
+        //updateOfferTrackTotems(state);
         // updateTurnOrderCard(state); // Qui aggiornerai la griglia di sinistra
     }
 
     // Aggiorna dinamicamente una qualsiasi HBox con le carte del momento
-    private void updateCardRow(HBox rowContainer, List<String> cardIds) {
+    private void renderCards(HBox rowContainer, List<String> cardIds) {
         rowContainer.getChildren().clear();
 
         for (String cardId : cardIds) {
@@ -132,7 +133,7 @@ public class BoardCenterController {
             Image cardImage = imageCache.renderImage(cardId);
             if (cardImage != null) {
                 ImageView imgView = new ImageView(cardImage);
-                imgView.setFitHeight(120);
+                imgView.fitHeightProperty().bind(rowContainer.heightProperty().multiply(0.8));
                 imgView.setPreserveRatio(true);
                 imgView.getStyleClass().add("card-hover");
 

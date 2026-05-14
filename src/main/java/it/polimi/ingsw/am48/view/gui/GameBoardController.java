@@ -41,7 +41,7 @@ public class GameBoardController implements ModelObserver {
     @FXML private ImageView avatarLeft, avatarRight, avatarTopLeft, avatarTopRight;
 
     // Board center
-    @FXML private VBox boardCenter;
+    @FXML private GridPane boardCenter;
     @FXML private VBox center;
     @FXML private BoardCenterController boardCenterController;
     @FXML private HBox upper_row, lower_row;
@@ -108,6 +108,10 @@ public class GameBoardController implements ModelObserver {
         //setupOfferCardClickHandlers();
     }
 
+    public void setDependencies(ImageCache cache) {
+        this.imageCache = cache;
+    }
+
     // Render an embedded version of player's tribe scene
     public void setupHandBox() {
         if (playerTribeController != null) {
@@ -122,6 +126,7 @@ public class GameBoardController implements ModelObserver {
         if (boardCenterController != null) {
             boardCenterController.initialize(this.server, this.model, this.myNickname);
             boardCenterController.setDependencies(this.imageCache);
+            boardCenterController.update(this.model.getState());
         }
     }
 
