@@ -7,7 +7,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -130,50 +129,14 @@
 
             <!-- CENTER: board -->
             <center>
-                <VBox fx:id="boardTable" alignment="CENTER" spacing="5.0"
-                      BorderPane.alignment="CENTER" styleClass="glass-box">
+                <!-- Il contenitore con i margini -->
+                <VBox fx:id="center" alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+                    <BorderPane.margin>
+                        <Insets top="20" right="30" bottom="20" left="30"/>
+                    </BorderPane.margin>
 
-                    <HBox fx:id="upper_row" alignment="CENTER" spacing="10.0"
-                          prefHeight="130.0">
-                        <!-- Carte personaggio/tribù superiori -->
-                        <HBox fx:id="deckable_sup" alignment="CENTER_LEFT"
-                              spacing="5.0" prefHeight="130.0" prefWidth="350.0"/>
-                        <!-- Carte edificio superiori -->
-                        <HBox fx:id="building_sup" alignment="CENTER_LEFT"
-                              spacing="5.0" prefHeight="130.0" prefWidth="200.0"/>
-                    </HBox>
-
-                    <!-- Fila centrale: offer track + deck -->
-                    <HBox fx:id="centerBoard" alignment="CENTER" spacing="4.0"
-                          prefHeight="180.0">
-                        <Pane fx:id="offerTurnCard"
-                              prefHeight="180.0" prefWidth="95.0"/>
-                        <!-- Posizioni A–G offer track -->
-                        <VBox fx:id="offerCardA" alignment="CENTER"
-                              prefHeight="180.0" prefWidth="95.0"/>
-                        <VBox fx:id="offerCardB" alignment="CENTER"
-                              prefHeight="180.0" prefWidth="95.0"/>
-                        <VBox fx:id="offerCardC" alignment="CENTER"
-                              prefHeight="180.0" prefWidth="95.0"/>
-                        <VBox fx:id="offerCardD" alignment="CENTER"
-                              prefHeight="180.0" prefWidth="95.0"/>
-                        <VBox fx:id="offerCardE" alignment="CENTER"
-                              prefHeight="180.0" prefWidth="95.0"/>
-                        <VBox fx:id="offerCardF" alignment="CENTER"
-                              prefHeight="180.0" prefWidth="95.0"/>
-                        <VBox fx:id="offerCardG" alignment="CENTER"
-                              prefHeight="180.0" prefWidth="95.0"/>
-                        <VBox fx:id="deck" alignment="CENTER"
-                              prefHeight="180.0" prefWidth="80.0"/>
-                    </HBox>
-
-                    <HBox fx:id="lower_row" alignment="CENTER" spacing="10.0"
-                          prefHeight="130.0">
-                        <HBox fx:id="deckable_inf" alignment="CENTER_LEFT"
-                              spacing="5.0" prefHeight="130.0" prefWidth="350.0"/>
-                        <HBox fx:id="building_inf" alignment="CENTER_LEFT"
-                              spacing="5.0" prefHeight="130.0" prefWidth="200.0"/>
-                    </HBox>
+                    <!-- QUI INCLUDI TUTTA L'AREA CENTRALE! -->
+                    <fx:include fx:id="boardCenter" source="board-center.fxml" />
 
                 </VBox>
             </center>

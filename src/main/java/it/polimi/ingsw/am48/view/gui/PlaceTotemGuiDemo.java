@@ -55,8 +55,7 @@ public class PlaceTotemGuiDemo extends Application {
 
         Object ctrl = SceneManager.changeScene("game-board.fxml");
         if (ctrl instanceof GameBoardController gbc) {
-            gbc.setServer(mockServer);
-            gbc.setModel(clientModel);
+            gbc.initialize(mockServer, clientModel);
         }
 
         stage.setTitle("Place Totem Demo - " + numPlayers + " players (you = " + NICKNAMES[0] + ")");

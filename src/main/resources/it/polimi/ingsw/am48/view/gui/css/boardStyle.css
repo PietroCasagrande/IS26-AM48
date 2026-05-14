@@ -77,7 +77,7 @@
 
     /* OPZIONALE MA CONSIGLIATO: scurisce leggermente l'interno del box
        per rendere le carte e il testo molto più leggibili rispetto allo sfondo */
-    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-background-color: rgba(0, 0, 0, 0.5);
     -fx-background-radius: 30px;
 
     /* Margine interno per non far attaccare le carte al bordo bianco */

@@ -25,6 +25,7 @@ import java.util.Map;
 
 public class GameBoardController implements ModelObserver {
 
+    //Root
     @FXML private StackPane rootboard;
 
     // Bottom area
@@ -40,6 +41,9 @@ public class GameBoardController implements ModelObserver {
     @FXML private ImageView avatarLeft, avatarRight, avatarTopLeft, avatarTopRight;
 
     // Board center
+    @FXML private VBox boardCenter;
+    @FXML private VBox center;
+    @FXML private BoardCenterController boardCenterController;
     @FXML private HBox upper_row, lower_row;
     @FXML private HBox deckable_sup, building_sup, deckable_inf, building_inf;
     @FXML private Pane offerTurnCard;
@@ -82,27 +86,46 @@ public class GameBoardController implements ModelObserver {
     };
 
     @FXML
-    public void initialize() {
+    public void initialize(VirtualServer server, ClientModel model) {
+        this.server = server;
+        this.model = model;
+        model.registerObserver(this);
+        if (model.getState() != null) onStateUpdated(model.getState());
+
         myNickname = SceneManager.getNickname();
 
-        offerCards = new VBox[]{ offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG };
+        setupHandBox();
+        setupCenter();
+
+        //TODO
+        //offerCards = new VBox[]{ offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG };
         opponentBoxes = new VBox[]{ left_player, right_player, topLeft_player, topRight_player };
         opponentLabels = new Label[]{ labelLeft, labelRight, labelTopLeft, labelTopRight };
         opponentAvatars = new ImageView[]{ avatarLeft, avatarRight, avatarTopLeft, avatarTopRight };
 
         for (VBox b : opponentBoxes) b.setVisible(false);
 
-        setupOfferCardClickHandlers();
+        //setupOfferCardClickHandlers();
     }
 
-    public void setServer(VirtualServer server) { this.server = server; }
-
-    public void setModel(ClientModel model) {
-        this.model = model;
-        model.registerObserver(this);
-        if (model.getState() != null) onStateUpdated(model.getState());
+    // Render an embedded version of player's tribe scene
+    public void setupHandBox() {
+        if (playerTribeController != null) {
+            playerTribeController.setDependencies(this.imageCache);
+            playerTribeController.setEmbeddedMode();
+            playerTribeController.initialize(this.server, this.model, this.myNickname);
+        }
     }
 
+    // Render board center
+    public void setupCenter() {
+        if (boardCenterController != null) {
+            boardCenterController.initialize(this.server, this.model, this.myNickname);
+            boardCenterController.setDependencies(this.imageCache);
+        }
+    }
+
+    //TODO =========================================================================================================
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
@@ -110,21 +133,15 @@ public class GameBoardController implements ModelObserver {
                 transitionToLeaderboard();
                 return;
             }
-            if (myNickname == null) myNickname = SceneManager.getNickname();
 
-            int numPlayers = state.getPlayers().size();
-            // Aggiorna la board solo se il numero di giocatori cambia (o al primo caricamento)
-            if (numPlayers > 0 && this.currentPlayerCount != numPlayers) {
-                updateBoardConfiguration(numPlayers);
-            }
-
+            /*
             // updateDeckEra(state.getCurrentEra()); DA GESTIRE!!!
             updatePlayerInfo(state);
             updateBoardRows(state);
             updateOfferCards(state);
             updateTotemGrid(state);
             updateMyHand(state);
-            updateTokens(state);
+            updateTokens(state);*/
         });
     }
 
@@ -140,17 +157,6 @@ public class GameBoardController implements ModelObserver {
             case 1 -> deck.getStyleClass().add("deck-era1");
             case 2 -> deck.getStyleClass().add("deck-era2");
             case 3 -> deck.getStyleClass().add("deck-era3");
-        }
-    }
-
-    public void setupHandBox() {
-        if (playerTribeController != null) {
-            playerTribeController.setServer(this.server);
-            playerTribeController.setModel(this.model);
-            playerTribeController.setDependencies(this.cardData, this.imageCache);
-
-            playerTribeController.setEmbeddedMode();
-            playerTribeController.initialize(this.myNickname);
         }
     }
 
@@ -174,37 +180,6 @@ public class GameBoardController implements ModelObserver {
     private double computeDisplayedH(Image img, double fitWidth) {
         if (img == null || img.isError() || img.getWidth() == 0) return 180;
         return img.getHeight() * (fitWidth / img.getWidth());
-    }
-
-    private void updateBoardConfiguration(int numPlayers) {
-        this.currentPlayerCount = numPlayers;
-        this.initialTotemOrder = null;
-
-        String gridImagePath = "/it/polimi/ingsw/am48/view/gui/images/offerTurnCards/offerTurnCard" + numPlayers + ".png";
-        try {
-            Image bgImage = new Image(getClass().getResourceAsStream(gridImagePath));
-            if (!bgImage.isError()) {
-                BackgroundImage bgi = new BackgroundImage(
-                        bgImage,
-                        BackgroundRepeat.NO_REPEAT,
-                        BackgroundRepeat.NO_REPEAT,
-                        BackgroundPosition.CENTER,
-                        new BackgroundSize(95, computeDisplayedH(bgImage, 95), false, false, false, false)                );
-                offerTurnCard.setBackground(new Background(bgi));
-            }
-        } catch (Exception e) {
-            System.err.println("Errore caricamento griglia turni: " + gridImagePath);
-        }
-
-        // Gestione visibilità slot offerta in base alle regole di Mesos
-        offerCardA.setVisible(numPlayers == 5);
-        offerCardA.setManaged(numPlayers == 5);
-
-        offerCardD.setVisible(numPlayers >= 3);
-        offerCardD.setManaged(numPlayers >= 3);
-
-        offerCardG.setVisible(numPlayers >= 4);
-        offerCardG.setManaged(numPlayers >= 4);
     }
 
     private void updateTotemGrid(ClientGameState state) {

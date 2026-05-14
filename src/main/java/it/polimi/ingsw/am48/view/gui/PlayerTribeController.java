@@ -2,7 +2,7 @@ package it.polimi.ingsw.am48.view.gui;
 
 import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.ClientModel;
-import it.polimi.ingsw.am48.view.CardDataRegistry;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -44,58 +44,55 @@ public class PlayerTribeController {
 
     private VirtualServer server;
     private ClientModel model;
-    private CardDataRegistry cardData;
     private ImageCache imageCache;
+    private String myNickname;
 
-    public void setServer(VirtualServer server) {
-        this.server = server;
-    }
-
-    public void setModel(ClientModel model) {
-        this.model = model;
-    }
-
-    public void setDependencies(CardDataRegistry registry, ImageCache cache) {
-        this.cardData = registry;
+    public void setDependencies(ImageCache cache) {
         this.imageCache = cache;
     }
 
     @FXML
-    public void initialize(String nickname) {
-        clearAllColumns();
+    public void initialize(VirtualServer server, ClientModel model, String nickname) {
+        this.server = server;
+        this.model = model;
+        this.myNickname = nickname;
+        this.titleLabel.setText(myNickname + "'s Tribe");
+        Platform.runLater(() -> {
+            clearAllColumns();
 
-        List<String> characters = model.getState().getPlayer(nickname).getCharacterCardIds();
-        List<String> buildings = model.getState().getPlayer(nickname).getBuildingCardIds();
+            List<String> characters = model.getState().getPlayer(nickname).getCharacterCardIds();
+            List<String> buildings = model.getState().getPlayer(nickname).getBuildingCardIds();
 
-        for (String cardId : characters) {
-            ImageView cardView = createImageView(cardId);
+            for (String cardId : characters) {
+                ImageView cardView = createImageView(cardId);
 
-            if (cardView != null) {
-                if (cardId.startsWith("ART")) {
-                    artistsColumn.getChildren().add(cardView);
-                } else if (cardId.startsWith("BUI")) {
-                    buildersColumn.getChildren().add(cardView);
-                } else if (cardId.startsWith("HUN")) {
-                    huntersColumn.getChildren().add(cardView);
-                } else if (cardId.startsWith("INV")) {
-                    inventorsColumn.getChildren().add(cardView);
-                } else if (cardId.startsWith("PIC")) {
-                    pickersColumn.getChildren().add(cardView);
-                } else if (cardId.startsWith("SHA")) {
-                    shamansColumn.getChildren().add(cardView);
-                } else {
-                    System.err.println("Prefisso carta personaggio sconosciuto: " + cardId);
+                if (cardView != null) {
+                    if (cardId.startsWith("ART")) {
+                        artistsColumn.getChildren().add(cardView);
+                    } else if (cardId.startsWith("BUI")) {
+                        buildersColumn.getChildren().add(cardView);
+                    } else if (cardId.startsWith("HUN")) {
+                        huntersColumn.getChildren().add(cardView);
+                    } else if (cardId.startsWith("INV")) {
+                        inventorsColumn.getChildren().add(cardView);
+                    } else if (cardId.startsWith("PIC")) {
+                        pickersColumn.getChildren().add(cardView);
+                    } else if (cardId.startsWith("SHA")) {
+                        shamansColumn.getChildren().add(cardView);
+                    } else {
+                        System.err.println("Prefisso carta personaggio sconosciuto: " + cardId);
+                    }
                 }
             }
-        }
 
-        for (String cardId : buildings) {
-            ImageView cardView = createImageView(cardId);
+            for (String cardId : buildings) {
+                ImageView cardView = createImageView(cardId);
 
-            if (cardView != null) {
-                buildingsColumn.getChildren().add(cardView);
+                if (cardView != null) {
+                    buildingsColumn.getChildren().add(cardView);
+                }
             }
-        }
+        });
     }
 
     /**

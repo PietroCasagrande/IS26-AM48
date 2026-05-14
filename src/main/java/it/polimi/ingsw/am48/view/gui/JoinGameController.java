@@ -77,9 +77,7 @@ public class JoinGameController implements ModelObserver {
              else if("PLACE_TOTEM".equals(state.getCurrentPhase())) {
                  GameBoardController gameBoardScene = (GameBoardController) SceneManager.changeScene("game-board.fxml");
                  if (gameBoardScene != null) {
-                     gameBoardScene.setServer(server);
-                     gameBoardScene.setModel(model);
-                     gameBoardScene.setupHandBox();
+                     gameBoardScene.initialize(this.server, this.model);
                  }
              }
              else {
@@ -114,6 +112,7 @@ public class JoinGameController implements ModelObserver {
             try{
                 server.joinGame(numPlayers, nickname);
                 joinBox.setDisable(true);
+                SceneManager.setNickname(nickname);
             } catch (Exception e){
                 System.out.println("Generic connection error occurred. Please try again.");
             }
