@@ -42,14 +42,12 @@ public class OfferCardTrack {
 
     public OfferTrackSnapshot toSnapshot() {
         Map<Character, String> totemPositions = new HashMap<>();
-        for(Map.Entry<Character, OfferCard> entry : track.entrySet()){
-            entry.getValue().getTotem().ifPresent(player ->
-                    totemPositions.put(
-                            entry.getKey(), player.getNickname()
-                    )
-            );
+        for (Map.Entry<Character, OfferCard> entry : track.entrySet()) {
+            String nickname = entry.getValue().getTotem()
+                    .map(Player::getNickname)
+                    .orElse("");
+            totemPositions.put(entry.getKey(), nickname);
         }
-
         return new OfferTrackSnapshot(totemPositions);
     }
 
@@ -68,6 +66,7 @@ public class OfferCardTrack {
 
         // Applica i totem presenti al momento del salvataggio
         for (Map.Entry<Character, String> entry : snapshot.getTotemPositions().entrySet()) {
+            if (entry.getValue().isEmpty()) continue;;
             char space = entry.getKey();
             String nickname = entry.getValue();
             Player player = players.stream()

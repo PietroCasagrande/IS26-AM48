@@ -93,14 +93,17 @@ public class ClientGameState {
     }
 
     public void returnTotemToTurnCard(String nickname) {
-        offerTrackPositions.entrySet()
-                .removeIf(e -> e.getValue().equals(nickname));
+        offerTrackPositions.entrySet().stream()
+                .filter(e -> e.getValue().equals(nickname))
+                .findFirst()
+                .ifPresent(e -> e.setValue(""));  // ← posizione attiva resta, totem rimosso
         offerTurnCardOrder.add(nickname);
     }
 
     public void updateOfferTurnCardOrder(List<String> newOrder) {
         this.offerTurnCardOrder = new ArrayList<>(newOrder);
     }
+
 
     // --- aggiornamento fase e turno ---
 

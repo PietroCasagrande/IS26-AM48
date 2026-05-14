@@ -302,9 +302,9 @@ class RmiIntegrationTest {
         Thread.sleep(300);
 
         // La track deve essere vuota — il piazzamento non è andato a buon fine
-        assertTrue(model1.getState().getOfferTrackPositions().isEmpty(),
+        assertTrue(model1.getState().getOfferTrackPositions().values().stream().allMatch(String::isEmpty),
                 "Track should be empty after out-of-turn placement");
-        assertTrue(model2.getState().getOfferTrackPositions().isEmpty(),
+        assertTrue(model2.getState().getOfferTrackPositions().values().stream().allMatch(String::isEmpty),
                 "Track should be empty after out-of-turn placement");
 
         // Il giocatore corretto piazza — deve funzionare

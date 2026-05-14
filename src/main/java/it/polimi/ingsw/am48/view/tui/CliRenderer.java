@@ -6,6 +6,7 @@ import it.polimi.ingsw.am48.network.client.ClientPlayerState;
 import it.polimi.ingsw.am48.view.CardDataRegistry;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -75,16 +76,13 @@ public class CliRenderer {
      */
     private void renderOfferTrack(ClientGameState state) {
         System.out.println("── Offer Track ──────────────────────");
-
-        int numPlayers = state.getPlayers().size();
-        Set<Character> active = getActivePositions(numPlayers);
-
-        for (char letter = 'A'; letter <= 'G'; letter++) {
-            if (!active.contains(letter)) continue;  // salta tessere non attive
-            String occupant = state.getOfferTrackPositions().getOrDefault(letter, "-");
-            System.out.println("  [" + letter + "] " + occupant);
-        }
-
+        // La mappa contiene già solo le posizioni attive — nessun filtro necessario
+        state.getOfferTrackPositions().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(e -> {
+                    String occupant = e.getValue().isEmpty() ? "-" : e.getValue();
+                    System.out.println("  [" + e.getKey() + "] " + occupant);
+                });
         System.out.println();
     }
 
@@ -241,12 +239,12 @@ public class CliRenderer {
     * Tells renderOfferTrack which tiles are active during the game.
     * It does a switch case over the number of players of the game.
     * */
-    private Set<Character> getActivePositions(int numPlayers) {
-        return switch (numPlayers) {
-            case 2 -> Set.of('B', 'C', 'E', 'F');
-            case 3 -> Set.of('B', 'C', 'D', 'E', 'F');
-            case 4 -> Set.of('B', 'C', 'D', 'E', 'F', 'G');
-            default -> Set.of('A', 'B', 'C', 'D', 'E', 'F', 'G');
-        };
-    }
+//    private Set<Character> getActivePositions(int numPlayers) {
+//        return switch (numPlayers) {
+//            case 2 -> Set.of('B', 'C', 'E', 'F');
+//            case 3 -> Set.of('B', 'C', 'D', 'E', 'F');
+//            case 4 -> Set.of('B', 'C', 'D', 'E', 'F', 'G');
+//            default -> Set.of('A', 'B', 'C', 'D', 'E', 'F', 'G');
+//        };
+//    }
 }
