@@ -61,4 +61,9 @@ public class PlaceTotemPhase implements GamePhase {
                 .collect(Collectors.toSet());
         return new PlaceTotemPhaseSnapshot(placedNicknames);
     }
+
+    // unicamente per testing
+    public Set<Player> getPlayersPlaced() {
+        return playersPlaced;
+    }
 }

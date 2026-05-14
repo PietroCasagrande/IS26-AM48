@@ -18,6 +18,9 @@ public class CardMapBuilder {
         new BuildingFactory(dto.buildings).createCards(numPlayers)
                 .forEach(c -> map.put(c.getCardId(), c));
 
+        new EventFactory(dto.events).createCards(numPlayers)
+                .forEach(c -> map.put(c.getCardId(), c));
+
         return map;
     }
 }
