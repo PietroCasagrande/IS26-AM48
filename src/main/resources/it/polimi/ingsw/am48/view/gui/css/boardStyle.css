@@ -66,3 +66,23 @@
 .deck-era3 {
     -fx-background-image: url("../images/deckEra/deckThirdEra.png");
 }
+
+
+/* ======================================================================================== */
+/*                                      LEADERBOARD                                         */
+/* ======================================================================================== */
+
+#rootLeaderboard {
+    -fx-background-image: url("../images/background-no-title.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+.leaderboard-title {
+    -fx-font-family: "Papyrus";
+    -fx-font-size: 48px;
+    -fx-text-fill: #FFD700;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
