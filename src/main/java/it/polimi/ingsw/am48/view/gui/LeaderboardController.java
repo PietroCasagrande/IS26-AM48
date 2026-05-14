@@ -110,20 +110,20 @@ public class LeaderboardController implements ModelObserver {
             try {
                 avatar.setImage(new Image(getClass().getResourceAsStream(totemPath)));
             } catch (Exception e) {
-                System.err.println("Impossibile caricare il totem per " + player.getNickname());
+                System.err.println("Impossible loading the totem for " + player.getNickname());
             }
         }
         avatar.setFitHeight(55);
         avatar.setPreserveRatio(true);
 
         String displayName = player.getNickname();
-        if (isMe) displayName += " (tu)";
+        if (isMe) displayName += " (you)";
         Label nickLabel = new Label(displayName);
         String nickStyle = "-fx-text-fill: #FFF3E0; -fx-font-size: 20; -fx-font-weight: bold; -fx-min-width: 200;";
         if (isWinner) nickStyle += " -fx-text-fill: #FFD700;";
         nickLabel.setStyle(nickStyle);
 
-        Label pointsLabel = new Label(player.getPoints() + " pts");
+        Label pointsLabel = new Label(player.getPoints() + " PP");
         pointsLabel.setStyle("-fx-text-fill: #FFD700; -fx-font-size: 20; -fx-font-weight: bold; -fx-min-width: 80;");
 
         Label foodLabel = new Label("Food: " + player.getFood());
