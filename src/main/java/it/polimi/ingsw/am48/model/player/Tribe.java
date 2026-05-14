@@ -191,7 +191,7 @@ public class Tribe {
                 shamanSafety,
                 shamanDoubling,
                 extraFoodRight,
-                extraPickRight
+                extraPickRight,
                 buildingDiscount,
                 builderPoints,
                 buildingPoints

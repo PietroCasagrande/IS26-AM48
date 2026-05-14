@@ -6,6 +6,8 @@ import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.model.phase.PlayerOfferPhase;
 import it.polimi.ingsw.am48.model.phase.PlaceTotemPhase;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.repository.GameRepository;
+import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class GameManagerTest {
 
@@ -20,7 +24,10 @@ class GameManagerTest {
 
     @BeforeEach
     void setUp() {
-        manager = new GameManager();
+        GameRepository mockRepo = mock(GameRepository.class);
+        LeaderboardRepository mockLeaderboard = mock(LeaderboardRepository.class);
+        when(mockRepo.listActiveGameIds()).thenReturn(List.of());
+        manager = new GameManager(mockRepo, mockLeaderboard);
     }
 
     // ==================== joinGame ====================

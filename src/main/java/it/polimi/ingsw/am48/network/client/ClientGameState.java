@@ -44,7 +44,7 @@ public class ClientGameState {
         }
 
         state.players = new HashMap<>();
-        snapshot.getPlayers().forEach(p ->
+        snapshot.getPlayerContext().getPlayers().forEach(p ->
                 state.players.put(p.getNickname(), ClientPlayerState.fromSnapshot(p))
         );
         return state;

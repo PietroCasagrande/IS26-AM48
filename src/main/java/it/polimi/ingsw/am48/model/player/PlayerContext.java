@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Nodes.collect;
 
 public class PlayerContext {
     private Player currPlayer;
@@ -23,7 +22,7 @@ public class PlayerContext {
                 players.stream()
                         .map(Player::toSnapshot)
                         .collect(Collectors.toList()),
-                currPlayer.getNickname()
+                currPlayer != null ? currPlayer.getNickname() : null
         );
     }
 
@@ -32,10 +31,14 @@ public class PlayerContext {
         ctx.players = snap.getPlayers().stream()
                 .map(ps -> Player.fromSnapshot(ps, cardMap))
                 .collect(Collectors.toList());
-        ctx.currPlayer = ctx.players.stream()
-                .filter(p -> p.getNickname().equals(snap.getCurrPlayerNickname()))
-                .findFirst()
-                .orElseThrow();
+
+        if (snap.getCurrPlayerNickname() != null) {
+            ctx.currPlayer = ctx.players.stream()
+                    .filter(p -> p.getNickname().equals(snap.getCurrPlayerNickname()))
+                    .findFirst()
+                    .orElseThrow();
+        }
+
         return ctx;
     }
 

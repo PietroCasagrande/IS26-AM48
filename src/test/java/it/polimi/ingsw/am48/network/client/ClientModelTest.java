@@ -58,7 +58,10 @@ class ClientModelTest {
         when(trackSnap.getTotemPositions()).thenReturn(offerTrack);
         when(boardSnap.getOfferTurnCard()).thenReturn(turnCardSnap);
         when(turnCardSnap.getTotemOrder()).thenReturn(turnCardOrder);
-        when(snap.getPlayers()).thenReturn(players);
+
+        PlayerContextSnapshot playerContextSnap = mock(PlayerContextSnapshot.class);
+        when(snap.getPlayerContext()).thenReturn(playerContextSnap);
+        when(playerContextSnap.getPlayers()).thenReturn(players);
 
         return snap;
     }
