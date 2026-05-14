@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.geometry.Insets?>
 <StackPane fx:id="rootboard" id="rootboard"
            stylesheets="@css/style.css, @css/boardStyle.css"
            xmlns="http://javafx.com/javafx/17"
@@ -22,12 +23,16 @@
 
             <!-- BOTTOM: mano + sommario + token-->
             <bottom>
-                <HBox alignment="CENTER" spacing="25.0" BorderPane.alignment="CENTER" style="-fx-padding: 15;">
+                <HBox alignment="CENTER_LEFT" spacing="50.0" BorderPane.alignment="CENTER" style="-fx-padding: 15;">
                     <children>
                         <ScrollPane fx:id="myHandBox"
-                                    fitToHeight="true"
+                                    fitToHeight="true" fitToWidth="true"
                                     prefHeight="210.0" prefWidth="750.0"
-                                    vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" >
+                                    vbarPolicy="NEVER" hbarPolicy="NEVER"
+                                    HBox.hgrow="ALWAYS">
+                            <HBox.margin>
+                                <Insets left="100.0" />
+                            </HBox.margin>
                         <content>
                             <!-- L'fx:id qui è la chiave di tutto! -->
                             <fx:include fx:id="playerTribe" source="player-tribe-screen.fxml" />
@@ -35,7 +40,7 @@
                         </ScrollPane>
 
                         <VBox fx:id="token" alignment="CENTER_LEFT"
-                              prefHeight="210.0" prefWidth="160.0" spacing="20.0">
+                              prefHeight="210.0" spacing="20.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="12.0">
                                     <ImageView fx:id="food" fitHeight="70.0" fitWidth="70.0"
@@ -55,7 +60,10 @@
                         </VBox>
 
                         <VBox fx:id="infoCard" alignment="CENTER"
-                              prefHeight="210.0" prefWidth="220.0" spacing="12.0">
+                              prefHeight="210.0" spacing="12.0">
+                            <HBox.margin>
+                                <Insets right="100.0" />
+                            </HBox.margin>
                             <children>
                                 <ImageView fx:id="summary_card"
                                            fitHeight="170.0" fitWidth="200.0"

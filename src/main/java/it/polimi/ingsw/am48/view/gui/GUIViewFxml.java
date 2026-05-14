@@ -1,7 +1,6 @@
 package it.polimi.ingsw.am48.view.gui;
 
 import it.polimi.ingsw.am48.network.VirtualServer;
-import it.polimi.ingsw.am48.network.VirtualServerRmi;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -26,7 +25,7 @@ public class GUIViewFxml extends Application {
     public void start(Stage stage) throws Exception {
         SceneManager.setup(stage, server, model);
 
-        Object controller = SceneManager.changeScene("game-board.fxml");
+        Object controller = SceneManager.changeScene("splash-screen.fxml");
         if (controller instanceof SplashScreenController splashScreenController) {
             splashScreenController.setServer(server);
             splashScreenController.setModel(model);

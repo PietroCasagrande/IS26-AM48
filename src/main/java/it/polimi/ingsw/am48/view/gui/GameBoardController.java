@@ -152,9 +152,6 @@ public class GameBoardController implements ModelObserver {
             playerTribeController.setEmbeddedMode();
             playerTribeController.initialize(this.myNickname);
         }
-        else System.out.println("errore");
-
-        // TODO Fai lo stesso per le altre carte della Board
     }
 
     // ─────────────────────── Helper per Colori Totem ───────────────────────
