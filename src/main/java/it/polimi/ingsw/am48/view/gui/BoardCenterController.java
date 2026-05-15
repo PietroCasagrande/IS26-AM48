@@ -29,6 +29,17 @@ public class BoardCenterController {
     @FXML private HBox offerTrackContainer;
     @FXML private VBox deckContainer;
 
+    // Relative totem positions on OfferTurnCard
+    private Map<String, Integer> totemSlotRegistry = new HashMap<>();
+    private static final double[][] SLOT_CENTER_FRACTIONS = {
+            {},
+            {},
+            {0.311, 0.451},                       // 2 players
+            {0.260, 0.435, 0.600},                // 3 players
+            {0.222, 0.397, 0.570, 0.710},         // 4 players
+            {0.146, 0.320, 0.494, 0.667, 0.807}   // 5 players
+    };
+
     private VirtualServer server;
     private ClientModel model;
     private ImageCache imageCache;
@@ -120,6 +131,7 @@ public class BoardCenterController {
         renderCards(lowerCharacterRow, state.getLowerRowCardIds());
         renderCards(lowerBuildingRow, state.getBuildingLowerIds());
 
+        updateTotemGrid(state);
         //updateOfferTrackTotems(state);
         // updateTurnOrderCard(state); // Qui aggiornerai la griglia di sinistra
     }
@@ -198,13 +210,60 @@ public class BoardCenterController {
     private void handleOfferTrackClick(char letter) {
         // La logica di click (controllare le fasi)
         try {
-            server.placeTotem(myNickname, letter);
+            this.server.placeTotem(this.myNickname, letter);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    //TODO
-    // Temporaneo per far compilare il codice
-    private String getTotemPath(String nick, ClientGameState state) { return ""; }
+    public void updateTotemGrid(ClientGameState state) {
+        this.offerTurnCard.getChildren().clear();
+
+        List<String> currentOrderList = state.getOfferTurnCardOrder();
+
+        if (currentOrderList == null || currentOrderList.isEmpty()) {
+            totemSlotRegistry.clear();
+            return;
+        }
+
+        int numPlayers = state.getPlayers().size();
+        double[] yPercentages = SLOT_CENTER_FRACTIONS[numPlayers];
+
+        // on totem return during player offer phase
+        for (String player : currentOrderList) {
+            if (!totemSlotRegistry.containsKey(player)) {
+                int freeSlot = totemSlotRegistry.size();
+                totemSlotRegistry.put(player, freeSlot);
+            }
+        }
+
+        // totem rendering
+        for (String player : currentOrderList) {
+            int slotIndex = totemSlotRegistry.get(player);
+
+            String totemPath = getTotemPath(player, state);
+            Image totemImage = new Image(getClass().getResourceAsStream(totemPath));
+            ImageView totemImg = new ImageView(totemImage);
+            totemImg.setPreserveRatio(true);
+            totemImg.fitHeightProperty().bind(this.offerTurnCard.heightProperty().multiply(0.12));
+            totemImg.layoutXProperty().bind(
+                    this.offerTurnCard.widthProperty().divide(2)
+                            .subtract(totemImg.fitWidthProperty().divide(2))
+            );
+
+            totemImg.layoutYProperty().bind(
+                    this.offerTurnCard.heightProperty().multiply(yPercentages[slotIndex])
+                            .subtract(totemImg.fitHeightProperty().divide(2))
+            );
+
+            totemImg.setId("totem_" + player); // ID per i click successivi
+
+            this.offerTurnCard.getChildren().add(totemImg);
+        }
+    }
+
+    private String getTotemPath(String nickname, ClientGameState state) {
+        String color = state.getPlayer(nickname).getTotemColor();
+        return "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
+    }
 }

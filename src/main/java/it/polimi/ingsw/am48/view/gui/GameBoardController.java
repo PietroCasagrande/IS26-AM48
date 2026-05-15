@@ -19,7 +19,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -67,23 +66,6 @@ public class GameBoardController implements ModelObserver {
 
     // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
     private int currentEra = 0;
-
-    // Ordine iniziale completo dei totem (per mantenere slot fissi quando alcuni vengono rimossi)
-    private List<String> initialTotemOrder;
-
-    // Ordine colori assegnati in base all'ingresso
-    private final String[] totemColors = {"blue", "red", "black", "white", "yellow"};
-
-
-    // MODIFICA QUI per ajustare la posizione verticale di ogni totem:
-    private static final double[][] SLOT_CENTER_FRACTIONS = {
-            {},
-            {},
-            {0.311, 0.451},                       // 2 players
-            {0.260, 0.435, 0.600},                // 3 players
-            {0.222, 0.397, 0.570, 0.710},         // 4 players
-            {0.146, 0.320, 0.494, 0.667, 0.807}   // 5 players
-    };
 
     @FXML
     public void initialize(VirtualServer server, ClientModel model) {
@@ -135,6 +117,7 @@ public class GameBoardController implements ModelObserver {
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
+            boardCenterController.update(state);
             //TODO if (this.currentEra == era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
@@ -156,21 +139,6 @@ public class GameBoardController implements ModelObserver {
         this.boardCenterController.changeEra(this.currentEra);
     }
 
-    // ─────────────────────── Helper per Colori Totem ───────────────────────
-
-    private String getTotemPath(String nickname, ClientGameState state) {
-        // Otteniamo la lista dei nickname per trovare l'indice di ingresso
-        List<String> entryOrder = state.getPlayers().values().stream()
-                .map(ClientPlayerState::getNickname)
-                .toList();
-
-        int index = entryOrder.indexOf(nickname);
-        if (index < 0 || index >= totemColors.length) return "";
-
-        String color = totemColors[index];
-        return "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
-    }
-
     // ─────────────────────── Configurazioni Dinamiche Board ───────────────────────
 
     private double computeDisplayedH(Image img, double fitWidth) {
@@ -178,6 +146,7 @@ public class GameBoardController implements ModelObserver {
         return img.getHeight() * (fitWidth / img.getWidth());
     }
 
+    /* TODO messo in board center
     private void updateTotemGrid(ClientGameState state) {
         offerTurnCard.getChildren().clear();
 
@@ -269,7 +238,7 @@ public class GameBoardController implements ModelObserver {
             offerTurnCard.getChildren().add(slotPane);
         }
     }
-
+    */
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
 
@@ -289,9 +258,9 @@ public class GameBoardController implements ModelObserver {
             label.setText(player.getNickname());
             box.setVisible(true);
 
-            String totemPath = getTotemPath(player.getNickname(), state);
+            //TODO String totemPath = getTotemPath(player.getNickname(), state);
             try {
-                avatar.setImage(new Image(getClass().getResourceAsStream(totemPath)));
+                //TODO avatar.setImage(new Image(getClass().getResourceAsStream(totemPath)));
                 avatar.setFitHeight(60);
                 avatar.setPreserveRatio(true);
             } catch (Exception e) {
@@ -325,22 +294,6 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
-    // ─────────────────────── Board & Rows ───────────────────────
-
-    private void updateBoardRows(ClientGameState state) {
-        updateRow(deckable_sup, state.getUpperRowCardIds());
-        updateRow(building_sup, state.getBuildingUpperIds());
-        updateRow(deckable_inf, state.getLowerRowCardIds());
-        updateRow(building_inf, state.getBuildingLowerIds());
-    }
-
-    private void updateRow(HBox rowBox, List<String> cardIds) {
-        rowBox.getChildren().clear();
-        for (String id : cardIds) {
-            rowBox.getChildren().add(createCardImageView(id, true));
-        }
-    }
-
     private void updateOfferCards(ClientGameState state) {
         Map<Character, String> positions = state.getOfferTrackPositions();
         for (int i = 0; i < 7; i++) {
@@ -368,10 +321,10 @@ public class GameBoardController implements ModelObserver {
             if (positions.containsKey(letter)) {
                 String playerNick = positions.get(letter);
                 ImageView totemOnTrack = new ImageView();
-                String path = getTotemPath(playerNick, state);
+                //TODO String path = getTotemPath(playerNick, state);
 
                 try {
-                    totemOnTrack.setImage(new Image(getClass().getResourceAsStream(path)));
+                    //TODO totemOnTrack.setImage(new Image(getClass().getResourceAsStream(path)));
                     totemOnTrack.setFitHeight(50);
                     totemOnTrack.setPreserveRatio(true);
                     offerBox.setAlignment(Pos.TOP_CENTER);
