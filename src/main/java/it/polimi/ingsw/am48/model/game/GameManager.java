@@ -36,10 +36,11 @@ public class GameManager implements ModelInterface{
         this.waitingGames = new HashMap<>();
         this.crashedGames = new HashMap<>();
         this.playerToGame = new HashMap<>();
-        this.nextGameId = 1;
 
         this.gameRepository = gameRepository;
         this.leaderboardRepository = leaderboardRepository;
+
+        this.nextGameId = computeNextGameId();
     }
 
     // ModelInterface implementation: joinGame, placeTotem and takeCard methods
@@ -201,6 +202,21 @@ public class GameManager implements ModelInterface{
                 .stream()
                 .map(Player::getNickname)
                 .toList();
+    }
+
+    private int computeNextGameId(){
+        if(gameRepository == null) return 1;
+        return gameRepository.listActiveGameIds().stream()
+                .map(id -> id.replace("GAME-", ""))
+                .mapToInt(s -> {
+                    try {
+                        return Integer.parseInt(s);
+                    } catch (NumberFormatException e) {
+                        return 0;
+                    }
+                })
+                .max()
+                .orElse(0) + 1;
     }
 
     // metodi per la persistenza del server (SaveGame) e per il DB (createGameResult)
