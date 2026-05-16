@@ -102,6 +102,10 @@ public class GameBoardController implements ModelObserver {
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
+            if (state.getWinnerNickname() != null) {
+                transitionToLeaderboard();
+                return;
+            }
             if (myNickname == null) myNickname = SceneManager.getNickname();
 
             int numPlayers = state.getPlayers().size();
@@ -477,4 +481,13 @@ public class GameBoardController implements ModelObserver {
     }
 
     @Override public void onError(String message) { System.err.println("Error: " + message); }
+
+    // serve alla fine per passare al decimo turno alla scena successiva
+    private void transitionToLeaderboard() {
+        LeaderboardController lb = (LeaderboardController) SceneManager.changeScene("leaderboard.fxml");
+        if (lb != null) {
+            lb.setServer(server);
+            lb.setModel(model);
+        }
+    }
 }
