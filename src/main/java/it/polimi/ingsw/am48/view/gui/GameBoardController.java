@@ -106,6 +106,7 @@ public class GameBoardController implements ModelObserver {
         Platform.runLater(() -> {
             boardCenterController.update(state);
             updateTokens(state);
+            playerTribeController.updateTribe(state);
             //TODO if (this.currentEra != era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
@@ -196,13 +197,6 @@ public class GameBoardController implements ModelObserver {
         if (myState != null) {
             foodCount.setText(String.valueOf(myState.getFood()));
             prestigeCount.setText(String.valueOf(myState.getPoints()));
-        }
-    }
-
-    private void handleCardClick(String cardId) {
-        if (server != null) {
-            try { server.takeCard(myNickname, cardId); }
-            catch (Exception ex) { ex.printStackTrace(); }
         }
     }
 

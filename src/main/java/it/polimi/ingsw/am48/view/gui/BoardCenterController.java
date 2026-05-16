@@ -224,6 +224,13 @@ public class BoardCenterController {
         }
     }
 
+    private void handleCardClick(String cardId) {
+        if (server != null) {
+            try { server.takeCard(myNickname, cardId); }
+            catch (Exception ex) { ex.printStackTrace(); }
+        }
+    }
+
     // Update Deck Era
     public void changeEra(int era){
         if(this.deckContainer != null) deckContainer.getChildren().clear();
@@ -292,10 +299,7 @@ public class BoardCenterController {
                 imgView.getStyleClass().add("card-hover");
 
                 // Click per pescare la carta
-                imgView.setOnMouseClicked(e -> {
-                    try { server.takeCard(myNickname, cardId); }
-                    catch (Exception ex) { ex.printStackTrace(); }
-                });
+                imgView.setOnMouseClicked(e -> handleCardClick(cardId));
 
                 rowContainer.getChildren().add(imgView);
             }
