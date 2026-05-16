@@ -5,6 +5,7 @@ import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ModelObserver;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
+import it.polimi.ingsw.am48.view.CardDataRegistry;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -18,26 +19,30 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class GameBoardController implements ModelObserver {
 
+    //Root
     @FXML private StackPane rootboard;
 
     // Bottom area
     @FXML private ScrollPane myHandBox;
+    @FXML private PlayerTribeController playerTribeController;
     @FXML private Label prestigeCount;
     @FXML private Label foodCount;
     @FXML private Button bottone_avanti;
 
     // Player areas
-    @FXML private VBox left_player, right_player, topLeft_player, topRight_player;
-    @FXML private Label labelLeft, labelRight, labelTopLeft, labelTopRight;
-    @FXML private ImageView avatarLeft, avatarRight, avatarTopLeft, avatarTopRight;
+    @FXML private VBox left_player1, right_player1, left_player2, right_player2;
+    @FXML private Label labelLeft1, labelRight1, labelLeft2, labelRight2;
+    @FXML private ImageView avatarLeft1, avatarRight1, avatarLeft2, avatarRight2;
 
     // Board center
+    @FXML private GridPane boardCenter;
+    @FXML private VBox center;
+    @FXML private BoardCenterController boardCenterController;
     @FXML private HBox upper_row, lower_row;
     @FXML private HBox deckable_sup, building_sup, deckable_inf, building_inf;
     @FXML private Pane offerTurnCard;
@@ -47,6 +52,8 @@ public class GameBoardController implements ModelObserver {
     private VirtualServer server;
     private ClientModel model;
     private String myNickname;
+    private CardDataRegistry cardData;
+    private ImageCache imageCache;
 
     private VBox[] offerCards;
     private VBox[] opponentBoxes;
@@ -60,98 +67,76 @@ public class GameBoardController implements ModelObserver {
     // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
     private int currentEra = 0;
 
-    // Ordine iniziale completo dei totem (per mantenere slot fissi quando alcuni vengono rimossi)
-    private List<String> initialTotemOrder;
-
-    // Ordine colori assegnati in base all'ingresso
-    private final String[] totemColors = {"blue", "red", "black", "white", "yellow"};
-
-
-    // MODIFICA QUI per ajustare la posizione verticale di ogni totem:
-    private static final double[][] SLOT_CENTER_FRACTIONS = {
-            {},
-            {},
-            {0.311, 0.451},                       // 2 players
-            {0.260, 0.435, 0.600},                // 3 players
-            {0.222, 0.397, 0.570, 0.710},         // 4 players
-            {0.146, 0.320, 0.494, 0.667, 0.807}   // 5 players
-    };
-
     @FXML
-    public void initialize() {
-        myNickname = SceneManager.getNickname();
-
-        offerCards = new VBox[]{ offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG };
-        opponentBoxes = new VBox[]{ left_player, right_player, topLeft_player, topRight_player };
-        opponentLabels = new Label[]{ labelLeft, labelRight, labelTopLeft, labelTopRight };
-        opponentAvatars = new ImageView[]{ avatarLeft, avatarRight, avatarTopLeft, avatarTopRight };
-
-        for (VBox b : opponentBoxes) b.setVisible(false);
-
-        setupOfferCardClickHandlers();
-    }
-
-    public void setServer(VirtualServer server) { this.server = server; }
-
-    public void setModel(ClientModel model) {
+    public void initialize(VirtualServer server, ClientModel model) {
+        this.server = server;
         this.model = model;
         model.registerObserver(this);
         if (model.getState() != null) onStateUpdated(model.getState());
+
+        myNickname = SceneManager.getNickname();
+
+        setupHandBox();
+        setupCenter();
+
+        //TODO
+        //offerCards = new VBox[]{ offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG };
+        opponentBoxes = new VBox[]{ left_player1, right_player1, left_player2, right_player2 };
+        opponentLabels = new Label[]{ labelLeft1, labelRight1, labelLeft2, labelRight2 };
+        opponentAvatars = new ImageView[]{ avatarLeft1, avatarRight1, avatarLeft2, avatarRight2 };
+
+        for (VBox b : opponentBoxes) b.setVisible(false);
+
+        //setupOfferCardClickHandlers();
     }
 
+    public void setDependencies(ImageCache cache) {
+        this.imageCache = cache;
+    }
+
+    // Render an embedded version of player's tribe scene
+    public void setupHandBox() {
+        if (playerTribeController != null) {
+            playerTribeController.setDependencies(this.imageCache);
+            playerTribeController.setEmbeddedMode();
+            playerTribeController.initialize(this.server, this.model, this.myNickname);
+        }
+    }
+
+    // Render board center
+    public void setupCenter() {
+        if (boardCenterController != null) {
+            boardCenterController.initialize(this.server, this.model, this.myNickname);
+            boardCenterController.setDependencies(this.imageCache);
+            boardCenterController.update(this.model.getState());
+            boardCenterController.changeEra(1);
+        }
+    }
+
+    //TODO =========================================================================================================
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
+            boardCenterController.update(state);
+            //TODO if (this.currentEra == era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
                 return;
             }
-            if (myNickname == null) myNickname = SceneManager.getNickname();
 
-            int numPlayers = state.getPlayers().size();
-            // Aggiorna la board solo se il numero di giocatori cambia (o al primo caricamento)
-            if (numPlayers > 0 && this.currentPlayerCount != numPlayers) {
-                updateBoardConfiguration(numPlayers);
-            }
-
-            // updateDeckEra(state.getCurrentEra()); DA GESTIRE!!!
+            /*
             updatePlayerInfo(state);
             updateBoardRows(state);
             updateOfferCards(state);
             updateTotemGrid(state);
             updateMyHand(state);
-            updateTokens(state);
+            updateTokens(state);*/
         });
     }
 
     private void updateDeckEra(int era) {
-        if (this.currentEra == era) return; // Evita di riapplicare lo stile se l'era non è cambiata
         this.currentEra = era;
-
-        // Rimuove le classi precedenti per evitare conflitti
-        deck.getStyleClass().removeAll("deck-era1", "deck-era2", "deck-era3");
-
-        // Aggiunge la classe corrispondente all'era
-        switch (era) {
-            case 1 -> deck.getStyleClass().add("deck-era1");
-            case 2 -> deck.getStyleClass().add("deck-era2");
-            case 3 -> deck.getStyleClass().add("deck-era3");
-        }
-    }
-
-    // ─────────────────────── Helper per Colori Totem ───────────────────────
-
-    private String getTotemPath(String nickname, ClientGameState state) {
-        // Otteniamo la lista dei nickname per trovare l'indice di ingresso
-        List<String> entryOrder = state.getPlayers().values().stream()
-                .map(ClientPlayerState::getNickname)
-                .toList();
-
-        int index = entryOrder.indexOf(nickname);
-        if (index < 0 || index >= totemColors.length) return "";
-
-        String color = totemColors[index];
-        return "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
+        this.boardCenterController.changeEra(this.currentEra);
     }
 
     // ─────────────────────── Configurazioni Dinamiche Board ───────────────────────
@@ -161,37 +146,7 @@ public class GameBoardController implements ModelObserver {
         return img.getHeight() * (fitWidth / img.getWidth());
     }
 
-    private void updateBoardConfiguration(int numPlayers) {
-        this.currentPlayerCount = numPlayers;
-        this.initialTotemOrder = null;
-
-        String gridImagePath = "/it/polimi/ingsw/am48/view/gui/images/offerTurnCards/offerTurnCard" + numPlayers + ".png";
-        try {
-            Image bgImage = new Image(getClass().getResourceAsStream(gridImagePath));
-            if (!bgImage.isError()) {
-                BackgroundImage bgi = new BackgroundImage(
-                        bgImage,
-                        BackgroundRepeat.NO_REPEAT,
-                        BackgroundRepeat.NO_REPEAT,
-                        BackgroundPosition.CENTER,
-                        new BackgroundSize(95, computeDisplayedH(bgImage, 95), false, false, false, false)                );
-                offerTurnCard.setBackground(new Background(bgi));
-            }
-        } catch (Exception e) {
-            System.err.println("Errore caricamento griglia turni: " + gridImagePath);
-        }
-
-        // Gestione visibilità slot offerta in base alle regole di Mesos
-        offerCardA.setVisible(numPlayers == 5);
-        offerCardA.setManaged(numPlayers == 5);
-
-        offerCardD.setVisible(numPlayers >= 3);
-        offerCardD.setManaged(numPlayers >= 3);
-
-        offerCardG.setVisible(numPlayers >= 4);
-        offerCardG.setManaged(numPlayers >= 4);
-    }
-
+    /* TODO messo in board center
     private void updateTotemGrid(ClientGameState state) {
         offerTurnCard.getChildren().clear();
 
@@ -283,7 +238,7 @@ public class GameBoardController implements ModelObserver {
             offerTurnCard.getChildren().add(slotPane);
         }
     }
-
+    */
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
 
@@ -303,9 +258,9 @@ public class GameBoardController implements ModelObserver {
             label.setText(player.getNickname());
             box.setVisible(true);
 
-            String totemPath = getTotemPath(player.getNickname(), state);
+            //TODO String totemPath = getTotemPath(player.getNickname(), state);
             try {
-                avatar.setImage(new Image(getClass().getResourceAsStream(totemPath)));
+                //TODO avatar.setImage(new Image(getClass().getResourceAsStream(totemPath)));
                 avatar.setFitHeight(60);
                 avatar.setPreserveRatio(true);
             } catch (Exception e) {
@@ -339,22 +294,6 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
-    // ─────────────────────── Board & Rows ───────────────────────
-
-    private void updateBoardRows(ClientGameState state) {
-        updateRow(deckable_sup, state.getUpperRowCardIds());
-        updateRow(building_sup, state.getBuildingUpperIds());
-        updateRow(deckable_inf, state.getLowerRowCardIds());
-        updateRow(building_inf, state.getBuildingLowerIds());
-    }
-
-    private void updateRow(HBox rowBox, List<String> cardIds) {
-        rowBox.getChildren().clear();
-        for (String id : cardIds) {
-            rowBox.getChildren().add(createCardImageView(id, true));
-        }
-    }
-
     private void updateOfferCards(ClientGameState state) {
         Map<Character, String> positions = state.getOfferTrackPositions();
         for (int i = 0; i < 7; i++) {
@@ -382,10 +321,10 @@ public class GameBoardController implements ModelObserver {
             if (positions.containsKey(letter)) {
                 String playerNick = positions.get(letter);
                 ImageView totemOnTrack = new ImageView();
-                String path = getTotemPath(playerNick, state);
+                //TODO String path = getTotemPath(playerNick, state);
 
                 try {
-                    totemOnTrack.setImage(new Image(getClass().getResourceAsStream(path)));
+                    //TODO totemOnTrack.setImage(new Image(getClass().getResourceAsStream(path)));
                     totemOnTrack.setFitHeight(50);
                     totemOnTrack.setPreserveRatio(true);
                     offerBox.setAlignment(Pos.TOP_CENTER);

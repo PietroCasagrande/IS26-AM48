@@ -1,7 +1,6 @@
 package it.polimi.ingsw.am48.view.gui;
 
 import it.polimi.ingsw.am48.network.VirtualServer;
-import it.polimi.ingsw.am48.network.VirtualServerRmi;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.application.Application;
 import javafx.application.Platform;
