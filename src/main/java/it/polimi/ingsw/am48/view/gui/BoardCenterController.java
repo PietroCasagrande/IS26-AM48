@@ -7,9 +7,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.*;
 
@@ -34,10 +36,10 @@ public class BoardCenterController {
     private static final double[][] SLOT_CENTER_FRACTIONS = {
             {},
             {},
-            {0.311, 0.451},                       // 2 players
-            {0.260, 0.435, 0.600},                // 3 players
-            {0.222, 0.397, 0.570, 0.710},         // 4 players
-            {0.146, 0.320, 0.494, 0.667, 0.807}   // 5 players
+            {0.290, 0.470},                       // 2 players
+            {0.240, 0.420, 0.600},                // 3 players
+            {0.205, 0.380, 0.560, 0.735},         // 4 players
+            {0.130, 0.310, 0.480, 0.650, 0.830}   // 5 players
     };
 
     private VirtualServer server;
@@ -245,9 +247,9 @@ public class BoardCenterController {
             Image totemImage = new Image(getClass().getResourceAsStream(totemPath));
             ImageView totemImg = new ImageView(totemImage);
             totemImg.setPreserveRatio(true);
-            totemImg.fitHeightProperty().bind(this.offerTurnCard.heightProperty().multiply(0.12));
+            totemImg.fitHeightProperty().bind(this.offerTurnCard.heightProperty().multiply(0.25));
             totemImg.layoutXProperty().bind(
-                    this.offerTurnCard.widthProperty().divide(2)
+                    this.offerTurnCard.widthProperty().multiply(0.381) // <-- GIOCA CON QUESTO NUMERO
                             .subtract(totemImg.fitWidthProperty().divide(2))
             );
 
@@ -255,6 +257,34 @@ public class BoardCenterController {
                     this.offerTurnCard.heightProperty().multiply(yPercentages[slotIndex])
                             .subtract(totemImg.fitHeightProperty().divide(2))
             );
+
+            DropShadow blackShadow = new DropShadow();
+            blackShadow.setRadius(5.0); // Sfocatura
+            blackShadow.setOffsetX(2.0); // Spostamento a destra
+            blackShadow.setOffsetY(3.0); // Spostamento in basso
+            blackShadow.setColor(Color.color(0, 0, 0, 0.7)); // Nero al 70% di opacità
+
+// 2. Controllo se questo è il MIO totem
+            if (player.equals(myNickname)) {
+                // Creiamo un alone luminoso (Glow) giallo oro
+                DropShadow yellowGlow = new DropShadow();
+                yellowGlow.setRadius(15.0); // Molto sfocato per fare l'effetto "alone"
+                yellowGlow.setOffsetX(0.0); // Centrato
+                yellowGlow.setOffsetY(0.0); // Centrato
+                yellowGlow.setColor(Color.web("#FFD700")); // Colore Gold / Giallo
+                yellowGlow.setSpread(0.3); // Quanto è "densa" la luce (da 0.0 a 1.0)
+
+                // TRUCCO PRO: In JavaFX un nodo può avere un solo "Effect".
+                // Se vuoi ENTRAMBI gli effetti (alone giallo + ombra nera sotto),
+                // devi "concatenarli" mettendo l'ombra nera come input del bagliore!
+                yellowGlow.setInput(blackShadow);
+
+                totemImg.setEffect(yellowGlow); // Applichiamo il super-effetto combinato
+
+            } else {
+                // Per gli avversari, applichiamo solo la normale ombra nera
+                totemImg.setEffect(blackShadow);
+            }
 
             totemImg.setId("totem_" + player); // ID per i click successivi
 
