@@ -2,7 +2,10 @@ package it.polimi.ingsw.am48.model.game;
 
 import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.board.Board;
+import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.factory.BoardBuilder;
+import it.polimi.ingsw.am48.model.factory.CardMapBuilder;
 import it.polimi.ingsw.am48.model.notificator.NotificatorCenter;
 import it.polimi.ingsw.am48.model.phase.GamePhase;
 import it.polimi.ingsw.am48.model.phase.WaitingForPlayersPhase;
@@ -11,16 +14,20 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.model.snapshot.PlayerSnapshot;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Game {
     private final String gameId;
     private final int numPlayers;
-    private final PlayerContext playerContext;
+    private PlayerContext playerContext;
     private Board board;
     private final NotificatorCenter notificatorCenter;
     private GamePhase currentPhase;
     private int currentTurn;
+    private Set<String> reconnectedPlayers;
 
     public Game(String gameId, int numPlayers) {
         this.gameId = gameId;
@@ -29,6 +36,7 @@ public class Game {
         this.notificatorCenter = new NotificatorCenter();
         this.currentTurn = 1;
         this.currentPhase = new WaitingForPlayersPhase(numPlayers);
+        this.reconnectedPlayers = new HashSet<>();
     }
 
     // Methods exposed to the controller
@@ -70,6 +78,17 @@ public class Game {
                 .orElseThrow(() -> new InvalidActionException("Nessun giocatore in partita."));
     }
 
+    // segna il giocatore come riconnesso
+    public void markReconnected(String nickname) {
+        reconnectedPlayers.add(nickname);
+    }
+
+    // true se tutti i player della partita si sono riconnessi
+    public boolean allPlayersReconnected() {
+        return playerContext.getPlayers().stream()
+                .map(Player::getNickname)
+                .allMatch(reconnectedPlayers::contains);
+    }
 
     // Package-private: only Phases set phases
     public void setPhase(GamePhase phase) { this.currentPhase = phase; }
@@ -84,11 +103,32 @@ public class Game {
         return new GameSnapshot(
                 gameId,
                 numPlayers,
+                playerContext.toSnapshot(),
                 currentTurn,
-                playerSnapshots,
                 // board!=null is necessary because during WaitingForPlayersPhase the board has not been created yet
                 board != null ? board.toSnapshot() : null,
                 currentPhase.toSnapshot()
         );
+    }
+
+    public static Game fromSnapshot(GameSnapshot snapshot){
+        Map<String, Card> cardMap = CardMapBuilder.buildCardMap(snapshot.getNumPlayers());
+        Game game = new Game(snapshot.getGameId(), snapshot.getNumPlayers());
+
+        game.playerContext = PlayerContext.fromSnapshot(snapshot.getPlayerContext(), cardMap);
+        List<Player> players = game.playerContext.getPlayers();
+
+        game.board = Board.fromSnapshot(snapshot.getBoard(), cardMap,  players);
+
+        game.currentPhase = GamePhase.fromSnapshot(snapshot.getPhase(), players, game.numPlayers);
+
+        game.currentTurn = snapshot.getCurrentTurn();
+
+        // registriamo nuovamente le strategy dei buildings di tutti i player, altrimenti non verranno mai notificate (characters non si registrano)
+        game.playerContext.getPlayers().forEach(p -> {
+            p.getTribe().getBuildings().forEach(b -> b.getStrategy().registerTo(game.notificatorCenter, game.playerContext));
+        });
+
+        return game;
     }
 }

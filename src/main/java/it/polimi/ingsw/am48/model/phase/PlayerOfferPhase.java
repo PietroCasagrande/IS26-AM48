@@ -37,6 +37,19 @@ public class PlayerOfferPhase implements GamePhase {
         totemReturned = false;
     }
 
+    // costruttore utilizzato in GamePhase.fromSnapshot()
+    public PlayerOfferPhase(List<Player> actionOrder, int currIdx, int picksFromUp,
+                            int picksFromDown, boolean extraPickActive,
+                            Player extraPickPlayer, boolean totemReturned) {
+        this.actionOrder = new ArrayList<>(actionOrder);
+        this.currIdx = currIdx;
+        this.picksFromUp = picksFromUp;
+        this.picksFromDown = picksFromDown;
+        this.extraPickActive = extraPickActive;
+        this.extraPickPlayer = extraPickPlayer;
+        this.totemReturned = totemReturned;
+    }
+
     // controlla se c'è qualcuno sulla tessera A e, in caso affermativo, assegna cibo, ritorna totem e restituisce nuovo delta apposito
     public Optional<GameDelta> setup(Game game){
         OfferCard firstOffer = game.getBoard().findTrackPosition(actionOrder.getFirst());
@@ -224,6 +237,6 @@ public class PlayerOfferPhase implements GamePhase {
                 .map(Player::getNickname)
                 .toList();
 
-        return new PlayerOfferPhaseSnapshot(orderNicknames, currIdx);
+        return new PlayerOfferPhaseSnapshot(orderNicknames, currIdx, picksFromUp, picksFromDown, extraPickActive, extraPickPlayer != null ? extraPickPlayer.getNickname() : null, totemReturned);
     }
 }

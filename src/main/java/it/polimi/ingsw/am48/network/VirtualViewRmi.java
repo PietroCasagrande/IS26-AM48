@@ -11,4 +11,5 @@ public interface VirtualViewRmi extends Remote, VirtualView{
     @Override void showGameDelta(GameDelta delta) throws RemoteException;
     @Override void showInitialSnapshot(GameSnapshot snapshot) throws RemoteException;
     @Override void reportError(String errorMessage) throws RemoteException;
+    void ping() throws RemoteException;
 }

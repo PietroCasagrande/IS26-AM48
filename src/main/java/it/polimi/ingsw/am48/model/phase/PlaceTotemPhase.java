@@ -21,6 +21,11 @@ public class PlaceTotemPhase implements GamePhase {
         this.playersPlaced = new HashSet<Player>();
     }
 
+    // costruttore che utilizziamo in GamePhase.fromSnapshot()
+    public PlaceTotemPhase(Set<Player> playersPlaced) {
+        this.playersPlaced = new HashSet<>(playersPlaced);
+    }
+
     @Override
     public List<GameDelta> placeTotem(Game game, Player player, char position){
         List<GameDelta> deltas = new ArrayList<>();
@@ -55,5 +60,10 @@ public class PlaceTotemPhase implements GamePhase {
                 .map(Player::getNickname)
                 .collect(Collectors.toSet());
         return new PlaceTotemPhaseSnapshot(placedNicknames);
+    }
+
+    // unicamente per testing
+    public Set<Player> getPlayersPlaced() {
+        return playersPlaced;
     }
 }

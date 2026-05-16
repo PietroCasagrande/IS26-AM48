@@ -43,4 +43,20 @@ public class MesosServer {
             }
         }
     }
+
+    // broadcasts an error to the client (needed for clients quitting games)
+    public void broadcastErrorToGame(List<String> recipients, String message) {
+        for (String nickname : recipients) {
+            VirtualView view = connectedPlayers.get(nickname);
+            if(view != null) {
+                try { view.reportError(message); }
+                catch (Exception e) { /* other clients might already be disconnected */ }
+            }
+        }
+    }
+
+    // unregisterClient() frees the nickname from connectedPlayers HashMap, so that other client can join with the same nickname
+    public void unregisterClient(String nickname) {
+        connectedPlayers.remove(nickname);
+    }
 }

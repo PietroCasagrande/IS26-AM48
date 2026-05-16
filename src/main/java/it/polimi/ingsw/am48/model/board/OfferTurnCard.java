@@ -1,7 +1,10 @@
 package it.polimi.ingsw.am48.model.board;
 
+import it.polimi.ingsw.am48.dto.BoardDTO;
+import it.polimi.ingsw.am48.model.factory.OfferTurnFactory;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.OfferTurnCardSnapshot;
+import it.polimi.ingsw.am48.utils.GameDataLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,12 +63,29 @@ public class OfferTurnCard {
     }
 
     public List <Player> getPlaceOrder(){return this.order; }
+
     public OfferTurnCardSnapshot toSnapshot() {
         List<String> totemOrder = order.stream()
                 .map(Player::getNickname)
                 .toList();
 
         return new OfferTurnCardSnapshot(totemOrder);
+    }
+
+    public static OfferTurnCard fromSnapshot(OfferTurnCardSnapshot snapshot, List<Player> players) {
+        // ricostruisce foodRewards e ppPenalty dal JSON
+        BoardDTO dto = new GameDataLoader().loadData();
+        OfferTurnCard card = new OfferTurnFactory(dto.offerTurnCard).createCards(players.size()).getFirst();
+
+        // Ripristina l'ordine dai nickname salvati nello snapshot
+        for (String nickname : snapshot.getTotemOrder()) {
+            Player player = players.stream()
+                    .filter(p -> p.getNickname().equals(nickname))
+                    .findFirst().orElseThrow();
+            card.order.add(player);
+        }
+
+        return card;
     }
 
     // Getters for testing

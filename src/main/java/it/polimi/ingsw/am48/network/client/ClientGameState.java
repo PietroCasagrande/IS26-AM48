@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.network.client;
 
+import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 
 import java.util.*;
@@ -16,6 +17,7 @@ public class ClientGameState {
     private Map<Character, String> offerTrackPositions; // lettera -> nickname
     private List<String> offerTurnCardOrder;            // ordine turno attuale
     private String winnerNickname;
+    private List<GameResult> leaderboard = new ArrayList<>();
 
     // --- costruzione da snapshot ---
 
@@ -42,7 +44,7 @@ public class ClientGameState {
         }
 
         state.players = new HashMap<>();
-        snapshot.getPlayers().forEach(p ->
+        snapshot.getPlayerContext().getPlayers().forEach(p ->
                 state.players.put(p.getNickname(), ClientPlayerState.fromSnapshot(p))
         );
         return state;
@@ -91,14 +93,17 @@ public class ClientGameState {
     }
 
     public void returnTotemToTurnCard(String nickname) {
-        offerTrackPositions.entrySet()
-                .removeIf(e -> e.getValue().equals(nickname));
+        offerTrackPositions.entrySet().stream()
+                .filter(e -> e.getValue().equals(nickname))
+                .findFirst()
+                .ifPresent(e -> e.setValue(""));  // ← posizione attiva resta, totem rimosso
         offerTurnCardOrder.add(nickname);
     }
 
     public void updateOfferTurnCardOrder(List<String> newOrder) {
         this.offerTurnCardOrder = new ArrayList<>(newOrder);
     }
+
 
     // --- aggiornamento fase e turno ---
 
@@ -113,6 +118,8 @@ public class ClientGameState {
     public void setWinnerNickname(String winnerNickname) {
         this.winnerNickname = winnerNickname;
     }
+
+    public void setLeaderboard(List<GameResult> leaderboard) {this.leaderboard = leaderboard; }
 
     // --- getters per la view ---
 
@@ -129,4 +136,5 @@ public class ClientGameState {
     public ClientPlayerState getPlayer(String nickname) { return players.get(nickname); }
     public Map<String, ClientPlayerState> getPlayers() { return Collections.unmodifiableMap(players); }
     public Collection<ClientPlayerState> getAllPlayers() { return Collections.unmodifiableCollection(players.values()); }
+    public List<GameResult> getLeaderboard() {return Collections.unmodifiableList(leaderboard); }
 }

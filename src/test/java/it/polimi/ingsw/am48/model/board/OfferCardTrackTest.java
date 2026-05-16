@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -247,7 +248,7 @@ class OfferCardTrackTest {
         when(offerCardG.getTotem()).thenReturn(Optional.empty());
 
         OfferTrackSnapshot snapshot = offerCardTrack.toSnapshot();
-        assertTrue(snapshot.getTotemPositions().isEmpty());
+        assertTrue(snapshot.getTotemPositions().values().stream().allMatch(String::isEmpty));
     }
 
     @Test
@@ -265,7 +266,8 @@ class OfferCardTrackTest {
 
         OfferTrackSnapshot snapshot = offerCardTrack.toSnapshot();
 
-        assertEquals(1, snapshot.getTotemPositions().size());
+        long occupied = snapshot.getTotemPositions().values().stream().filter(s -> !s.isEmpty()).count();
+        assertEquals(1, occupied);
         assertEquals("Alice", snapshot.getTotemPositions().get('A'));
     }
 
@@ -284,7 +286,8 @@ class OfferCardTrackTest {
 
         OfferTrackSnapshot snapshot = offerCardTrack.toSnapshot();
 
-        assertEquals(2, snapshot.getTotemPositions().size());
+        long occupied = snapshot.getTotemPositions().values().stream().filter(s -> !s.isEmpty()).count();
+        assertEquals(2, occupied);
         assertEquals("Alice",  snapshot.getTotemPositions().get('A'));
         assertEquals("Bob", snapshot.getTotemPositions().get('B'));
     }

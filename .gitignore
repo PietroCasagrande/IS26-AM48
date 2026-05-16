@@ -39,3 +39,10 @@ build/
 
 .idea
 target
+
+### MySql username and password ###
+src/main/resources/db.properties
+
+### Persistence snapshot on disk ###
+saves/
+target/test-saves/

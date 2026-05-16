@@ -2,6 +2,10 @@ package it.polimi.ingsw.am48.network.server;
 
 import it.polimi.ingsw.am48.controller.GameController;
 import it.polimi.ingsw.am48.model.game.GameManager;
+import it.polimi.ingsw.am48.repository.GameRepository;
+import it.polimi.ingsw.am48.repository.JsonGameRepository;
+import it.polimi.ingsw.am48.repository.LeaderboardRepository;
+import it.polimi.ingsw.am48.repository.MySqlLeaderboardRepository;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -25,10 +29,17 @@ public class ServerMain {
     private final GameController controller;
     private ServerSocket serverSocket;
     private volatile boolean running;
+    private final JsonGameRepository gameRepository;
+    private final MySqlLeaderboardRepository leaderboardRepository;
+    private static final String SAVES_DIR = "saves/";
 
     public ServerMain() {
         this.threadPool = Executors.newCachedThreadPool();
-        GameManager gameManager = new GameManager();
+        this.gameRepository = new JsonGameRepository(SAVES_DIR);
+        this.leaderboardRepository = new MySqlLeaderboardRepository();
+        GameManager gameManager = new GameManager(gameRepository, leaderboardRepository);
+        gameManager.loadCrashedGames();
+        // GameManager gameManager = new GameManager(JsonGameRepository, MySqlLeaderboardRepository);
         this.mesosServer = new MesosServer();
         this.controller = new GameController(gameManager);
     }
@@ -65,6 +76,7 @@ public class ServerMain {
 
     public void stop() {
         running = false;
+        leaderboardRepository.close();
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close(); // Sblocca la accept() forzando una SocketException

@@ -10,6 +10,7 @@ import it.polimi.ingsw.am48.network.messages.commands.JoinGameCommand;
 import it.polimi.ingsw.am48.network.messages.commands.PlaceTotemCommand;
 import it.polimi.ingsw.am48.network.messages.commands.TakeCardCommand;
 import it.polimi.ingsw.am48.network.messages.notifications.ServerNotification;
+import it.polimi.ingsw.am48.utils.JsonMapper;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,12 +21,16 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
     private PrintWriter out;
     private ObjectMapper mapper;
     private ClientModel model; // Per aggiornare lo stato locale
+    private final String host;
+    private final int port;
 
     public SocketServerHandler(String host, int port, ClientModel model) throws IOException {
+        this.host = host;
+        this.port = port;
         this.socket = new Socket(host, port);
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.out = new PrintWriter(socket.getOutputStream(), true);
-        this.mapper = new ObjectMapper();
+        this.mapper = JsonMapper.get();
         this.model = model;
     }
 
@@ -38,10 +43,9 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
                 ServerNotification notification = mapper.readValue(line, ServerNotification.class);
                 notification.apply(model);
             }
-            model.notifyError("Connessione al server persa.");
+            handleServerCrash();
         } catch (IOException e) {
-            e.printStackTrace();
-            model.notifyError("Connessione al server persa.");
+            handleServerCrash();
         }
     }
 
@@ -64,7 +68,64 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
         try {
             out.println(mapper.writeValueAsString(command));
         } catch (Exception e) {
+            System.err.println("SEND ERROR: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void handleServerCrash() {
+        model.notifyError(buildCrashMessage());
+        startReconnectWatcher();
+    }
+
+    private String buildCrashMessage() {
+        String nickname = model.getSessionNickname();
+        int numPlayers = model.getSessionNumPlayers();
+        if(nickname == null) {
+            return "\n[!] Lost connection to server. Restart the client once the server comes back online.";
+        }
+        return String.format("""
+
+            ╔══════════════════════════════════════════════════════╗
+            ║  [!] LOST SERVER CONNECTION                          ║
+            ║                                                      ║
+            ║  Wait for the server to get back online...           ║
+            ║  We'll notify you once it'll be available.           ║
+            ╚══════════════════════════════════════════════════════╝
+            """);
+    }
+
+    private void startReconnectWatcher() {
+        Thread watcher = new Thread(() -> {
+            while(!Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(5000);
+                    // tries a test-connection
+                    new Socket(host, port).close();
+                    // server came back ON
+                    String nickname = model.getSessionNickname();
+                    int numPlayers = model.getSessionNumPlayers();
+                    model.notifyError(String.format("""
+            
+                        ╔══════════════════════════════════════════════════════╗
+                        ║  [!] SERVER BACK ONLINE                              ║
+                        ║                                                      ║
+                        ║  Quit the game, restart the client and type:         ║
+                        ║       join %s %d                                     ║
+                        ║  to get back in the same game.                       ║
+                        ║                                                      ║
+                        ╚══════════════════════════════════════════════════════╝
+                        """, nickname, numPlayers));
+                    return;
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch (IOException e) {
+                    // server is still down, try again
+                }
+            }
+        });
+        watcher.setDaemon(true);
+        watcher.start();
     }
 }

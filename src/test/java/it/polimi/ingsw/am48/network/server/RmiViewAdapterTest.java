@@ -18,7 +18,8 @@ class RmiViewAdapterTest {
     @BeforeEach
     void setUp(){
         callbackMock = mock(VirtualViewRmi.class);
-        adapter = new RmiViewAdapter(callbackMock);
+        // no-operation Runnable: existent tests do not test the disconnection
+        adapter = new RmiViewAdapter(callbackMock, () -> {});
     }
 
     @Test
@@ -53,5 +54,33 @@ class RmiViewAdapterTest {
         doThrow(new RemoteException("disconnected")).when(callbackMock).showGameDelta(any());
 
         assertDoesNotThrow(() -> adapter.showGameDelta(mock(GameDelta.class)));
+    }
+
+
+    @Test
+    @DisplayName("onDisconnect should be called once when callback throws RemoteException")
+    void shouldCallOnDisconnectOnRemoteException() throws Exception {
+        Runnable onDisconnect = mock(Runnable.class);
+        RmiViewAdapter adapterWithDisconnect = new RmiViewAdapter(callbackMock, onDisconnect);
+        doThrow(new RemoteException("disconnected")).when(callbackMock).showGameDelta(any());
+
+        adapterWithDisconnect.showGameDelta(mock(GameDelta.class));
+
+        verify(onDisconnect, timeout(1000).times(1)).run();
+    }
+
+    // tests the AtomicBoolean: if two or more callbacks fail in succession, runnable should not be called more than once
+    @Test
+    @DisplayName("onDisconnect should be called only once even if multiple callbacks fail")
+    void shouldCallOnDisconnectOnlyOnce() throws Exception {
+        Runnable onDisconnect = mock(Runnable.class);
+        RmiViewAdapter adapterWithDisconnect = new RmiViewAdapter(callbackMock, onDisconnect);
+        doThrow(new RemoteException()).when(callbackMock).showGameDelta(any());
+        doThrow(new RemoteException()).when(callbackMock).reportError(any());
+
+        adapterWithDisconnect.showGameDelta(mock(GameDelta.class));
+        adapterWithDisconnect.reportError("error");
+
+        verify(onDisconnect, timeout(1000).times(1)).run();
     }
 }

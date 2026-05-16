@@ -1,6 +1,7 @@
 package it.polimi.ingsw.am48.network.client;
 
 import it.polimi.ingsw.am48.model.delta.GameDelta;
+import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 
 import java.util.LinkedHashSet;
@@ -10,6 +11,14 @@ import java.util.Set;
 public class ClientModel {
     private ClientGameState state;
     private final Set<ModelObserver> observers = new LinkedHashSet<>();  // valutare di cambiare in LinkedHashSet (mantiene ordine ma evita duplicati), così è impossibile registrare due volte lo stesso oggetto erroneamente
+
+    private String sessionNickname;
+    private int sessionNumPlayers;
+
+    public void saveSession(String nickname, int numPlayers) {
+        this.sessionNickname = nickname;
+        this.sessionNumPlayers = numPlayers;
+    }
 
     public void registerObserver(ModelObserver observer) {
         observers.add(observer);
@@ -85,6 +94,8 @@ public class ClientModel {
 
     public void setWinnerNickname(String winnerNickname) { state.setWinnerNickname(winnerNickname); }
 
+    public void setLeaderboard(List<GameResult> leaderboard) { state.setLeaderboard(leaderboard);}
+
     // --- getter per la view ---
 
     public ClientGameState getState() { return state; }
@@ -93,5 +104,13 @@ public class ClientModel {
 
     private void notifyObservers() {
         observers.forEach(o -> o.onStateUpdated(state));
+    }
+
+    public String getSessionNickname() {
+        return sessionNickname;
+    }
+
+    public int getSessionNumPlayers() {
+        return sessionNumPlayers;
     }
 }

@@ -2,10 +2,11 @@ package it.polimi.ingsw.am48.model.game;
 
 import it.polimi.ingsw.am48.exception.InvalidActionException;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
-import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.model.phase.PlayerOfferPhase;
 import it.polimi.ingsw.am48.model.phase.PlaceTotemPhase;
 import it.polimi.ingsw.am48.model.player.Player;
+import it.polimi.ingsw.am48.repository.GameRepository;
+import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,14 +14,19 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class GameManagerTest {
 
     private GameManager manager;
+    private GameRepository mockRepo;    // Needed in handleClientDisconnect tests
 
     @BeforeEach
     void setUp() {
-        manager = new GameManager();
+        mockRepo = mock(GameRepository.class);
+        LeaderboardRepository mockLeaderboard = mock(LeaderboardRepository.class);
+        when(mockRepo.listActiveGameIds()).thenReturn(List.of());
+        manager = new GameManager(mockRepo, mockLeaderboard);
     }
 
     // ==================== joinGame ====================
@@ -205,5 +211,74 @@ class GameManagerTest {
 
         Game found = manager.findGame("GAME-1");
         assertEquals("GAME-1", found.getGameId());
+    }
+
+
+    // ===================== handleClientDisconnect ============
+
+    @Test
+    @DisplayName("handleClientDisconnect: should return empty list for unknown nickname")
+    void shouldReturnEmptyListForUnknownNickname() {
+        List<String> companions = manager.handleClientDisconnect("nonexistent");
+        assertTrue(companions.isEmpty());
+    }
+
+    @Test
+    @DisplayName("handleClientDisconnect: should return companions without the disconnected player")
+    void shouldReturnCompanionsWithoutDisconnectedPlayer() {
+        manager.joinGame(2, "alice");
+        manager.joinGame(2, "bob");
+
+        List<String> companions = manager.handleClientDisconnect("alice");
+
+        assertFalse(companions.contains("alice"));
+        assertTrue(companions.contains("bob"));
+    }
+
+    @Test
+    @DisplayName("handleClientDisconnect: should free all nicknames in the game, not just the disconnected one")
+    void shouldFreeAllNicknamesInGame() {
+        manager.joinGame(2, "alice");
+        manager.joinGame(2, "bob");
+
+        manager.handleClientDisconnect("alice");
+
+        // entrambi i nickname devono essere liberi — non solo "alice"
+        assertDoesNotThrow(() -> manager.joinGame(2, "alice"));
+        assertDoesNotThrow(() -> manager.joinGame(2, "bob"));
+    }
+
+    @Test
+    @DisplayName("handleClientDisconnect: should delete the game snapshot from repository")
+    void shouldDeleteSnapshotFromRepository() {
+        manager.joinGame(2, "alice");
+        manager.joinGame(2, "bob");
+
+        manager.handleClientDisconnect("alice");
+
+        verify(mockRepo, atLeastOnce()).delete(anyString());
+    }
+
+    @Test
+    @DisplayName("handleClientDisconnect: should work even if player is still in waiting game")
+    void shouldCleanUpWaitingGameOnDisconnect() {
+        manager.joinGame(4, "alice"); // partita non ancora iniziata
+
+        List<String> companions = manager.handleClientDisconnect("alice");
+
+        assertTrue(companions.isEmpty()); // nessun companion ancora
+        assertDoesNotThrow(() -> manager.joinGame(4, "alice")); // nickname libero
+    }
+
+    @Test
+    @DisplayName("handleClientDisconnect: calling twice on same nickname should not throw")
+    void shouldBeIdempotentOnDoubleCall() {
+        manager.joinGame(2, "alice");
+        manager.joinGame(2, "bob");
+
+        manager.handleClientDisconnect("alice");
+
+        // la seconda chiamata non deve esplodere — alice non è più in playerToGame
+        assertDoesNotThrow(() -> manager.handleClientDisconnect("alice"));
     }
 }

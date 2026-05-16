@@ -8,7 +8,9 @@ import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 import it.polimi.ingsw.am48.model.snapshot.BoardSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Board {
     private final OfferCardTrack track;
@@ -144,7 +146,67 @@ public class Board {
                 tribeDeckIds,
                 buildingDeckIds,
                 track.toSnapshot(),
-                turnOrder.toSnapshot()
+                turnOrder.toSnapshot(),
+                buildingsPerEra,
+                currEra.name(),
+                numPlayers
         );
     }
+
+    public static Board fromSnapshot(BoardSnapshot snapshot, Map<String, Card> cardMap, List<Player> players){
+        List<Card> tribeDeck = new ArrayList<>();
+        for(String id : snapshot.getTribeDeckRemainingIds()){
+            Card card = cardMap.get(id);
+            if (card == null) {
+                throw new IllegalStateException("Errore critico: Il character con ID " + id + " non è presente nel salvataggio sul disco!");
+            }
+            tribeDeck.add(card);
+        }
+        List<BuildingCard> buildingDeck = new ArrayList<>();
+        for(String id : snapshot.getBuildingDeckRemainingIds()){
+            Card card = cardMap.get(id);
+            if (card == null) {
+                throw new IllegalStateException("Errore critico: Il building con ID " + id + " non è presente nel salvataggio sul disco!");
+            }
+            buildingDeck.add((BuildingCard) card);
+        }
+
+        Board board = new Board(
+                OfferCardTrack.fromSnapshot(snapshot.getOfferTrack(), snapshot.getNumPlayers(), players),
+                OfferTurnCard.fromSnapshot(snapshot.getOfferTurnCard(), players),
+                new Deck<>(tribeDeck),
+                new Deck<>(buildingDeck),
+                snapshot.getBuildingsPerEra(),
+                snapshot.getNumPlayers()
+        );
+
+        List<Card> upperCards = new ArrayList<>();
+        for(String id : snapshot.getUpperRowCardIds()) {
+            upperCards.add(cardMap.get(id));
+        }
+        board.tribeShowed.addUpperCards(upperCards);
+
+        List<Card> lowerCards = new ArrayList<>();
+        for(String id : snapshot.getLowerRowCardIds()) {
+            lowerCards.add(cardMap.get(id));
+        }
+        board.tribeShowed.addLowerCards(lowerCards);
+
+        List<BuildingCard> upperBuildings = new ArrayList<>();
+        for(String id : snapshot.getBuildingUpperRowCardIds()){
+            upperBuildings.add((BuildingCard) cardMap.get(id));
+        }
+        board.buildingShowed.addUpperCards(upperBuildings);
+
+        List<BuildingCard> lowerBuildings = new ArrayList<>();
+        for(String id : snapshot.getBuildingLowerRowCardIds()){
+            lowerBuildings.add((BuildingCard) cardMap.get(id));
+        }
+        board.buildingShowed.addLowerCards(lowerBuildings);
+
+        board.currEra = Era.valueOf(snapshot.getCurrEra());
+
+        return board;
+    }
+
 }
