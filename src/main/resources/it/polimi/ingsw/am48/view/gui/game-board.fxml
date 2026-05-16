@@ -78,54 +78,45 @@
             </bottom>
             <!--LEFT: avversario -->
             <left>
-                <VBox fx:id="left_player" alignment="CENTER"
-                      prefWidth="130.0" spacing="5.0" BorderPane.alignment="CENTER">
-                    <ImageView fx:id="avatarLeft"
-                               fitHeight="60.0" fitWidth="60.0"
-                               pickOnBounds="true" preserveRatio="true"/>
-                    <Label fx:id="labelLeft" text="Player 2" styleClass="opponent-label">
-                        <font><Font name="System Bold" size="16.0"/></font>
-                    </Label>
+                <VBox alignment="CENTER" prefWidth="130.0" spacing="50.0" BorderPane.alignment="CENTER">
+
+                    <VBox fx:id="left_player1" alignment="CENTER" spacing="5.0">
+                        <ImageView fx:id="avatarLeft1" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                        <Label fx:id="labelLeft1" text="Player 2" styleClass="opponent-label">
+                            <font><Font name="System Bold" size="16.0"/></font>
+                        </Label>
+                    </VBox>
+
+                    <VBox fx:id="left_player2" alignment="CENTER" spacing="5.0">
+                        <ImageView fx:id="avatarLeft2" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                        <Label fx:id="labelLeft2" text="Player 3" styleClass="opponent-label">
+                            <font><Font name="System Bold" size="16.0"/></font>
+                        </Label>
+                    </VBox>
+
                 </VBox>
             </left>
 
             <!-- RIGHT: avversario -->
             <right>
-                <VBox fx:id="right_player" alignment="CENTER"
-                      prefWidth="130.0" spacing="5.0" BorderPane.alignment="CENTER">
-                    <ImageView fx:id="avatarRight"
-                               fitHeight="60.0" fitWidth="60.0"
-                               pickOnBounds="true" preserveRatio="true"/>
-                    <Label fx:id="labelRight" text="Player 4" styleClass="opponent-label">
-                        <font><Font name="System Bold" size="16.0"/></font>
-                    </Label>
+                <VBox alignment="CENTER" prefWidth="130.0" spacing="50.0" BorderPane.alignment="CENTER">
+
+                    <VBox fx:id="right_player1" alignment="CENTER" spacing="5.0">
+                        <ImageView fx:id="avatarRight1" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                        <Label fx:id="labelRight1" text="Player 4" styleClass="opponent-label">
+                            <font><Font name="System Bold" size="16.0"/></font>
+                        </Label>
+                    </VBox>
+
+                    <VBox fx:id="right_player2" alignment="CENTER" spacing="5.0">
+                        <ImageView fx:id="avatarRight2" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                        <Label fx:id="labelRight2" text="Player 5" styleClass="opponent-label">
+                            <font><Font name="System Bold" size="16.0"/></font>
+                        </Label>
+                    </VBox>
+
                 </VBox>
             </right>
-
-            <!-- TOP: avversari -->
-            <top>
-                <HBox alignment="CENTER" prefHeight="120.0" spacing="50.0"
-                      BorderPane.alignment="CENTER">
-                    <VBox fx:id="topLeft_player" alignment="CENTER"
-                          prefHeight="120.0" prefWidth="280.0" spacing="5.0">
-                        <ImageView fx:id="avatarTopLeft"
-                                   fitHeight="60.0" fitWidth="60.0"
-                                   pickOnBounds="true" preserveRatio="true"/>
-                        <Label fx:id="labelTopLeft" text="Player 3" styleClass="opponent-label">
-                            <font><Font name="System Bold" size="16.0"/></font>
-                        </Label>
-                    </VBox>
-                    <VBox fx:id="topRight_player" alignment="CENTER"
-                          prefHeight="120.0" prefWidth="280.0" spacing="5.0">
-                        <ImageView fx:id="avatarTopRight"
-                                   fitHeight="60.0" fitWidth="60.0"
-                                   pickOnBounds="true" preserveRatio="true"/>
-                        <Label fx:id="labelTopRight" text="Player 5" styleClass="opponent-label">
-                            <font><Font name="System Bold" size="16.0"/></font>
-                        </Label>
-                    </VBox>
-                </HBox>
-            </top>
 
             <!-- CENTER: board -->
             <center>

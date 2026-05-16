@@ -80,7 +80,7 @@
     </top>
 
     <center>
-        <ScrollPane fx:id="tribeScroll" fitToWidth="true" styleClass="scroll-pane"
+        <ScrollPane fx:id="tribeScroll" fitToWidth="true" fitToHeight="true" styleClass="scroll-pane"
                     BorderPane.alignment="CENTER" vbarPolicy="ALWAYS">
             <content>
                 <GridPane fx:id="tribeGrid">

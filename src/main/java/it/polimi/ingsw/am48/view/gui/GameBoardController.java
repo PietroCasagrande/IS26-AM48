@@ -35,9 +35,9 @@ public class GameBoardController implements ModelObserver {
     @FXML private Button bottone_avanti;
 
     // Player areas
-    @FXML private VBox left_player, right_player, topLeft_player, topRight_player;
-    @FXML private Label labelLeft, labelRight, labelTopLeft, labelTopRight;
-    @FXML private ImageView avatarLeft, avatarRight, avatarTopLeft, avatarTopRight;
+    @FXML private VBox left_player1, right_player1, left_player2, right_player2;
+    @FXML private Label labelLeft1, labelRight1, labelLeft2, labelRight2;
+    @FXML private ImageView avatarLeft1, avatarRight1, avatarLeft2, avatarRight2;
 
     // Board center
     @FXML private GridPane boardCenter;
@@ -81,9 +81,9 @@ public class GameBoardController implements ModelObserver {
 
         //TODO
         //offerCards = new VBox[]{ offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG };
-        opponentBoxes = new VBox[]{ left_player, right_player, topLeft_player, topRight_player };
-        opponentLabels = new Label[]{ labelLeft, labelRight, labelTopLeft, labelTopRight };
-        opponentAvatars = new ImageView[]{ avatarLeft, avatarRight, avatarTopLeft, avatarTopRight };
+        opponentBoxes = new VBox[]{ left_player1, right_player1, left_player2, right_player2 };
+        opponentLabels = new Label[]{ labelLeft1, labelRight1, labelLeft2, labelRight2 };
+        opponentAvatars = new ImageView[]{ avatarLeft1, avatarRight1, avatarLeft2, avatarRight2 };
 
         for (VBox b : opponentBoxes) b.setVisible(false);
 
