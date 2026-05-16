@@ -1,6 +1,7 @@
 package it.polimi.ingsw.am48.view.gui;
 
 import it.polimi.ingsw.am48.network.VirtualServer;
+import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -57,14 +58,19 @@ public class PlayerTribeController {
         this.model = model;
         this.myNickname = nickname;
         this.titleLabel.setText(myNickname + "'s Tribe");
+    }
+
+    public void updateTribe(ClientGameState state){
         Platform.runLater(() -> {
             clearAllColumns();
 
-            List<String> characters = model.getState().getPlayer(nickname).getCharacterCardIds();
-            List<String> buildings = model.getState().getPlayer(nickname).getBuildingCardIds();
+            List<String> characters = model.getState().getPlayer(this.myNickname).getCharacterCardIds();
+            List<String> buildings = model.getState().getPlayer(this.myNickname).getBuildingCardIds();
 
             for (String cardId : characters) {
                 ImageView cardView = createImageView(cardId);
+                cardView.setPreserveRatio(true);
+                cardView.fitWidthProperty().bind(artistsColumn.widthProperty().multiply(0.85));
 
                 if (cardView != null) {
                     if (cardId.startsWith("ART")) {
@@ -87,6 +93,8 @@ public class PlayerTribeController {
 
             for (String cardId : buildings) {
                 ImageView cardView = createImageView(cardId);
+                cardView.setPreserveRatio(true);
+                cardView.fitWidthProperty().bind(buildingsColumn.widthProperty().multiply(0.85));
 
                 if (cardView != null) {
                     buildingsColumn.getChildren().add(cardView);

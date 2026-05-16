@@ -43,11 +43,6 @@ public class GameBoardController implements ModelObserver {
     @FXML private GridPane boardCenter;
     @FXML private VBox center;
     @FXML private BoardCenterController boardCenterController;
-    @FXML private HBox upper_row, lower_row;
-    @FXML private HBox deckable_sup, building_sup, deckable_inf, building_inf;
-    @FXML private Pane offerTurnCard;
-    @FXML private VBox offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG;
-    @FXML private VBox deck;
 
     private VirtualServer server;
     private ClientModel model;
@@ -60,10 +55,6 @@ public class GameBoardController implements ModelObserver {
     private Label[] opponentLabels;
     private ImageView[] opponentAvatars;
 
-    // Variabili di stato per la meccanica del Totem e configurazione board
-    private boolean isMyTotemSelected = false;
-    private int currentPlayerCount = 0;
-
     // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
     private int currentEra = 0;
 
@@ -72,8 +63,6 @@ public class GameBoardController implements ModelObserver {
         this.server = server;
         this.model = model;
         model.registerObserver(this);
-        if (model.getState() != null) onStateUpdated(model.getState());
-
         myNickname = SceneManager.getNickname();
 
         setupHandBox();
@@ -86,8 +75,6 @@ public class GameBoardController implements ModelObserver {
         opponentAvatars = new ImageView[]{ avatarLeft1, avatarRight1, avatarLeft2, avatarRight2 };
 
         for (VBox b : opponentBoxes) b.setVisible(false);
-
-        //setupOfferCardClickHandlers();
     }
 
     public void setDependencies(ImageCache cache) {
@@ -118,7 +105,9 @@ public class GameBoardController implements ModelObserver {
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
             boardCenterController.update(state);
-            //TODO if (this.currentEra == era) updateDeckEra(state.getCurrentEra);
+            updateTokens(state);
+            playerTribeController.updateTribe(state);
+            //TODO if (this.currentEra != era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
                 return;
@@ -126,11 +115,7 @@ public class GameBoardController implements ModelObserver {
 
             /*
             updatePlayerInfo(state);
-            updateBoardRows(state);
-            updateOfferCards(state);
-            updateTotemGrid(state);
-            updateMyHand(state);
-            updateTokens(state);*/
+            updateMyHand(state); */
         });
     }
 
@@ -138,107 +123,6 @@ public class GameBoardController implements ModelObserver {
         this.currentEra = era;
         this.boardCenterController.changeEra(this.currentEra);
     }
-
-    // ─────────────────────── Configurazioni Dinamiche Board ───────────────────────
-
-    private double computeDisplayedH(Image img, double fitWidth) {
-        if (img == null || img.isError() || img.getWidth() == 0) return 180;
-        return img.getHeight() * (fitWidth / img.getWidth());
-    }
-
-    /* TODO messo in board center
-    private void updateTotemGrid(ClientGameState state) {
-        offerTurnCard.getChildren().clear();
-
-        List<String> orderList = state.getOfferTurnCardOrder();
-        if (orderList == null || orderList.isEmpty()) return;
-
-        if (initialTotemOrder == null) {
-            initialTotemOrder = new ArrayList<>(orderList);
-        }
-
-        String currentPhase = state.getCurrentPhase();
-        boolean isPlaceTotemPhase = "PLACE_TOTEM".equals(currentPhase);
-        boolean isMyTurn = isPlaceTotemPhase
-                && !orderList.isEmpty()
-                && myNickname.equals(orderList.get(0));
-
-        int numSlots = currentPlayerCount > 0 ? currentPlayerCount : orderList.size();
-
-        // Calcola l'altezza reale dell'immagine quando scalata a 95px di larghezza
-        String gridImagePath = "/it/polimi/ingsw/am48/view/gui/images/offerTurnCards/offerTurnCard" + numSlots + ".png";
-        double displayedH = 180.0; // fallback
-        try {
-            Image gridImg = new Image(getClass().getResourceAsStream(gridImagePath));
-            if (!gridImg.isError()) {
-                displayedH = computeDisplayedH(gridImg, 95);
-            }
-        } catch (Exception ignored) {}
-
-        double vboxH = 180.0; // HBox.fillHeight=true → il VBox è sempre 180px
-        double topOffset = Math.max(0, (vboxH - displayedH) / 2.0);
-        double slotH = displayedH / numSlots;
-
-        double[] slotFractions = (numSlots >= 2 && numSlots <= 5) ? SLOT_CENTER_FRACTIONS[numSlots] : null;
-        double totemSize = slotH * 0.72;
-
-        for (int i = 0; i < numSlots; i++) {
-            StackPane slotPane = new StackPane();
-            slotPane.setAlignment(Pos.CENTER);
-
-            double slotCenterY;
-            if (slotFractions != null && i < slotFractions.length) {
-                slotCenterY = topOffset + slotFractions[i] * displayedH;
-            } else {
-                slotCenterY = topOffset + slotH * (i + 0.5);
-            }
-
-            double slotSize = totemSize * 1.10;
-            slotPane.setPrefHeight(slotSize);
-            slotPane.setMinHeight(slotSize);
-            slotPane.setMaxHeight(slotSize);
-
-            slotPane.setPrefWidth(95);
-            slotPane.setMinWidth(95);
-            slotPane.setMaxWidth(95);
-
-            slotPane.setLayoutY(slotCenterY - slotSize / 2.0);
-
-            // Ogni giocatore ha uno slot fisso in base all'ordine iniziale,
-            // anche dopo che alcuni totem sono stati rimossi
-            String nick = null;
-            if (initialTotemOrder != null && i < initialTotemOrder.size()) {
-                String slotPlayer = initialTotemOrder.get(i);
-                if (orderList.contains(slotPlayer)) {
-                    nick = slotPlayer;
-                }
-            }
-
-            if (nick != null) {
-                ImageView totemImg = new ImageView();
-                try {
-                    String path = getTotemPath(nick, state);
-                    if (!path.isEmpty())
-                        totemImg.setImage(new Image(getClass().getResourceAsStream(path)));
-                } catch (Exception e) {
-                    System.err.println("Impossibile caricare totem: " + nick);
-                }
-                totemImg.setPreserveRatio(true);
-                totemImg.setFitHeight(totemSize);
-
-                if (nick.equals(myNickname) && isMyTurn) {
-                    totemImg.getStyleClass().add("totem-selectable");
-                    totemImg.setOnMouseClicked(e -> {
-                        isMyTotemSelected = true;
-                        totemImg.setStyle("-fx-effect: dropshadow(gaussian, #ffd700, 15, 0.5, 0, 0);");
-                    });
-                }
-                slotPane.getChildren().add(totemImg);
-            }
-            offerTurnCard.getChildren().add(slotPane);
-        }
-    }
-    */
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
 
@@ -287,58 +171,11 @@ public class GameBoardController implements ModelObserver {
     }
 
     private void addCardsToContainer(HBox container, List<String> ids, double height) {
-        for (String id : ids) {
+        /*for (String id : ids) {
             ImageView img = createCardImageView(id, false);
             img.setFitHeight(height);
             container.getChildren().add(img);
-        }
-    }
-
-    private void updateOfferCards(ClientGameState state) {
-        Map<Character, String> positions = state.getOfferTrackPositions();
-        for (int i = 0; i < 7; i++) {
-            char letter = (char) ('A' + i);
-            VBox offerBox = offerCards[i];
-            offerBox.getChildren().clear();
-
-            String bgPath = "/it/polimi/ingsw/am48/view/gui/images/offerCards/offerCard" + letter + ".png";
-            try {
-                Image bgImage = new Image(getClass().getResourceAsStream(bgPath));
-                if (!bgImage.isError()) {
-                    BackgroundImage bgi = new BackgroundImage(
-                            bgImage,
-                            BackgroundRepeat.NO_REPEAT,
-                            BackgroundRepeat.NO_REPEAT,
-                            BackgroundPosition.CENTER,
-                            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false)
-                    );
-                    offerBox.setBackground(new Background(bgi));
-                }
-            } catch (Exception e) {
-                System.err.println("Errore caricamento offer card: " + bgPath);
-            }
-
-            if (positions.containsKey(letter)) {
-                String playerNick = positions.get(letter);
-                ImageView totemOnTrack = new ImageView();
-                //TODO String path = getTotemPath(playerNick, state);
-
-                try {
-                    //TODO totemOnTrack.setImage(new Image(getClass().getResourceAsStream(path)));
-                    totemOnTrack.setFitHeight(50);
-                    totemOnTrack.setPreserveRatio(true);
-                    offerBox.setAlignment(Pos.TOP_CENTER);
-                    offerBox.setPadding(new Insets(22, 0, 0, 0));
-                    offerBox.getChildren().add(totemOnTrack);
-                } catch (Exception e) {
-                    Label lbl = new Label(playerNick);
-                    lbl.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold;");
-                    offerBox.setAlignment(Pos.TOP_CENTER);
-                    offerBox.setPadding(new Insets(22, 0, 0, 0));
-                    offerBox.getChildren().add(lbl);
-                }
-            }
-        }
+        }*/
     }
 
     // ─────────────────────── Utilities & Handlers ───────────────────────
@@ -360,62 +197,6 @@ public class GameBoardController implements ModelObserver {
         if (myState != null) {
             foodCount.setText(String.valueOf(myState.getFood()));
             prestigeCount.setText(String.valueOf(myState.getPoints()));
-        }
-    }
-
-    private ImageView createCardImageView(String cardId, boolean clickable) {
-        ImageView img = new ImageView();
-        String path = "/it/polimi/ingsw/am48/view/gui/images/cards/" + cardId + ".png";
-
-        try {
-            Image image = new Image(getClass().getResourceAsStream(path));
-            img.setImage(image);
-        } catch (Exception e) {
-            System.err.println("Impossibile caricare l'immagine: " + path);
-        }
-
-        img.setPreserveRatio(true);
-        img.setFitHeight(120);
-
-        if (clickable) {
-            img.getStyleClass().add("card-hover");
-            img.setOnMouseClicked(e -> handleCardClick(cardId));
-        }
-        return img;
-    }
-
-    private void setupOfferCardClickHandlers() {
-        for (int i = 0; i < offerCards.length; i++) {
-            final char letter = (char) ('A' + i);
-            offerCards[i].setOnMouseClicked(e -> handleOfferCardClick(letter));
-        }
-    }
-
-    private void handleCardClick(String cardId) {
-        if (server != null) {
-            try { server.takeCard(myNickname, cardId); }
-            catch (Exception ex) { ex.printStackTrace(); }
-        }
-    }
-
-    private void handleOfferCardClick(char letter) {
-        if (server == null || model == null || model.getState() == null) return;
-
-        if (!"PLACE_TOTEM".equals(model.getState().getCurrentPhase())) {
-            System.out.println("Azione non consentita in questa fase!");
-            return;
-        }
-
-        if (!isMyTotemSelected) {
-            System.out.println("Seleziona prima il tuo totem dalla griglia!");
-            return;
-        }
-
-        try {
-            server.placeTotem(myNickname, letter);
-            isMyTotemSelected = false;
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 

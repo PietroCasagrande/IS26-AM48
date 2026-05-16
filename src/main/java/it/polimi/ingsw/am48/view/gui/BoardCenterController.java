@@ -7,9 +7,12 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.*;
 
@@ -34,16 +37,18 @@ public class BoardCenterController {
     private static final double[][] SLOT_CENTER_FRACTIONS = {
             {},
             {},
-            {0.311, 0.451},                       // 2 players
-            {0.260, 0.435, 0.600},                // 3 players
-            {0.222, 0.397, 0.570, 0.710},         // 4 players
-            {0.146, 0.320, 0.494, 0.667, 0.807}   // 5 players
+            {0.290, 0.470},                       // 2 players
+            {0.240, 0.420, 0.600},                // 3 players
+            {0.205, 0.380, 0.560, 0.735},         // 4 players
+            {0.130, 0.310, 0.480, 0.650, 0.830}   // 5 players
     };
 
     private VirtualServer server;
     private ClientModel model;
     private ImageCache imageCache;
     private String myNickname;
+
+    // ================================================ INITIAL SETUP ====================================================
 
     public void setDependencies(ImageCache cache) {
         this.imageCache = cache;
@@ -121,7 +126,7 @@ public class BoardCenterController {
         }
     }
 
-    // ====================================================================================================
+    // =============================================== UPDATES =====================================================
 
     //TODO
     // --- METODI DI UPDATE (Chiamati ad ogni aggiornamento dal Server) ---
@@ -132,31 +137,97 @@ public class BoardCenterController {
         renderCards(lowerBuildingRow, state.getBuildingLowerIds());
 
         updateTotemGrid(state);
-        //updateOfferTrackTotems(state);
-        // updateTurnOrderCard(state); // Qui aggiornerai la griglia di sinistra
+        updateTotemTrack(state);
     }
 
-    // Aggiorna dinamicamente una qualsiasi HBox con le carte del momento
-    private void renderCards(HBox rowContainer, List<String> cardIds) {
-        rowContainer.getChildren().clear();
+    // Update totem placement on offer turn card
+    private void updateTotemGrid(ClientGameState state) {
+        this.offerTurnCard.getChildren().clear();
 
-        for (String cardId : cardIds) {
-            // Usa sempre la cache!
-            Image cardImage = imageCache.renderImage(cardId);
-            if (cardImage != null) {
-                ImageView imgView = new ImageView(cardImage);
-                imgView.fitHeightProperty().bind(rowContainer.heightProperty().multiply(0.8));
-                imgView.setPreserveRatio(true);
-                imgView.getStyleClass().add("card-hover");
+        List<String> currentOrderList = state.getOfferTurnCardOrder();
 
-                // Click per pescare la carta
-                imgView.setOnMouseClicked(e -> {
-                    try { server.takeCard(myNickname, cardId); }
-                    catch (Exception ex) { ex.printStackTrace(); }
-                });
+        // Check empty list
+        if (currentOrderList == null || currentOrderList.isEmpty()) {
+            return;
+        }
 
-                rowContainer.getChildren().add(imgView);
+        int numPlayers = state.getPlayers().size();
+        double[] yPercentages = SLOT_CENTER_FRACTIONS[numPlayers];
+
+        // Check if current phase is PLACE TOTEM (emptying) or PLAYER OFFER (filling)
+        String currentPhase = state.getCurrentPhase();
+        boolean isEmptyingPhase = "PLACE_TOTEM".equals(currentPhase);
+
+        for (int i = 0; i < currentOrderList.size(); i++) {
+            String player = currentOrderList.get(i);
+            int slotIndex;
+            if (isEmptyingPhase) slotIndex = numPlayers - currentOrderList.size() + i;
+            else slotIndex = i;
+
+            if (slotIndex < 0 || slotIndex >= yPercentages.length) continue;
+
+            ImageView totemImg = renderTotem(player, state);
+            totemImg.fitHeightProperty().bind(this.offerTurnCard.heightProperty().multiply(0.25));
+
+            totemImg.layoutXProperty().bind(
+                    this.offerTurnCard.widthProperty().multiply(0.381)
+                            .subtract(totemImg.fitWidthProperty().divide(2))
+            );
+
+            totemImg.layoutYProperty().bind(
+                    this.offerTurnCard.heightProperty().multiply(yPercentages[slotIndex])
+                            .subtract(totemImg.fitHeightProperty().divide(2))
+            );
+
+            this.offerTurnCard.getChildren().add(totemImg);
+        }
+    }
+
+    //TODO
+    // Update totem placement on offer card track
+    private void updateTotemTrack(ClientGameState state) {
+        Map<Character, String> positions = state.getOfferTrackPositions();
+
+        for (Node node : offerTrackContainer.getChildren()) {
+            if (node instanceof VBox slot) {
+
+                slot.getChildren().clear();
+
+                Character letter = (Character) slot.getUserData();
+                if (letter != null && positions.containsKey(letter)) {
+                    String playerNick = positions.get(letter);
+
+                    if(playerNick != null && !playerNick.trim().isEmpty() && state.getPlayer(playerNick) != null){
+
+                        ImageView totemImg = renderTotem(playerNick, state);
+                        // --- BINDING RESPONSIVI ---
+                        // Il totem scala seguendo il 30% dell'altezza dello slot
+                        totemImg.fitHeightProperty().bind(slot.heightProperty().multiply(0.30));
+
+                        // Spingiamo il totem in basso (es. 15%) per metterlo al centro del riquadro.
+                        // Puoi aumentare/diminuire questo valore per tarare l'altezza!
+                        totemImg.translateYProperty().bind(slot.heightProperty().multiply(0.0));
+
+                        // Aggiungiamo il totem al VBox!
+                        slot.getChildren().add(totemImg);
+                    }
+                }
             }
+        }
+    }
+
+    private void handleOfferTrackClick(char letter) {
+        try {
+            this.server.placeTotem(this.myNickname, letter);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void handleCardClick(String cardId) {
+        if (server != null) {
+            try { server.takeCard(myNickname, cardId); }
+            catch (Exception ex) { ex.printStackTrace(); }
         }
     }
 
@@ -177,93 +248,61 @@ public class BoardCenterController {
         }
     }
 
-    //TODO
-    // Sposta solo i totem sui 7 slot già preparati
-    private void updateOfferTrackTotems(ClientGameState state) {
-        Map<Character, String> positions = state.getOfferTrackPositions();
+    // =============================================== IMAGE RENDERING =====================================================
 
-        // Iteriamo sui 7 slot che abbiamo creato nel setup
-        for (int i = 0; i < 7; i++) {
-            char letter = (char) ('A' + i);
-            VBox slot = (VBox) offerTrackContainer.getChildren().get(i);
-
-            // Rimuoviamo il totem del turno precedente
-            slot.getChildren().clear();
-
-            // Se c'è un giocatore su questa lettera, disegniamo il totem
-            if (positions.containsKey(letter)) {
-                String playerNick = positions.get(letter);
-                // NOTA: Dovrai spostare la logica getTotemPath in una classe helper o nel Model
-                String totemPath = getTotemPath(playerNick, state);
-
-                Image totemImg = imageCache.renderImage(totemPath);
-                if (totemImg != null) {
-                    ImageView imgView = new ImageView(totemImg);
-                    imgView.setFitHeight(50);
-                    imgView.setPreserveRatio(true);
-                    slot.getChildren().add(imgView);
-                }
-            }
-        }
-    }
-
-    private void handleOfferTrackClick(char letter) {
-        // La logica di click (controllare le fasi)
-        try {
-            this.server.placeTotem(this.myNickname, letter);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void updateTotemGrid(ClientGameState state) {
-        this.offerTurnCard.getChildren().clear();
-
-        List<String> currentOrderList = state.getOfferTurnCardOrder();
-
-        if (currentOrderList == null || currentOrderList.isEmpty()) {
-            totemSlotRegistry.clear();
-            return;
-        }
-
-        int numPlayers = state.getPlayers().size();
-        double[] yPercentages = SLOT_CENTER_FRACTIONS[numPlayers];
-
-        // on totem return during player offer phase
-        for (String player : currentOrderList) {
-            if (!totemSlotRegistry.containsKey(player)) {
-                int freeSlot = totemSlotRegistry.size();
-                totemSlotRegistry.put(player, freeSlot);
-            }
-        }
-
-        // totem rendering
-        for (String player : currentOrderList) {
-            int slotIndex = totemSlotRegistry.get(player);
-
-            String totemPath = getTotemPath(player, state);
-            Image totemImage = new Image(getClass().getResourceAsStream(totemPath));
-            ImageView totemImg = new ImageView(totemImage);
-            totemImg.setPreserveRatio(true);
-            totemImg.fitHeightProperty().bind(this.offerTurnCard.heightProperty().multiply(0.12));
-            totemImg.layoutXProperty().bind(
-                    this.offerTurnCard.widthProperty().divide(2)
-                            .subtract(totemImg.fitWidthProperty().divide(2))
-            );
-
-            totemImg.layoutYProperty().bind(
-                    this.offerTurnCard.heightProperty().multiply(yPercentages[slotIndex])
-                            .subtract(totemImg.fitHeightProperty().divide(2))
-            );
-
-            totemImg.setId("totem_" + player); // ID per i click successivi
-
-            this.offerTurnCard.getChildren().add(totemImg);
-        }
-    }
-
-    private String getTotemPath(String nickname, ClientGameState state) {
+    //TODO implementare rendering immagine totem in ImageCache
+    // Render Totem Image adding shadows
+    private ImageView renderTotem(String nickname, ClientGameState state) {
         String color = state.getPlayer(nickname).getTotemColor();
-        return "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
+        String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
+        Image totemImage = new Image(getClass().getResourceAsStream(totemPath));
+        ImageView totemImg = new ImageView(totemImage);
+        totemImg.setPreserveRatio(true);
+
+        // Black shadow
+        DropShadow blackShadow = new DropShadow();
+        blackShadow.setRadius(5.0);
+        blackShadow.setOffsetX(2.0);
+        blackShadow.setOffsetY(3.0);
+        blackShadow.setColor(Color.color(0, 0, 0, 0.7));
+
+        // Yellow shadow for your own totem
+        if (nickname.equals(myNickname)) {
+            DropShadow yellowGlow = new DropShadow();
+            yellowGlow.setRadius(15.0);
+            yellowGlow.setOffsetX(0.0);
+            yellowGlow.setOffsetY(0.0);
+            yellowGlow.setColor(Color.web("#FFD700"));
+            yellowGlow.setSpread(0.3);
+            yellowGlow.setInput(blackShadow);
+            totemImg.setEffect(yellowGlow);
+        } else {
+            totemImg.setEffect(blackShadow);
+        }
+
+        totemImg.setId("totem_" + nickname);
+
+        return totemImg;
+    }
+
+    // Aggiorna dinamicamente una qualsiasi HBox con le carte del momento
+    private void renderCards(HBox rowContainer, List<String> cardIds) {
+        rowContainer.getChildren().clear();
+
+        for (String cardId : cardIds) {
+            // Usa sempre la cache!
+            Image cardImage = imageCache.renderImage(cardId);
+            if (cardImage != null) {
+                ImageView imgView = new ImageView(cardImage);
+                imgView.fitHeightProperty().bind(rowContainer.heightProperty().multiply(0.8));
+                imgView.setPreserveRatio(true);
+                imgView.getStyleClass().add("card-hover");
+
+                // Click per pescare la carta
+                imgView.setOnMouseClicked(e -> handleCardClick(cardId));
+
+                rowContainer.getChildren().add(imgView);
+            }
+        }
     }
 }

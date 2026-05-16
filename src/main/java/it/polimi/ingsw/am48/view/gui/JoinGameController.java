@@ -36,6 +36,8 @@ public class JoinGameController implements ModelObserver {
     private VirtualServer server;
     private ClientModel model;
 
+    private boolean hasGameStarted = false;
+
     public void setServer(VirtualServer server) {
         this.server = server;
     }
@@ -66,7 +68,8 @@ public class JoinGameController implements ModelObserver {
 
      @Override
      public void onStateUpdated(ClientGameState state){
-         Platform.runLater(() -> {
+        if(hasGameStarted) return;
+        Platform.runLater(() -> {
              if ("WAITING_FOR_PLAYERS".equals(state.getCurrentPhase())) {
                  LoadingLobbyController loadingLobby = (LoadingLobbyController) SceneManager.changeScene("loading-lobby.fxml");
                  if (loadingLobby != null) {
@@ -79,6 +82,7 @@ public class JoinGameController implements ModelObserver {
                  if (gameBoardScene != null) {
                      gameBoardScene.setDependencies(SceneManager.getImageCache());
                      gameBoardScene.initialize(this.server, this.model);
+                     hasGameStarted = true;
                  }
              }
              else {
