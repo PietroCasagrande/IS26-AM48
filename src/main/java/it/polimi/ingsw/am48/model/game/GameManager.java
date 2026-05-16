@@ -219,6 +219,35 @@ public class GameManager implements ModelInterface{
                 .orElse(0) + 1;
     }
 
+
+    @Override
+    public List<String> handleClientDisconnect(String nickname) {
+        synchronized (this) {
+            Game game = playerToGame.get(nickname);
+            if(game == null) return List.of();
+
+            // get players before throwing down everything about the game
+            List<String> companions = game.getPlayerContext().getPlayers().stream()
+                    .map(Player::getNickname)
+                    .filter(n -> !n.equals(nickname))
+                    .toList();
+
+            String gameId = game.getGameId();
+
+            // frees every game's nickname (not only the disconnected one)
+            // otherwise, companions would still be mapped to a game that doesn't belong to activeGames anymore
+            game.getPlayerContext().getPlayers().forEach(p -> playerToGame.remove(p.getNickname()));
+
+            activeGames.remove(gameId);
+            waitingGames.values().remove(game);
+            crashedGames.remove(gameId);
+
+            if (gameRepository != null) gameRepository.delete(gameId);
+
+            return companions;
+        }
+    }
+
     // metodi per la persistenza del server (SaveGame) e per il DB (createGameResult)
     public void SaveGame(String gameId){ throw new UnsupportedOperationException("TODO - FA persistenza"); }
     public GameResult createGameResult(){ throw new UnsupportedOperationException("TODO - FA leaderboard"); }

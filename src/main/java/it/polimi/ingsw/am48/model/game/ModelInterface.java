@@ -17,4 +17,5 @@ public interface ModelInterface {
     GameSnapshot getSnapshotForNickname(String nickname);
     boolean isGameFull(String nickname);
     List<String> getPlayersInGame(String nickname);
+    List<String> handleClientDisconnect(String nickname);
 }

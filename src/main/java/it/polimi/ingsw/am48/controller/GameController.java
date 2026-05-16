@@ -39,6 +39,10 @@ public class GameController {
         return deltas;
     }
 
+    public List<String> handleClientDisconnect(String nickname) {
+        return model.handleClientDisconnect(nickname);
+    }
+
     public List<String> getPlayersInGame(String nickname) {
         return model.getPlayersInGame(nickname);
     }

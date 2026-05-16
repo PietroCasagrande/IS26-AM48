@@ -47,6 +47,15 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
         } catch (IOException e) {
             System.err.println("connessione persa con " + nickname);
         } finally {
+            if(nickname != null) {
+                // pick active clients (companions) and clean GameManager
+                List<String> companions = controller.handleClientDisconnect(nickname);
+                // notify companions about client's disconnection
+                server.broadcastErrorToGame(companions,
+                        "Player '" + nickname + "' disconnected. The game has been terminated.");
+                // Remove this client from the server
+                server.unregisterClient(nickname);
+            }
             try {
                 socket.close();
             } catch (IOException e) {
