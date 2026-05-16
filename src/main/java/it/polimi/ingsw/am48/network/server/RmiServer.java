@@ -28,7 +28,17 @@ public class RmiServer extends UnicastRemoteObject implements VirtualServerRmi {
     @Override
     public void connect(String nickname, VirtualViewRmi client) throws RemoteException{
         rmiCallbacks.put(nickname, client);
-        VirtualView viewAdapter = new RmiViewAdapter(client);
+
+        // this thread is executed each time RmiViewAdapter detects a disconnection
+        Runnable onDisconnect = () -> {
+            rmiCallbacks.remove(nickname);
+            List<String> companions = controller.handleClientDisconnect(nickname);
+            mesosServer.broadcastErrorToGame(companions,
+                    "Player '" + nickname + "' disconnected. The game has been terminated.");
+            mesosServer.unregisterClient(nickname);
+        };
+
+        VirtualView viewAdapter = new RmiViewAdapter(client, onDisconnect);
         mesosServer.registerClient(nickname, viewAdapter);
     }
 

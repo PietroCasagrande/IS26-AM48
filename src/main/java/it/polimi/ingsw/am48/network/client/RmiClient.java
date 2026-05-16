@@ -72,4 +72,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualViewRmi, Vi
         model.notifyError(errorMessage);
     }
 
+    @Override
+    public void ping() throws RemoteException {
+        // Server pings clients periodically in order to see if they're "still alive".
+    }
+
 }
