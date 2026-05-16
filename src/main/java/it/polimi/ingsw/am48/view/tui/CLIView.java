@@ -172,6 +172,8 @@ public class CLIView implements ModelObserver {
         // will arrive and onStateUpdated() will already have the correct nickname.
         // If the server rejects, the user will call join again with a different name.
         localNickname = nickname;
+        // saving the number of Players of the session as well
+        clientModel.saveSession(nickname, numPlayers);
         renderer.renderWaiting();
 
         try {

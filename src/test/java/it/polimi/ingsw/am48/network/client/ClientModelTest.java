@@ -3,6 +3,7 @@ package it.polimi.ingsw.am48.network.client;
 import it.polimi.ingsw.am48.model.delta.*;
 import it.polimi.ingsw.am48.model.snapshot.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -557,4 +558,21 @@ class ClientModelTest {
         assertEquals(10, model.getState().getPlayer("alice").getPoints()); // endturn ha sovrascritto
         assertNotEquals(25, model.getState().getPlayer("alice").getPoints());
     }
+
+    @Test
+    @DisplayName("saveSession should persist nickname and numPlayers")
+    void shouldSaveSession() {
+        ClientModel model = new ClientModel();
+        model.saveSession("alice", 2);
+        assertEquals("alice", model.getSessionNickname());
+        assertEquals(2, model.getSessionNumPlayers());
+    }
+
+    @Test
+    @DisplayName("getSessionNickname should return null before any join")
+    void shouldReturnNullBeforeJoin() {
+        ClientModel model = new ClientModel();
+        assertNull(model.getSessionNickname());
+    }
+
 }

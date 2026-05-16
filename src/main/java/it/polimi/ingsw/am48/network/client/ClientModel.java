@@ -12,6 +12,14 @@ public class ClientModel {
     private ClientGameState state;
     private final Set<ModelObserver> observers = new LinkedHashSet<>();  // valutare di cambiare in LinkedHashSet (mantiene ordine ma evita duplicati), così è impossibile registrare due volte lo stesso oggetto erroneamente
 
+    private String sessionNickname;
+    private int sessionNumPlayers;
+
+    public void saveSession(String nickname, int numPlayers) {
+        this.sessionNickname = nickname;
+        this.sessionNumPlayers = numPlayers;
+    }
+
     public void registerObserver(ModelObserver observer) {
         observers.add(observer);
     }
@@ -96,5 +104,13 @@ public class ClientModel {
 
     private void notifyObservers() {
         observers.forEach(o -> o.onStateUpdated(state));
+    }
+
+    public String getSessionNickname() {
+        return sessionNickname;
+    }
+
+    public int getSessionNumPlayers() {
+        return sessionNumPlayers;
     }
 }

@@ -6,6 +6,7 @@ import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.VirtualServerRmi;
 import it.polimi.ingsw.am48.network.VirtualViewRmi;
 
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -22,11 +23,17 @@ public class RmiClient extends UnicastRemoteObject implements VirtualViewRmi, Vi
     private final VirtualServerRmi server;
     private final ClientModel model;
 
+    private final String host;
+    private final int port;
+
     public RmiClient(String host, int port, ClientModel model) throws RemoteException, NotBoundException {
         super();
+        this.host = host;
+        this.port = port;
         Registry registry = LocateRegistry.getRegistry(host, port);
         this.server = (VirtualServerRmi) registry.lookup("MesosServer");
         this.model = model;
+        startHeartbeat();
     }
 
     // Costruttore package-private per i test di RmiClientTest
@@ -36,6 +43,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualViewRmi, Vi
         super();
         this.server = server;
         this.model = model;
+        this.host = null;
+        this.port = -1;
     }
 
     // VirtualServer: comandi verso il server dal client
@@ -77,4 +86,69 @@ public class RmiClient extends UnicastRemoteObject implements VirtualViewRmi, Vi
         // Server pings clients periodically in order to see if they're "still alive".
     }
 
+    private void startHeartbeat(){
+        Thread heartbeat = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(3000);
+                    server.ping();
+                } catch (RemoteException e) {
+                    handleServerCrash();
+                    return;
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        });
+        heartbeat.setDaemon(true);
+        heartbeat.start();
+    }
+
+    private void handleServerCrash() {
+        // Same message of SocketServerHandler - unified behaviour
+        model.notifyError("""
+
+            ╔══════════════════════════════════════════════════════╗
+            ║  [!] LOST SERVER CONNECTION                          ║
+            ║                                                      ║
+            ║  Wait for the server to get back online...           ║
+            ║  We'll notify you once it'll be available.           ║
+            ╚══════════════════════════════════════════════════════╝
+            """);
+        startReconnectWatcher();
+    }
+
+    private void startReconnectWatcher() {
+        Thread watcher = new Thread(() -> {
+            while(!Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(5000);
+                    LocateRegistry.getRegistry(host, port).lookup("MesosServer");
+                    // Server came back ON
+                    String nickname = model.getSessionNickname();
+                    int numPlayers = model.getSessionNumPlayers();
+                    model.notifyError(String.format("""
+            
+                        ╔══════════════════════════════════════════════════════╗
+                        ║  [!] SERVER BACK ONLINE                              ║
+                        ║                                                      ║
+                        ║  Quit the game, restart the client and type:         ║
+                        ║       join %s %d                                     ║
+                        ║  to get back in the same game.                       ║
+                        ║                                                      ║
+                        ╚══════════════════════════════════════════════════════╝
+                        """, nickname, numPlayers));
+                    return;
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch (Exception e) {
+                    // server is still down, try again
+                }
+            }
+        });
+        watcher.setDaemon(true);
+        watcher.start();
+    }
 }

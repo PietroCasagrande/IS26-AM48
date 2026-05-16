@@ -85,4 +85,9 @@ public class RmiServer extends UnicastRemoteObject implements VirtualServerRmi {
             catch (Exception ex) { ex.printStackTrace(); }
         }
     }
+
+    @Override
+    public void ping() throws RemoteException {
+        // empty method: if the server's alive, it answers. Otherwise, RemoteException.
+    }
 }
