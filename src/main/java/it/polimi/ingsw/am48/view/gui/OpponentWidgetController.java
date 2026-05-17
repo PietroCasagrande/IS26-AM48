@@ -23,6 +23,10 @@ public class OpponentWidgetController {
     private VirtualServer server;
     private ImageCache imageCache;
 
+    public void setModel(ClientModel model)       { this.model = model; }
+    public void setServer(VirtualServer server)   { this.server = server; }
+    public void setDependencies(ImageCache cache) { this.imageCache = cache; }
+
     @FXML
     public void initialize() {
         labelNickname.setOnMouseClicked(event -> openPlayerTribePopup(labelNickname.getText()));
@@ -48,11 +52,16 @@ public class OpponentWidgetController {
             // ora si può inizializzare la pagina
             tribeController.initialize(nickname);
 
+            // aggiorna player tribe
+            tribeController.updateTribe(this.model.getState());
+
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.setTitle("Tribù di " + nickname);
+            popupStage.setTitle(nickname + "'s Tribe");
             popupStage.setScene(new Scene(root));
-            popupStage.setResizable(false);
+            popupStage.setResizable(true);
+            popupStage.setMinWidth(600);
+            popupStage.setMinHeight(400);
             popupStage.showAndWait();
 
         } catch (IOException e) {
