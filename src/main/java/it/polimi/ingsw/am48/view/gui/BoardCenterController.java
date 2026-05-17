@@ -71,7 +71,6 @@ public class BoardCenterController {
     }
 
     // Render OfferTurnCard for the correct number of players
-    //TODO sistema la generazione dell'immagine con cache (?)
     private void setupOfferTurnCard(int numPlayers) {
 
         try {
@@ -95,7 +94,6 @@ public class BoardCenterController {
     }
 
     // Render OfferCardTrack for the correct number of players
-    //TODO sistema la generazione dell'immagine con cache
     private void setupOfferTrack(){
 
         Set<Character> offerCards = this.model.getState().getOfferTrackPositions().keySet();
@@ -128,8 +126,8 @@ public class BoardCenterController {
 
     // =============================================== UPDATES =====================================================
 
-    //TODO
-    // --- METODI DI UPDATE (Chiamati ad ogni aggiornamento dal Server) ---
+
+    // Update board (called whenever server updates its state)
     public void update(ClientGameState state) {
         renderCards(upperCharacterRow, state.getUpperRowCardIds());
         renderCards(upperBuildingRow, state.getBuildingUpperIds());
@@ -183,7 +181,6 @@ public class BoardCenterController {
         }
     }
 
-    //TODO
     // Update totem placement on offer card track
     private void updateTotemTrack(ClientGameState state) {
         Map<Character, String> positions = state.getOfferTrackPositions();
@@ -250,13 +247,11 @@ public class BoardCenterController {
 
     // =============================================== IMAGE RENDERING =====================================================
 
-    //TODO implementare rendering immagine totem in ImageCache
     // Render Totem Image adding shadows
     private ImageView renderTotem(String nickname, ClientGameState state) {
         String color = state.getPlayer(nickname).getTotemColor();
-        String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
-        Image totemImage = new Image(getClass().getResourceAsStream(totemPath));
-        ImageView totemImg = new ImageView(totemImage);
+        Image totem = this.imageCache.renderTotem(color);
+        ImageView totemImg = new ImageView(totem);
         totemImg.setPreserveRatio(true);
 
         // Black shadow
@@ -291,7 +286,7 @@ public class BoardCenterController {
 
         for (String cardId : cardIds) {
             // Usa sempre la cache!
-            Image cardImage = imageCache.renderImage(cardId);
+            Image cardImage = imageCache.renderCards(cardId);
             if (cardImage != null) {
                 ImageView imgView = new ImageView(cardImage);
                 imgView.fitHeightProperty().bind(rowContainer.heightProperty().multiply(0.8));

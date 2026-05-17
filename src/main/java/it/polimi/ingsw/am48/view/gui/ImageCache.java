@@ -3,19 +3,24 @@ package it.polimi.ingsw.am48.view.gui;
 import javafx.scene.image.Image;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ImageCache {
     private final Map<String, String> paths;
     private final Map<String, Image> cache;
+    private final int numRulesPages;
 
     public ImageCache(Map<String, String> imagePaths) {
         this.paths = imagePaths;
         this.cache = new HashMap<>();
+        this.numRulesPages = 8;
     }
 
-    public Image renderImage(String cardId) {
+    //Render card images
+    public Image renderCards(String cardId) {
         String path = paths.get(cardId);
 
         if (path == null || path.isEmpty()) {
@@ -37,5 +42,75 @@ public class ImageCache {
         }
 
         return null;
+    }
+
+    //Render rules images
+    public List<Image> preloadRules() {
+
+        List<Image> rules = new ArrayList<>();
+
+        for(int i = 1; i <= numRulesPages; i++) {
+            String path = "/it/polimi/ingsw/am48/view/gui/images/rules/rules_" + i + ".png";
+
+            try {
+                // TRUCCO JAVAFX: Per il caricamento in background SERVE l'URL testuale, non l'InputStream!
+                java.net.URL resource = getClass().getResource(path);
+
+                if (resource != null) {
+                    String absoluteUrl = resource.toExternalForm();
+
+                    // IL SEGRETO È QUI: Il secondo parametro 'true' ordina a JavaFX
+                    // di caricare l'immagine in un thread separato (Background Loading).
+                    // La GUI non si bloccherà per un singolo millisecondo!
+                    Image ruleImg = new Image(absoluteUrl, true);
+                    rules.add(ruleImg);
+                } else {
+                    System.err.println("Risorsa non trovata: " + path);
+                }
+            } catch (Exception e) {
+                System.err.println("Errore pre-caricamento immagine: " + path);
+            }
+        }
+        return rules;
+    }
+
+    public List<Image> renderSummaryCard(){
+
+        String frontPath = "/it/polimi/ingsw/am48/view/gui/images/summaryCard/summary-card-front.png";
+        String backPath = "/it/polimi/ingsw/am48/view/gui/images/summaryCard/summary-card-back.png";
+        List<Image> summaryCard = new ArrayList<>();
+
+        // First Summary Card Image rendering
+        if (!this.cache.containsKey(frontPath) || !this.cache.containsKey(backPath)) {
+            try {
+                Image frontImg = new Image(getClass().getResourceAsStream(frontPath));
+                Image backImg = new Image(getClass().getResourceAsStream(backPath));
+
+                this.cache.put(frontPath, frontImg);
+                this.cache.put(backPath, backImg);
+
+            } catch (Exception e) {
+                System.err.println("Error: cannot upload summary card.");
+            }
+        }
+
+        summaryCard.add(this.cache.get(frontPath));
+        summaryCard.add(this.cache.get(backPath));
+        return summaryCard;
+    }
+
+    public Image renderTotem(String color){
+
+        String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
+
+        if(!this.cache.containsKey(totemPath)) {
+            try {
+                Image totemImage = new Image(getClass().getResourceAsStream(totemPath));
+                this.cache.put(totemPath, totemImage);
+            } catch (Exception e) {
+                System.err.println("Error: cannot upload" + color + "totem.");
+            }
+        }
+        return this.cache.get(totemPath);
     }
 }

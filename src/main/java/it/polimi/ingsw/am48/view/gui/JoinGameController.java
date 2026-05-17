@@ -93,6 +93,7 @@ public class JoinGameController implements ModelObserver {
 
     @Override
     public void onError(String message) {
+        if(hasGameStarted) return;
         Platform.runLater(() -> {
             joinBox.setDisable(false);
             nicknameTextField.setStyle("-fx-border-color: #ff4444; -fx-border-width: 3px;");
@@ -126,7 +127,7 @@ public class JoinGameController implements ModelObserver {
 
     private void showErrorMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Login error: this nickname is already in use");
+        alert.setTitle("LOGIN ERROR");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

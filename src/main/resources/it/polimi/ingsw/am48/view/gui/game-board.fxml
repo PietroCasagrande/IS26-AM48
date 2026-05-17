@@ -64,11 +64,13 @@
                                 <Insets right="100.0" />
                             </HBox.margin>
                             <children>
-                                <ImageView fx:id="summary_card"
-                                           fitHeight="170.0" fitWidth="200.0"
-                                           pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@images/summary_card.png"/></image>
-                                </ImageView>
+                                <StackPane fx:id="summaryCardContainer" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" style="-fx-cursor: hand; -fx-background-color: black; -fx-background-radius: 10px;">
+
+                                    <ImageView fx:id="summaryCardImage" fitWidth="120.0" preserveRatio="true" />
+
+                                    <Label fx:id="flipIcon" text="🔄" visible="false" style="-fx-font-size: 50px; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 5, 0.7, 0, 0);" />
+
+                                </StackPane>
                                 <Button fx:id="bottone_avanti" mnemonicParsing="false"
                                         text="AVANTI" prefWidth="180.0" styleClass="button-menu-fire" />
                             </children>

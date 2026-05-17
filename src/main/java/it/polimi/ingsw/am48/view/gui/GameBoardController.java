@@ -6,19 +6,17 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ModelObserver;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
 import it.polimi.ingsw.am48.view.CardDataRegistry;
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +31,9 @@ public class GameBoardController implements ModelObserver {
     @FXML private Label prestigeCount;
     @FXML private Label foodCount;
     @FXML private Button bottone_avanti;
+    @FXML private StackPane summaryCardContainer;
+    @FXML private ImageView summaryCardImage;
+    @FXML private Label flipIcon;
 
     // Player areas
     @FXML private VBox left_player1, right_player1, left_player2, right_player2;
@@ -50,13 +51,16 @@ public class GameBoardController implements ModelObserver {
     private CardDataRegistry cardData;
     private ImageCache imageCache;
 
-    private VBox[] offerCards;
     private VBox[] opponentBoxes;
     private Label[] opponentLabels;
     private ImageView[] opponentAvatars;
 
     // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
     private int currentEra = 0;
+
+    // Summary card state variables
+    private boolean isFrontInfoCard = true;
+    private List<Image> summaryCard = new ArrayList<>();
 
     @FXML
     public void initialize(VirtualServer server, ClientModel model) {
@@ -67,9 +71,9 @@ public class GameBoardController implements ModelObserver {
 
         setupHandBox();
         setupCenter();
+        setupSummaryCard();
 
-        //TODO
-        //offerCards = new VBox[]{ offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG };
+        //TODO in attesa dell'implementazione degli avatar avversari
         opponentBoxes = new VBox[]{ left_player1, right_player1, left_player2, right_player2 };
         opponentLabels = new Label[]{ labelLeft1, labelRight1, labelLeft2, labelRight2 };
         opponentAvatars = new ImageView[]{ avatarLeft1, avatarRight1, avatarLeft2, avatarRight2 };
@@ -100,7 +104,26 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
-    //TODO =========================================================================================================
+    // Render summary card
+    private void setupSummaryCard() {
+        summaryCardImage.setImage(this.imageCache.renderSummaryCard().getFirst());
+
+        // Hover effect
+        summaryCardContainer.setOnMouseEntered(e -> {
+            summaryCardImage.setOpacity(0.6);
+            flipIcon.setVisible(true);
+        });
+
+        // Unhover effect
+        summaryCardContainer.setOnMouseExited(e -> {
+            summaryCardImage.setOpacity(1.0);
+            flipIcon.setVisible(false);
+        });
+
+        // Flip animation on mouse click
+        summaryCardContainer.setOnMouseClicked(e -> flipSummaryCardAnimation());
+    }
+
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
@@ -112,10 +135,7 @@ public class GameBoardController implements ModelObserver {
                 transitionToLeaderboard();
                 return;
             }
-
-            /*
-            updatePlayerInfo(state);
-            updateMyHand(state); */
+            // updatePlayerInfo(state);
         });
     }
 
@@ -126,6 +146,7 @@ public class GameBoardController implements ModelObserver {
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
 
+    //TODO
     private void updatePlayerInfo(ClientGameState state) {
         Map<String, ClientPlayerState> players = state.getPlayers();
         for (VBox b : opponentBoxes) b.setVisible(false);
@@ -170,6 +191,7 @@ public class GameBoardController implements ModelObserver {
         label.setTooltip(tooltip);
     }
 
+    //TODO da togliere (ci sono ancora dipendenze)
     private void addCardsToContainer(HBox container, List<String> ids, double height) {
         /*for (String id : ids) {
             ImageView img = createCardImageView(id, false);
@@ -180,18 +202,6 @@ public class GameBoardController implements ModelObserver {
 
     // ─────────────────────── Utilities & Handlers ───────────────────────
 
-    private void updateMyHand(ClientGameState state) {
-        ClientPlayerState myState = state.getPlayer(myNickname);
-        if (myState == null) return;
-
-        HBox handContainer = new HBox(10);
-        handContainer.setPadding(new Insets(10));
-        addCardsToContainer(handContainer, myState.getCharacterCardIds(), 150);
-        addCardsToContainer(handContainer, myState.getBuildingCardIds(), 150);
-
-        myHandBox.setContent(handContainer);
-    }
-
     private void updateTokens(ClientGameState state) {
         ClientPlayerState myState = state.getPlayer(myNickname);
         if (myState != null) {
@@ -200,7 +210,15 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
-    @Override public void onError(String message) { System.err.println("Error: " + message); }
+    @Override public void onError(String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("GAME ERROR");
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
 
     // serve alla fine per passare al decimo turno alla scena successiva
     private void transitionToLeaderboard() {
@@ -209,5 +227,33 @@ public class GameBoardController implements ModelObserver {
             lb.setServer(server);
             lb.setModel(model);
         }
+    }
+
+    // ======================================= SUMMARY CARD ANIMATION ========================================
+
+    private void flipSummaryCardAnimation() {
+        // Closing animation
+        ScaleTransition flipOut = new ScaleTransition(Duration.millis(150), summaryCardImage);
+        flipOut.setFromX(1);
+        flipOut.setToX(0);
+
+        // Opening animation
+        ScaleTransition flipIn = new ScaleTransition(Duration.millis(150), summaryCardImage);
+        flipIn.setFromX(0);
+        flipIn.setToX(1);
+
+        // Switch images when the card is completely compressed
+        flipOut.setOnFinished(event -> {
+            this.isFrontInfoCard = !this.isFrontInfoCard;
+            this.summaryCardImage.setImage(isFrontInfoCard ?
+                    this.imageCache.renderSummaryCard().getFirst() :
+                    this.imageCache.renderSummaryCard().getLast());
+
+            // Animartion restart
+            flipIn.play();
+        });
+
+        // Animation start
+        flipOut.play();
     }
 }
