@@ -74,4 +74,29 @@ public class ImageCache {
         }
         return rules;
     }
+
+    public List<Image> renderSummaryCard(){
+
+        String frontPath = "/it/polimi/ingsw/am48/view/gui/images/summaryCard/summary-card-front.png";
+        String backPath = "/it/polimi/ingsw/am48/view/gui/images/summaryCard/summary-card-back.png";
+        List<Image> summaryCard = new ArrayList<>();
+
+        // First Summary Card Image rendering
+        if (!this.cache.containsKey(frontPath) || !this.cache.containsKey(backPath)) {
+            try {
+                Image frontImg = new Image(getClass().getResourceAsStream(frontPath));
+                Image backImg = new Image(getClass().getResourceAsStream(backPath));
+
+                this.cache.put(frontPath, frontImg);
+                this.cache.put(backPath, backImg);
+
+            } catch (Exception e) {
+                System.err.println("Errore nel caricamento della Summary Card.");
+            }
+        }
+
+        summaryCard.add(this.cache.get(frontPath));
+        summaryCard.add(this.cache.get(backPath));
+        return summaryCard;
+    }
 }
