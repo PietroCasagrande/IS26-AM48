@@ -51,7 +51,6 @@ public class GameBoardController implements ModelObserver {
     private CardDataRegistry cardData;
     private ImageCache imageCache;
 
-    private VBox[] offerCards;
     private VBox[] opponentBoxes;
     private Label[] opponentLabels;
     private ImageView[] opponentAvatars;
@@ -74,8 +73,7 @@ public class GameBoardController implements ModelObserver {
         setupCenter();
         setupSummaryCard();
 
-        //TODO
-        //offerCards = new VBox[]{ offerCardA, offerCardB, offerCardC, offerCardD, offerCardE, offerCardF, offerCardG };
+        //TODO in attesa dell'implementazione degli avatar avversari
         opponentBoxes = new VBox[]{ left_player1, right_player1, left_player2, right_player2 };
         opponentLabels = new Label[]{ labelLeft1, labelRight1, labelLeft2, labelRight2 };
         opponentAvatars = new ImageView[]{ avatarLeft1, avatarRight1, avatarLeft2, avatarRight2 };
@@ -126,7 +124,6 @@ public class GameBoardController implements ModelObserver {
         summaryCardContainer.setOnMouseClicked(e -> flipSummaryCardAnimation());
     }
 
-    //TODO =========================================================================================================
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
@@ -138,10 +135,7 @@ public class GameBoardController implements ModelObserver {
                 transitionToLeaderboard();
                 return;
             }
-
-            /*
-            updatePlayerInfo(state);
-            updateMyHand(state); */
+            // updatePlayerInfo(state);
         });
     }
 
@@ -152,6 +146,7 @@ public class GameBoardController implements ModelObserver {
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
 
+    //TODO
     private void updatePlayerInfo(ClientGameState state) {
         Map<String, ClientPlayerState> players = state.getPlayers();
         for (VBox b : opponentBoxes) b.setVisible(false);
@@ -196,6 +191,7 @@ public class GameBoardController implements ModelObserver {
         label.setTooltip(tooltip);
     }
 
+    //TODO da togliere (ci sono ancora dipendenze)
     private void addCardsToContainer(HBox container, List<String> ids, double height) {
         /*for (String id : ids) {
             ImageView img = createCardImageView(id, false);
@@ -205,18 +201,6 @@ public class GameBoardController implements ModelObserver {
     }
 
     // ─────────────────────── Utilities & Handlers ───────────────────────
-
-    private void updateMyHand(ClientGameState state) {
-        ClientPlayerState myState = state.getPlayer(myNickname);
-        if (myState == null) return;
-
-        HBox handContainer = new HBox(10);
-        handContainer.setPadding(new Insets(10));
-        addCardsToContainer(handContainer, myState.getCharacterCardIds(), 150);
-        addCardsToContainer(handContainer, myState.getBuildingCardIds(), 150);
-
-        myHandBox.setContent(handContainer);
-    }
 
     private void updateTokens(ClientGameState state) {
         ClientPlayerState myState = state.getPlayer(myNickname);

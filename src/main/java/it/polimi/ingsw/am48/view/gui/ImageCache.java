@@ -1,7 +1,6 @@
 package it.polimi.ingsw.am48.view.gui;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class ImageCache {
     }
 
     //Render card images
-    public Image renderImage(String cardId) {
+    public Image renderCards(String cardId) {
         String path = paths.get(cardId);
 
         if (path == null || path.isEmpty()) {
@@ -91,12 +90,27 @@ public class ImageCache {
                 this.cache.put(backPath, backImg);
 
             } catch (Exception e) {
-                System.err.println("Errore nel caricamento della Summary Card.");
+                System.err.println("Error: cannot upload summary card.");
             }
         }
 
         summaryCard.add(this.cache.get(frontPath));
         summaryCard.add(this.cache.get(backPath));
         return summaryCard;
+    }
+
+    public Image renderTotem(String color){
+
+        String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
+
+        if(!this.cache.containsKey(totemPath)) {
+            try {
+                Image totemImage = new Image(getClass().getResourceAsStream(totemPath));
+                this.cache.put(totemPath, totemImage);
+            } catch (Exception e) {
+                System.err.println("Error: cannot upload" + color + "totem.");
+            }
+        }
+        return this.cache.get(totemPath);
     }
 }

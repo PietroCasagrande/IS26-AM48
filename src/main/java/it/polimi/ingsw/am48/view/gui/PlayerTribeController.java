@@ -108,7 +108,7 @@ public class PlayerTribeController {
      * Applica le dimensioni standard ed eventuali effetti grafici.
      */
     private ImageView createImageView(String cardId) {
-        Image img = imageCache.renderImage(cardId);
+        Image img = imageCache.renderCards(cardId);
 
         if (img == null) {return null;}
 
