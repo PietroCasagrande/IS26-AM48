@@ -4,6 +4,8 @@ import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
@@ -15,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MesosMenuController {
 
@@ -32,6 +36,15 @@ public class MesosMenuController {
     private Button buttonSettings;
     @FXML
     private Button buttonExit;
+    @FXML
+    private VBox menuContainer;
+    @FXML
+    private ScrollPane rulesOverlay;
+    @FXML
+    private VBox rulesImagesContainer;
+
+    private boolean rulesLoaded = false;
+    private List<ImageView> rules = new ArrayList<>();
 
     private VirtualServer server;
     private ClientModel model;
@@ -46,6 +59,14 @@ public class MesosMenuController {
 
     @FXML
     public void initialize() {
+        // Preloading rules
+        List<Image> rulesList = SceneManager.getImageCache().preloadRules();
+        for(Image i : rulesList) {
+            ImageView ruleImgV = new ImageView(i);
+            ruleImgV.setFitWidth(1000.0);
+            ruleImgV.setPreserveRatio(true);
+            this.rules.add(ruleImgV);
+        }
     }
 
     @FXML
@@ -59,18 +80,20 @@ public class MesosMenuController {
         }
     }
 
-    @FXML
-    private VBox menuContainer; // Il contenitore del menu principale
-
-    @FXML
-    private ScrollPane rulesOverlay; // Lo ScrollPane del manuale
-
     // Metodo collegato al tasto "How to Play"
     @FXML
     private void handleHowToPlay() {
-        // Nasconde il menu e mostra il manuale scorribile
+        // Changing visibility
         menuContainer.setVisible(false);
         rulesOverlay.setVisible(true);
+
+        // Rendering rules images just for the very first time
+        if (!rulesLoaded) {
+            for(ImageView iv : rules) {
+                rulesImagesContainer.getChildren().add(iv);
+            }
+            rulesLoaded = true;
+        }
     }
 
     // Metodo collegato al tasto "Indietro" dentro il manuale

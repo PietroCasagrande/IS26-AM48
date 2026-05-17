@@ -65,37 +65,11 @@
             <content>
                 <VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-background-color: #1a1a1a;">
                     <children>
-                        <!-- Bottone per tornare indietro in alto -->
                         <Button text="TORNA AL MENU" onAction="#handleCloseRules"
                                 styleClass="button-menu-fire" style="-fx-margin-bottom: 20;" />
 
-                        <!-- Le 8 pagine del manuale di Mesos -->
-                        <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@images/rules/rules_1.png" /></image>
-                        </ImageView>
-                        <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@images/rules/rules_2.png" /></image>
-                        </ImageView>
-                        <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@images/rules/rules_3.png" /></image>
-                        </ImageView>
-                        <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@images/rules/rules_4.png" /></image>
-                        </ImageView>
-                        <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@images/rules/rules_5.png" /></image>
-                        </ImageView>
-                        <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@images/rules/rules_6.png" /></image>
-                        </ImageView>
-                        <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@images/rules/rules_7.png" /></image>
-                        </ImageView>
-                        <ImageView fitWidth="1000.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@images/rules/rules_8.png" /></image>
-                        </ImageView>
+                        <VBox fx:id="rulesImagesContainer" alignment="TOP_CENTER" spacing="20.0" />
 
-                        <!-- Il bottone in fondo -->
                         <Button text="TORNA AL MENU" onAction="#handleCloseRules" styleClass="button-menu-fire" />
                     </children>
                     <padding>
