@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -48,8 +49,24 @@ public class PlayerTribeController {
     private ImageCache imageCache;
     private String myNickname;
 
+    public void setModel(ClientModel model) {
+        this.model = model;
+    }
+
+    public void setServer(VirtualServer server) {
+        this.server = server;
+    }
+
     public void setDependencies(ImageCache cache) {
         this.imageCache = cache;
+    }
+
+    public void setDependencies(it.polimi.ingsw.am48.view.CardDataRegistry registry, ImageCache cache) {
+        this.imageCache = cache;
+    }
+
+    public void initialize(String nickname) {
+        initialize(this.server, this.model, nickname);
     }
 
     @FXML
@@ -148,6 +165,7 @@ public class PlayerTribeController {
 
     @FXML
     public void handleExit() {
-        //TODO
+        Stage stage = (Stage) rootTribe.getScene().getWindow();
+        stage.close();
     }
 }

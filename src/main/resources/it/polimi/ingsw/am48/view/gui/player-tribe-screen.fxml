@@ -28,7 +28,7 @@
                         </Label>
                     </center>
                     <right>
-                        <Button fx:id="exitButton" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="button-exit" text="X" BorderPane.alignment="CENTER">
+                        <Button fx:id="exitButton" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="button-exit" text="X" BorderPane.alignment="CENTER" onAction="#handleExit">
                             <BorderPane.margin>
                                 <Insets bottom="5.0" right="0.0" top="0.0" />
                             </BorderPane.margin>

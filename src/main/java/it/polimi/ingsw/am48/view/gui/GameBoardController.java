@@ -15,6 +15,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +167,8 @@ public class GameBoardController implements ModelObserver {
             ImageView avatar = opponentAvatars[slot];
 
             label.setText(player.getNickname());
+            final String nick = player.getNickname();
+            label.setOnMouseClicked(e -> openOpponentTribePopup(nick));
             box.setVisible(true);
 
             //TODO String totemPath = getTotemPath(player.getNickname(), state);
@@ -176,6 +184,31 @@ public class GameBoardController implements ModelObserver {
             slot++;
         }
     }
+
+    private void openOpponentTribePopup(String nickname) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/it/polimi/ingsw/am48/view/gui/player-tribe-screen.fxml")
+            );
+            Parent root = loader.load();
+
+            PlayerTribeController tc = loader.getController();
+            tc.setModel(this.model);
+            tc.setServer(this.server);
+            tc.setDependencies(this.imageCache); // PlayerTribeController.setDependencies(ImageCache)
+            tc.initialize(this.server, this.model, nickname);
+
+            Stage popup = new Stage();
+            popup.initModality(Modality.APPLICATION_MODAL);
+            popup.setTitle("Tribù di " + nickname);
+            popup.setScene(new Scene(root));
+            popup.setResizable(false);
+            popup.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void setupPlayerTooltip(Label label, ClientPlayerState player) {
         Tooltip tooltip = new Tooltip();
