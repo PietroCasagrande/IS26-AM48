@@ -49,6 +49,12 @@ public class GameBoardController implements ModelObserver {
     @FXML private VBox center;
     @FXML private BoardCenterController boardCenterController;
 
+    // Phase / Turn indicator
+    @FXML private HBox phaseIndicator;
+    @FXML private Label phaseLabel;
+    @FXML private Label turnLabel;
+    @FXML private ImageView turnTotem;
+
     private VirtualServer server;
     private ClientModel model;
     private String myNickname;
@@ -87,6 +93,7 @@ public class GameBoardController implements ModelObserver {
                 updateTokens(model.getState());
                 playerTribeController.updateTribe(model.getState());
                 updatePlayerInfo(model.getState());
+                updatePhaseInfo(model.getState());
             });
         }
 
@@ -153,6 +160,7 @@ public class GameBoardController implements ModelObserver {
             updateTokens(state);
             playerTribeController.updateTribe(state);
             updatePlayerInfo(state);
+            updatePhaseInfo(state);
             playBoardSounds(state);
             //TODO if (this.currentEra != era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
@@ -160,6 +168,7 @@ public class GameBoardController implements ModelObserver {
                 this.model.unregisterObserver(this);
                 return;
             }
+            // updatePlayerInfo(state);
         });
     }
 
@@ -173,10 +182,14 @@ public class GameBoardController implements ModelObserver {
     //TODO
     private void updatePlayerInfo(ClientGameState state) {
         Map<String, ClientPlayerState> players = state.getPlayers();
+        String currentTurn = getCurrentPlayer(state);
 
         // Usa prima i slot sinistri, poi quelli destri
         VBox[] containers = { left_player1, left_player2, right_player1, right_player2 };
         for (VBox b : containers) { b.getChildren().clear(); b.setVisible(false); }
+
+        String currentPhase = state.getCurrentPhase();
+        boolean showTurnGlow = "PLACE_TOTEM".equals(currentPhase) || "PLAYER_OFFER".equals(currentPhase);
 
         int slot = 0;
         for (ClientPlayerState player : players.values()) {
@@ -200,6 +213,12 @@ public class GameBoardController implements ModelObserver {
 
                 containers[slot].getChildren().add(widget);
                 containers[slot].setVisible(true);
+
+                if (showTurnGlow && player.getNickname().equals(currentTurn)) {
+                    containers[slot].setStyle("-fx-effect: dropshadow(gaussian, #FFD700, 12, 0.6, 0, 0);");
+                } else {
+                    containers[slot].setStyle("");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -256,6 +275,57 @@ public class GameBoardController implements ModelObserver {
             img.setFitHeight(height);
             container.getChildren().add(img);
         }*/
+    }
+
+    // ─────────────────────── Phase / Turn Indicator ───────────────────────
+
+    private void updatePhaseInfo(ClientGameState state) {
+        String rawPhase = state.getCurrentPhase();
+        phaseLabel.setText("Phase: " + formatPhase(rawPhase));
+
+        String currentPlayer = getCurrentPlayer(state);
+        if (currentPlayer != null) {
+            turnLabel.setText("Turn: " + currentPlayer);
+
+            ClientPlayerState p = state.getPlayer(currentPlayer);
+            if (p != null) {
+                String color = p.getTotemColor();
+                Image totemImg = imageCache.renderTotem(color);
+                turnTotem.setImage(totemImg);
+                turnTotem.setVisible(true);
+            } else {
+                turnTotem.setVisible(false);
+            }
+        } else {
+            turnLabel.setText("Turn: --");
+            turnTotem.setVisible(false);
+        }
+    }
+
+    private String getCurrentPlayer(ClientGameState state) {
+        String phase = state.getCurrentPhase();
+        if ("PLACE_TOTEM".equals(phase)) {
+            List<String> order = state.getOfferTurnCardOrder();
+            return (order != null && !order.isEmpty()) ? order.get(0) : null;
+        } else if ("PLAYER_OFFER".equals(phase)) {
+            return state.getOfferTrackPositions().entrySet().stream()
+                    .filter(e -> e.getValue() != null && !e.getValue().isEmpty())
+                    .min(Map.Entry.comparingByKey())
+                    .map(Map.Entry::getValue)
+                    .orElse(null);
+        }
+        return null;
+    }
+
+    private String formatPhase(String phase) {
+        return switch (phase) {
+            case "WAITING_FOR_PLAYERS" -> "Waiting for Players";
+            case "PLACE_TOTEM"         -> "Place Your Totem";
+            case "PLAYER_OFFER"        -> "Player Offer";
+            case "END_TURN"            -> "End Turn";
+            case "END_GAME"            -> "Game Over";
+            default                    -> phase;
+        };
     }
 
     // ─────────────────────── Utilities & Handlers ───────────────────────
