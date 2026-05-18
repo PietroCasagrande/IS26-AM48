@@ -80,7 +80,7 @@ public class JoinGameController implements ModelObserver {
              else if("PLACE_TOTEM".equals(state.getCurrentPhase())) {
                  GameBoardController gameBoardScene = (GameBoardController) SceneManager.changeScene("game-board.fxml");
                  if (gameBoardScene != null) {
-                     gameBoardScene.setDependencies(SceneManager.getImageCache());
+                     gameBoardScene.setDependencies(SceneManager.getImageCache(), SceneManager.getSoundCache());
                      gameBoardScene.initialize(this.server, this.model);
                      hasGameStarted = true;
                  }

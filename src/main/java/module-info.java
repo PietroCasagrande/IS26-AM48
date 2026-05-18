@@ -10,6 +10,7 @@ module it.polimi.ingsw.am48 {
     requires java.sql;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires javafx.graphics;
+    requires javafx.media;
     exports it.polimi.ingsw.am48;
     exports it.polimi.ingsw.am48.model.game;
     exports it.polimi.ingsw.am48.model.player;

@@ -22,9 +22,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameBoardController implements ModelObserver {
 
@@ -56,6 +54,7 @@ public class GameBoardController implements ModelObserver {
     private String myNickname;
     private CardDataRegistry cardData;
     private ImageCache imageCache;
+    private SoundCache soundCache;
 
     private VBox[] opponentBoxes;
     private Label[] opponentLabels;
@@ -67,6 +66,10 @@ public class GameBoardController implements ModelObserver {
     // Summary card state variables
     private boolean isFrontInfoCard = true;
     private List<Image> summaryCard = new ArrayList<>();
+
+    // Memorie globali nel tuo Controller
+    private int previousTotemCount = 0;
+    private Set<String> previousCardIds = new HashSet<>();
 
     @FXML
     public void initialize(VirtualServer server, ClientModel model) {
@@ -99,8 +102,9 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
-    public void setDependencies(ImageCache cache) {
-        this.imageCache = cache;
+    public void setDependencies(ImageCache imgCache, SoundCache soundCache) {
+        this.imageCache = imgCache;
+        this.soundCache = soundCache;
     }
 
     // Render an embedded version of player's tribe scene
@@ -149,12 +153,12 @@ public class GameBoardController implements ModelObserver {
             updateTokens(state);
             playerTribeController.updateTribe(state);
             updatePlayerInfo(state);
+            playBoardSounds(state);
             //TODO if (this.currentEra != era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
                 return;
             }
-            // updatePlayerInfo(state);
         });
     }
 
@@ -308,5 +312,44 @@ public class GameBoardController implements ModelObserver {
 
         // Animation start
         flipOut.play();
+    }
+
+    // ======================================= BOARD SOUNDS ========================================
+
+    private void playBoardSounds(ClientGameState state) {
+
+        // Counting totems on track
+        int currentTotemCount = (int) state.getOfferTrackPositions().values().stream()
+                .filter(nick -> nick != null && !nick.trim().isEmpty())
+                .count();
+
+        // Saving cardIds to compute delta diff
+        Set<String> currentCardIds = new HashSet<>();
+        currentCardIds.addAll(state.getUpperRowCardIds());
+        currentCardIds.addAll(state.getLowerRowCardIds());
+        currentCardIds.addAll(state.getBuildingUpperIds());
+        currentCardIds.addAll(state.getBuildingLowerIds());
+
+        // Place Totem sound
+        if (currentTotemCount > previousTotemCount) {
+            this.soundCache.playTotem();
+        }
+
+        // Take Card sound
+        boolean cardWasDrawn = false;
+        for (String oldCardId : previousCardIds) {
+            if (!currentCardIds.contains(oldCardId)) {
+                cardWasDrawn = true;
+                break; // just one card is necessary
+            }
+        }
+
+        if (cardWasDrawn) {
+            this.soundCache.playCard();
+        }
+
+        // Save state to compute diff in the next update
+        previousTotemCount = currentTotemCount;
+        previousCardIds = currentCardIds;
     }
 }

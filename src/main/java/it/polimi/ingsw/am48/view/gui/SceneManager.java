@@ -16,6 +16,7 @@ public class SceneManager {
     private static ClientModel model;  // Riferimento al model
     private static CardDataRegistry cardData;
     private static ImageCache imageCache;
+    private static SoundCache soundCache;
     private static String nickname; // Nickname del giocatore locale
 
     public static void setup(Stage primaryStage, VirtualServer s, ClientModel m) {
@@ -24,6 +25,7 @@ public class SceneManager {
         model = m;
         cardData = new CardDataRegistry();
         imageCache = new ImageCache(cardData.getImagePaths());
+        soundCache = new SoundCache();
     }
 
     public static void setNickname(String nick) {
@@ -35,6 +37,8 @@ public class SceneManager {
     }
 
     public static ImageCache getImageCache() {return imageCache;}
+
+    public static SoundCache getSoundCache() {return soundCache;}
 
     public static Object changeScene(String fxmlPath) {
         try {
