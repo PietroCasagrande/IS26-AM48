@@ -15,6 +15,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,13 +78,25 @@ public class GameBoardController implements ModelObserver {
         setupHandBox();
         setupCenter();
         setupSummaryCard();
+        if (model.getState() != null) {
+            Platform.runLater(() -> {
+                boardCenterController.update(model.getState());
+                updateTokens(model.getState());
+                playerTribeController.updateTribe(model.getState());
+                updatePlayerInfo(model.getState());
+            });
+        }
 
-        //TODO in attesa dell'implementazione degli avatar avversari
         opponentBoxes = new VBox[]{ left_player1, right_player1, left_player2, right_player2 };
         opponentLabels = new Label[]{ labelLeft1, labelRight1, labelLeft2, labelRight2 };
         opponentAvatars = new ImageView[]{ avatarLeft1, avatarRight1, avatarLeft2, avatarRight2 };
 
         for (VBox b : opponentBoxes) b.setVisible(false);
+
+        ClientGameState initialState = model.getState();
+        if (initialState != null) {
+            updatePlayerInfo(initialState);
+        }
     }
 
     public void setDependencies(ImageCache cache) {
@@ -130,6 +148,7 @@ public class GameBoardController implements ModelObserver {
             boardCenterController.update(state);
             updateTokens(state);
             playerTribeController.updateTribe(state);
+            updatePlayerInfo(state);
             //TODO if (this.currentEra != era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
@@ -149,33 +168,67 @@ public class GameBoardController implements ModelObserver {
     //TODO
     private void updatePlayerInfo(ClientGameState state) {
         Map<String, ClientPlayerState> players = state.getPlayers();
-        for (VBox b : opponentBoxes) b.setVisible(false);
+
+        // Usa prima i slot sinistri, poi quelli destri
+        VBox[] containers = { left_player1, left_player2, right_player1, right_player2 };
+        for (VBox b : containers) { b.getChildren().clear(); b.setVisible(false); }
 
         int slot = 0;
         for (ClientPlayerState player : players.values()) {
             if (player.getNickname().equals(myNickname)) continue;
-            if (slot >= opponentBoxes.length) break;
+            if (slot >= containers.length) break;
 
-            Label label = opponentLabels[slot];
-            VBox box = opponentBoxes[slot];
-            ImageView avatar = opponentAvatars[slot];
-
-            label.setText(player.getNickname());
-            box.setVisible(true);
-
-            //TODO String totemPath = getTotemPath(player.getNickname(), state);
             try {
-                //TODO avatar.setImage(new Image(getClass().getResourceAsStream(totemPath)));
-                avatar.setFitHeight(60);
-                avatar.setPreserveRatio(true);
-            } catch (Exception e) {
-                System.err.println("Impossibile caricare avatar per " + player.getNickname());
-            }
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/it/polimi/ingsw/am48/view/gui/opponent-widget.fxml")
+                );
+                Parent widget = loader.load();
+                OpponentWidgetController wc = loader.getController();
 
-            setupPlayerTooltip(label, player);
+                wc.setModel(model);
+                wc.setServer(server);
+                wc.setDependencies(imageCache);
+
+                String totemColor = player.getTotemColor();
+                Image avatarImg = (totemColor != null) ? imageCache.renderTotem(totemColor) : null;
+                wc.setPlayerData(player.getNickname(), avatarImg);
+
+                containers[slot].getChildren().add(widget);
+                containers[slot].setVisible(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             slot++;
         }
     }
+
+    private void openOpponentTribePopup(String nickname) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/it/polimi/ingsw/am48/view/gui/player-tribe-screen.fxml")
+            );
+            Parent root = loader.load();
+
+            PlayerTribeController tc = loader.getController();
+            tc.setModel(this.model);
+            tc.setServer(this.server);
+            tc.setDependencies(this.imageCache); // PlayerTribeController.setDependencies(ImageCache)
+            tc.initialize(this.server, this.model, nickname);
+            tc.updateTribe(this.model.getState());
+
+            Stage popup = new Stage();
+            popup.initModality(Modality.APPLICATION_MODAL);
+            popup.setTitle(nickname + "'s Tribe");
+            popup.setScene(new Scene(root));
+            popup.setResizable(true);
+            popup.setMinWidth(600);
+            popup.setMinHeight(400);
+            popup.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void setupPlayerTooltip(Label label, ClientPlayerState player) {
         Tooltip tooltip = new Tooltip();
