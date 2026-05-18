@@ -92,16 +92,15 @@ public class LeaderboardController implements ModelObserver {
         boolean isMe = player.getNickname().equals(myNickname);
         boolean isWinner = player.getNickname().equals(winner);
 
-        String style = "-fx-background-color: rgba(0,0,0,0.4); -fx-background-radius: 10;";
+        row.getStyleClass().add("lb-row");
         if (isWinner) {
-            style = "-fx-background-color: rgba(0,0,0,0.6); -fx-background-radius: 10; -fx-border-color: #FFD700; -fx-border-width: 2; -fx-border-radius: 10;";
+            row.getStyleClass().add("lb-row-winner");
         } else if (isMe) {
-            style += " -fx-background-color: rgba(255,215,0,0.12);";
+            row.getStyleClass().add("lb-row-self");
         }
-        row.setStyle(style);
 
         Label rankLabel = new Label("#" + rank);
-        rankLabel.setStyle("-fx-text-fill: #FFD700; -fx-font-size: 22; -fx-font-weight: bold; -fx-min-width: 55;");
+        rankLabel.getStyleClass().add("lb-rank");
 
         ImageView avatar = new ImageView();
         String totemPath = getTotemPath(player.getNickname(), state);
@@ -118,15 +117,14 @@ public class LeaderboardController implements ModelObserver {
         String displayName = player.getNickname();
         if (isMe) displayName += " (you)";
         Label nickLabel = new Label(displayName);
-        String nickStyle = "-fx-text-fill: #FFF3E0; -fx-font-size: 20; -fx-font-weight: bold; -fx-min-width: 200;";
-        if (isWinner) nickStyle += " -fx-text-fill: #FFD700;";
-        nickLabel.setStyle(nickStyle);
+        nickLabel.getStyleClass().add("lb-nick");
+        if (isWinner) nickLabel.getStyleClass().add("lb-nick-winner");
 
         Label pointsLabel = new Label(player.getPoints() + " PP");
-        pointsLabel.setStyle("-fx-text-fill: #FFD700; -fx-font-size: 20; -fx-font-weight: bold; -fx-min-width: 80;");
+        pointsLabel.getStyleClass().add("lb-points");
 
         Label foodLabel = new Label("Food: " + player.getFood());
-        foodLabel.setStyle("-fx-text-fill: #FFF3E0; -fx-font-size: 18;");
+        foodLabel.getStyleClass().add("lb-food");
 
         row.getChildren().addAll(rankLabel, avatar, nickLabel, pointsLabel, foodLabel);
         return row;

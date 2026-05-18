@@ -32,18 +32,12 @@ public class EndTurnPhase implements GamePhase {
 
             Map<String, Integer> foodDeltas = new HashMap<>();
             Map<String, Integer> pointsDeltas = new HashMap<>();
-            boolean changed = false;
             for (String nick : foodAfter.keySet()) {
-                int fd = foodAfter.get(nick) - foodBefore.get(nick);
-                int pd = pointsAfter.get(nick) - pointsBefore.get(nick);
-                if (fd != 0 || pd != 0) changed = true;
-                foodDeltas.put(nick, fd);
-                pointsDeltas.put(nick, pd);
+                foodDeltas.put(nick, foodAfter.get(nick) - foodBefore.get(nick));
+                pointsDeltas.put(nick, pointsAfter.get(nick) - pointsBefore.get(nick));
             }
 
-            if (changed) {
-                eventInfos.add(new EventInfo(e.name(), foodDeltas, pointsDeltas));
-            }
+            eventInfos.add(new EventInfo(e.name(), foodDeltas, pointsDeltas));
         }
 
         // board update after solving events

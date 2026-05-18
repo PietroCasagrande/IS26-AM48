@@ -34,7 +34,7 @@ public class IntergalacticRankingController {
 
         if (data == null || data.isEmpty()) {
             Label empty = new Label("No historical rankings available yet.");
-            empty.setStyle("-fx-text-fill: #FFF3E0; -fx-font-size: 20; -fx-font-weight: bold;");
+            empty.getStyleClass().add("rk-empty");
             rankingList.getChildren().add(empty);
             return;
         }
@@ -51,25 +51,25 @@ public class IntergalacticRankingController {
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(10, 25, 10, 25));
         row.setPrefWidth(800);
-        row.setStyle("-fx-background-color: rgba(0,0,0,0.4); -fx-background-radius: 10;");
+        row.getStyleClass().add("rk-row");
 
         Label rankLabel = new Label("#" + rank);
-        rankLabel.setStyle("-fx-text-fill: #FFD700; -fx-font-size: 20; -fx-font-weight: bold; -fx-min-width: 50;");
+        rankLabel.getStyleClass().add("rk-rank");
 
         Label nickLabel = new Label(r.getPlayerNickname());
-        nickLabel.setStyle("-fx-text-fill: #FFF3E0; -fx-font-size: 18; -fx-font-weight: bold; -fx-min-width: 200;");
+        nickLabel.getStyleClass().add("rk-nick");
 
         Label scoreLabel = new Label(r.getFinalScore() + " PP");
-        scoreLabel.setStyle("-fx-text-fill: #FFD700; -fx-font-size: 18; -fx-font-weight: bold; -fx-min-width: 80;");
+        scoreLabel.getStyleClass().add("rk-score");
 
         Label playersLabel = new Label(r.getNumPlayers() + " players");
-        playersLabel.setStyle("-fx-text-fill: #FFF3E0; -fx-font-size: 16; -fx-min-width: 100;");
+        playersLabel.getStyleClass().add("rk-players");
 
         Label dateLabel = new Label(r.getGameDate().toLocalDate().toString());
-        dateLabel.setStyle("-fx-text-fill: #FFF3E0; -fx-font-size: 16; -fx-min-width: 110;");
+        dateLabel.getStyleClass().add("rk-date");
 
         Label gameIdLabel = new Label(r.getGameId());
-        gameIdLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 14; -fx-min-width: 80;");
+        gameIdLabel.getStyleClass().add("rk-gameid");
 
         row.getChildren().addAll(rankLabel, nickLabel, scoreLabel, playersLabel, dateLabel, gameIdLabel);
         return row;

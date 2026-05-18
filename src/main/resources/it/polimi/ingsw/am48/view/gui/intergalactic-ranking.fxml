@@ -27,7 +27,7 @@
                 </Label>
 
                 <ScrollPane fitToWidth="true" prefHeight="480.0" VBox.vgrow="ALWAYS"
-                            style="-fx-background: transparent; -fx-background-color: transparent;">
+                            styleClass="lb-scroll-pane">
                     <VBox fx:id="rankingList" alignment="TOP_CENTER" spacing="8.0" />
                 </ScrollPane>
 

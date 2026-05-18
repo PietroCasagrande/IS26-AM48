@@ -1,15 +1,19 @@
 package it.polimi.ingsw.am48.view.gui;
 
+import it.polimi.ingsw.am48.model.delta.EventInfo;
 import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ModelObserver;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
 import it.polimi.ingsw.am48.view.CardDataRegistry;
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +26,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.*;
 
 public class GameBoardController implements ModelObserver {
@@ -69,6 +77,10 @@ public class GameBoardController implements ModelObserver {
     // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
     private int currentEra = 0;
 
+    // Event detection from lower row changes
+    private List<String> prevLowerRowIds = new ArrayList<>();
+    private boolean showingEvents = false;
+
     // Summary card state variables
     private boolean isFrontInfoCard = true;
     private List<Image> summaryCard = new ArrayList<>();
@@ -105,6 +117,7 @@ public class GameBoardController implements ModelObserver {
 
         ClientGameState initialState = model.getState();
         if (initialState != null) {
+            prevLowerRowIds = new ArrayList<>(initialState.getLowerRowCardIds());
             updatePlayerInfo(initialState);
         }
     }
@@ -156,19 +169,34 @@ public class GameBoardController implements ModelObserver {
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
+            List<String> currentLower = state.getLowerRowCardIds();
+            List<String> removedEventCards = new ArrayList<>();
+            for (String id : prevLowerRowIds) {
+                if (!currentLower.contains(id) && id.startsWith("EV")) {
+                    removedEventCards.add(id);
+                }
+            }
+            prevLowerRowIds = new ArrayList<>(currentLower);
+
+            List<EventInfo> eventInfos = state.getEvents();
+            if (eventInfos == null) eventInfos = new ArrayList<>();
+            state.setEvents(new ArrayList<>());
+
+            if (!removedEventCards.isEmpty()) {
+                showEventNotifications(removedEventCards, eventInfos);
+            }
+
             boardCenterController.update(state);
             updateTokens(state);
             playerTribeController.updateTribe(state);
             updatePlayerInfo(state);
             updatePhaseInfo(state);
             playBoardSounds(state);
-            //TODO if (this.currentEra != era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
                 this.model.unregisterObserver(this);
                 return;
             }
-            // updatePlayerInfo(state);
         });
     }
 
@@ -210,6 +238,7 @@ public class GameBoardController implements ModelObserver {
                 String totemColor = player.getTotemColor();
                 Image avatarImg = (totemColor != null) ? imageCache.renderTotem(totemColor) : null;
                 wc.setPlayerData(player.getNickname(), avatarImg);
+                wc.setPlayerStats(player.getFood(), player.getPoints());
 
                 containers[slot].getChildren().add(widget);
                 containers[slot].setVisible(true);
@@ -224,57 +253,6 @@ public class GameBoardController implements ModelObserver {
             }
             slot++;
         }
-    }
-
-    private void openOpponentTribePopup(String nickname) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/it/polimi/ingsw/am48/view/gui/player-tribe-screen.fxml")
-            );
-            Parent root = loader.load();
-
-            PlayerTribeController tc = loader.getController();
-            tc.setModel(this.model);
-            tc.setServer(this.server);
-            tc.setDependencies(this.imageCache); // PlayerTribeController.setDependencies(ImageCache)
-            tc.initialize(this.server, this.model, nickname);
-            tc.updateTribe(this.model.getState());
-
-            Stage popup = new Stage();
-            popup.initModality(Modality.APPLICATION_MODAL);
-            popup.setTitle(nickname + "'s Tribe");
-            popup.setScene(new Scene(root));
-            popup.setResizable(true);
-            popup.setMinWidth(600);
-            popup.setMinHeight(400);
-            popup.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void setupPlayerTooltip(Label label, ClientPlayerState player) {
-        Tooltip tooltip = new Tooltip();
-        HBox container = new HBox(5);
-        container.setPadding(new Insets(10));
-        container.setStyle("-fx-background-color: #2b2b2b; -fx-border-color: #ffd700; -fx-border-width: 2;");
-
-        addCardsToContainer(container, player.getCharacterCardIds(), 80);
-        addCardsToContainer(container, player.getBuildingCardIds(), 80);
-
-        tooltip.setGraphic(container);
-        tooltip.setShowDelay(Duration.millis(100));
-        label.setTooltip(tooltip);
-    }
-
-    //TODO da togliere (ci sono ancora dipendenze)
-    private void addCardsToContainer(HBox container, List<String> ids, double height) {
-        /*for (String id : ids) {
-            ImageView img = createCardImageView(id, false);
-            img.setFitHeight(height);
-            container.getChildren().add(img);
-        }*/
     }
 
     // ─────────────────────── Phase / Turn Indicator ───────────────────────
@@ -357,6 +335,112 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
+    // ─────────────────────── Event notifications via lower-row detection ───────────────────────
+
+    private void showEventNotifications(List<String> cardIds, List<EventInfo> eventInfos) {
+        if (cardIds == null || cardIds.isEmpty() || showingEvents) return;
+        showingEvents = true;
+        showNextEvent(new ArrayList<>(cardIds), 0, eventInfos);
+    }
+
+    private void showNextEvent(List<String> cardIds, int index, List<EventInfo> eventInfos) {
+        if (index >= cardIds.size()) {
+            showingEvents = false;
+            return;
+        }
+
+        String cardId = cardIds.get(index);
+        String eventType = getEventTypeFromCardId(cardId);
+
+        Map<String, Integer> foodDeltas = new HashMap<>();
+        Map<String, Integer> pointsDeltas = new HashMap<>();
+        for (EventInfo ei : eventInfos) {
+            if (ei.getEventType().equals(eventType)) {
+                foodDeltas = ei.getFoodDeltas();
+                pointsDeltas = ei.getPointsDeltas();
+                break;
+            }
+        }
+
+        VBox notification = buildEventNotification(eventType, foodDeltas, pointsDeltas);
+
+        StackPane.setAlignment(notification, Pos.TOP_CENTER);
+        StackPane.setMargin(notification, new Insets(15, 0, 0, 0));
+        rootboard.getChildren().add(notification);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), notification);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(800), notification);
+        fadeOut.setFromValue(1);
+        fadeOut.setToValue(0);
+
+        fadeIn.setOnFinished(e -> {
+            PauseTransition pause = new PauseTransition(Duration.seconds(2.5));
+            pause.setOnFinished(ev -> fadeOut.play());
+            pause.play();
+        });
+
+        int nextIndex = index + 1;
+        fadeOut.setOnFinished(e -> {
+            rootboard.getChildren().remove(notification);
+            showNextEvent(cardIds, nextIndex, eventInfos);
+        });
+
+        fadeIn.play();
+    }
+
+    private VBox buildEventNotification(String eventType, Map<String, Integer> foodDeltas, Map<String, Integer> pointsDeltas) {
+        VBox notification = new VBox(6);
+        notification.setAlignment(Pos.CENTER);
+        notification.setMaxWidth(500);
+        notification.setMaxHeight(100);
+        notification.getStyleClass().add("event-notification");
+        notification.setOpacity(0);
+
+        String displayName = formatEventName(eventType);
+        Label titleLabel = new Label(displayName);
+        titleLabel.getStyleClass().add("event-title");
+
+        String myNick = SceneManager.getNickname();
+        int foodDelta = foodDeltas.getOrDefault(myNick, 0);
+        int pointsDelta = pointsDeltas.getOrDefault(myNick, 0);
+
+        HBox details = new HBox(20);
+        details.setAlignment(Pos.CENTER);
+
+        Label foodLabel = new Label("Food" + String.format("%+d", foodDelta));
+        foodLabel.getStyleClass().add("event-detail");
+        details.getChildren().add(foodLabel);
+
+        Label pointsLabel = new Label("PP " + String.format("%+d", pointsDelta));
+        pointsLabel.getStyleClass().add("event-detail");
+        details.getChildren().add(pointsLabel);
+
+        notification.getChildren().addAll(titleLabel, details);
+
+        return notification;
+    }
+
+    private String getEventTypeFromCardId(String cardId) {
+        if (cardId.startsWith("EVA-")) return "ARTIST_EVENT";
+        if (cardId.startsWith("EVH-")) return "HUNTER_EVENT";
+        if (cardId.startsWith("EVS-")) return "SHAMAN_EVENT";
+        if (cardId.startsWith("EVP-")) return "PICKER_EVENT";
+        return "UNKNOWN_EVENT";
+    }
+
+    private String formatEventName(String raw) {
+        return switch (raw) {
+            case "ARTIST_EVENT"  -> "Artist Event";
+            case "HUNTER_EVENT"  -> "Hunter Event";
+            case "SHAMAN_EVENT"  -> "Shaman Event";
+            case "PICKER_EVENT"  -> "Sustenance";
+            default              -> raw;
+        };
+    }
+
     // ======================================= SUMMARY CARD ANIMATION ========================================
 
     private void flipSummaryCardAnimation() {
@@ -377,7 +461,7 @@ public class GameBoardController implements ModelObserver {
                     this.imageCache.renderSummaryCard().getFirst() :
                     this.imageCache.renderSummaryCard().getLast());
 
-            // Animartion restart
+            // Animation restart
             flipIn.play();
         });
 
