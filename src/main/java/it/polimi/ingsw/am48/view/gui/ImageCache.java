@@ -101,7 +101,9 @@ public class ImageCache {
 
     public Image renderTotem(String color){
 
-        String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/" + color + "Totem.png";
+        String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/"
+                + color.toLowerCase()
+                + "Totem.png";
 
         if(!this.cache.containsKey(totemPath)) {
             try {

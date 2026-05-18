@@ -46,3 +46,6 @@ src/main/resources/db.properties
 ### Persistence snapshot on disk ###
 saves/
 target/test-saves/
+
+### .jar OS-specific ###
+*.jar
