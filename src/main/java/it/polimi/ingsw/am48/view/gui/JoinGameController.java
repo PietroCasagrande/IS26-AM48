@@ -119,6 +119,7 @@ public class JoinGameController implements ModelObserver {
                 server.joinGame(numPlayers, nickname);
                 joinBox.setDisable(true);
                 SceneManager.setNickname(nickname);
+                model.saveSession(nickname, numPlayers);
             } catch (Exception e){
                 System.out.println("Generic connection error occurred. Please try again.");
             }

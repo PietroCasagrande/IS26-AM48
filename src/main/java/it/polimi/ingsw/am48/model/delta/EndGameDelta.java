@@ -28,6 +28,7 @@ public class EndGameDelta extends GameDelta{
             model.updatePlayerPoints(nick, finalScores.get(nick));
         });
         model.setWinnerNickname(winnerNickname);
+        model.setGameEnded();
     };
 
     public Map<String, Integer> getFinalScores() {

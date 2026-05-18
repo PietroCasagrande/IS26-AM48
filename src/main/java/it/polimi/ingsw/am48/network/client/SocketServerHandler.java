@@ -74,13 +74,13 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
     }
 
     private void handleServerCrash() {
+        if(model.isGameEnded()) return;
         model.notifyError(buildCrashMessage());
         startReconnectWatcher();
     }
 
     private String buildCrashMessage() {
         String nickname = model.getSessionNickname();
-        int numPlayers = model.getSessionNumPlayers();
         if(nickname == null) {
             return "\n[!] Lost connection to server. Restart the client once the server comes back online.";
         }

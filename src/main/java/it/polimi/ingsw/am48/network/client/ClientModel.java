@@ -15,6 +15,9 @@ public class ClientModel {
     private String sessionNickname;
     private int sessionNumPlayers;
 
+    // fix for unwanted end game crash -> used in handleGameCrash
+    private boolean gameEnded = false;
+
     public void saveSession(String nickname, int numPlayers) {
         this.sessionNickname = nickname;
         this.sessionNumPlayers = numPlayers;
@@ -28,6 +31,7 @@ public class ClientModel {
 
     public void setInitialState(GameSnapshot snapshot) {
         this.state = ClientGameState.fromSnapshot(snapshot);
+        this.gameEnded = false;
         notifyObservers();
     }
 
@@ -115,4 +119,7 @@ public class ClientModel {
     public int getSessionNumPlayers() {
         return sessionNumPlayers;
     }
+
+    public void setGameEnded() { this.gameEnded = true; }
+    public boolean isGameEnded() { return gameEnded; }
 }

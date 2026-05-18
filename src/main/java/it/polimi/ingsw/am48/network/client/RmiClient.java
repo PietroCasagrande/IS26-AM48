@@ -106,8 +106,18 @@ public class RmiClient extends UnicastRemoteObject implements VirtualViewRmi, Vi
     }
 
     private void handleServerCrash() {
+        if(model.isGameEnded()) return;
         // Same message of SocketServerHandler - unified behaviour
-        model.notifyError("""
+        model.notifyError(buildCrashMessage());
+        startReconnectWatcher();
+    }
+
+    private String buildCrashMessage() {
+        String nickname = model.getSessionNickname();
+        if(nickname == null) {
+            return "\n[!] Lost connection to server. Restart the client once the server comes back online.";
+        }
+        return String.format("""
 
             ╔══════════════════════════════════════════════════════╗
             ║  [!] LOST SERVER CONNECTION                          ║
@@ -116,7 +126,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualViewRmi, Vi
             ║  We'll notify you once it'll be available.           ║
             ╚══════════════════════════════════════════════════════╝
             """);
-        startReconnectWatcher();
     }
 
     private void startReconnectWatcher() {
