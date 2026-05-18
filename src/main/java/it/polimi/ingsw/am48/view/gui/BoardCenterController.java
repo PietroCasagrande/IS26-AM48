@@ -13,8 +13,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.Cursor;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BoardCenterController {
 
@@ -34,6 +36,8 @@ public class BoardCenterController {
 
     // Relative totem positions on OfferTurnCard
     private Map<String, Integer> totemSlotRegistry = new HashMap<>();
+    private Map<Character, VBox> renderedOfferSlots = new HashMap<>();
+    private Map<String, StackPane> renderedOfferCards = new HashMap<>();
     private static final double[][] SLOT_CENTER_FRACTIONS = {
             {},
             {},
@@ -100,6 +104,9 @@ public class BoardCenterController {
         List<Character> sortedSlots = new ArrayList<>(offerCards);
         Collections.sort(sortedSlots);
 
+        offerTrackContainer.getChildren().clear();
+        renderedOfferSlots.clear();
+
         for(Character letter : sortedSlots){
             VBox slot = new VBox();
             slot.setUserData(letter);
@@ -108,7 +115,7 @@ public class BoardCenterController {
             slot.setPadding(new Insets(22, 0, 0, 0));
 
             String bgPath = "/it/polimi/ingsw/am48/view/gui/images/offerCards/offerCard" + letter + ".png";
-            Image bgImage = new Image(getClass().getResourceAsStream(bgPath));
+            Image bgImage = new Image(getClass().getResource(bgPath).toExternalForm(), true);
 
             if (!bgImage.isError()) {
                 BackgroundImage bgi = new BackgroundImage(
@@ -119,8 +126,10 @@ public class BoardCenterController {
                 slot.setBackground(new Background(bgi));
             }
 
-            slot.setOnMouseClicked(e -> handleOfferTrackClick(letter));
             offerTrackContainer.getChildren().add(slot);
+
+            // Saving OfferCard to enlighten up them during PLACE TOTEM phase
+            renderedOfferSlots.put(letter, slot);
         }
     }
 
@@ -129,6 +138,8 @@ public class BoardCenterController {
 
     // Update board (called whenever server updates its state)
     public void update(ClientGameState state) {
+        renderedOfferCards.clear();
+
         renderCards(upperCharacterRow, state.getUpperRowCardIds());
         renderCards(upperBuildingRow, state.getBuildingUpperIds());
         renderCards(lowerCharacterRow, state.getLowerRowCardIds());
@@ -136,6 +147,31 @@ public class BoardCenterController {
 
         updateTotemGrid(state);
         updateTotemTrack(state);
+
+        //TODO if solo se sono il giocatore corrente
+        if(state.getCurrentPhase().equals("PLACE_TOTEM")){
+            Map<Character, String> places = state.getOfferTrackPositions();
+            List<Character> freeSlot = places.entrySet().stream()
+                    .filter(entry -> entry.getValue() == null || entry.getValue().isEmpty())
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+            highlightInteractiveOfferCards(freeSlot);
+        } else {
+            highlightInteractiveOfferCards(null);
+        }
+
+        //TODO if solo se sono il giocatore corrente
+        if(state.getCurrentPhase().equals("PLAYER_OFFER")){
+            List <String> interactiveCardIds = new ArrayList<>();
+            interactiveCardIds.addAll(state.getUpperRowCardIds());
+            interactiveCardIds.addAll(state.getLowerRowCardIds());
+            interactiveCardIds = interactiveCardIds.stream()
+                    .filter(cardId -> !cardId.startsWith("EV"))
+                    .collect(Collectors.toList());
+            interactiveCardIds.addAll(state.getBuildingUpperIds());
+            interactiveCardIds.addAll(state.getBuildingLowerIds());
+            highlightInteractiveCards(interactiveCardIds);
+        }
     }
 
     // Update totem placement on offer turn card
@@ -285,18 +321,78 @@ public class BoardCenterController {
         rowContainer.getChildren().clear();
 
         for (String cardId : cardIds) {
-            // Usa sempre la cache!
             Image cardImage = imageCache.renderCards(cardId);
+
             if (cardImage != null) {
+                StackPane cardContainer = new StackPane();
+                cardContainer.setAlignment(Pos.CENTER);
+
                 ImageView imgView = new ImageView(cardImage);
                 imgView.fitHeightProperty().bind(rowContainer.heightProperty().multiply(0.8));
                 imgView.setPreserveRatio(true);
-                imgView.getStyleClass().add("card-hover");
 
-                // Click per pescare la carta
-                imgView.setOnMouseClicked(e -> handleCardClick(cardId));
+                // Aggiungiamo entrambe allo StackPane come prima
+                cardContainer.getChildren().add(imgView);
+                rowContainer.getChildren().add(cardContainer);
+                renderedOfferCards.put(cardId, cardContainer);
+            }
+        }
+    }
 
-                rowContainer.getChildren().add(imgView);
+    // =============================================== ENLIGHTEN IMAGES =====================================================
+
+    private void highlightInteractiveCards(List<String> interactiveCardIds) {
+
+        for (Map.Entry<String, StackPane> entry : renderedOfferCards.entrySet()) {
+            String cardId = entry.getKey();
+            StackPane container = entry.getValue();
+
+            ImageView imgView = (ImageView) container.getChildren().get(0);
+
+            if (interactiveCardIds != null && interactiveCardIds.contains(cardId)) {
+
+                container.setCursor(Cursor.HAND);
+                container.setOnMouseEntered(e -> {
+                    imgView.setStyle("-fx-effect: dropshadow(gaussian, #ffd700, 15, 0.6, 0, 0);");
+                });
+                container.setOnMouseExited(e -> {
+                    imgView.setStyle("");
+                });
+                container.setOnMouseClicked(e -> handleCardClick(cardId));
+
+            } else {
+                container.setCursor(Cursor.DEFAULT);
+                container.setOnMouseEntered(null);
+                container.setOnMouseExited(null);
+                container.setOnMouseClicked(null);
+                imgView.setStyle("");
+            }
+        }
+    }
+
+    private void highlightInteractiveOfferCards(List<Character> interactiveSlots) {
+
+        for (Map.Entry<Character, VBox> entry : renderedOfferSlots.entrySet()) {
+            Character letter = entry.getKey();
+            VBox slot = entry.getValue();
+
+            if (interactiveSlots != null && interactiveSlots.contains(letter)) {
+
+                slot.setCursor(Cursor.HAND);
+                slot.setOnMouseEntered(e -> {
+                    slot.setStyle("-fx-effect: dropshadow(gaussian, #00ffff, 15, 0.6, 0, 0);");
+                });
+                slot.setOnMouseExited(e -> {
+                    slot.setStyle("");
+                });
+                slot.setOnMouseClicked(e -> handleOfferTrackClick(letter));
+
+            } else {
+                slot.setCursor(Cursor.DEFAULT);
+                slot.setOnMouseEntered(null);
+                slot.setOnMouseExited(null);
+                slot.setOnMouseClicked(null);
+                slot.setStyle("");
             }
         }
     }
