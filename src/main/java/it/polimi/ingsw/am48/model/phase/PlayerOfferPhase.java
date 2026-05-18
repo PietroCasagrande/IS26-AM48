@@ -57,7 +57,7 @@ public class PlayerOfferPhase implements GamePhase {
         if(firstOffer.getLetterId() == 'A'){
             Player firstPlayer = actionOrder.getFirst();
             firstPlayer.updateFood(firstOffer.getFoodBonus());
-            handleTotemReturn(game, firstPlayer);
+            handleTotemReturn(game, firstOffer.returnTotem().orElse(null));
             currIdx++;
 
             return Optional.of(new OfferCardADelta(firstPlayer.getNickname(), firstPlayer.getFood()));
