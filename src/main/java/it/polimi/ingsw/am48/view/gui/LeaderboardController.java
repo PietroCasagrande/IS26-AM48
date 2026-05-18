@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.view.gui;
 
+import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.network.VirtualServer;
 import it.polimi.ingsw.am48.network.client.*;
 import javafx.application.Platform;
@@ -185,6 +186,15 @@ public class LeaderboardController implements ModelObserver {
 
     @FXML
     private void handleHistory() {
-        // TODO: da aspettare che pit aggiunga database
+        if (model == null || model.getState() == null) return;
+        List<GameResult> data = model.getState().getLeaderboard();
+        if (data == null || data.isEmpty()) return;
+
+        Object ctrl = SceneManager.changeScene("intergalactic-ranking.fxml");
+        if (ctrl instanceof IntergalacticRankingController irc) {
+            irc.setServer(server);
+            irc.setModel(model);
+            irc.setData(data);
+        }
     }
 }

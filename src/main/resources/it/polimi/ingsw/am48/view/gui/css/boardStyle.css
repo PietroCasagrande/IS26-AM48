@@ -95,6 +95,13 @@
     -fx-background-repeat: no-repeat;
 }
 
+#rootRanking {
+    -fx-background-image: url("../images/background-leaderboard.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
 .leaderboard-title {
     -fx-font-family: "Papyrus";
     -fx-font-size: 48px;
