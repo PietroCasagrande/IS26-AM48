@@ -499,7 +499,7 @@ class PersistenceTest {
                 new OfferTrackSnapshot(Map.of()),
                 new OfferTurnCardSnapshot(List.of("Alice", "Bob")),
                 List.of(1, 2, 3),
-                "FIRST",
+                0,
                 numPlayers
         );
     }

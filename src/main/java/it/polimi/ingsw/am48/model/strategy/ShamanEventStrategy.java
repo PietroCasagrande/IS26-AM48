@@ -6,8 +6,8 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 import java.util.List;
 
 public class ShamanEventStrategy extends CardStrategy {
-    private int ppToMin;    // salvati POSITIVI
-    private int ppToMax;
+    private int ppToMin;    // salvato NEGATIVO
+    private int ppToMax;    // salvato POSITIVO
 
     public ShamanEventStrategy(int ppToMin, int ppToMax, RegistrationAction registration) {
         super(registration);
@@ -39,7 +39,7 @@ public class ShamanEventStrategy extends CardStrategy {
             }
             // tutti i player con le stelle minime perdono punti (a meno che non si abbia l'edificio che rende immuni)
             if(p.getShamanStars() == minStars){
-                if(!p.isShamanSafe()) p.updatePoints(-ppToMin);
+                if(!p.isShamanSafe()) p.updatePoints(ppToMin);
             }
         });
     }

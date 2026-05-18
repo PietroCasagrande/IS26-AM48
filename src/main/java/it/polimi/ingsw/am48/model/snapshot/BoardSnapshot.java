@@ -18,7 +18,7 @@ public class BoardSnapshot implements Serializable {
     private final OfferTrackSnapshot offerTrack;
     private final OfferTurnCardSnapshot offerTurnCard;
     private final List <Integer> buildingsPerEra;
-    private final String currEra;
+    private final int currEra;
     private final int numPlayers;
 
 
@@ -33,7 +33,7 @@ public class BoardSnapshot implements Serializable {
             @JsonProperty("offerTrack") OfferTrackSnapshot offerTrack,
             @JsonProperty("offerTurnCard") OfferTurnCardSnapshot offerTurnCard,
             @JsonProperty("buildingsPerEra") List<Integer> buildingsPerEra,
-            @JsonProperty("currEra") String currEra,
+            @JsonProperty("currEra") int currEra,
             @JsonProperty("numPlayers") int numPlayers) {
         this.upperRowCardIds = upperRowCardIds;
         this.lowerRowCardIds = lowerRowCardIds;
@@ -57,6 +57,6 @@ public class BoardSnapshot implements Serializable {
     public OfferTrackSnapshot getOfferTrack() { return offerTrack; }
     public OfferTurnCardSnapshot getOfferTurnCard() { return offerTurnCard; }
     public List<Integer> getBuildingsPerEra() { return buildingsPerEra; }
-    public String getCurrEra() { return currEra; }
+    public int getCurrEra() { return currEra; }
     public int getNumPlayers() { return numPlayers; }
 }

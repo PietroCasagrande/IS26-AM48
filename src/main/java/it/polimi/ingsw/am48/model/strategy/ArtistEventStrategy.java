@@ -6,7 +6,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 public class ArtistEventStrategy extends CardStrategy {
     int threshold;
     int ppPerArtist;
-    int ppLost;   // salvato con segno POSITIVO, metto io il - in updatePoints
+    int ppLost;   // salvato con segno NEGATIVO
 
     public ArtistEventStrategy(int threshold, int ppPerArtist, int ppLost, RegistrationAction registration) {
         super(registration);
@@ -21,7 +21,7 @@ public class ArtistEventStrategy extends CardStrategy {
         playerContext.getPlayers().forEach(p -> {
                 int artistsCount = p.getTribe().countByType(CharacterType.ARTIST);
                 if(artistsCount >= this.threshold) p.updatePoints(ppPerArtist * artistsCount);
-                else p.updatePoints(-ppLost);
+                else p.updatePoints(ppLost);
             });
     }
 }

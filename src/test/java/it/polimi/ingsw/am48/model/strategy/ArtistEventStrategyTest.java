@@ -31,7 +31,7 @@ class ArtistEventStrategyTest {
         context.addPlayer(p2);
         context.addPlayer(p3);
 
-        strategy = new ArtistEventStrategy(2, 3, 1, null);
+        strategy = new ArtistEventStrategy(2, 3, -1, null);
     }
 
     private void addArtists(Player player, int count) {

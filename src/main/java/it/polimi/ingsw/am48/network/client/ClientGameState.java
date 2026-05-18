@@ -9,6 +9,7 @@ public class ClientGameState {
     private String gameId;
     private int currentTurn;
     private String currentPhase;
+    private int currEra;
     private List<String> upperRowCardIds;
     private List<String> lowerRowCardIds;
     private List<String> buildingUpperIds;
@@ -26,6 +27,7 @@ public class ClientGameState {
         state.gameId = snapshot.getGameId();
         state.currentTurn = snapshot.getCurrentTurn();
         state.currentPhase = snapshot.getPhase().getPhaseName();
+        state.currEra = snapshot.getBoard().getCurrEra();
 
         if(snapshot.getBoard() != null) {
             state.upperRowCardIds = new ArrayList<>(snapshot.getBoard().getUpperRowCardIds());
@@ -115,6 +117,8 @@ public class ClientGameState {
         this.currentTurn = newTurn;
     }
 
+    public void setEra(int newEra) { this.currEra = newEra; }
+
     public void setWinnerNickname(String winnerNickname) {
         this.winnerNickname = winnerNickname;
     }
@@ -126,6 +130,7 @@ public class ClientGameState {
     public String getGameId() { return gameId; }
     public int getCurrentTurn() { return currentTurn; }
     public String getCurrentPhase() { return currentPhase; }
+    public int getCurrEra() { return currEra; }
     public String getWinnerNickname() { return winnerNickname; }
     public List<String> getUpperRowCardIds() { return Collections.unmodifiableList(upperRowCardIds); }
     public List<String> getLowerRowCardIds() { return Collections.unmodifiableList(lowerRowCardIds); }

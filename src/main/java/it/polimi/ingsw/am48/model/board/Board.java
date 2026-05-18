@@ -115,6 +115,7 @@ public class Board {
     // getter (?)
     public Showed<Card> getTribeShowed() { return tribeShowed; }
     public Showed<BuildingCard> getBuildingShowed() { return buildingShowed; }
+    public int getCurrEraIndex() { return currEra.getIndex(); }
 
     // takes the order attribute from OfferTurnCard
     public List <Player> getPlaceOrder(){return turnOrder.getPlaceOrder(); }
@@ -148,7 +149,7 @@ public class Board {
                 track.toSnapshot(),
                 turnOrder.toSnapshot(),
                 buildingsPerEra,
-                currEra.name(),
+                currEra.getIndex(),
                 numPlayers
         );
     }
@@ -204,7 +205,7 @@ public class Board {
         }
         board.buildingShowed.addLowerCards(lowerBuildings);
 
-        board.currEra = Era.valueOf(snapshot.getCurrEra());
+        board.currEra = Era.values()[snapshot.getCurrEra()];
 
         return board;
     }

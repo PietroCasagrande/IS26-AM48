@@ -381,7 +381,7 @@ class ClientModelTest {
                 Map.of("alice", 4, "bob", 2),   // food dopo sustenance
                 Map.of("alice", 5, "bob", 3),   // prestige aggiornato
                 List.of("c20", "c21"), List.of("c22"),
-                List.of("b10"), List.of(), 8, "PlaceTotem"
+                List.of("b10"), List.of(), 8, "PlaceTotem", 3
         );
 
         // applica nell'ordine corretto
@@ -421,7 +421,7 @@ class ClientModelTest {
                 Map.of("alice", 0, "bob", 2),
                 Map.of("alice", 5, "bob", 0),
                 List.of("c20"), List.of("c21"),
-                List.of("b10"), List.of(), 8, "PlaceTotem"
+                List.of("b10"), List.of(), 8, "PlaceTotem", 3
         );
 
         model.applyDelta(pickDelta);
@@ -472,7 +472,7 @@ class ClientModelTest {
                 Map.of("alice", 4, "bob", 2),
                 Map.of("alice", 10, "bob", 7),
                 List.of(), List.of(),
-                List.of(), List.of(), 11, "EndGame"
+                List.of(), List.of(), 11, "EndGame", 3
         );
 
         EndGameDelta endGameDelta = new EndGameDelta(
@@ -501,7 +501,7 @@ class ClientModelTest {
         EndTurnDelta endTurnDelta = new EndTurnDelta(
                 Map.of("alice", 4, "bob", 2),
                 Map.of("alice", 10, "bob", 7), // punti dopo eventi
-                List.of(), List.of(), List.of(), List.of(), 11, "EndGame"
+                List.of(), List.of(), List.of(), List.of(), 11, "EndGame", 3
         );
 
         EndGameDelta endGameDelta = new EndGameDelta(
@@ -542,7 +542,7 @@ class ClientModelTest {
                 Map.of("alice", 4, "bob", 2),
                 Map.of("alice", 10, "bob", 7),
                 List.of("c20"), List.of(), List.of(), List.of(),
-                11, "EndGame"
+                11, "EndGame", 3
         );
 
         EndGameDelta endGameDelta = new EndGameDelta(

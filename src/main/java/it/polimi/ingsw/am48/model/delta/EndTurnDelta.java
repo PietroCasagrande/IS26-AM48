@@ -16,6 +16,7 @@ public class EndTurnDelta extends GameDelta {
     private final List<String> newLowerBuildingIds;
     private final int currentTurn;
     private final String currentPhase;
+    private final int currentEra;
 
     @JsonCreator
     public EndTurnDelta(
@@ -26,7 +27,8 @@ public class EndTurnDelta extends GameDelta {
             @JsonProperty("newUpperBuildingIds")List<String> newUpperBuildingIds,
             @JsonProperty("newLowerBuildingIds")List<String> newLowerBuildingIds,
             @JsonProperty("currentTurn") int currentTurn,
-            @JsonProperty("currentPhase") String currentPhase) {
+            @JsonProperty("currentPhase") String currentPhase,
+            @JsonProperty("currentEra") int currentEra) {
         this.updatedFood = updatedFood;
         this.updatedPrestige = updatedPrestige;
         this.newUpperTribeIds = newUpperTribeIds;
@@ -35,6 +37,7 @@ public class EndTurnDelta extends GameDelta {
         this.newLowerBuildingIds = newLowerBuildingIds;
         this.currentTurn = currentTurn;
         this.currentPhase = currentPhase;
+        this.currentEra = currentEra;
     }
 
     // EndTurn modifica showed e food e pp di tutti i giocatori
@@ -53,6 +56,7 @@ public class EndTurnDelta extends GameDelta {
 
         model.setPhase(currentPhase);
         model.incrementTurn(currentTurn);
+        model.setEra(currentEra);
     }
 
     // getter per tutti i campi

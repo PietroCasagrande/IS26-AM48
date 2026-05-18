@@ -92,6 +92,8 @@ public class ClientModel {
         state.incrementTurn(newTurn);
     }
 
+    public void setEra(int newEra) { state.setEra(newEra); }
+
     public void setWinnerNickname(String winnerNickname) { state.setWinnerNickname(winnerNickname); }
 
     public void setLeaderboard(List<GameResult> leaderboard) { state.setLeaderboard(leaderboard);}
