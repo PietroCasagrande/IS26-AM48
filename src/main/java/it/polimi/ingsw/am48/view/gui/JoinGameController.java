@@ -74,17 +74,13 @@ public class JoinGameController implements ModelObserver {
                      loadingLobby.setModel(model);
                  }
              }
-             else if("PLACE_TOTEM".equals(state.getCurrentPhase())) {
+             else {
                  GameBoardController gameBoardScene = (GameBoardController) SceneManager.changeScene("game-board.fxml");
                  if (gameBoardScene != null) {
                      gameBoardScene.setDependencies(SceneManager.getImageCache(), SceneManager.getSoundCache());
                      gameBoardScene.initialize(this.server, this.model);
                      model.unregisterObserver(this);
                  }
-             }
-             else {
-                 System.out.println("Generic error occurred. Cannot set in waiting for players state.");
-                 joinBox.setDisable(false);
              }
          });
      }
