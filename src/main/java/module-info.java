@@ -37,4 +37,5 @@ module it.polimi.ingsw.am48 {
     opens it.polimi.ingsw.am48.network.messages.notifications to com.fasterxml.jackson.databind;
     opens it.polimi.ingsw.am48.network.messages.commands to com.fasterxml.jackson.databind;
     opens it.polimi.ingsw.am48.view.gui to javafx.graphics, javafx.fxml;
+    opens it.polimi.ingsw.am48.model.game to com.fasterxml.jackson.databind;
 }
