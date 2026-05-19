@@ -1177,7 +1177,7 @@
       "era": "THIRD",
       "strategy": {
         "effect": "ExtraPickStrategy",
-        "notificator": "OnEndOfferPhase"
+        "notificator": "OnPick"
       },
       "foodCost": 9,
       "prestigePoints": 3

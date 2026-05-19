@@ -91,10 +91,11 @@ public class PlayerOfferPhase implements GamePhase {
         game.getPlayerContext().setCurrPlayer(player);
 
         // 2. Trova la tessera offerta del giocatore corrente
-        OfferCard currentOffer = game.getBoard().findTrackPosition(player);
+        OfferCard currentOffer = null;
 
         // 3. Valida il pick (solo nel turno normale, non nel extra)
         if (!extraPickActive) {
+             currentOffer = game.getBoard().findTrackPosition(player);
             validatePick(game.getBoard(), cardId, currentOffer);
         }
 
@@ -206,8 +207,8 @@ public class PlayerOfferPhase implements GamePhase {
     private void checkExtraPick(Game game) {
         // Notifica OnEndOfferPhase — questa chiamata attiva ExtraPickStrategy
         // che setta deservesExtraPick = true sul player che ha l'edificio
-        game.getNotificatorCenter().getEndOfferPhaseNotificator()
-                .notify(game.getPlayerContext());
+        /*game.getNotificatorCenter().getEndOfferPhaseNotificator()
+                .notify(game.getPlayerContext());*/
         // L'edificio "extra pick" è registrato su OnEndOfferPhaseNotificator
         // Controlliamo se c'è un listener
         // Se sì, settiamo extraPickActive ed extraPickPlayer
