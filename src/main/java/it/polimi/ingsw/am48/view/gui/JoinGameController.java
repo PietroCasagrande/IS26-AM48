@@ -122,6 +122,16 @@ public class JoinGameController implements ModelObserver {
         }
     }
 
+    @FXML
+    private void handleBackToMenu() {
+        model.unregisterObserver(this);
+        MesosMenuController menu = (MesosMenuController) SceneManager.changeScene("mesos-menu.fxml");
+        if (menu != null) {
+            menu.setServer(server);
+            menu.setModel(model);
+        }
+    }
+
     private void showErrorMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("LOGIN ERROR");

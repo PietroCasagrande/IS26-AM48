@@ -77,4 +77,5 @@ public class EndTurnDelta extends GameDelta {
     public int getCurrentTurn() { return currentTurn; }
     public String getCurrentPhase() { return currentPhase; }
     public List<EventInfo> getEvents() { return events; }
+    public int getCurrentEra() { return currentEra; }
 }
