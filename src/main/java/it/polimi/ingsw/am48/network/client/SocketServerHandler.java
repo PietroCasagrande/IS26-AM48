@@ -73,6 +73,17 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
         }
     }
 
+    @Override
+    public void disconnect() {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close(); // Rompe il ciclo while(readLine) e fa morire il thread pulitamente
+            }
+        } catch (IOException e) {
+            System.err.println("Errore durante la disconnessione: " + e.getMessage());
+        }
+    }
+
     private void handleServerCrash() {
         if(model.isGameEnded()) return;
         model.notifyError(buildCrashMessage());

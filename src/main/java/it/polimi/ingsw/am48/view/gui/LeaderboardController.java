@@ -1,10 +1,7 @@
 package it.polimi.ingsw.am48.view.gui;
 
 import it.polimi.ingsw.am48.network.VirtualServer;
-import it.polimi.ingsw.am48.network.client.ClientGameState;
-import it.polimi.ingsw.am48.network.client.ClientModel;
-import it.polimi.ingsw.am48.network.client.ClientPlayerState;
-import it.polimi.ingsw.am48.network.client.ModelObserver;
+import it.polimi.ingsw.am48.network.client.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -17,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -147,10 +145,32 @@ public class LeaderboardController implements ModelObserver {
 
     @FXML
     private void handleNewGame() {
-        Object ctrl = SceneManager.changeScene("join-game-screen.fxml");
-        if (ctrl instanceof JoinGameController jgc) {
-            jgc.setServer(server);
-            jgc.setModel(model);
+        try {
+            // Close socket and end thread
+            if (this.server instanceof SocketServerHandler) {
+                ((SocketServerHandler) this.server).disconnect();
+            }
+
+            // Create brand-new model
+            ClientModel newModel = new ClientModel();
+
+            // Create brand-new socket
+            SocketServerHandler newServer = new SocketServerHandler("localhost", 12345, newModel);
+
+            // Restart thread
+            Thread networkThread = new Thread(newServer);
+            networkThread.setDaemon(true);
+            networkThread.start();
+
+            // Change to join game scene
+            Object ctrl = SceneManager.changeScene("join-game-screen.fxml");
+            if (ctrl instanceof JoinGameController jgc) {
+                jgc.setServer(newServer);
+                jgc.setModel(newModel);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Impossibile connettersi al server per la nuova partita!");
         }
     }
 

@@ -27,6 +27,8 @@ public class ClientModel {
         observers.add(observer);
     }
 
+    public void unregisterObserver(ModelObserver observer) {observers.remove(observer);}
+
     // --- inizializzazione ---
 
     public void setInitialState(GameSnapshot snapshot) {
