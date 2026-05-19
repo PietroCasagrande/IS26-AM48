@@ -45,21 +45,29 @@ public class GameManager implements ModelInterface{
 
     // ModelInterface implementation: joinGame, placeTotem and takeCard methods
     @Override
-    public JoinResult joinGame(int numPlayers, String nickname){
-
-        // controlliamo se questa join è una riconnessione post-crash o meno
+    public JoinResult joinGame(int numPlayers, String nickname) {
         synchronized (this) {
             if (playerToGame.containsKey(nickname)) {
                 Game game = playerToGame.get(nickname);
+
                 if (crashedGames.containsValue(game)) {
                     return handleReconnect(nickname, game);
                 }
-                throw new InvalidActionException("Nickname già in uso: " + nickname);
+
+                if (game.getCurrentTurn() > 10) {
+                    activeGames.remove(game.getGameId());
+                    game.getPlayerContext().getPlayers().forEach(p -> {
+                        playerToGame.remove(p.getNickname());
+                    });
+                } else {
+                    throw new InvalidActionException("Nickname già in uso: " + nickname);
+                }
             }
         }
+
         synchronized (this) {
             if(numPlayers < 2 || numPlayers > 5) {
-                throw new IllegalArgumentException("Invalid number of players: must be between 2 and 5");
+                throw new IllegalArgumentException("Invalid number of players");
             }
             if(playerToGame.containsKey(nickname)){
                 throw new InvalidActionException("Nickname già in uso: " + nickname);
@@ -70,20 +78,24 @@ public class GameManager implements ModelInterface{
         synchronized (this) {
             game = findAvailableGame(numPlayers).orElseGet(() -> createGame(numPlayers));
         }
+
         synchronized (game) {
             game.addPlayer(nickname);
             synchronized (this) { playerToGame.put(nickname, game); }
-
             boolean started = game.isFull();
             if (started) {
                 synchronized (this) {
                     waitingGames.remove(numPlayers);
                     activeGames.put(game.getGameId(), game);
                 }
-                gameRepository.save(game.getGameId(), game.toSnapshot());
+                if(gameRepository != null) {
+                    gameRepository.save(game.getGameId(), game.toSnapshot());
+                }
             }
+
             GameSnapshot snapshot = game.toSnapshot();
-            return new JoinResult(snapshot, started);
+            JoinResult result = new JoinResult(snapshot, started);
+            return result;
         }
     }
 

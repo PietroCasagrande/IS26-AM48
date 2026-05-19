@@ -157,6 +157,7 @@ public class GameBoardController implements ModelObserver {
             //TODO if (this.currentEra != era) updateDeckEra(state.getCurrentEra);
             if (state.getWinnerNickname() != null) {
                 transitionToLeaderboard();
+                this.model.unregisterObserver(this);
                 return;
             }
         });

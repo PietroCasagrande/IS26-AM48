@@ -36,8 +36,6 @@ public class JoinGameController implements ModelObserver {
     private VirtualServer server;
     private ClientModel model;
 
-    private boolean hasGameStarted = false;
-
     public void setServer(VirtualServer server) {
         this.server = server;
     }
@@ -68,7 +66,6 @@ public class JoinGameController implements ModelObserver {
 
      @Override
      public void onStateUpdated(ClientGameState state){
-        if(hasGameStarted) return;
         Platform.runLater(() -> {
              if ("WAITING_FOR_PLAYERS".equals(state.getCurrentPhase())) {
                  LoadingLobbyController loadingLobby = (LoadingLobbyController) SceneManager.changeScene("loading-lobby.fxml");
@@ -82,18 +79,18 @@ public class JoinGameController implements ModelObserver {
                  if (gameBoardScene != null) {
                      gameBoardScene.setDependencies(SceneManager.getImageCache(), SceneManager.getSoundCache());
                      gameBoardScene.initialize(this.server, this.model);
-                     hasGameStarted = true;
+                     model.unregisterObserver(this);
                  }
              }
              else {
                  System.out.println("Generic error occurred. Cannot set in waiting for players state.");
+                 joinBox.setDisable(false);
              }
          });
      }
 
     @Override
     public void onError(String message) {
-        if(hasGameStarted) return;
         Platform.runLater(() -> {
             joinBox.setDisable(false);
             nicknameTextField.setStyle("-fx-border-color: #ff4444; -fx-border-width: 3px;");
@@ -115,13 +112,14 @@ public class JoinGameController implements ModelObserver {
             String nickname = nicknameTextField.getText();
 
             // Calls joinGame method
-            try{
+            try {
                 server.joinGame(numPlayers, nickname);
                 joinBox.setDisable(true);
                 SceneManager.setNickname(nickname);
                 model.saveSession(nickname, numPlayers);
-            } catch (Exception e){
-                System.out.println("Generic connection error occurred. Please try again.");
+            } catch (Exception e) {
+                System.out.println("Generic connection error occurred.");
+                joinBox.setDisable(false);
             }
         }
     }
