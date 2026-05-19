@@ -6,6 +6,7 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ModelObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -92,6 +93,7 @@ public class JoinGameController implements ModelObserver {
             nicknameTextField.setStyle("-fx-border-color: #ff4444; -fx-border-width: 3px;");
 
             // Shows error message as an alert
+            SceneManager.getSoundCache().playFAAAAH();
             showErrorMessage(message);
 
             // Focus on nickname textfield to rewrite user's nickname

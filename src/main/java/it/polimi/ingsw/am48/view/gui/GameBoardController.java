@@ -331,6 +331,7 @@ public class GameBoardController implements ModelObserver {
 
     @Override public void onError(String message) {
         Platform.runLater(() -> {
+            this.soundCache.playFAAAAH();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("GAME ERROR");
             alert.setHeaderText(null);
