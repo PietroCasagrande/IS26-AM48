@@ -71,8 +71,8 @@
                                     <Label fx:id="flipIcon" text="🔄" visible="false" style="-fx-font-size: 50px; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 5, 0.7, 0, 0);" />
 
                                 </StackPane>
-                                <Button fx:id="bottone_avanti" mnemonicParsing="false"
-                                        text="AVANTI" prefWidth="180.0" styleClass="button-menu-fire" />
+                                <Button fx:id="skipButton" mnemonicParsing="false"
+                                        text="SKIP" prefWidth="180.0" styleClass="button-menu-fire" onAction="#handleSkipAction"/>
                             </children>
                         </VBox>
                     </children>

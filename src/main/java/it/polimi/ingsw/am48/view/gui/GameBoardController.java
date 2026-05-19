@@ -41,7 +41,7 @@ public class GameBoardController implements ModelObserver {
     @FXML private PlayerTribeController playerTribeController;
     @FXML private Label prestigeCount;
     @FXML private Label foodCount;
-    @FXML private Button bottone_avanti;
+    @FXML private Button skipButton;
     @FXML private StackPane summaryCardContainer;
     @FXML private ImageView summaryCardImage;
     @FXML private Label flipIcon;
@@ -100,6 +100,9 @@ public class GameBoardController implements ModelObserver {
         setupHandBox();
         setupCenter();
         setupSummaryCard();
+        skipButton.setVisible(false);
+        skipButton.setDisable(true);
+
         if (model.getState() != null) {
             Platform.runLater(() -> {
                 boardCenterController.update(model.getState());
@@ -190,6 +193,7 @@ public class GameBoardController implements ModelObserver {
 
             // cambia l'era sul tabellone centrale
             updateDeckEra(state.getCurrEra());
+            checkExtraPick(state);
 
             boardCenterController.update(state);
             updateTokens(state);
@@ -208,6 +212,42 @@ public class GameBoardController implements ModelObserver {
     private void updateDeckEra(int era) {
         this.currentEra = era + 1;
         this.boardCenterController.changeEra(this.currentEra);
+    }
+
+    @FXML
+    private void handleSkipAction() {
+        String myNickname = this.myNickname;
+        try {
+            server.takeCard(myNickname, "skip");
+            skipButton.setDisable(true);
+
+        } catch (Exception e) {
+            System.err.println("Errore di connessione durante lo skip.");
+        }
+    }
+
+    private void checkExtraPick(ClientGameState state) {
+        String myNickname = SceneManager.getNickname();
+
+        // 1. Controlla se possiedi l'edificio BLD-21
+        // (Adatta questo metodo in base a come è fatto il tuo ClientGameState)
+        boolean hasSkipBuilding = state.getPlayer(myNickname).getBuildingCardIds().contains("BLD-21");
+
+        // 2. Controlla se la fase è corretta (es. fase in cui si pescano le carte)
+        boolean isCorrectPhase = "PLAYER_OFFER".equals(state.getCurrentPhase());
+
+        // 3. Controlla se è il TUO turno
+        boolean isMyTurn = state.getOfferTrackPositions().values().stream()
+                .allMatch(valore -> "".equals(valore));;
+
+        // Se tutte le stelle si allineano, mostra il bottone!
+        if (hasSkipBuilding && isCorrectPhase && isMyTurn) {
+            skipButton.setVisible(true);
+            skipButton.setDisable(false);
+        } else {
+            skipButton.setVisible(false);
+            skipButton.setDisable(true);
+        }
     }
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
