@@ -76,6 +76,15 @@ public class PlayerOfferPhase implements GamePhase {
             if (!player.equals(extraPickPlayer)) {
                 throw new InvalidActionException("Non è il tuo turno.");
             }
+            else if(cardId.equals("skip")){
+                extraPickActive = false;
+                extraPickPlayer = null;
+                // Transizione a EndTurnPhase
+                EndTurnPhase endPhase = new EndTurnPhase();
+                game.setPhase(endPhase);
+                deltas.addAll(endPhase.endTurn(game));
+                return deltas;
+            }
             // Può prendere solo dalla fila superiore
             if (!game.getBoard().isCardTop(cardId)) {
                 throw new InvalidActionException("Puoi prendere solo dalla fila superiore.");
