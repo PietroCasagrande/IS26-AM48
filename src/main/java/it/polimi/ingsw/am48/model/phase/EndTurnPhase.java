@@ -2,6 +2,7 @@ package it.polimi.ingsw.am48.model.phase;
 
 import it.polimi.ingsw.am48.model.card.Card;
 import it.polimi.ingsw.am48.model.delta.EndTurnDelta;
+import it.polimi.ingsw.am48.model.delta.EventInfo;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.enums.EventType;
 import it.polimi.ingsw.am48.model.game.Game;
@@ -17,10 +18,12 @@ public class EndTurnPhase implements GamePhase {
 
     public List<GameDelta> endTurn(Game game){
         List<GameDelta> deltas = new ArrayList<>();
+        List<EventInfo> eventInfos = new ArrayList<>();
 
         // resolve events
         for(EventType e : EventType.values()){
             game.getNotificatorCenter().getEventNotificator().notify(e, game.getPlayerContext());
+            eventInfos.add(new EventInfo(e.name()));
         }
 
         // board update after solving events
@@ -33,18 +36,17 @@ public class EndTurnPhase implements GamePhase {
         if(game.getCurrentTurn() > 10){
             EndGamePhase endGamePhase = new EndGamePhase();
             game.setPhase(endGamePhase);
-            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "END_GAME", game.getBoard().getCurrEraIndex()));
+            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "END_GAME", eventInfos, game.getBoard().getCurrEraIndex()));
             deltas.add(endGamePhase.resolveEndGame(game));
         } else {
             game.setPhase(new PlaceTotemPhase());
-            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "PLACE_TOTEM",  game.getBoard().getCurrEraIndex()));
+            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "PLACE_TOTEM", eventInfos, game.getBoard().getCurrEraIndex()));
         }
 
         return deltas;
     }
 
-
-    private EndTurnDelta buildEndTurnDelta(Game game, int newTurn, String newPhase, int newEra) {
+    private EndTurnDelta buildEndTurnDelta(Game game, int newTurn, String newPhase,List<EventInfo> eventInfos, int newEra) {
         // Updated resources for each player (after events)
         Map<String, Integer> updatedFood = new HashMap<>();
         Map<String, Integer> updatedPrestige = new HashMap<>();
@@ -72,6 +74,7 @@ public class EndTurnPhase implements GamePhase {
                 newBuildingLowerIds,
                 newTurn,
                 newPhase,
+                eventInfos,
                 newEra
         );
     }

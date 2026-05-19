@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.network.client;
 
+import it.polimi.ingsw.am48.model.delta.EventInfo;
 import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 
@@ -19,6 +20,7 @@ public class ClientGameState {
     private List<String> offerTurnCardOrder;            // ordine turno attuale
     private String winnerNickname;
     private List<GameResult> leaderboard = new ArrayList<>();
+    private List<EventInfo> lastEvents = new ArrayList<>();
 
     // --- costruzione da snapshot ---
 
@@ -125,6 +127,9 @@ public class ClientGameState {
     }
 
     public void setLeaderboard(List<GameResult> leaderboard) {this.leaderboard = leaderboard; }
+
+    public void setEvents(List<EventInfo> events) { this.lastEvents = new ArrayList<>(events); }
+    public List<EventInfo> getEvents() { return lastEvents; }
 
     // --- getters per la view ---
 

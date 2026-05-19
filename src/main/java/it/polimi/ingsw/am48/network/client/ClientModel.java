@@ -1,5 +1,6 @@
 package it.polimi.ingsw.am48.network.client;
 
+import it.polimi.ingsw.am48.model.delta.EventInfo;
 import it.polimi.ingsw.am48.model.delta.GameDelta;
 import it.polimi.ingsw.am48.model.game.GameResult;
 import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
@@ -103,6 +104,8 @@ public class ClientModel {
     public void setWinnerNickname(String winnerNickname) { state.setWinnerNickname(winnerNickname); }
 
     public void setLeaderboard(List<GameResult> leaderboard) { state.setLeaderboard(leaderboard);}
+
+    public void setEvents(List<EventInfo> events) { state.setEvents(events); }
 
     // --- getter per la view ---
 

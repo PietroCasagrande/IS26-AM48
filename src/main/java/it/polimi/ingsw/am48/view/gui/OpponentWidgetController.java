@@ -18,6 +18,8 @@ import java.io.IOException;
 public class OpponentWidgetController {
     @FXML private ImageView avatar;
     @FXML private Label labelNickname;
+    @FXML private Label foodCount;
+    @FXML private Label prestigeCount;
     private CardDataRegistry cardDataRegistry;
     private ClientModel model;
     private VirtualServer server;
@@ -35,6 +37,11 @@ public class OpponentWidgetController {
     public void setPlayerData(String nickname, Image avatarImage) {
         labelNickname.setText(nickname);
         avatar.setImage(avatarImage);
+    }
+
+    public void setPlayerStats(int food, int prestige) {
+        foodCount.setText(String.valueOf(food));
+        prestigeCount.setText(String.valueOf(prestige));
     }
 
     private void openPlayerTribePopup(String nickname) {

@@ -95,10 +95,193 @@
     -fx-background-repeat: no-repeat;
 }
 
+#rootRanking {
+    -fx-background-image: url("../images/background-leaderboard.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+/* ======================================================================================== */
+/*                                      PHASE INDICATOR                                      */
+/* ======================================================================================== */
+
+.phase-indicator {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-radius: 15px;
+    -fx-padding: 8px 20px;
+    -fx-border-color: rgba(255, 215, 0, 0.3);
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+}
+
+.phase-indicator .label {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* --- Opponent stats --- */
+
+.opponent-stat-food {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+.opponent-stat-pp {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+/* ======================================================================================== */
+/*                                      EVENT NOTIFICATIONS                                  */
+/* ======================================================================================== */
+
+.event-notification {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-background-radius: 15;
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+    -fx-padding: 12 25 12 25;
+}
+
+.event-title {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-font-family: "Papyrus";
+}
+
+.event-detail {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
 .leaderboard-title {
     -fx-font-family: "Papyrus";
     -fx-font-size: 48px;
     -fx-text-fill: #FFD700;
     -fx-font-weight: bold;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+/* --- Leaderboard (end-of-game) --- */
+
+.lb-winner-label {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+}
+
+.lb-winner-name {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 28;
+    -fx-font-weight: bold;
+}
+
+.lb-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.lb-row {
+    -fx-background-color: rgba(0,0,0,0.4);
+    -fx-background-radius: 10;
+}
+
+.lb-row-winner {
+    -fx-background-color: rgba(0,0,0,0.6);
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.lb-row-self {
+    -fx-background-color: rgba(255,215,0,0.12);
+}
+
+.lb-rank {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+    -fx-min-width: 55;
+}
+
+.lb-nick {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-min-width: 200;
+}
+
+.lb-nick-winner {
+    -fx-text-fill: #FFD700;
+}
+
+.lb-points {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-min-width: 80;
+}
+
+.lb-food {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 18;
+}
+
+/* --- Ranking (Intergalactic / historical) --- */
+
+.rk-row {
+    -fx-background-color: rgba(0,0,0,0.4);
+    -fx-background-radius: 10;
+}
+
+.rk-rank {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-min-width: 50;
+}
+
+.rk-nick {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-min-width: 200;
+}
+
+.rk-score {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-min-width: 80;
+}
+
+.rk-players {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 16;
+    -fx-min-width: 100;
+}
+
+.rk-date {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 16;
+    -fx-min-width: 110;
+}
+
+.rk-gameid {
+    -fx-text-fill: #999;
+    -fx-font-size: 14;
+    -fx-min-width: 80;
+}
+
+.rk-empty {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
 }

@@ -1,6 +1,7 @@
 // EndTurnDelta.java
 package it.polimi.ingsw.am48.model.delta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -16,6 +17,7 @@ public class EndTurnDelta extends GameDelta {
     private final List<String> newLowerBuildingIds;
     private final int currentTurn;
     private final String currentPhase;
+    private final List<EventInfo> events;
     private final int currentEra;
 
     @JsonCreator
@@ -28,6 +30,7 @@ public class EndTurnDelta extends GameDelta {
             @JsonProperty("newLowerBuildingIds")List<String> newLowerBuildingIds,
             @JsonProperty("currentTurn") int currentTurn,
             @JsonProperty("currentPhase") String currentPhase,
+            @JsonProperty("events") List<EventInfo> events,
             @JsonProperty("currentEra") int currentEra) {
         this.updatedFood = updatedFood;
         this.updatedPrestige = updatedPrestige;
@@ -37,6 +40,7 @@ public class EndTurnDelta extends GameDelta {
         this.newLowerBuildingIds = newLowerBuildingIds;
         this.currentTurn = currentTurn;
         this.currentPhase = currentPhase;
+        this.events = events != null ? events : new ArrayList<>();
         this.currentEra = currentEra;
     }
 
@@ -56,6 +60,10 @@ public class EndTurnDelta extends GameDelta {
 
         model.setPhase(currentPhase);
         model.incrementTurn(currentTurn);
+
+        if (!events.isEmpty()) {
+            model.setEvents(events);
+        }
         model.setEra(currentEra);
     }
 
@@ -68,4 +76,5 @@ public class EndTurnDelta extends GameDelta {
     public List<String> getNewLowerBuildingIds() { return newLowerBuildingIds; }
     public int getCurrentTurn() { return currentTurn; }
     public String getCurrentPhase() { return currentPhase; }
+    public List<EventInfo> getEvents() { return events; }
 }
