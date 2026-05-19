@@ -129,12 +129,14 @@
                     </BorderPane.margin>
 
                     <!-- Phase / Turn indicator -->
-                    <HBox fx:id="phaseIndicator" alignment="CENTER" spacing="15.0"
-                          styleClass="phase-indicator">
+                    <HBox fx:id="phaseIndicator" alignment="CENTER" spacing="15.0" styleClass="phase-indicator">
                         <Label fx:id="phaseLabel" text="Phase: --" />
                         <Label fx:id="turnLabel" text="Turn: --" />
-                        <ImageView fx:id="turnTotem" fitHeight="32.0" fitWidth="32.0"
-                                   preserveRatio="true" />
+
+                        <Label fx:id="turnNumberLabel" text="Round: --" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Label fx:id="eraLabel" text="Era: --" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+
+                        <ImageView fx:id="turnTotem" fitHeight="32.0" fitWidth="32.0" preserveRatio="true" />
                     </HBox>
 
                     <!-- QUI INCLUDI TUTTA L'AREA CENTRALE! -->

@@ -20,24 +20,10 @@ public class EndTurnPhase implements GamePhase {
         List<GameDelta> deltas = new ArrayList<>();
         List<EventInfo> eventInfos = new ArrayList<>();
 
-        // resolve events, capturing deltas for each
+        // resolve events
         for(EventType e : EventType.values()){
-            Map<String, Integer> foodBefore = snapshotFood(game);
-            Map<String, Integer> pointsBefore = snapshotPoints(game);
-
             game.getNotificatorCenter().getEventNotificator().notify(e, game.getPlayerContext());
-
-            Map<String, Integer> foodAfter = snapshotFood(game);
-            Map<String, Integer> pointsAfter = snapshotPoints(game);
-
-            Map<String, Integer> foodDeltas = new HashMap<>();
-            Map<String, Integer> pointsDeltas = new HashMap<>();
-            for (String nick : foodAfter.keySet()) {
-                foodDeltas.put(nick, foodAfter.get(nick) - foodBefore.get(nick));
-                pointsDeltas.put(nick, pointsAfter.get(nick) - pointsBefore.get(nick));
-            }
-
-            eventInfos.add(new EventInfo(e.name(), foodDeltas, pointsDeltas));
+            eventInfos.add(new EventInfo(e.name()));
         }
 
         // board update after solving events
@@ -50,33 +36,17 @@ public class EndTurnPhase implements GamePhase {
         if(game.getCurrentTurn() > 10){
             EndGamePhase endGamePhase = new EndGamePhase();
             game.setPhase(endGamePhase);
-            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "END_GAME", eventInfos));
-            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "END_GAME", game.getBoard().getCurrEraIndex()));
+            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "END_GAME", eventInfos, game.getBoard().getCurrEraIndex()));
             deltas.add(endGamePhase.resolveEndGame(game));
         } else {
             game.setPhase(new PlaceTotemPhase());
-            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "PLACE_TOTEM", eventInfos));
-            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "PLACE_TOTEM",  game.getBoard().getCurrEraIndex()));
+            deltas.add(buildEndTurnDelta(game, game.getCurrentTurn(), "PLACE_TOTEM", eventInfos, game.getBoard().getCurrEraIndex()));
         }
 
         return deltas;
     }
 
-    private Map<String, Integer> snapshotFood(Game game) {
-        Map<String, Integer> map = new HashMap<>();
-        game.getPlayerContext().getPlayers().forEach(p ->
-                map.put(p.getNickname(), p.getFood()));
-        return map;
-    }
-
-    private Map<String, Integer> snapshotPoints(Game game) {
-        Map<String, Integer> map = new HashMap<>();
-        game.getPlayerContext().getPlayers().forEach(p ->
-                map.put(p.getNickname(), p.getPoints()));
-        return map;
-    }
-
-    private EndTurnDelta buildEndTurnDelta(Game game, int newTurn, String newPhase, int newEra) {
+    private EndTurnDelta buildEndTurnDelta(Game game, int newTurn, String newPhase,List<EventInfo> eventInfos, int newEra) {
         // Updated resources for each player (after events)
         Map<String, Integer> updatedFood = new HashMap<>();
         Map<String, Integer> updatedPrestige = new HashMap<>();
@@ -104,8 +74,7 @@ public class EndTurnPhase implements GamePhase {
                 newBuildingLowerIds,
                 newTurn,
                 newPhase,
-                eventInfos
-                newPhase,
+                eventInfos,
                 newEra
         );
     }

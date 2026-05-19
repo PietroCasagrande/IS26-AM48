@@ -27,7 +27,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.*;
@@ -57,11 +56,13 @@ public class GameBoardController implements ModelObserver {
     @FXML private VBox center;
     @FXML private BoardCenterController boardCenterController;
 
-    // Phase / Turn indicator
+    // Phase / Turn indicator /Era indicator
     @FXML private HBox phaseIndicator;
     @FXML private Label phaseLabel;
     @FXML private Label turnLabel;
     @FXML private ImageView turnTotem;
+    @FXML private Label turnNumberLabel;
+    @FXML private Label eraLabel;
 
     private VirtualServer server;
     private ClientModel model;
@@ -106,6 +107,7 @@ public class GameBoardController implements ModelObserver {
                 playerTribeController.updateTribe(model.getState());
                 updatePlayerInfo(model.getState());
                 updatePhaseInfo(model.getState());
+                updateDeckEra(model.getState().getCurrEra());
             });
         }
 
@@ -186,6 +188,9 @@ public class GameBoardController implements ModelObserver {
                 showEventNotifications(removedEventCards, eventInfos);
             }
 
+            // cambia l'era sul tabellone centrale
+            updateDeckEra(state.getCurrEra());
+
             boardCenterController.update(state);
             updateTokens(state);
             playerTribeController.updateTribe(state);
@@ -201,7 +206,7 @@ public class GameBoardController implements ModelObserver {
     }
 
     private void updateDeckEra(int era) {
-        this.currentEra = era;
+        this.currentEra = era + 1;
         this.boardCenterController.changeEra(this.currentEra);
     }
 
@@ -260,6 +265,14 @@ public class GameBoardController implements ModelObserver {
     private void updatePhaseInfo(ClientGameState state) {
         String rawPhase = state.getCurrentPhase();
         phaseLabel.setText("Phase: " + formatPhase(rawPhase));
+
+        // AGGIORNAMENTO NUMERO TURNO ED ERA CORRENTE
+        if (turnNumberLabel != null) {
+            turnNumberLabel.setText("Round: " + state.getCurrentTurn());
+        }
+        if (eraLabel != null) {
+            eraLabel.setText("Era: " + (state.getCurrEra() + 1));
+        }
 
         String currentPlayer = getCurrentPlayer(state);
         if (currentPlayer != null) {
@@ -352,17 +365,7 @@ public class GameBoardController implements ModelObserver {
         String cardId = cardIds.get(index);
         String eventType = getEventTypeFromCardId(cardId);
 
-        Map<String, Integer> foodDeltas = new HashMap<>();
-        Map<String, Integer> pointsDeltas = new HashMap<>();
-        for (EventInfo ei : eventInfos) {
-            if (ei.getEventType().equals(eventType)) {
-                foodDeltas = ei.getFoodDeltas();
-                pointsDeltas = ei.getPointsDeltas();
-                break;
-            }
-        }
-
-        VBox notification = buildEventNotification(eventType, foodDeltas, pointsDeltas);
+        VBox notification = buildEventNotification(eventType);
 
         StackPane.setAlignment(notification, Pos.TOP_CENTER);
         StackPane.setMargin(notification, new Insets(15, 0, 0, 0));
@@ -391,7 +394,7 @@ public class GameBoardController implements ModelObserver {
         fadeIn.play();
     }
 
-    private VBox buildEventNotification(String eventType, Map<String, Integer> foodDeltas, Map<String, Integer> pointsDeltas) {
+    private VBox buildEventNotification(String eventType) {
         VBox notification = new VBox(6);
         notification.setAlignment(Pos.CENTER);
         notification.setMaxWidth(500);
@@ -403,22 +406,7 @@ public class GameBoardController implements ModelObserver {
         Label titleLabel = new Label(displayName);
         titleLabel.getStyleClass().add("event-title");
 
-        String myNick = SceneManager.getNickname();
-        int foodDelta = foodDeltas.getOrDefault(myNick, 0);
-        int pointsDelta = pointsDeltas.getOrDefault(myNick, 0);
-
-        HBox details = new HBox(20);
-        details.setAlignment(Pos.CENTER);
-
-        Label foodLabel = new Label("Food" + String.format("%+d", foodDelta));
-        foodLabel.getStyleClass().add("event-detail");
-        details.getChildren().add(foodLabel);
-
-        Label pointsLabel = new Label("PP " + String.format("%+d", pointsDelta));
-        pointsLabel.getStyleClass().add("event-detail");
-        details.getChildren().add(pointsLabel);
-
-        notification.getChildren().addAll(titleLabel, details);
+        notification.getChildren().add(titleLabel);
 
         return notification;
     }

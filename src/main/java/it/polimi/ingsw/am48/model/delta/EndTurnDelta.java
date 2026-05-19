@@ -30,8 +30,7 @@ public class EndTurnDelta extends GameDelta {
             @JsonProperty("newLowerBuildingIds")List<String> newLowerBuildingIds,
             @JsonProperty("currentTurn") int currentTurn,
             @JsonProperty("currentPhase") String currentPhase,
-            @JsonProperty("events") List<EventInfo> events) {
-            @JsonProperty("currentPhase") String currentPhase,
+            @JsonProperty("events") List<EventInfo> events,
             @JsonProperty("currentEra") int currentEra) {
         this.updatedFood = updatedFood;
         this.updatedPrestige = updatedPrestige;
