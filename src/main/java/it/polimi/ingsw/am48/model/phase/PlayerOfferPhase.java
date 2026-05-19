@@ -125,8 +125,8 @@ public class PlayerOfferPhase implements GamePhase {
 
         // 7. Se siamo nel extra pick, abbiamo finito
         if (extraPickActive) {
-//            extraPickActive = false;
-//            extraPickPlayer = null;
+            extraPickActive = false;
+            extraPickPlayer = null;
             // Transizione a EndTurnPhase
             EndTurnPhase endPhase = new EndTurnPhase();
             game.setPhase(endPhase);
@@ -204,6 +204,10 @@ public class PlayerOfferPhase implements GamePhase {
     }
 
     private void checkExtraPick(Game game) {
+        // Notifica OnEndOfferPhase — questa chiamata attiva ExtraPickStrategy
+        // che setta deservesExtraPick = true sul player che ha l'edificio
+        game.getNotificatorCenter().getEndOfferPhaseNotificator()
+                .notify(game.getPlayerContext());
         // L'edificio "extra pick" è registrato su OnEndOfferPhaseNotificator
         // Controlliamo se c'è un listener
         // Se sì, settiamo extraPickActive ed extraPickPlayer

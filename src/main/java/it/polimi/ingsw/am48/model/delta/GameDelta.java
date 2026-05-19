@@ -13,6 +13,7 @@ import java.io.Serializable;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TotemPlacedDelta.class,          name = "totemPlaced"),
+        @JsonSubTypes.Type(value = OfferCardADelta.class,           name = "offerCardA"),
         @JsonSubTypes.Type(value = CharacterCardPickedDelta.class,  name = "characterCardPicked"),
         @JsonSubTypes.Type(value = BuildingCardPickedDelta.class,   name = "buildingCardPicked"),
         @JsonSubTypes.Type(value = EndTurnDelta.class,              name = "endTurn"),
