@@ -62,16 +62,17 @@ public class IntergalacticRankingController {
         Label scoreLabel = new Label(r.getFinalScore() + " PP");
         scoreLabel.getStyleClass().add("rk-score");
 
-        Label playersLabel = new Label(r.getNumPlayers() + " players");
-        playersLabel.getStyleClass().add("rk-players");
+//        Label playersLabel = new Label(r.getNumPlayers() + " players");
+//        playersLabel.getStyleClass().add("rk-players");
 
         Label dateLabel = new Label(r.getGameDate().toLocalDate().toString());
         dateLabel.getStyleClass().add("rk-date");
 
-        Label gameIdLabel = new Label(r.getGameId());
-        gameIdLabel.getStyleClass().add("rk-gameid");
+//        Label gameIdLabel = new Label(r.getGameId());
+//        gameIdLabel.getStyleClass().add("rk-gameid");
 
-        row.getChildren().addAll(rankLabel, nickLabel, scoreLabel, playersLabel, dateLabel, gameIdLabel);
+//        row.getChildren().addAll(rankLabel, nickLabel, scoreLabel, playersLabel, dateLabel, gameIdLabel);
+        row.getChildren().addAll(rankLabel, nickLabel, scoreLabel, dateLabel);
         return row;
     }
 

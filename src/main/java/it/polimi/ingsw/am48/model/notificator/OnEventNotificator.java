@@ -44,6 +44,6 @@ public class OnEventNotificator {
 
         // Activates event effect and then deletes them
         for (CardStrategy cs : this.eventListeners.get(e)) cs.effect(playerContext);
-        this.eventListeners.clear();
+        this.eventListeners.get(e).clear();
     }
 }
