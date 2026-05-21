@@ -20,6 +20,12 @@ public class EndTurnPhase implements GamePhase {
         List<GameDelta> deltas = new ArrayList<>();
         List<EventInfo> eventInfos = new ArrayList<>();
 
+        // At the last turn, also register events from the upper row
+        if(game.getCurrentTurn() == 10){
+            game.getBoard().getTribeShowed().registerUpper(
+                    game.getNotificatorCenter(), game.getPlayerContext());
+        }
+
         // resolve events
         for(EventType e : EventType.values()){
             game.getNotificatorCenter().getEventNotificator().notify(e, game.getPlayerContext());

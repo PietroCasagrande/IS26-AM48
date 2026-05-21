@@ -53,6 +53,16 @@ public class Showed<T extends Card>{
                 card.getStrategy().registerTo(nc, playerContext);
     }
 
+    // Registers events contained in the upper row (for the last turn)
+    public void registerUpper(NotificatorCenter nc, PlayerContext playerContext){
+        List<T> sortedCards = this.upperList.stream()
+                .sorted((c1, c2) -> Integer.compare(c1.getEra().getIndex(), c2.getEra().getIndex()))
+                .toList();
+        for(T card : sortedCards)
+            if (card.getStrategy() != null)
+                card.getStrategy().registerTo(nc, playerContext);
+    }
+
     public void clearBottom(){
         lowerList.clear();
     }
