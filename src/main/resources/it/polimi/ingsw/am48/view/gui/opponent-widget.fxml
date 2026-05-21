@@ -17,7 +17,7 @@
             <image><Image url="@images/food.png"/></image>
         </ImageView>
         <Label fx:id="foodCount" text="0" styleClass="opponent-stat-food" />
-        <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+        <ImageView fx:id="prestigeImage" fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
             <image><Image url="@images/prestigePoints.png"/></image>
         </ImageView>
         <Label fx:id="prestigeCount" text="0" styleClass="opponent-stat-pp" />

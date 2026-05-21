@@ -99,6 +99,28 @@ public class ImageCache {
         return summaryCard;
     }
 
+    public Image renderPrestige(boolean negative) {
+        String path = negative
+                ? "/it/polimi/ingsw/am48/view/gui/images/negPrestigePoints.png"
+                : "/it/polimi/ingsw/am48/view/gui/images/prestigePoints.png";
+
+        if (cache.containsKey(path)) {
+            return cache.get(path);
+        }
+
+        try (InputStream is = getClass().getResourceAsStream(path)) {
+            if (is != null) {
+                Image img = new Image(is);
+                cache.put(path, img);
+                return img;
+            }
+        } catch (Exception e) {
+            System.err.println("Errore caricamento immagine prestige: " + path);
+        }
+
+        return null;
+    }
+
     public Image renderTotem(String color){
 
         String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/"

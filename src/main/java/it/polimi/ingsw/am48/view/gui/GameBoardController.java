@@ -40,6 +40,7 @@ public class GameBoardController implements ModelObserver {
     @FXML private ScrollPane myHandBox;
     @FXML private PlayerTribeController playerTribeController;
     @FXML private Label prestigeCount;
+    @FXML private ImageView prestige_points;
     @FXML private Label foodCount;
     @FXML private Button skipButton;
     @FXML private StackPane summaryCardContainer;
@@ -366,6 +367,7 @@ public class GameBoardController implements ModelObserver {
         if (myState != null) {
             foodCount.setText(String.valueOf(myState.getFood()));
             prestigeCount.setText(String.valueOf(myState.getPoints()));
+            prestige_points.setImage(imageCache.renderPrestige(myState.getPoints() < 0));
         }
     }
 

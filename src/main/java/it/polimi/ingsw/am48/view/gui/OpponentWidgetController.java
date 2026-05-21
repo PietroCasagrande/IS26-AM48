@@ -20,6 +20,7 @@ public class OpponentWidgetController {
     @FXML private Label labelNickname;
     @FXML private Label foodCount;
     @FXML private Label prestigeCount;
+    @FXML private ImageView prestigeImage;
     private CardDataRegistry cardDataRegistry;
     private ClientModel model;
     private VirtualServer server;
@@ -42,6 +43,9 @@ public class OpponentWidgetController {
     public void setPlayerStats(int food, int prestige) {
         foodCount.setText(String.valueOf(food));
         prestigeCount.setText(String.valueOf(prestige));
+        if (imageCache != null) {
+            prestigeImage.setImage(imageCache.renderPrestige(prestige < 0));
+        }
     }
 
     private void openPlayerTribePopup(String nickname) {
