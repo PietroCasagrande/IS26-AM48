@@ -5,10 +5,8 @@ import it.polimi.ingsw.am48.model.board.Board;
 import it.polimi.ingsw.am48.model.board.OfferCard;
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
-import it.polimi.ingsw.am48.model.delta.BuildingCardPickedDelta;
-import it.polimi.ingsw.am48.model.delta.CharacterCardPickedDelta;
-import it.polimi.ingsw.am48.model.delta.GameDelta;
-import it.polimi.ingsw.am48.model.delta.OfferCardADelta;
+import it.polimi.ingsw.am48.model.card.CharacterCard;
+import it.polimi.ingsw.am48.model.delta.*;
 import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.PhaseSnapshot;
@@ -23,9 +21,10 @@ public class PlayerOfferPhase implements GamePhase {
     private int currIdx;
     private int picksFromUp;
     private int picksFromDown;
-    private boolean extraPickActive;     // per l'edificio extra pick
+    private boolean extraPickActive;// per l'edificio extra pick
     private Player extraPickPlayer;      // chi ha l'edificio
     private boolean totemReturned;
+    private boolean skipAvailable;
 
     public PlayerOfferPhase(List<Player> actionOrder) {
         this.actionOrder = new ArrayList<>(actionOrder);
@@ -35,6 +34,7 @@ public class PlayerOfferPhase implements GamePhase {
         extraPickActive = false;
         extraPickPlayer = null;
         totemReturned = false;
+        skipAvailable = false;
     }
 
     // costruttore utilizzato in GamePhase.fromSnapshot()
@@ -108,45 +108,50 @@ public class PlayerOfferPhase implements GamePhase {
             validatePick(game.getBoard(), cardId, currentOffer);
         }
 
-        // Determina la posizione PRIMA di prendere la carta (serve dopo per il counter)
-        boolean isTop = !extraPickActive && game.getBoard().isCardTop(cardId);
+        Card selectedCard = null;
 
-        // Prende la carta dal board - se lancia eccezione, i contatori non vengono toccati
-        Card selectedCard = game.getBoard().takeCard(game.getPlayerContext(), cardId);
+        if(!skipAvailable){
 
-        // Aggiorna contatori solamente dopo che takeCard è andato a buon fine
-        if (!extraPickActive) {
-            if (isTop) {
-                picksFromUp++;
-            } else {
-                picksFromDown++;
+            // Determina la posizione PRIMA di prendere la carta (serve dopo per il counter)
+            boolean isTop = !extraPickActive && game.getBoard().isCardTop(cardId);
+
+            // Prende la carta dal board - se lancia eccezione, i contatori non vengono toccati
+            selectedCard = game.getBoard().takeCard(game.getPlayerContext(), cardId);
+
+            // Aggiorna contatori solamente dopo che takeCard è andato a buon fine
+            if (!extraPickActive) {
+                if (isTop) {
+                    picksFromUp++;
+                } else {
+                    picksFromDown++;
+                }
+            }
+
+            // 6. Registra la strategy della carta al notificator
+            if (selectedCard.getStrategy() != null) {
+                game.getPlayerContext().setCurrPlayer(player);
+                selectedCard.getStrategy().registerTo(
+                        game.getNotificatorCenter(), game.getPlayerContext());
+                // Attiva OnPick
+                game.getNotificatorCenter().getPickNotificator()
+                        .notify(game.getPlayerContext());
+            }
+
+            // 7. Se siamo nel extra pick, abbiamo finito
+            if (extraPickActive) {
+                extraPickActive = false;
+                extraPickPlayer = null;
+                // Transizione a EndTurnPhase
+                EndTurnPhase endPhase = new EndTurnPhase();
+                game.setPhase(endPhase);
+                deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "END_TURN"));  // se siamo all'extraPick dobbiamo costruire il delta, dato che non arriviamo a quello del punto 9
+                deltas.addAll(endPhase.endTurn(game));
+                return deltas;
             }
         }
 
-        // 6. Registra la strategy della carta al notificator
-        if (selectedCard.getStrategy() != null) {
-            game.getPlayerContext().setCurrPlayer(player);
-            selectedCard.getStrategy().registerTo(
-                    game.getNotificatorCenter(), game.getPlayerContext());
-            // Attiva OnPick
-            game.getNotificatorCenter().getPickNotificator()
-                    .notify(game.getPlayerContext());
-        }
-
-        // 7. Se siamo nel extra pick, abbiamo finito
-        if (extraPickActive) {
-            extraPickActive = false;
-            extraPickPlayer = null;
-            // Transizione a EndTurnPhase
-            EndTurnPhase endPhase = new EndTurnPhase();
-            game.setPhase(endPhase);
-            deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "END_TURN"));  // se siamo all'extraPick dobbiamo costruire il delta, dato che non arriviamo a quello del punto 9
-            deltas.addAll(endPhase.endTurn(game));
-            return deltas;
-        }
-
         // 8. Controlla se il giocatore ha finito i suoi pick
-        if (picksFromUp + picksFromDown >= currentOffer.getTotalPicks()) {
+        if (picksFromUp + picksFromDown >= currentOffer.getTotalPicks() || skipAvailable) {
             // Totem torna sulla tessera ordine di turno
             handleTotemReturn(game, currentOffer.returnTotem().get());
             totemReturned = true;
@@ -179,11 +184,42 @@ public class PlayerOfferPhase implements GamePhase {
         else deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "PLAYER_OFFER"));
 
         totemReturned = false;  // rimettiamo a false per prossimo player (in caso il curr l'avesse aggiornato)
+        skipAvailable = false;
 
         return deltas;
     }
 
     private void validatePick(Board board, String cardId, OfferCard offer) {
+
+        if(cardId.equals("skip")){
+            if(picksFromUp < offer.getNumUp()){
+                List<Card> tribeUpper = board.getTribeShowed().getUpperList();
+                int numCharUp = (int) tribeUpper.stream()
+                        .filter(c -> c instanceof CharacterCard)
+                        .count();
+                if(numCharUp == 0) {
+                    skipAvailable = true;
+                    return;
+                }
+                else{
+                    throw new InvalidActionException("Devi pescare una carta dalla fila superiore");
+                }
+            }
+            else if(picksFromDown < offer.getNumDown()){
+                List<Card> tribeLower = board.getTribeShowed().getLowerList();
+                int numCharDown = (int) tribeLower.stream()
+                        .filter(c -> c instanceof CharacterCard)
+                        .count();
+                if(numCharDown == 0) {
+                    skipAvailable = true;
+                    return;
+                }
+                else{
+                    throw new InvalidActionException("Devi pescare una carta dalla fila inferiore");
+                }
+            }
+        }
+
         boolean isTop = board.isCardTop(cardId);
         boolean isDown = board.isCardDown(cardId);
 
@@ -233,7 +269,10 @@ public class PlayerOfferPhase implements GamePhase {
     }
 
     private GameDelta buildCardDelta(Player player, Card card, Game game, boolean totemReturned, String phaseName) {
-        if (card instanceof BuildingCard) {
+        if(card == null){
+            return new SkipDelta(player.getNickname(), totemReturned, phaseName);
+        }
+        else if (card instanceof BuildingCard) {
             List<String> updatedUpperBuildingsIds = game.getBoard().getBuildingShowed().getUpperList().stream().map(Card::getCardId).toList();
             List<String> updatedLowerBuildingsIds = game.getBoard().getBuildingShowed().getLowerList().stream().map(Card::getCardId).toList();
 

@@ -195,6 +195,7 @@ public class GameBoardController implements ModelObserver {
             // cambia l'era sul tabellone centrale
             updateDeckEra(state.getCurrEra());
             checkExtraPick(state);
+            checkAcquirableCharacters(state);
 
             boardCenterController.update(state);
             updateTokens(state);
@@ -230,18 +231,11 @@ public class GameBoardController implements ModelObserver {
     private void checkExtraPick(ClientGameState state) {
         String myNickname = SceneManager.getNickname();
 
-        // 1. Controlla se possiedi l'edificio BLD-21
-        // (Adatta questo metodo in base a come è fatto il tuo ClientGameState)
         boolean hasSkipBuilding = state.getPlayer(myNickname).getBuildingCardIds().contains("BLD-21");
-
-        // 2. Controlla se la fase è corretta (es. fase in cui si pescano le carte)
         boolean isCorrectPhase = "PLAYER_OFFER".equals(state.getCurrentPhase());
-
-        // 3. Controlla se è il TUO turno
         boolean isMyTurn = state.getOfferTrackPositions().values().stream()
-                .allMatch(valore -> "".equals(valore));;
+                .allMatch(value -> "".equals(value));
 
-        // Se tutte le stelle si allineano, mostra il bottone!
         if (hasSkipBuilding && isCorrectPhase && isMyTurn) {
             skipButton.setVisible(true);
             skipButton.setDisable(false);
@@ -249,6 +243,39 @@ public class GameBoardController implements ModelObserver {
             skipButton.setVisible(false);
             skipButton.setDisable(true);
         }
+    }
+
+    private void checkAcquirableCharacters(ClientGameState state) {
+
+        boolean isUpperEmpty = state.getUpperRowCardIds().stream()
+                .allMatch(cardId -> cardId.startsWith("EV"));
+        boolean isLowerEmpty = state.getLowerRowCardIds().stream()
+                .allMatch(cardId -> cardId.startsWith("EV"));
+        boolean isMyTurn = getCurrentPlayer(state).equals(myNickname);
+        Character myOfferCard = state.getOfferTrackPositions()
+                .entrySet()
+                .stream()
+                .filter(entry -> myNickname.equals(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+
+        boolean canSkip = false;
+
+        if (isMyTurn && myOfferCard != null) {
+            char card = myOfferCard;
+
+            if (isUpperEmpty && (card == 'C' || card == 'E' || card == 'F' || card == 'G')) {
+                canSkip = true;
+            }
+            else if (isLowerEmpty && (card == 'B' || card == 'D' || card == 'E' || card == 'G')) {
+                canSkip = true;
+            }
+        }
+
+        skipButton.setVisible(canSkip);
+        skipButton.setDisable(!canSkip);
+
     }
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
