@@ -189,7 +189,7 @@ class GameDataLoaderTest {
                 .orElseThrow();
         assertNotNull(bld21.strategy);
         assertEquals("ExtraPickStrategy", bld21.strategy.effect);
-        assertEquals("OnEndOfferPhase", bld21.strategy.notificator);
+        assertEquals("OnPick", bld21.strategy.notificator);
     }
 
     @Test
