@@ -10,6 +10,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests for {@link OnPickNotificator}.
+ * Verifies that strategies registered per player fire on the correct context,
+ * that multiple strategies for the same player all execute, that listeners
+ * are isolated between players, and that the notificator is persistent
+ * across multiple notify calls.
+ */
 class OnPickNotificatorTest {
 
     private OnPickNotificator notificator;
@@ -38,6 +45,14 @@ class OnPickNotificatorTest {
 
     // ==================== attach ====================
 
+    /**
+     * Tests that a strategy registered via
+     * {@link OnPickNotificator#attach(Player, CardStrategy)} fires when
+     * {@link OnPickNotificator#notify(PlayerContext)} is called with the
+     * correct player context.
+     * <p>Components involved: {@link OnPickNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("attach: should fire strategy on notify after registration")
     void shouldFireStrategyOnNotifyAfterRegistration() {
@@ -48,6 +63,12 @@ class OnPickNotificatorTest {
         verify(strategy1, times(1)).effect(any());
     }
 
+    /**
+     * Tests that multiple strategies registered for the same player all
+     * fire when the player's context is notified.
+     * <p>Components involved: {@link OnPickNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("attach: should fire all strategies when multiple are registered for the same player")
     void shouldFireAllStrategiesForSamePlayer() {
@@ -60,6 +81,13 @@ class OnPickNotificatorTest {
         verify(strategy2, times(1)).effect(any());
     }
 
+    /**
+     * Tests that strategies registered for different players are isolated:
+     * notifying one player's context does not trigger another player's
+     * strategies.
+     * <p>Components involved: {@link OnPickNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("attach: should keep listeners separate for different players")
     void shouldKeepListenersSeparateForDifferentPlayers() {
@@ -74,12 +102,24 @@ class OnPickNotificatorTest {
 
     // ==================== notify ====================
 
+    /**
+     * Tests that notifying with no strategies registered for the current
+     * player does not throw.
+     * <p>Components involved: {@link OnPickNotificator},
+     * {@link PlayerContext}.</p>
+     */
     @Test
     @DisplayName("notify: should not throw when no strategies are registered for the player")
     void shouldNotThrowWhenNoStrategiesRegistered() {
         assertDoesNotThrow(() -> notificator.notify(context1));
     }
 
+    /**
+     * Tests that registered strategies persist across multiple notify calls
+     * and fire each time.
+     * <p>Components involved: {@link OnPickNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("notify: should fire strategy persistently on repeated notify calls")
     void shouldFireStrategyPersistentlyOnRepeatedNotify() {
@@ -91,6 +131,12 @@ class OnPickNotificatorTest {
         verify(strategy1, times(2)).effect(any());
     }
 
+    /**
+     * Tests that notifying one player does not cross-contaminate another
+     * player's strategies.
+     * <p>Components involved: {@link OnPickNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("notify: should not affect other players' strategies")
     void shouldNotCrossContaminateBetweenPlayers() {
