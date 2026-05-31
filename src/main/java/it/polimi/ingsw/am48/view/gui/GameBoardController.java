@@ -192,22 +192,21 @@ public class GameBoardController implements ModelObserver {
                 showEventNotifications(removedEventCards, eventInfos);
             }
 
-            // cambia l'era sul tabellone centrale
+            if (state.getWinnerNickname() != null) {
+                transitionToLeaderboard();
+                this.model.unregisterObserver(this);
+                return;
+            }
+
             updateDeckEra(state.getCurrEra());
             checkExtraPick(state);
             checkAcquirableCharacters(state);
-
             boardCenterController.update(state);
             updateTokens(state);
             playerTribeController.updateTribe(state);
             updatePlayerInfo(state);
             updatePhaseInfo(state);
             playBoardSounds(state);
-            if (state.getWinnerNickname() != null) {
-                transitionToLeaderboard();
-                this.model.unregisterObserver(this);
-                return;
-            }
         });
     }
 
