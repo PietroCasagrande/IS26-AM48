@@ -1,9 +1,6 @@
 package it.polimi.ingsw.am48.network.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polimi.ingsw.am48.model.delta.GameDelta;
-import it.polimi.ingsw.am48.model.snapshot.GameSnapshot;
 import it.polimi.ingsw.am48.network.VirtualServerSocket;
 import it.polimi.ingsw.am48.network.messages.commands.ClientCommand;
 import it.polimi.ingsw.am48.network.messages.commands.JoinGameCommand;
@@ -15,15 +12,35 @@ import it.polimi.ingsw.am48.utils.JsonMapper;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Handles client-side communication with the server over a TCP socket.
+ * Implements {@link VirtualServerSocket} to send commands (join, place
+ * totem, take card) as JSON lines, and runs a listener thread that
+ * reads incoming {@link ServerNotification} objects and applies them
+ * to the local {@link ClientModel}.
+ *
+ * <p>On connection loss, starts a reconnect watcher thread that polls
+ * the server until it comes back online, then instructs the player
+ * to rejoin.</p>
+ */
 public class SocketServerHandler implements Runnable, VirtualServerSocket {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
     private ObjectMapper mapper;
-    private ClientModel model; // Per aggiornare lo stato locale
+    private ClientModel model;
     private final String host;
     private final int port;
 
+    /**
+     * Opens a TCP socket to the specified host and port and sets up
+     * input/output streams for JSON communication.
+     *
+     * @param host the server hostname or IP address
+     * @param port the server port
+     * @param model the {@link ClientModel} to update with received notifications
+     * @throws IOException if the socket cannot be opened
+     */
     public SocketServerHandler(String host, int port, ClientModel model) throws IOException {
         this.host = host;
         this.port = port;
@@ -34,7 +51,12 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
         this.model = model;
     }
 
-    // Thread in ascolto delle notifiche dal SERVER
+    /**
+     * Listener thread that continuously reads JSON lines from the server.
+     * Each line is deserialized into a {@link ServerNotification} and
+     * applied to the {@link ClientModel}. On connection loss, triggers
+     * crash recovery.
+     */
     @Override
     public void run() {
         try {
@@ -64,6 +86,12 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
         send(new TakeCardCommand(cardId));
     }
 
+    /**
+     * Serializes a {@link ClientCommand} to JSON and sends it over the
+     * socket.
+     *
+     * @param command the command to send
+     */
     private void send(ClientCommand command) {
         try {
             out.println(mapper.writeValueAsString(command));
@@ -77,19 +105,29 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
     public void disconnect() {
         try {
             if (socket != null && !socket.isClosed()) {
-                socket.close(); // Rompe il ciclo while(readLine) e fa morire il thread pulitamente
+                socket.close();
             }
         } catch (IOException e) {
-            System.err.println("Errore durante la disconnessione: " + e.getMessage());
+            System.err.println("Error during disconnect: " + e.getMessage());
         }
     }
 
+    /**
+     * Handles a server crash or connection loss. If the game has not
+     * ended, notifies the player and starts a reconnect watcher.
+     */
     private void handleServerCrash() {
         if(model.isGameEnded()) return;
         model.notifyError(buildCrashMessage());
         startReconnectWatcher();
     }
 
+    /**
+     * Builds a user-facing crash message depending on whether the
+     * player's session nickname is known.
+     *
+     * @return the crash message string
+     */
     private String buildCrashMessage() {
         String nickname = model.getSessionNickname();
         if(nickname == null) {
@@ -106,6 +144,11 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
             """);
     }
 
+    /**
+     * Starts a thread that periodically attempts to reconnect
+     * to the server. Once the server is reachable, notifies the player
+     * with a message containing their session info for rejoin.
+     */
     private void startReconnectWatcher() {
         Thread watcher = new Thread(() -> {
             while(!Thread.currentThread().isInterrupted()) {
