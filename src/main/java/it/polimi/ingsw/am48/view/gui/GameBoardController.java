@@ -31,6 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.*;
 
+/**
+ * Main controller for the game board scene.
+ * It orchestrates all subcomponents (board center, player tribe, phase indicators, opponent widgets),
+ * observes the client model for state updates, handles event notifications with animated popups,
+ * manages the summary card flip animation, and plays contextual sound effects.
+ * Implements {@link ModelObserver} to react to server state changes.
+ */
 public class GameBoardController implements ModelObserver {
 
     //Root
@@ -77,7 +84,7 @@ public class GameBoardController implements ModelObserver {
     private ImageView[] opponentAvatars;
     private OpponentWidgetController[] opponentControllers = new OpponentWidgetController[4];
 
-    // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
+    // Tracks the current era to update the deck texture when the era changes
     private int currentEra = 0;
 
     // Event detection from lower row changes
@@ -88,10 +95,17 @@ public class GameBoardController implements ModelObserver {
     private boolean isFrontInfoCard = true;
     private List<Image> summaryCard = new ArrayList<>();
 
-    // Memorie globali nel tuo Controller
+    // Previous state values used to compute deltas for sound effects
     private int previousTotemCount = 0;
     private Set<String> previousCardIds = new HashSet<>();
 
+    /**
+     * Initializes the game board with the given server and model references.
+     * Sets up all sub-controllers (hand box, board center, summary card),
+     * registers as a model observer, and performs an initial render of the game state.
+     * @param server the virtual server reference for sending commands
+     * @param model the client model containing the current game state
+     */
     @FXML
     public void initialize(VirtualServer server, ClientModel model) {
         this.server = server;
@@ -148,6 +162,11 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
+    /**
+     * Injects the image and sound cache dependencies.
+     * @param imgCache the shared {@link ImageCache} instance
+     * @param soundCache the shared {@link SoundCache} instance
+     */
     public void setDependencies(ImageCache imgCache, SoundCache soundCache) {
         this.imageCache = imgCache;
         this.soundCache = soundCache;
@@ -159,7 +178,10 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
-    // Render an embedded version of player's tribe scene
+    /**
+     * Renders an embedded version of the player's tribe scene inside the hand box area.
+     * Delegates to {@link PlayerTribeController} with the cached dependencies.
+     */
     public void setupHandBox() {
         if (playerTribeController != null) {
             playerTribeController.setDependencies(this.imageCache);
@@ -168,7 +190,9 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
-    // Render board center
+    /**
+     * Initializes and renders the board center sub-controller with the current game state.
+     */
     public void setupCenter() {
         if (boardCenterController != null) {
             boardCenterController.initialize(this.server, this.model, this.myNickname);
@@ -178,7 +202,10 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
-    // Render summary card
+    /**
+     * Sets up the summary card in the bottom area with hover opacity effects,
+     * a flip icon toggle, and a click handler that triggers the flip animation.
+     */
     private void setupSummaryCard() {
         summaryCardImage.setImage(this.imageCache.renderSummaryCard().getFirst());
 
@@ -198,6 +225,12 @@ public class GameBoardController implements ModelObserver {
         summaryCardContainer.setOnMouseClicked(e -> flipSummaryCardAnimation());
     }
 
+    /**
+     * Called by the client model whenever the game state is updated by the server.
+     * Detects removed event cards to show animated notifications, checks for game end,
+     * and refreshes all visual components on the JavaFX application thread.
+     * @param state the updated client game state
+     */
     @Override
     public void onStateUpdated(ClientGameState state) {
         Platform.runLater(() -> {
@@ -215,7 +248,7 @@ public class GameBoardController implements ModelObserver {
             state.setEvents(new ArrayList<>());
 
             if (!removedEventCards.isEmpty()) {
-                showEventNotifications(removedEventCards, eventInfos);
+                showEventNotifications(removedEventCards);
             }
 
             if (state.getWinnerNickname() != null) {
@@ -236,11 +269,20 @@ public class GameBoardController implements ModelObserver {
         });
     }
 
+    /**
+     * Updates the deck background image to match the current era.
+     * @param era the current era index
+     */
     private void updateDeckEra(int era) {
         this.currentEra = era + 1;
         this.boardCenterController.changeEra(this.currentEra);
     }
 
+    /**
+     * Handles the Skip action button. Sends a "skip" card take command to the server,
+     * effectively allowing the player to forfeit their remaining picks.
+     * Only enabled when the player holds building card BLD-21 and conditions are met.
+     */
     @FXML
     private void handleSkipAction() {
         String myNickname = this.myNickname;
@@ -249,17 +291,23 @@ public class GameBoardController implements ModelObserver {
             skipButton.setDisable(true);
 
         } catch (Exception e) {
-            System.err.println("Errore di connessione durante lo skip.");
+            System.err.println("Connection error during skip.");
         }
     }
 
+    /**
+     * Checks whether the local player has the BLD-21 building card that grants an extra pick.
+     * If so, and it is the player's turn during PLAYER_OFFER with all totems placed,
+     * the Skip button is shown and enabled.
+     * @param state the current client game state
+     */
     private void checkExtraPick(ClientGameState state) {
         String myNickname = SceneManager.getNickname();
 
         boolean hasSkipBuilding = state.getPlayer(myNickname).getBuildingCardIds().contains("BLD-21");
         boolean isCorrectPhase = "PLAYER_OFFER".equals(state.getCurrentPhase());
         boolean isMyTurn = state.getOfferTrackPositions().values().stream()
-                .allMatch(value -> "".equals(value));
+                .allMatch(""::equals);
 
         if (hasSkipBuilding && isCorrectPhase && isMyTurn) {
             skipButton.setVisible(true);
@@ -270,6 +318,12 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
+    /**
+     * Determines whether the current player can skip their turn during PLAYER_OFFER
+     * based on which offer card they occupy and whether the target rows contain only event cards.
+     * Enables or disables the Skip button accordingly.
+     * @param state the current client game state
+     */
     private void checkAcquirableCharacters(ClientGameState state) {
 
         boolean isUpperEmpty = state.getUpperRowCardIds().stream()
@@ -305,9 +359,21 @@ public class GameBoardController implements ModelObserver {
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
 
+    /**
+     * Updates the opponent widget panels on the sides of the board.
+     * Each opponent is rendered using the {@code opponent-widget.fxml} layout,
+     * showing their nickname, avatar (totem), food and prestige points.
+     * The current turn player receives a golden glow effect during PLACE_TOTEM and PLAYER_OFFER phases.
+     * @param state the current client game state
+     */
     private void updatePlayerInfo(ClientGameState state) {
         Map<String, ClientPlayerState> players = state.getPlayers();
         String currentTurn = getCurrentPlayer(state);
+
+        // Use left slots first, then right slots
+        VBox[] containers = { left_player1, left_player2, right_player1, right_player2 };
+        for (VBox b : containers) { b.getChildren().clear(); b.setVisible(false); }
+
         String currentPhase = state.getCurrentPhase();
         boolean showTurnGlow = "PLACE_TOTEM".equals(currentPhase) || "PLAYER_OFFER".equals(currentPhase);
 
@@ -340,11 +406,16 @@ public class GameBoardController implements ModelObserver {
 
     // ─────────────────────── Phase / Turn Indicator ───────────────────────
 
+    /**
+     * Updates the phase indicator, turn label, round number, era indicator,
+     * and the current player's totem icon in the top HUD area.
+     * @param state the current client game state
+     */
     private void updatePhaseInfo(ClientGameState state) {
         String rawPhase = state.getCurrentPhase();
         phaseLabel.setText("Phase: " + formatPhase(rawPhase));
 
-        // AGGIORNAMENTO NUMERO TURNO ED ERA CORRENTE
+        // updates round, turn and current era
         if (turnNumberLabel != null) {
             turnNumberLabel.setText("Round: " + state.getCurrentTurn());
         }
@@ -371,6 +442,13 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
+    /**
+     * Determines the nickname of the player whose turn it is.
+     * During PLACE_TOTEM it is the first player in the turn order list.
+     * During PLAYER_OFFER it is the player on the lowest-letter offer track slot.
+     * @param state the current client game state
+     * @return the nickname of the current turn player, or null if undetermined
+     */
     private String getCurrentPlayer(ClientGameState state) {
         String phase = state.getCurrentPhase();
         if ("PLACE_TOTEM".equals(phase)) {
@@ -386,6 +464,11 @@ public class GameBoardController implements ModelObserver {
         return null;
     }
 
+    /**
+     * Converts an internal phase name into a human-readable display string.
+     * @param phase the internal phase identifier
+     * @return the formatted phase name for the UI
+     */
     private String formatPhase(String phase) {
         return switch (phase) {
             case "WAITING_FOR_PLAYERS" -> "Waiting for Players";
@@ -399,6 +482,11 @@ public class GameBoardController implements ModelObserver {
 
     // ─────────────────────── Utilities & Handlers ───────────────────────
 
+    /**
+     * Updates the local player's food and prestige point counters in the bottom HUD.
+     * Also switches the prestige icon to the negative variant when points are below zero.
+     * @param state the current client game state
+     */
     private void updateTokens(ClientGameState state) {
         ClientPlayerState myState = state.getPlayer(myNickname);
         if (myState != null) {
@@ -408,6 +496,11 @@ public class GameBoardController implements ModelObserver {
         }
     }
 
+    /**
+     * Called when the model reports an error. Displays an error alert dialog
+     * and plays the error sound effect.
+     * @param message the error description
+     */
     @Override public void onError(String message) {
         Platform.runLater(() -> {
             this.soundCache.playFAAAAH();
@@ -419,7 +512,10 @@ public class GameBoardController implements ModelObserver {
         });
     }
 
-    // serve alla fine per passare al decimo turno alla scena successiva
+    /**
+     * Transitions from the game board to the leaderboard scene when the game ends.
+     * Passes the server and model references to the leaderboard controller.
+     */
     private void transitionToLeaderboard() {
         LeaderboardController lb = (LeaderboardController) SceneManager.changeScene("leaderboard.fxml");
         if (lb != null) {
@@ -430,13 +526,24 @@ public class GameBoardController implements ModelObserver {
 
     // ─────────────────────── Event notifications via lower-row detection ───────────────────────
 
-    private void showEventNotifications(List<String> cardIds, List<EventInfo> eventInfos) {
+    /**
+     * Begins a sequential display of event notification popups for the given event card IDs.
+     * Prevents overlapping notifications by checking the {@link #showingEvents} flag.
+     * @param cardIds the list of event card IDs that were removed and should be notified
+     */
+    private void showEventNotifications(List<String> cardIds) {
         if (cardIds == null || cardIds.isEmpty() || showingEvents) return;
         showingEvents = true;
-        showNextEvent(new ArrayList<>(cardIds), 0, eventInfos);
+        showNextEvent(new ArrayList<>(cardIds), 0);
     }
 
-    private void showNextEvent(List<String> cardIds, int index, List<EventInfo> eventInfos) {
+    /**
+     * Recursively shows event notification popups one at a time with a fade-in, pause, and fade-out animation.
+     * When all events have been shown, resets the {@link #showingEvents} flag.
+     * @param cardIds the list of remaining event card IDs to display
+     * @param index the current index in the list
+     */
+    private void showNextEvent(List<String> cardIds, int index) {
         if (index >= cardIds.size()) {
             showingEvents = false;
             return;
@@ -468,12 +575,18 @@ public class GameBoardController implements ModelObserver {
         int nextIndex = index + 1;
         fadeOut.setOnFinished(e -> {
             rootboard.getChildren().remove(notification);
-            showNextEvent(cardIds, nextIndex, eventInfos);
+            showNextEvent(cardIds, nextIndex);
         });
 
         fadeIn.play();
     }
 
+    /**
+     * Builds a styled VBox notification node for the given event type.
+     * The notification is initially invisible (opacity 0) and will be animated later.
+     * @param eventType the raw event type identifier
+     * @return a styled VBox ready for fade-in animation
+     */
     private VBox buildEventNotification(String eventType) {
         VBox notification = new VBox(6);
         notification.setAlignment(Pos.CENTER);
@@ -491,14 +604,22 @@ public class GameBoardController implements ModelObserver {
         return notification;
     }
 
+    /**
+     * Extracts the event type from an event card ID based on its prefix.
+     * @param cardId the event card identifier
+     * @return the corresponding event type string (e.g. "ARTIST_EVENT", "HUNTER_EVENT")
+     */
     private String getEventTypeFromCardId(String cardId) {
         if (cardId.startsWith("EVA-")) return "ARTIST_EVENT";
         if (cardId.startsWith("EVH-")) return "HUNTER_EVENT";
         if (cardId.startsWith("EVS-")) return "SHAMAN_EVENT";
-        if (cardId.startsWith("EVP-")) return "PICKER_EVENT";
-        return "UNKNOWN_EVENT";
-    }
+        return "PICKER_EVENT";}
 
+    /**
+     * Converts an internal event type name into a human-readable display string.
+     * @param raw the raw event type identifier
+     * @return the formatted event name for the notification UI
+     */
     private String formatEventName(String raw) {
         return switch (raw) {
             case "ARTIST_EVENT"  -> "Artist Event";
@@ -511,6 +632,11 @@ public class GameBoardController implements ModelObserver {
 
     // ======================================= SUMMARY CARD ANIMATION ========================================
 
+    /**
+     * Animates a horizontal flip of the summary card.
+     * The card scales to zero width on the X axis, switches the image between front and back,
+     * and then scales back to full width.
+     */
     private void flipSummaryCardAnimation() {
         // Closing animation
         ScaleTransition flipOut = new ScaleTransition(Duration.millis(150), summaryCardImage);
@@ -539,6 +665,12 @@ public class GameBoardController implements ModelObserver {
 
     // ======================================= BOARD SOUNDS ========================================
 
+    /**
+     * Plays contextual sound effects by comparing the previous and current game state.
+     * A totem placement sound is played when the number of placed totems increases.
+     * A card draw sound is played when a card ID disappears from the board.
+     * @param state the current client game state
+     */
     private void playBoardSounds(ClientGameState state) {
 
         // Counting totems on track
