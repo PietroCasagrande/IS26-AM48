@@ -6,46 +6,52 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ModelObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * Controller for the "Join Game" screen where the player enters their nickname,
+ * selects the number of players, and starts a new game.
+ * Implements {@link ModelObserver} to react to state changes (game started or lobby wait).
+ */
 public class JoinGameController implements ModelObserver {
-    @FXML
-    private StackPane rootJoinGame;
     @FXML
     private VBox joinBox;
     @FXML
     private TextField nicknameTextField;
     @FXML
-    private HBox numPlayersBox;
-    @FXML
     private ToggleButton twoPlayersButton;
     @FXML
     private ToggleGroup numPlayersGroup;
-    @FXML
-    private ToggleButton threePlayersButton;
-    @FXML
-    private ToggleButton fourPlayersButton;
-    @FXML
-    private ToggleButton fivePlayersButton;
     @FXML
     private Button startGameButton;
 
     private VirtualServer server;
     private ClientModel model;
 
+    /**
+     * Injects the server reference used to send join game requests.
+     * @param server the virtual server reference
+     */
     public void setServer(VirtualServer server) {
         this.server = server;
     }
 
+    /**
+     * Injects the model reference and registers this controller as an observer
+     * to be notified when the game state transitions to the lobby or the game board.
+     * @param model the client model reference
+     */
     public void setModel(ClientModel model) {
         this.model = model;
         this.model.registerObserver(this);
     }
 
+    /**
+     * Initializes the join game form with default values:
+     * pre-selects 2 players, enforces a 15-character nickname limit,
+     * and disables the start button until a nickname is entered.
+     */
     @FXML
     public void initialize() {
         // Predefined 2 players button
@@ -65,6 +71,12 @@ public class JoinGameController implements ModelObserver {
         });
     }
 
+    /**
+     * Called when the game state changes. Transitions to the loading lobby if
+     * waiting for players, or to the game board if the game has started.
+     * Unregisters this observer when the game board is reached.
+     * @param state the updated client game state
+     */
      @Override
      public void onStateUpdated(ClientGameState state){
         Platform.runLater(() -> {
@@ -86,13 +98,19 @@ public class JoinGameController implements ModelObserver {
          });
      }
 
+    /**
+     * Called when the model reports a login error.
+     * Displays the error message in an alert, highlights the nickname field,
+     * and plays the error sound effect.
+     * @param message the error description
+     */
     @Override
     public void onError(String message) {
         Platform.runLater(() -> {
             joinBox.setDisable(false);
             nicknameTextField.setStyle("-fx-border-color: #ff4444; -fx-border-width: 3px;");
 
-            // Shows error message as an alert
+            // Show error message as an alert
             SceneManager.getSoundCache().playFAAAAH();
             showErrorMessage(message);
 
@@ -102,6 +120,11 @@ public class JoinGameController implements ModelObserver {
         });
     }
 
+    /**
+     * Handles the "Start Game" button click.
+     * Reads the selected number of players and the entered nickname,
+     * sends a {@code joinGame} request to the server, and saves the session.
+     */
     @FXML
     private void handleStartGame() {
         ToggleButton selectedButton = (ToggleButton) numPlayersGroup.getSelectedToggle();
@@ -122,6 +145,10 @@ public class JoinGameController implements ModelObserver {
         }
     }
 
+    /**
+     * Handles the "Back to Menu" button click.
+     * Unregisters this observer and returns to the main menu scene.
+     */
     @FXML
     private void handleBackToMenu() {
         model.unregisterObserver(this);
@@ -132,6 +159,10 @@ public class JoinGameController implements ModelObserver {
         }
     }
 
+    /**
+     * Displays an error alert dialog with the given message.
+     * @param message the error message to show
+     */
     private void showErrorMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("LOGIN ERROR");
