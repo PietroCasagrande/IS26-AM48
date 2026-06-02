@@ -6,7 +6,6 @@ import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ModelObserver;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
-import it.polimi.ingsw.am48.view.CardDataRegistry;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
@@ -21,9 +20,6 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -44,7 +40,6 @@ public class GameBoardController implements ModelObserver {
     @FXML private StackPane rootboard;
 
     // Bottom area
-    @FXML private ScrollPane myHandBox;
     @FXML private PlayerTribeController playerTribeController;
     @FXML private Label prestigeCount;
     @FXML private ImageView prestige_points;
@@ -60,12 +55,9 @@ public class GameBoardController implements ModelObserver {
     @FXML private ImageView avatarLeft1, avatarRight1, avatarLeft2, avatarRight2;
 
     // Board center
-    @FXML private GridPane boardCenter;
-    @FXML private VBox center;
     @FXML private BoardCenterController boardCenterController;
 
     // Phase / Turn indicator /Era indicator
-    @FXML private HBox phaseIndicator;
     @FXML private Label phaseLabel;
     @FXML private Label turnLabel;
     @FXML private ImageView turnTotem;
@@ -75,7 +67,6 @@ public class GameBoardController implements ModelObserver {
     private VirtualServer server;
     private ClientModel model;
     private String myNickname;
-    private CardDataRegistry cardData;
     private ImageCache imageCache;
     private SoundCache soundCache;
 
@@ -93,7 +84,6 @@ public class GameBoardController implements ModelObserver {
 
     // Summary card state variables
     private boolean isFrontInfoCard = true;
-    private List<Image> summaryCard = new ArrayList<>();
 
     // Previous state values used to compute deltas for sound effects
     private int previousTotemCount = 0;
