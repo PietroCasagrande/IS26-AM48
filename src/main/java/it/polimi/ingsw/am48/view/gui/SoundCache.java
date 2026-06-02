@@ -4,9 +4,18 @@ import javafx.scene.media.AudioClip;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Caches and plays sound effects for the GUI.
+ * Audio clips are loaded on first use and stored in an internal map
+ * so that repeated playback does not require reloading from disk.
+ */
 public class SoundCache {
     private Map<String, AudioClip> cache = new HashMap<>();
 
+    /**
+     * Plays the sound effect for placing a totem.
+     * The audio clip is loaded once and then cached.
+     */
     public void playTotem() {
         String path = "/it/polimi/ingsw/am48/view/gui/audio/place-totem-sound.wav";
 
@@ -17,7 +26,7 @@ public class SoundCache {
                 clip.setVolume(0.5);
                 cache.put(path, clip);
             } catch (Exception e) {
-                System.err.println("Impossibile caricare il suono: " + path);
+                System.err.println("Impossible loading the sound: " + path);
                 return;
             }
         }
@@ -26,6 +35,10 @@ public class SoundCache {
         cache.get(path).play();
     }
 
+    /**
+     * Plays the sound effect for taking a card.
+     * The audio clip is loaded once and then cached.
+     */
     public void playCard() {
         String path = "/it/polimi/ingsw/am48/view/gui/audio/take-card-sound.wav";
 
@@ -36,7 +49,7 @@ public class SoundCache {
                 clip.setVolume(0.8);
                 cache.put(path, clip);
             } catch (Exception e) {
-                System.err.println("Impossibile caricare il suono: " + path);
+                System.err.println("Impossible loading the sound: " + path);
                 return;
             }
         }
@@ -45,7 +58,10 @@ public class SoundCache {
         cache.get(path).play();
     }
 
-    // Error FAAAH sound
+    /**
+     * Plays the error sound effect (a distinctive "FAAAAH" sound).
+     * This is triggered when the server returns an error to the client.
+     */
     public void playFAAAAH() {
         String path = "/it/polimi/ingsw/am48/view/gui/audio/FAAAAAAAH.wav";
 
@@ -56,7 +72,7 @@ public class SoundCache {
                 clip.setVolume(0.5);
                 cache.put(path, clip);
             } catch (Exception e) {
-                System.err.println("Impossibile caricare il suono: " + path);
+                System.err.println("Impossible loading the sound: " + path);
                 return;
             }
         }
