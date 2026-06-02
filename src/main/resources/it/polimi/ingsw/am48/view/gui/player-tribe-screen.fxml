@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="rootTribe" prefHeight="500.0" prefWidth="900.0" stylesheets="@../gui/css/style.css"
+<BorderPane fx:id="rootTribe" prefHeight="500.0" prefWidth="900.0" stylesheets="@css/style.css"
             styleClass="rootTribe" fx:controller="it.polimi.ingsw.am48.view.gui.PlayerTribeController"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
