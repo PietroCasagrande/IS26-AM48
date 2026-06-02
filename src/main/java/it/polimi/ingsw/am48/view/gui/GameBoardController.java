@@ -123,7 +123,7 @@ public class GameBoardController implements ModelObserver {
             Platform.runLater(() -> {
                 boardCenterController.update(model.getState());
                 updateTokens(model.getState());
-                playerTribeController.updateTribe(model.getState());
+                playerTribeController.updateTribe();
                 updatePlayerInfo(model.getState());
                 updatePhaseInfo(model.getState());
                 updateDeckEra(model.getState().getCurrEra());
@@ -262,7 +262,7 @@ public class GameBoardController implements ModelObserver {
             checkAcquirableCharacters(state);
             boardCenterController.update(state);
             updateTokens(state);
-            playerTribeController.updateTribe(state);
+            playerTribeController.updateTribe();
             updatePlayerInfo(state);
             updatePhaseInfo(state);
             playBoardSounds(state);
