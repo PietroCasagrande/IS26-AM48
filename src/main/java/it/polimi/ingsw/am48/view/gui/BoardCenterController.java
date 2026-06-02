@@ -18,24 +18,30 @@ import javafx.scene.Cursor;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for the central area of the game board.
+ * Manages the rendering of the offer turn card, the offer card track, the deck era indicator,
+ * and all four card rows (upper/lower character and building rows).
+ * Provides interactivity for the {@code PLACE_TOTEM} and {@code PLAYER_OFFER} phases,
+ * allowing the current player to click on offer slots or cards to perform actions.
+ */
 public class BoardCenterController {
 
     //Root
     @FXML private GridPane boardCenterRoot;
 
-    // Contenitori Righe Carte
+    // Card row containers
     @FXML private HBox upperCharacterRow;
     @FXML private HBox upperBuildingRow;
     @FXML private HBox lowerCharacterRow;
     @FXML private HBox lowerBuildingRow;
 
-    // Contenitori Riga Centrale
+    // Central row containers
     @FXML private Pane offerTurnCard;
     @FXML private HBox offerTrackContainer;
     @FXML private VBox deckContainer;
 
     // Relative totem positions on OfferTurnCard
-    private Map<String, Integer> totemSlotRegistry = new HashMap<>();
     private Map<Character, VBox> renderedOfferSlots = new HashMap<>();
     private Map<String, StackPane> renderedOfferCards = new HashMap<>();
     private static final double[][] SLOT_CENTER_FRACTIONS = {
@@ -54,10 +60,21 @@ public class BoardCenterController {
 
     // ================================================ INITIAL SETUP ====================================================
 
+    /**
+     * Injects the image cache dependency used to render card and totem images.
+     * @param cache the shared {@link ImageCache} instance
+     */
     public void setDependencies(ImageCache cache) {
         this.imageCache = cache;
     }
 
+    /**
+     * Initializes the board center controller with server, model and player identity.
+     * Sets up the offer turn card background and the offer track once the model state is available.
+     * @param server the virtual server reference for sending commands
+     * @param model the client model containing the current game state
+     * @param myNickname the nickname of the local player
+     */
     @FXML public void initialize(VirtualServer server, ClientModel model, String myNickname) {
         this.server = server;
         this.model = model;
@@ -69,12 +86,16 @@ public class BoardCenterController {
                 setupOfferTurnCard(numPlayers);
                 setupOfferTrack();
             } else {
-                System.err.println("Errore critico: Model non inizializzato in tempo.");
+                System.err.println("Critical error: Model not initialized in time.");
             }
         });
     }
 
-    // Render OfferTurnCard for the correct number of players
+    /**
+     * Renders the background image of the offer turn card, which displays turn order slots.
+     * The image varies depending on the number of players in the game.
+     * @param numPlayers the number of players in the current game.
+     */
     private void setupOfferTurnCard(int numPlayers) {
 
         try {
@@ -90,14 +111,18 @@ public class BoardCenterController {
                 );
                 offerTurnCard.setBackground(new Background(bgi));
             } else {
-                System.err.println("Immagine turni non trovata per " + numPlayers + " giocatori.");
+                System.err.println("Turn image not found for " + numPlayers + " players.");
             }
         } catch (Exception e) {
-            System.err.println("Errore caricamento griglia turni: " + e.getMessage());
+            System.err.println("Error loading turn grid: " + e.getMessage());
         }
     }
 
-    // Render OfferCardTrack for the correct number of players
+    /**
+     * Renders the offer card track with slot backgrounds for each letter (A-G).
+     * Each slot is a clickable VBox; the slots are sorted alphabetically and stored
+     * in {@link #renderedOfferSlots} for interactivity during the PLACE_TOTEM phase.
+     */
     private void setupOfferTrack(){
 
         Set<Character> offerCards = this.model.getState().getOfferTrackPositions().keySet();
@@ -136,7 +161,12 @@ public class BoardCenterController {
     // =============================================== UPDATES =====================================================
 
 
-    // Update board (called whenever server updates its state)
+    /**
+     * Updates the entire board center to reflect the latest game state.
+     * Re-renders all card rows, the totem grid on the offer turn card, the totem track,
+     * and applies highlight interactivity based on the current game phase.
+     * @param state the current client game state snapshot
+     */
     public void update(ClientGameState state) {
         renderedOfferCards.clear();
 
@@ -148,7 +178,6 @@ public class BoardCenterController {
         updateTotemGrid(state);
         updateTotemTrack(state);
 
-        //TODO if solo se sono il giocatore corrente
         if(state.getCurrentPhase().equals("PLACE_TOTEM")){
             Map<Character, String> places = state.getOfferTrackPositions();
             List<Character> freeSlot = places.entrySet().stream()
@@ -160,7 +189,6 @@ public class BoardCenterController {
             highlightInteractiveOfferCards(null);
         }
 
-        //TODO if solo se sono il giocatore corrente
         if(state.getCurrentPhase().equals("PLAYER_OFFER")){
             List <String> interactiveCardIds = new ArrayList<>();
             interactiveCardIds.addAll(state.getUpperRowCardIds());
@@ -174,7 +202,13 @@ public class BoardCenterController {
         }
     }
 
-    // Update totem placement on offer turn card
+    /**
+     * Updates the totem icons displayed on the offer turn card.
+     * During the PLACE_TOTEM phase totems are removed from the top,
+     * while during PLAYER_OFFER they are added from the bottom.
+     * Each totem is positioned using precomputed slot fractions based on player count.
+     * @param state the current client game state
+     */
     private void updateTotemGrid(ClientGameState state) {
         this.offerTurnCard.getChildren().clear();
 
@@ -217,7 +251,12 @@ public class BoardCenterController {
         }
     }
 
-    // Update totem placement on offer card track
+    /**
+     * Updates the totem icons displayed on each offer card track slot.
+     * Each slot that has a player assigned shows that player's totem image,
+     * scaled responsively within the slot container.
+     * @param state the current client game state
+     */
     private void updateTotemTrack(ClientGameState state) {
         Map<Character, String> positions = state.getOfferTrackPositions();
 
@@ -233,15 +272,14 @@ public class BoardCenterController {
                     if(playerNick != null && !playerNick.trim().isEmpty() && state.getPlayer(playerNick) != null){
 
                         ImageView totemImg = renderTotem(playerNick, state);
-                        // --- BINDING RESPONSIVI ---
-                        // Il totem scala seguendo il 30% dell'altezza dello slot
+                        // --- BINDING ---
+                        // Scale the totem to 30% of the slot height
                         totemImg.fitHeightProperty().bind(slot.heightProperty().multiply(0.30));
 
-                        // Spingiamo il totem in basso (es. 15%) per metterlo al centro del riquadro.
-                        // Puoi aumentare/diminuire questo valore per tarare l'altezza!
+                        // No vertical translation needed (bound to 0.0)
                         totemImg.translateYProperty().bind(slot.heightProperty().multiply(0.0));
 
-                        // Aggiungiamo il totem al VBox!
+                        // Add the totem to the slot
                         slot.getChildren().add(totemImg);
                     }
                 }
@@ -249,6 +287,11 @@ public class BoardCenterController {
         }
     }
 
+    /**
+     * Handles a click on an offer track slot during the PLACE_TOTEM phase.
+     * Sends the {@code placeTotem} command to the server with the chosen slot letter.
+     * @param letter the letter of the offer track slot that was clicked
+     */
     private void handleOfferTrackClick(char letter) {
         try {
             this.server.placeTotem(this.myNickname, letter);
@@ -257,6 +300,11 @@ public class BoardCenterController {
         }
     }
 
+    /**
+     * Handles a click on a card during the PLAYER_OFFER phase.
+     * Sends the {@code takeCard} command to the server with the clicked card ID.
+     * @param cardId the identifier of the card that was clicked
+     */
     private void handleCardClick(String cardId) {
         if (server != null) {
             try { server.takeCard(myNickname, cardId); }
@@ -264,7 +312,11 @@ public class BoardCenterController {
         }
     }
 
-    // Update Deck Era
+    /**
+     * Updates the deck image to reflect the current game era.
+     * The era number determines which era-specific deck background is shown.
+     * @param era the current era index
+     */
     public void changeEra(int era){
         if(this.deckContainer != null) deckContainer.getChildren().clear();
 
@@ -277,13 +329,19 @@ public class BoardCenterController {
             deckView.setPreserveRatio(true);
             deckContainer.getChildren().add(deckView);
         } else {
-            System.err.println("Immagine mazzo non trovata per Era: " + era + ". Path cercato: " + deckPath);
+            System.err.println("Deck image not found for Era: " + era + ". Path looked for: " + deckPath);
         }
     }
 
     // =============================================== IMAGE RENDERING =====================================================
 
-    // Render Totem Image adding shadows
+    /**
+     * Creates an {@link ImageView} for a player's totem with appropriate visual effects.
+     * The local player's totem receives an additional yellow glow to distinguish it.
+     * @param nickname the player whose totem to render
+     * @param state the current client game state (used to look up the player's totem color)
+     * @return an ImageView displaying the totem with shadow effects applied
+     */
     private ImageView renderTotem(String nickname, ClientGameState state) {
         String color = state.getPlayer(nickname).getTotemColor();
         Image totem = this.imageCache.renderTotem(color);
@@ -316,7 +374,13 @@ public class BoardCenterController {
         return totemImg;
     }
 
-    // Aggiorna dinamicamente una qualsiasi HBox con le carte del momento
+    /**
+     * Renders a list of card images into a given HBox row container.
+     * Each card is wrapped in a {@link StackPane} for layering and stored in
+     * {@link #renderedOfferCards} for later interactivity.
+     * @param rowContainer the HBox row to populate with card images
+     * @param cardIds the list of card identifiers to render
+     */
     private void renderCards(HBox rowContainer, List<String> cardIds) {
         rowContainer.getChildren().clear();
 
@@ -331,7 +395,7 @@ public class BoardCenterController {
                 imgView.fitHeightProperty().bind(rowContainer.heightProperty().multiply(0.8));
                 imgView.setPreserveRatio(true);
 
-                // Aggiungiamo entrambe allo StackPane come prima
+                // Add both to the StackPane
                 cardContainer.getChildren().add(imgView);
                 rowContainer.getChildren().add(cardContainer);
                 renderedOfferCards.put(cardId, cardContainer);
@@ -341,6 +405,12 @@ public class BoardCenterController {
 
     // =============================================== ENLIGHTEN IMAGES =====================================================
 
+    /**
+     * Applies highlight and click interactivity to cards during the PLAYER_OFFER phase.
+     * Interactive cards show a golden glow on hover and respond to clicks via {@link #handleCardClick}.
+     * Non-interactive cards have all effects and handlers removed.
+     * @param interactiveCardIds the list of card IDs that should be clickable, or null to clear all
+     */
     private void highlightInteractiveCards(List<String> interactiveCardIds) {
 
         for (Map.Entry<String, StackPane> entry : renderedOfferCards.entrySet()) {
@@ -370,6 +440,12 @@ public class BoardCenterController {
         }
     }
 
+    /**
+     * Applies highlight and click interactivity to offer track slots during the PLACE_TOTEM phase.
+     * Free slots show a cyan glow on hover and respond to clicks via {@link #handleOfferTrackClick}.
+     * Occupied or non-interactive slots have all effects and handlers cleared.
+     * @param interactiveSlots the list of slot letters that should be clickable, or null to clear all
+     */
     private void highlightInteractiveOfferCards(List<Character> interactiveSlots) {
 
         for (Map.Entry<Character, VBox> entry : renderedOfferSlots.entrySet()) {
