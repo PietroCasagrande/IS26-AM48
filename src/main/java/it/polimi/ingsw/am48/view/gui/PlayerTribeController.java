@@ -1,41 +1,28 @@
 package it.polimi.ingsw.am48.view.gui;
 
 import it.polimi.ingsw.am48.network.VirtualServer;
-import it.polimi.ingsw.am48.network.client.ClientGameState;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.List;
 
+/**
+ * Controller for the player tribe view, showing all character and building cards
+ * owned by a specific player. The cards are organized into columns by type
+ * (Artists, Builders, Hunters, Inventors, Pickers, Shamans, Buildings).
+ * Can be displayed either as an embedded widget or as a full modal popup.
+ */
 public class PlayerTribeController {
     @FXML private BorderPane rootTribe;
-    @FXML private VBox playerTribeBox;
-
     @FXML private BorderPane titlePane;
     @FXML private Label titleLabel;
-    @FXML private Button exitButton;
-
-    @FXML private GridPane charactersPane;
-    @FXML private Label artistsLabel;
-    @FXML private Label buildersLabel;
-    @FXML private Label huntersLabel;
-    @FXML private Label inventorsLabel;
-    @FXML private Label pickersLabel;
-    @FXML private Label shamansLabel;
-    @FXML private Label buildingsLabel;
-
-    @FXML private ScrollPane tribeScroll;
-    @FXML private GridPane tribeGrid;
     @FXML private VBox artistsColumn;
     @FXML private VBox buildersColumn;
     @FXML private VBox huntersColumn;
@@ -49,26 +36,46 @@ public class PlayerTribeController {
     private ImageCache imageCache;
     private String myNickname;
 
+    /**
+     * Injects the client model reference.
+     * @param model the client model
+     */
     public void setModel(ClientModel model) {
         this.model = model;
     }
 
+    /**
+     * Injects the server reference.
+     * @param server the virtual server
+     */
     public void setServer(VirtualServer server) {
         this.server = server;
     }
 
+    /**
+     * Injects the image cache dependency.
+     * @param cache the shared {@link ImageCache}
+     */
     public void setDependencies(ImageCache cache) {
         this.imageCache = cache;
     }
 
-    public void setDependencies(it.polimi.ingsw.am48.view.CardDataRegistry registry, ImageCache cache) {
-        this.imageCache = cache;
-    }
-
+    /**
+     * Initializes the tribe view for a given player nickname.
+     * Delegates to the full {@link #initialize(VirtualServer, ClientModel, String)} method.
+     * @param nickname the player whose tribe to display
+     */
     public void initialize(String nickname) {
         initialize(this.server, this.model, nickname);
     }
 
+    /**
+     * Initializes the tribe controller with server, model, and player identity.
+     * Sets the title label to show whose tribe is being displayed.
+     * @param server the virtual server reference
+     * @param model the client model
+     * @param nickname the player whose tribe to display
+     */
     @FXML
     public void initialize(VirtualServer server, ClientModel model, String nickname) {
         this.server = server;
@@ -77,7 +84,12 @@ public class PlayerTribeController {
         this.titleLabel.setText(myNickname + "'s Tribe");
     }
 
-    public void updateTribe(ClientGameState state){
+    /**
+     * Refreshes the tribe display to reflect the current game state.
+     * Clears all card columns and repopulates them with the player's character and building cards.
+     * Cards are assigned to the appropriate column based on their ID prefix.
+     */
+    public void updateTribe(){
         Platform.runLater(() -> {
             clearAllColumns();
 
@@ -103,7 +115,7 @@ public class PlayerTribeController {
                     } else if (cardId.startsWith("SHA")) {
                         shamansColumn.getChildren().add(cardView);
                     } else {
-                        System.err.println("Prefisso carta personaggio sconosciuto: " + cardId);
+                        System.err.println("Unknown character card prefix: " + cardId);
                     }
                 }
             }
@@ -121,8 +133,10 @@ public class PlayerTribeController {
     }
 
     /**
-     * Metodo di supporto per trasformare un ID di una carta in un nodo ImageView grafico.
-     * Applica le dimensioni standard ed eventuali effetti grafici.
+     * Helper method to convert a card ID into a graphical ImageView node.
+     * Applies standard sizing and a drop shadow effect.
+     * @param cardId the card identifier
+     * @return an ImageView for the card, or null if the image could not be loaded
      */
     private ImageView createImageView(String cardId) {
         Image img = imageCache.renderCards(cardId);
@@ -138,7 +152,7 @@ public class PlayerTribeController {
     }
 
     /**
-     * Svuota tutti i contenitori grafici prima di popolarli.
+     * Clears all card column containers before repopulating them.
      */
     private void clearAllColumns() {
         if (artistsColumn != null) artistsColumn.getChildren().clear();
@@ -150,19 +164,26 @@ public class PlayerTribeController {
         if (buildingsColumn != null) buildingsColumn.getChildren().clear();
     }
 
+    /**
+     * Configures this tribe view for embedded display within the game board,
+     * hiding the title bar and collapsing its space so it does not leave an empty gap.
+     * Adds a "mini-mode" CSS class for styling adjustments.
+     */
     public void setEmbeddedMode() {
 
-        // 1. Rendiamo invisibile la barra
+        // 1. Hide the title bar
         titlePane.setVisible(false);
 
-        // 2. Diciamo a JavaFX di far "collassare" lo spazio.
-        // Senza questo, avresti un buco vuoto in alto!
+        // 2. Collapse the title bar's layout space (otherwise an empty gap remains)
         titlePane.setManaged(false);
 
-        // 3. Aggiungiamo una classe CSS speciale a tutta la schermata (vedi step 2)
+        // 3. Add a special CSS class for mini-mode styling
         rootTribe.getStyleClass().add("mini-mode");
     }
 
+    /**
+     * Handles the exit/close button click. Closes the popup stage.
+     */
     @FXML
     public void handleExit() {
         Stage stage = (Stage) rootTribe.getScene().getWindow();
