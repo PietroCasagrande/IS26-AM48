@@ -1,8 +1,7 @@
 package it.polimi.ingsw.am48.view.gui;
 
 import javafx.scene.image.Image;
-
-import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,122 +18,75 @@ public class ImageCache {
         this.numRulesPages = 8;
     }
 
-    //Render card images
-    public Image renderCards(String cardId) {
-        String path = paths.get(cardId);
-
-        if (path == null || path.isEmpty()) {
-            return null;
-        }
+    // METODO DI SUPPORTO: Carica l'immagine in background senza bloccare la GUI
+    private Image loadAsync(String path) {
+        if (path == null || path.isEmpty()) return null;
 
         if (cache.containsKey(path)) {
             return cache.get(path);
         }
 
-        try (InputStream is = getClass().getResourceAsStream(path)) {
-            if (is != null) {
-                Image img = new Image(is);
-                cache.put(path, img); // Salvataggio in cache per usi futuri
+        try {
+            URL resource = getClass().getResource(path);
+            if (resource != null) {
+                // 'true' attiva il Background Loading nativo di JavaFX
+                Image img = new Image(resource.toExternalForm(), true);
+                cache.put(path, img);
                 return img;
+            } else {
+                System.err.println("Risorsa non trovata: " + path);
             }
         } catch (Exception e) {
-            System.err.println("Errore caricamento immagine: " + path);
+            System.err.println("Errore caricamento asincrono: " + path);
         }
-
         return null;
     }
 
-    //Render rules images
+    // Render card images - ORA ASINCRONO
+    public Image renderCards(String cardId) {
+        String path = paths.get(cardId);
+        return loadAsync(path);
+    }
+
+    // Render rules images (Già perfetto così)
     public List<Image> preloadRules() {
-
         List<Image> rules = new ArrayList<>();
-
         for(int i = 1; i <= numRulesPages; i++) {
             String path = "/it/polimi/ingsw/am48/view/gui/images/rules/rules_" + i + ".png";
-
-            try {
-                // TRUCCO JAVAFX: Per il caricamento in background SERVE l'URL testuale, non l'InputStream!
-                java.net.URL resource = getClass().getResource(path);
-
-                if (resource != null) {
-                    String absoluteUrl = resource.toExternalForm();
-
-                    // IL SEGRETO È QUI: Il secondo parametro 'true' ordina a JavaFX
-                    // di caricare l'immagine in un thread separato (Background Loading).
-                    // La GUI non si bloccherà per un singolo millisecondo!
-                    Image ruleImg = new Image(absoluteUrl, true);
-                    rules.add(ruleImg);
-                } else {
-                    System.err.println("Risorsa non trovata: " + path);
-                }
-            } catch (Exception e) {
-                System.err.println("Errore pre-caricamento immagine: " + path);
-            }
+            Image img = loadAsync(path);
+            if (img != null) rules.add(img);
         }
         return rules;
     }
 
+    // Render summary card - ORA ASINCRONO
     public List<Image> renderSummaryCard(){
-
         String frontPath = "/it/polimi/ingsw/am48/view/gui/images/summaryCard/summary-card-front.png";
         String backPath = "/it/polimi/ingsw/am48/view/gui/images/summaryCard/summary-card-back.png";
+
+        // Innesca il caricamento asincrono per entrambe se non ci sono
+        Image frontImg = loadAsync(frontPath);
+        Image backImg = loadAsync(backPath);
+
         List<Image> summaryCard = new ArrayList<>();
-
-        // First Summary Card Image rendering
-        if (!this.cache.containsKey(frontPath) || !this.cache.containsKey(backPath)) {
-            try {
-                Image frontImg = new Image(getClass().getResourceAsStream(frontPath));
-                Image backImg = new Image(getClass().getResourceAsStream(backPath));
-
-                this.cache.put(frontPath, frontImg);
-                this.cache.put(backPath, backImg);
-
-            } catch (Exception e) {
-                System.err.println("Error: cannot upload summary card.");
-            }
-        }
-
-        summaryCard.add(this.cache.get(frontPath));
-        summaryCard.add(this.cache.get(backPath));
+        if (frontImg != null) summaryCard.add(frontImg);
+        if (backImg != null) summaryCard.add(backImg);
         return summaryCard;
     }
 
+    // Render prestige points - ORA ASINCRONO
     public Image renderPrestige(boolean negative) {
         String path = negative
                 ? "/it/polimi/ingsw/am48/view/gui/images/negPrestigePoints.png"
                 : "/it/polimi/ingsw/am48/view/gui/images/prestigePoints.png";
-
-        if (cache.containsKey(path)) {
-            return cache.get(path);
-        }
-
-        try (InputStream is = getClass().getResourceAsStream(path)) {
-            if (is != null) {
-                Image img = new Image(is);
-                cache.put(path, img);
-                return img;
-            }
-        } catch (Exception e) {
-            System.err.println("Errore caricamento immagine prestige: " + path);
-        }
-
-        return null;
+        return loadAsync(path);
     }
 
+    // Render totem images - ORA ASINCRONO
     public Image renderTotem(String color){
-
         String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/"
                 + color.toLowerCase()
                 + "Totem.png";
-
-        if(!this.cache.containsKey(totemPath)) {
-            try {
-                Image totemImage = new Image(getClass().getResourceAsStream(totemPath));
-                this.cache.put(totemPath, totemImage);
-            } catch (Exception e) {
-                System.err.println("Error: cannot upload" + color + "totem.");
-            }
-        }
-        return this.cache.get(totemPath);
+        return loadAsync(totemPath);
     }
 }

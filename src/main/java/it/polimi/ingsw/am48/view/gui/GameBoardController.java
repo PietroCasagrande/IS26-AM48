@@ -75,6 +75,7 @@ public class GameBoardController implements ModelObserver {
     private VBox[] opponentBoxes;
     private Label[] opponentLabels;
     private ImageView[] opponentAvatars;
+    private OpponentWidgetController[] opponentControllers = new OpponentWidgetController[4];
 
     // Variabile per stabilire il cambio della texture del deck in base all'era in cui ci si trova
     private int currentEra = 0;
@@ -121,6 +122,25 @@ public class GameBoardController implements ModelObserver {
 
         for (VBox b : opponentBoxes) b.setVisible(false);
 
+        for (int i = 0; i < opponentBoxes.length; i++) {
+            try {
+                opponentBoxes[i].getChildren().clear();
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/am48/view/gui/opponent-widget.fxml"));
+                Parent widget = loader.load();
+
+                opponentControllers[i] = loader.getController();
+
+                opponentControllers[i].setModel(model);
+                opponentControllers[i].setServer(server);
+
+                opponentBoxes[i].getChildren().add(widget);
+                opponentBoxes[i].setVisible(false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         ClientGameState initialState = model.getState();
         if (initialState != null) {
             prevLowerRowIds = new ArrayList<>(initialState.getLowerRowCardIds());
@@ -131,6 +151,12 @@ public class GameBoardController implements ModelObserver {
     public void setDependencies(ImageCache imgCache, SoundCache soundCache) {
         this.imageCache = imgCache;
         this.soundCache = soundCache;
+
+        for (OpponentWidgetController wc : opponentControllers) {
+            if (wc != null) {
+                wc.setDependencies(imgCache);
+            }
+        }
     }
 
     // Render an embedded version of player's tribe scene
@@ -279,49 +305,38 @@ public class GameBoardController implements ModelObserver {
 
     // ─────────────────────── Player Info & Tooltip ───────────────────────
 
-    //TODO
     private void updatePlayerInfo(ClientGameState state) {
         Map<String, ClientPlayerState> players = state.getPlayers();
         String currentTurn = getCurrentPlayer(state);
-
-        // Usa prima i slot sinistri, poi quelli destri
-        VBox[] containers = { left_player1, left_player2, right_player1, right_player2 };
-        for (VBox b : containers) { b.getChildren().clear(); b.setVisible(false); }
-
         String currentPhase = state.getCurrentPhase();
         boolean showTurnGlow = "PLACE_TOTEM".equals(currentPhase) || "PLAYER_OFFER".equals(currentPhase);
+
+        // Nascondiamo tutti i box di base
+        for (VBox b : opponentBoxes) { b.setVisible(false); }
 
         int slot = 0;
         for (ClientPlayerState player : players.values()) {
             if (player.getNickname().equals(myNickname)) continue;
-            if (slot >= containers.length) break;
+            if (slot >= opponentBoxes.length) break;
 
-            try {
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/it/polimi/ingsw/am48/view/gui/opponent-widget.fxml")
-                );
-                Parent widget = loader.load();
-                OpponentWidgetController wc = loader.getController();
+            // Recuperiamo il controller che abbiamo istanziato in initialize()
+            OpponentWidgetController wc = opponentControllers[slot];
 
-                wc.setModel(model);
-                wc.setServer(server);
-                wc.setDependencies(imageCache);
+            // Aggiorniamo solo i dati puri in RAM (zero lag!)
+            String totemColor = player.getTotemColor();
+            Image avatarImg = (totemColor != null) ? imageCache.renderTotem(totemColor) : null;
 
-                String totemColor = player.getTotemColor();
-                Image avatarImg = (totemColor != null) ? imageCache.renderTotem(totemColor) : null;
-                wc.setPlayerData(player.getNickname(), avatarImg);
-                wc.setPlayerStats(player.getFood(), player.getPoints());
+            wc.setPlayerData(player.getNickname(), avatarImg);
+            wc.setPlayerStats(player.getFood(), player.getPoints());
 
-                containers[slot].getChildren().add(widget);
-                containers[slot].setVisible(true);
+            // Rendiamo visibile il box
+            opponentBoxes[slot].setVisible(true);
 
-                if (showTurnGlow && player.getNickname().equals(currentTurn)) {
-                    containers[slot].setStyle("-fx-effect: dropshadow(gaussian, #FFD700, 12, 0.6, 0, 0);");
-                } else {
-                    containers[slot].setStyle("");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            // Gestione bagliore turno
+            if (showTurnGlow && player.getNickname().equals(currentTurn)) {
+                opponentBoxes[slot].setStyle("-fx-effect: dropshadow(gaussian, #FFD700, 12, 0.6, 0, 0);");
+            } else {
+                opponentBoxes[slot].setStyle("");
             }
             slot++;
         }
