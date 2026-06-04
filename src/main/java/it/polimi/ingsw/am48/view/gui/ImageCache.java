@@ -18,7 +18,6 @@ public class ImageCache {
         this.numRulesPages = 8;
     }
 
-    // METODO DI SUPPORTO: Carica l'immagine in background senza bloccare la GUI
     private Image loadAsync(String path) {
         if (path == null || path.isEmpty()) return null;
 
@@ -29,7 +28,6 @@ public class ImageCache {
         try {
             URL resource = getClass().getResource(path);
             if (resource != null) {
-                // 'true' attiva il Background Loading nativo di JavaFX
                 Image img = new Image(resource.toExternalForm(), true);
                 cache.put(path, img);
                 return img;
@@ -42,13 +40,11 @@ public class ImageCache {
         return null;
     }
 
-    // Render card images - ORA ASINCRONO
     public Image renderCards(String cardId) {
         String path = paths.get(cardId);
         return loadAsync(path);
     }
 
-    // Render rules images (Già perfetto così)
     public List<Image> preloadRules() {
         List<Image> rules = new ArrayList<>();
         for(int i = 1; i <= numRulesPages; i++) {
@@ -59,12 +55,10 @@ public class ImageCache {
         return rules;
     }
 
-    // Render summary card - ORA ASINCRONO
     public List<Image> renderSummaryCard(){
         String frontPath = "/it/polimi/ingsw/am48/view/gui/images/summaryCard/summary-card-front.png";
         String backPath = "/it/polimi/ingsw/am48/view/gui/images/summaryCard/summary-card-back.png";
 
-        // Innesca il caricamento asincrono per entrambe se non ci sono
         Image frontImg = loadAsync(frontPath);
         Image backImg = loadAsync(backPath);
 
@@ -74,7 +68,6 @@ public class ImageCache {
         return summaryCard;
     }
 
-    // Render prestige points - ORA ASINCRONO
     public Image renderPrestige(boolean negative) {
         String path = negative
                 ? "/it/polimi/ingsw/am48/view/gui/images/negPrestigePoints.png"
@@ -82,7 +75,6 @@ public class ImageCache {
         return loadAsync(path);
     }
 
-    // Render totem images - ORA ASINCRONO
     public Image renderTotem(String color){
         String totemPath = "/it/polimi/ingsw/am48/view/gui/images/totems/"
                 + color.toLowerCase()

@@ -311,7 +311,6 @@ public class GameBoardController implements ModelObserver {
         String currentPhase = state.getCurrentPhase();
         boolean showTurnGlow = "PLACE_TOTEM".equals(currentPhase) || "PLAYER_OFFER".equals(currentPhase);
 
-        // Nascondiamo tutti i box di base
         for (VBox b : opponentBoxes) { b.setVisible(false); }
 
         int slot = 0;
@@ -319,20 +318,17 @@ public class GameBoardController implements ModelObserver {
             if (player.getNickname().equals(myNickname)) continue;
             if (slot >= opponentBoxes.length) break;
 
-            // Recuperiamo il controller che abbiamo istanziato in initialize()
+
             OpponentWidgetController wc = opponentControllers[slot];
 
-            // Aggiorniamo solo i dati puri in RAM (zero lag!)
             String totemColor = player.getTotemColor();
             Image avatarImg = (totemColor != null) ? imageCache.renderTotem(totemColor) : null;
 
             wc.setPlayerData(player.getNickname(), avatarImg);
             wc.setPlayerStats(player.getFood(), player.getPoints());
 
-            // Rendiamo visibile il box
             opponentBoxes[slot].setVisible(true);
 
-            // Gestione bagliore turno
             if (showTurnGlow && player.getNickname().equals(currentTurn)) {
                 opponentBoxes[slot].setStyle("-fx-effect: dropshadow(gaussian, #FFD700, 12, 0.6, 0, 0);");
             } else {
