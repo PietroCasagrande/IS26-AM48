@@ -10,6 +10,11 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import javafx.scene.control.Label;
 
+/**
+ * Controller for the splash screen scene.
+ * Displays the game title and a pulsing "press any key" label.
+ * Transitions to the main menu when the user clicks anywhere or presses a key.
+ */
 public class SplashScreenController {
 
     @FXML
@@ -24,19 +29,29 @@ public class SplashScreenController {
     private VirtualServer server;
     private ClientModel model;
 
+    /**
+     * Injects the server reference to pass to subsequent scenes.
+     * @param server the virtual server reference
+     */
     public void setServer(VirtualServer server) {
         this.server = server;
     }
 
+    /**
+     * Injects the model reference to pass to subsequent scenes.
+     * @param model the client model reference
+     */
     public void setModel(ClientModel model) {
         this.model = model;
     }
 
+    /**
+     * Initializes the splash screen with a pulsing fade animation on the instruction label,
+     * and sets up mouse click and key press listeners to navigate to the main menu.
+     */
     @FXML
     public void initialize() {
-        // Questo metodo viene chiamato automaticamente da JavaFX appena carica l'FXML
-
-        // 1. Facciamo lampeggiare la scritta
+        // Pulsing animation on the "press any button" label
         pulse = new FadeTransition(Duration.seconds(1.2), pressAnyButtonLabel);
         pulse.setFromValue(1.0);
         pulse.setToValue(0.2);
@@ -44,18 +59,22 @@ public class SplashScreenController {
         pulse.setAutoReverse(true);
         pulse.play();
 
-        // 2. Ci mettiamo in ascolto del click del mouse
-        root.setOnMouseClicked(event -> handleMenu());
+        // Listen for mouse clicks to transition to menu
+        root.setOnMouseClicked(_-> handleMenu());
 
-        // 3. Ci mettiamo in ascolto della tastiera
+        // Listen for keyboard presses to transition to menu
         root.setFocusTraversable(true);
-        root.setOnKeyPressed(event -> handleMenu());
+        root.setOnKeyPressed(_ -> handleMenu());
     }
 
+    /**
+     * Transitions from the splash screen to the main menu scene.
+     * Passes the server and model references to the menu controller.
+     */
     private void handleMenu() {
         MesosMenuController menuController = (MesosMenuController) SceneManager.changeScene("mesos-menu.fxml");
 
-        // Passiamo i riferimenti al nuovo controller
+        // Pass server and model references to the menu controller
         if (menuController != null) {
             menuController.setServer(server);
             menuController.setModel(model);
