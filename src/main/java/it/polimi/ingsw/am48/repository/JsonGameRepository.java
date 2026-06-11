@@ -13,11 +13,30 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * File-system implementation of {@link GameRepository} that persists each game as a JSON
+ * file.
+ * <p>
+ * Every game is stored as a single {@code <gameId>.json} file inside a configurable saves
+ * directory, created on construction if it does not yet exist. Serialization to and from
+ * {@link GameSnapshot} is handled by a Jackson {@link ObjectMapper}; I/O failures are
+ * surfaced as unchecked {@link RuntimeException}s.
+ *
+ * @see GameRepository
+ * @see GameSnapshot
+ */
 public class JsonGameRepository implements GameRepository {
 
     private final Path savesDir;  // percorso della cartella dove risiedono i file JSON
     private final ObjectMapper objectMapper;  // traduce tra Oggetti Java e JSON
 
+    /**
+     * Creates a repository rooted at the given directory, creating the directory if it is
+     * absent.
+     *
+     * @param savesDirPath the path of the folder where the JSON save files are stored
+     * @throws RuntimeException if the saves directory cannot be created
+     */
     public JsonGameRepository(String savesDirPath) {
         // converte la stringa in un oggetto Path gestibile dal sistema operativo
         this.savesDir = Path.of(savesDirPath);
@@ -25,6 +44,14 @@ public class JsonGameRepository implements GameRepository {
         createSavesDirIfAbsent();
     }
 
+    /**
+     * Serializes the snapshot to JSON and writes it to {@code <gameId>.json}, overwriting any
+     * existing file for the same game.
+     *
+     * @param gameId   the unique identifier of the game
+     * @param snapshot the snapshot to persist
+     * @throws RuntimeException if the snapshot cannot be written to disk
+     */
     @Override
     public void save(String gameId, GameSnapshot snapshot) {
         Path file = fileFor(gameId);
@@ -37,6 +64,14 @@ public class JsonGameRepository implements GameRepository {
         }
     }
 
+    /**
+     * Reads {@code <gameId>.json} and deserializes it back into a {@link GameSnapshot}.
+     *
+     * @param gameId the unique identifier of the game to load
+     * @return an {@link Optional} containing the snapshot, or an empty optional if no file
+     *         exists for the given id
+     * @throws RuntimeException if the file exists but cannot be read or parsed
+     */
     @Override
     public Optional<GameSnapshot> load(String gameId) {
         Path file = fileFor(gameId);
@@ -53,6 +88,12 @@ public class JsonGameRepository implements GameRepository {
         }
     }
 
+    /**
+     * Deletes {@code <gameId>.json} if it exists; does nothing if the file is already absent.
+     *
+     * @param gameId the unique identifier of the game to delete
+     * @throws RuntimeException if the file exists but cannot be deleted
+     */
     @Override
     public void delete(String gameId) {
         try {
@@ -63,6 +104,13 @@ public class JsonGameRepository implements GameRepository {
         }
     }
 
+    /**
+     * Lists the ids of all stored games by scanning the saves directory for {@code .json}
+     * files and stripping their extension.
+     *
+     * @return the list of game ids found in the saves directory
+     * @throws RuntimeException if the saves directory cannot be read
+     */
     @Override
     public List<String> listActiveGameIds() {
         // apre uno Stream sulle risorse della cartella. try-with-resources garantisce la chiusura del file system stream
@@ -76,11 +124,22 @@ public class JsonGameRepository implements GameRepository {
         }
     }
 
+    /**
+     * Builds the path of the save file backing the given game id.
+     *
+     * @param gameId the game identifier
+     * @return the path {@code <savesDir>/<gameId>.json}
+     */
     private Path fileFor(String gameId) {
         // aggiunge nome file specifico al percorso
         return savesDir.resolve(gameId + ".json");
     }
 
+    /**
+     * Creates the saves directory (and any missing parent) if it does not already exist.
+     *
+     * @throws RuntimeException if the directory cannot be created
+     */
     private void createSavesDirIfAbsent() {
         try {
             // crea cartella dei salvataggi se mancante
