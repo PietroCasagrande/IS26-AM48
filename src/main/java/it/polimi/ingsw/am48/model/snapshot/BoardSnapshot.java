@@ -8,6 +8,21 @@ import it.polimi.ingsw.am48.model.enums.Era;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Serializable, immutable snapshot of the board state. It captures the cards
+ * currently showed in the tribe and building rows, the remaining cards in both
+ * decks, the {@link OfferTrackSnapshot offer track} and the
+ * {@link OfferTurnCardSnapshot turn-order card}, plus era-related information.
+ *
+ * <p>Card collections are stored as lists of card ids rather than full card
+ * objects; the ids are resolved back to {@code Card} instances when the game is
+ * restored from the snapshot.
+ * </p>
+ *
+ * @see GameSnapshot
+ * @see OfferTrackSnapshot
+ * @see OfferTurnCardSnapshot
+ */
 public class BoardSnapshot implements Serializable {
     private final List<String> upperRowCardIds;
     private final List<String> lowerRowCardIds;
@@ -22,6 +37,24 @@ public class BoardSnapshot implements Serializable {
     private final int numPlayers;
 
 
+    /**
+     * Creates a new board snapshot.
+     *
+     * @param upperRowCardIds ids of the cards in the upper showed tribe row
+     * @param lowerRowCardIds ids of the cards in the lower showed tribe row
+     * @param buildingUpperRowCardIds ids of the cards in the upper showed
+     *                                building row
+     * @param buildingLowerRowCardIds ids of the cards in the lower showed
+     *                                building row
+     * @param tribeDeckRemainingIds ids of the cards still in the tribe deck
+     * @param buildingDeckRemainingIds ids of the cards still in the building
+     *                                 deck
+     * @param offerTrack snapshot of the offer track (totem positions)
+     * @param offerTurnCard snapshot of the turn-order card (totem order)
+     * @param buildingsPerEra number of buildings to draw for each era
+     * @param currEra the index of the current era
+     * @param numPlayers the number of players in the game
+     */
     @JsonCreator
     public BoardSnapshot(
             @JsonProperty("upperRowCardIds") List<String> upperRowCardIds,

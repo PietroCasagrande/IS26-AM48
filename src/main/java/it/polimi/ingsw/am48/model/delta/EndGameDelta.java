@@ -5,13 +5,25 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 
+/**
+ * {@link GameDelta} broadcast when the game ends. It carries the final score
+ * of every player and the nickname of the winner, so that each client can
+ * align its local replica to the definitive result and switch into the
+ * end-game state.
+ *
+ * @see GameDelta
+ * @see ClientModel
+ */
 public class EndGameDelta extends GameDelta{
     private final Map<String, Integer> finalScores;     // nickname -> final score
     private final String winnerNickname;
-    // attualmente winner MAI UTILIZZATO in ambito di delta,
-    // dobbiamo capire se passarlo al ClientModel (aggiungendo un attributo winnerNickname in esso)
-    // oppure se toglierlo dal delta perchè relativo a un puro calcolo del model
 
+    /**
+     * Creates a new end-game delta.
+     *
+     * @param finalScores map from each player's nickname to their final score
+     * @param winnerNickname the nickname of the winning player
+     */
     @JsonCreator
     public EndGameDelta(
             @JsonProperty("finalScores") Map<String, Integer> finalScores,
@@ -20,6 +32,13 @@ public class EndGameDelta extends GameDelta{
         this.winnerNickname = winnerNickname;
     }
 
+    /**
+     * Applies the end-game update to the client model: sets every player's
+     * prestige points to their final score, records the winner and marks the
+     * game as ended.
+     *
+     * @param model the client model whose state must be updated
+     */
     // EndGame modifica pp di tutti i giocatori
     @Override
     public void applyTo(ClientModel model) {

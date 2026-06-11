@@ -5,6 +5,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.am48.network.client.ClientModel;
 
+/**
+ * {@link GameDelta} sent when a player picks a character card from the shared
+ * "showed" tribe rows. It conveys which card was taken, the refreshed tribe
+ * rows, the player's updated food and prestige points, whether the player
+ * returned their totem (i.e. finished picking) and the resulting game phase.
+ *
+ * @see GameDelta
+ * @see ClientModel
+ */
 public class CharacterCardPickedDelta extends GameDelta{
     private final String playerNickname;
     private final String cardId;
@@ -15,6 +24,19 @@ public class CharacterCardPickedDelta extends GameDelta{
     private final boolean totemReturned;
     private final String currentPhase;
 
+    /**
+     * Creates a new character-card-picked delta.
+     *
+     * @param playerNickname the nickname of the player who picked the card
+     * @param cardId the identifier of the picked character card
+     * @param updatedUpperTribeIds the refreshed upper "showed" tribe row
+     * @param updatedLowerTribeIds the refreshed lower "showed" tribe row
+     * @param updatedFood the player's food after the pick
+     * @param updatedPoints the player's prestige points after the pick
+     * @param totemReturned {@code true} if the player has finished their picks
+     *                      and the totem has been returned
+     * @param currentPhase the game phase after applying this delta
+     */
     @JsonCreator
     public CharacterCardPickedDelta(
             @JsonProperty("playerNickname") String playerNickname,
@@ -35,6 +57,13 @@ public class CharacterCardPickedDelta extends GameDelta{
         this.currentPhase = currentPhase;
     }
 
+    /**
+     * Applies the pick to the client model: adds the card to the player's
+     * tribe, refreshes the showed tribe rows, updates the player's food and
+     * prestige points, returns the totem if needed and sets the current phase.
+     *
+     * @param model the client model whose state must be updated
+     */
     @Override
     public void applyTo(ClientModel model) {
         model.addCardToPlayerTribe(playerNickname, cardId);

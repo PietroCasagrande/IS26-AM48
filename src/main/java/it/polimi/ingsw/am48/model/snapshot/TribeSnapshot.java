@@ -8,6 +8,18 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Serializable, immutable snapshot of a player's tribe. It captures the ids of
+ * the owned character and building cards, the collected artifacts and all the
+ * scalar resources and bonuses (food, prestige points, shaman stars, discounts
+ * and the various rights/flags) that make up the tribe's state.
+ *
+ * <p>Cards are stored as ids and resolved back to {@code Card} instances when
+ * the tribe is restored from the snapshot.
+ * </p>
+ *
+ * @see PlayerSnapshot
+ */
 public class TribeSnapshot implements Serializable {
     private final List<String> characterCardIds;
     private final List<String> buildingCardIds;
@@ -24,6 +36,25 @@ public class TribeSnapshot implements Serializable {
     private final int builderPoints;
     private final int buildingPoints;
 
+    /**
+     * Creates a new tribe snapshot.
+     *
+     * @param characterCardIds ids of the owned character cards
+     * @param buildingCardIds ids of the owned building cards
+     * @param artifacts map from artifact name to the number owned
+     * @param currentFood the current amount of food
+     * @param currentPrestigePoints the current prestige points
+     * @param shamanStars the number of shaman stars
+     * @param foodDiscount the current food discount
+     * @param shamanSafety {@code true} if the player is immune to the shaman
+     *                     event
+     * @param shamanDoubling {@code true} if the shaman doubling effect is active
+     * @param extraFoodRight {@code true} if the player holds an extra-food right
+     * @param extraPickRight {@code true} if the player holds an extra-pick right
+     * @param buildingDiscount the current building discount
+     * @param builderPoints the points granted by the builder bonus
+     * @param buildingPoints the points granted by owned buildings
+     */
     @JsonCreator
     public TribeSnapshot(
             @JsonProperty("characterCardIds") List<String> characterCardIds,

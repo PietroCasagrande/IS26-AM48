@@ -9,6 +9,19 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
 
 
+/**
+ * Base type for the serializable snapshot of a game phase. Each concrete
+ * subclass corresponds to a specific phase of the game and carries the
+ * phase-specific state that must survive persistence.
+ *
+ * <p>Snapshots are (de)serialized using Jackson polymorphic typing: a
+ * {@code "phaseType"} property in the JSON selects the concrete subclass, as
+ * declared by the {@link JsonSubTypes} mapping above. The {@link #phaseName}
+ * field carries the same logical phase identifier as a plain string.
+ * </p>
+ *
+ * @see GameSnapshot
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "phaseType")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = WaitingPhaseSnapshot.class, name = "WAITING_FOR_PLAYERS"),
@@ -20,6 +33,11 @@ import java.io.Serializable;
 public abstract class PhaseSnapshot implements Serializable {
     private final String phaseName;
 
+    /**
+     * Creates a new phase snapshot with the given logical phase name.
+     *
+     * @param phaseName the identifier of the phase this snapshot represents
+     */
     @JsonCreator
     protected PhaseSnapshot(
             @JsonProperty("phaseName") String phaseName) {
