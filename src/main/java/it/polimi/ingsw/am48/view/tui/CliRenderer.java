@@ -7,33 +7,46 @@ import it.polimi.ingsw.am48.view.CardDataRegistry;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-/*
- * Handles all terminal output for the TUI. Responsibilities:
- *   - Render the full game state (board, players, offer track, etc.).
- *   - Render error messages received from the server.
- *   - Render informational messages (waiting, help, etc.).
+/**
+ * Handles all terminal output for the TUI.
  *
- * This class has NO knowledge of the server, the network, or the input loop.
- * It only reads ClientGameState and writes to System.out / System.err.
+ * <p>This class is the single point of responsibility for formatting and printing to
+ * {@code System.out} and {@code System.err}. It reads data from {@link ClientGameState}
+ * and {@link CardDataRegistry} and has no knowledge of the server, the network layer,
+ * or the input loop.
+ *
+ * <p>All {@code render*} methods may be called from any thread (typically the network
+ * thread for state updates and the main thread for command feedback), as they perform
+ * only sequential writes to the terminal.
  */
 public class CliRenderer {
 
     private final CardDataRegistry cardRegistry;
 
+    /**
+     * Constructs a {@code CliRenderer} and initialises the {@link CardDataRegistry}
+     * used to resolve human-readable labels and effect descriptions from card identifiers.
+     */
     public CliRenderer() {
         this.cardRegistry = new CardDataRegistry();
     }
 
-    /*
-     * Full state rendering:
-     *  - Renders the complete current game state to stdout.
-     *  - Called every time an update is received from the server.
-     * Parameters:
-     *  - state: the current local game state
-     *  - localNickname: the nickname of the local player (used to mark "YOU")
+
+    // -------------------------------------------------------------------------
+    // Full state rendering
+    // -------------------------------------------------------------------------
+
+    /**
+     * Renders the complete current game state to stdout.
+     *
+     * <p>Prints a header with the current turn and phase, followed by the board
+     * (tribe and building rows), the offer track, the turn order, and the player list.
+     * Called every time an update is received from the server.
+     *
+     * @param state the current local game state
+     * @param localNickname the nickname of the local player, used to mark the "(YOU)" label
      */
     public void renderState(ClientGameState state, String localNickname) {
         System.out.println("\n╔══════════════════════════════════╗");
@@ -55,8 +68,10 @@ public class CliRenderer {
     // Board sections
     // -------------------------------------------------------------------------
 
-    /*
-     * Renders the tribe and building showed rows.
+    /**
+     * Renders the tribe and building showed rows (upper and lower) to stdout.
+     *
+     * @param state the current local game state
      */
     private void renderBoard(ClientGameState state) {
         System.out.println("── Tribe Showed ─────────────────────");
@@ -69,14 +84,19 @@ public class CliRenderer {
         System.out.println();
     }
 
-    /*
-     * Renders the offer track (letters A-G and which player's totem is there).
-     * Empty positions are shown as "-".
-     * Uses getActivePositions util method to print only the "active" tiles in relation to the number of players.
+    /**
+     * Renders the offer track to stdout, showing each position letter (A-G) and the
+     * nickname of the player whose totem occupies it, or {@code "-"} if the positon is empty.
+     *
+     * <p>Only positions present in {@link ClientGameState#getOfferTrackPositions()} are
+     * displayed; the server already filters out inactive tiles based on the player count,
+     * so no additional filtering is needed here.
+     *
+     * @param state the current local game state
      */
     private void renderOfferTrack(ClientGameState state) {
         System.out.println("── Offer Track ──────────────────────");
-        // La mappa contiene già solo le posizioni attive — nessun filtro necessario
+        // map already contains only active positions: no need to filter
         state.getOfferTrackPositions().entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(e -> {
@@ -86,8 +106,10 @@ public class CliRenderer {
         System.out.println();
     }
 
-    /*
-     * Renders the current turn order (the OfferTurnCard totem positions).
+    /**
+     * Renders the current turn order derived from the OfferTurnCard totem positions.
+     *
+     * @param state the current local game state
      */
     private void renderTurnOrder(ClientGameState state) {
         System.out.println("── Turn Order ───────────────────────");
@@ -95,10 +117,13 @@ public class CliRenderer {
         System.out.println();
     }
 
-    /*
-     * Renders all players with their food, prestige points, and cards.
-     * The local player is marked with "(YOU)".
-     * The parameter localNickname it's used to highlight the local player
+    /**
+     * Renders all players with their food, prestige points, totem colour, and acquired
+     * card lists. The local player is labelled with "(YOU)". Card lists are omitted when
+     * empty to avoid cluttering the output.
+     *
+     * @param state the current local game state
+     * @param localNickname the nickname of the local player
      */
     private void renderPlayers(ClientGameState state, String localNickname) {
         System.out.println("── Players ──────────────────────────");
@@ -125,25 +150,31 @@ public class CliRenderer {
     // Messages
     // -------------------------------------------------------------------------
 
-    /*
-     * Renders an error message received from the server.
-     * Uses System.err so it stands out visually from normal output.
+    /**
+     * Renders an error message received from the server to {@code System.err},
+     * so it stands out visually from normal output. The input prompt is then
+     * reprinted so the user can immediately type a corrected command.
+     *
+     * @param message the human-readable error description
      */
     public void renderError(String message) {
         System.err.println("\n[ERROR] " + message);
         System.out.print("> ");
     }
 
-    /*
-     * Renders a waiting message shown while the lobby is filling up.
+    /**
+     * Renders a waiting message shown in the lobby while not all players have joined yet.
      */
     public void renderWaiting() {
         System.out.println("[INFO] Waiting for other players to join...");
     }
 
-    /*
-     * Renders a game-over screen with the final scores.
-     * The only parameter is state, from which we'll get all the attributes needed.
+    /**
+     * Renders the game-over screen with the winner's name and the final scores
+     * sorted in descending order. Also prompts the user to type {@code leaderboard}
+     * to view the historical rankings.
+     *
+     * @param state the final game state, from which the winner and player scores are read
      */
     public void renderGameOver(ClientGameState state) {
         System.out.println("\n╔══════════════════════════════════╗");
@@ -160,7 +191,15 @@ public class CliRenderer {
         System.out.println("\n> ");
     }
 
-    // Renders the full details of a card on demand (used by the "info" command)
+    /**
+     * Renders the full details of a single card on demand (invoked by the {@code info} command).
+     *
+     * <p>Displays the card identifier, its human-readable label from {@link CardDataRegistry},
+     * and its effect description when available. If the registry has no entry for the given ID,
+     * a default "no additional info" message is shown instead.
+     *
+     * @param cardId the identifier of the card to display (e.g. {@code "HUN_1"})
+     */
     public void renderCardInfo(String cardId){
         String label = cardRegistry.getLabel(cardId);
         String description = cardRegistry.getDescription(cardId);
@@ -178,7 +217,12 @@ public class CliRenderer {
         System.out.print("> ");
     }
 
-    // Renders the historical table of results for the games with the specified num of players
+    /**
+     * Renders the historical leaderboard retrieved from the server's database,
+     * formatted as a ranked table with columns for ranks, nickname, score and date.
+     *
+     * @param leaderboard the ordered list of {@link GameResult} entries to display
+      */
     public void renderLeaderboard(List<GameResult> leaderboard) {
         System.out.println("\n── Historical Leaderboard ───────────────────────");
         System.out.printf("  %-4s  %-20s  %-8s  %-10s%n", "#", "Nickname", "Score", "Date");
@@ -198,8 +242,8 @@ public class CliRenderer {
         System.out.print("> ");
     }
 
-    /*
-     * Renders the help message listing all available commands.
+    /**
+     * Renders the help message listing all available TUI commands and their syntax.
      */
     public void renderHelp() {
         System.out.println("""
@@ -220,11 +264,16 @@ public class CliRenderer {
     // Utility
     // -------------------------------------------------------------------------
 
-    /*
-     * Formats a list of card IDs into a compact inline string.
-     * Appends the registry label in brackets when available.
+    /**
+     * Formats a list of card IDs into a compact inline string, appending the
+     * human-readable label from {@link CardDataRegistry} in brackets when available.
+     * Returns {@code "(empty)"} if the list is {@code null} or empty.
+     *
+     * @param ids the list of card identifiers to format
+     * @return a single formatted string with entries separated by {@code "  |  "},
+     *         or {@code "(empty)"} if the list contains no elements
      */
-    private String formatCardList(java.util.List<String> ids) {
+    private String formatCardList(List<String> ids) {
         if (ids == null || ids.isEmpty()) return "(empty)";
 
         return ids.stream()
@@ -234,17 +283,4 @@ public class CliRenderer {
                 })
                 .collect(Collectors.joining("  |  "));
     }
-
-    /*
-    * Tells renderOfferTrack which tiles are active during the game.
-    * It does a switch case over the number of players of the game.
-    * */
-//    private Set<Character> getActivePositions(int numPlayers) {
-//        return switch (numPlayers) {
-//            case 2 -> Set.of('B', 'C', 'E', 'F');
-//            case 3 -> Set.of('B', 'C', 'D', 'E', 'F');
-//            case 4 -> Set.of('B', 'C', 'D', 'E', 'F', 'G');
-//            default -> Set.of('A', 'B', 'C', 'D', 'E', 'F', 'G');
-//        };
-//    }
 }

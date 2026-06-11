@@ -9,32 +9,28 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-/*
- * Terminal User Interface (TUI) for Mesos. The class has two concurrent roles:
+/**
+ * Terminal User Interface (TUI) entry point for Mesos.
  *
- *   1. Observer role (network thread):
- *      Implements ModelObserver and is registered on ClientModel.
- *      When the server sends a delta or snapshot, onStateUpdated() is called
- *      on the network thread. It immediately delegates rendering to CliRenderer.
+ * <p>This class plays two concurrent roles:
+ * <ol>
+ *   <li><b>Observer role (network thread):</b> implements {@link ModelObserver} and is
+ *       registered on {@link ClientModel}. Whenever the server pushes a delta or an initial
+ *       snapshot, {@link #onStateUpdated} is invoked on the network thread, which immediately
+ *       delegates rendering to {@link CliRenderer}.</li>
+ *   <li><b>Input-loop role (main thread):</b> {@link #run()} blocks on stdin waiting for
+ *       user commands. Each line is parsed by {@link CliCommandParser} and dispatched to the
+ *       appropriate handler, which forwards the action to {@link VirtualServer}.</li>
+ * </ol>
  *
- *   2. Input loop role (main thread):
- *      The run() method blocks on stdin waiting for user commands.
- *      Each line is parsed by CliCommandParser and dispatched to the
- *      appropriate handler, which calls VirtualServer.
+ * <p><b>Threading note:</b> the two roles run on different threads but share only
+ * {@code localNickname}, which is written once on a successful join and subsequently
+ * only read. The field is declared {@code volatile} to guarantee cross-thread visibility
+ * without requiring explicit synchronisation.
  *
- * Threading note:
- *   The two roles run on different threads but share only 'localNickname', which is written once (on join)
- *   and then only read. No synchronization is needed beyond the volatile declaration.
- *
- * Responsibilities of THIS class:
- *   - Coordinate parser, renderer, and server calls.
- *   - Maintain localNickname after a successful join.
- *   - Keep the input prompt responsive even when updates arrive.
- *
- * What this class does NOT do:
- *   - Validate game rules (delegated to the server).
- *   - Format output (delegated to CliRenderer).
- *   - Parse strings (delegated to CliCommandParser).
+ * <p>This class does <em>not</em> validate game rules (delegated to the server),
+ * format terminal output (delegated to {@link CliRenderer}), or parse raw input strings
+ * (delegated to {@link CliCommandParser}).
  */
 public class CLIView implements ModelObserver {
 
@@ -44,14 +40,14 @@ public class CLIView implements ModelObserver {
     private final CliCommandParser parser;
     private final BufferedReader reader;
 
-    // Nickname of the local player. Null until the user successfully sends a join command.
+    /** Nickname of the local player. {@code null} until the user successfully sends a join command. */
     private volatile String localNickname;
 
-    /*
-     * Creates the TUI and registers it as an observer of the client model.
-     * Parameters:
-     *  - server: the VirtualServer to send commands to
-     *  - clientModel: the local model to observe for state updates
+    /**
+     * Constructs the TUI and registers it as an observer of the given client model.
+     *
+     * @param server the {@link VirtualServer} to which game commands will be sent
+     * @param clientModel the local model to observe for state updates
      */
     public CLIView(VirtualServer server, ClientModel clientModel) {
         this.server = server;
@@ -68,9 +64,16 @@ public class CLIView implements ModelObserver {
     // ModelObserver — called by the NETWORK thread
     // =========================================================================
 
-    /*
-     * Called by ClientModel whenever a new state is available (after a delta or an initial snapshot has been applied).
-     * This method runs on the NETWORK thread, not the main thread. It delegates to the renderer and return.
+    /**
+     * Called by {@link ClientModel} whenever a new game state is available, either after
+     * a delta or after the initial snapshot has been applied.
+     *
+     * <p>This method runs on the <em>network thread</em>. It inspects the current phase:
+     * if the game has ended it delegates to the game-over renderer; otherwise it delegates
+     * to the full-state renderer. The two-step end-game check handles the fact that the
+     * {@code EndGameDelta} and the {@code LeaderboardState} may arrive in separate updates.
+     *
+     * @param state the updated local game state
      */
     @Override
     public void onStateUpdated(ClientGameState state) {
@@ -87,8 +90,11 @@ public class CLIView implements ModelObserver {
         renderer.renderState(state, localNickname);
     }
 
-    /*
-     * Called by ClientModel when the server sends an error notification. Displays the error message and reprints the input prompt.
+    /**
+     * Called by {@link ClientModel} when the server sends an error notification.
+     * Delegates display to {@link CliRenderer#renderError}.
+     *
+     * @param message the human-readable error description received from the server
      */
     @Override
     public void onError(String message) {
@@ -100,9 +106,14 @@ public class CLIView implements ModelObserver {
     // Input loop — runs on the MAIN thread
     // =========================================================================
 
-    /*
-     * Starts the TUI input loop. Doesn't block until the user types "quit" or stdin is closed (Ctrl+D / Ctrl+Z).
-     * This method must be called from the main thread AFTER the network connection has been established.
+    /**
+     * Starts the TUI input loop, blocking until the user types {@code quit} or stdin is closed
+     * (Ctrl+D on Unix / Ctrl+Z on Windows).
+     *
+     * <p>While blocked on {@code readLine()}, the network thread can still invoke
+     * {@link #onStateUpdated} and print updates to the terminal concurrently.
+     * This method must be called from the main thread <em>after</em> the network connection
+     * has been established.
      */
     public void run() {
         renderer.renderHelp();
@@ -120,8 +131,16 @@ public class CLIView implements ModelObserver {
         }
     }
 
-    /*
-     * Dispatches a single parsed input line to the appropriate handler.
+    // =========================================================================
+    // Command dispatching
+    // =========================================================================
+
+    /**
+     * Parses and dispatches a single input line to the appropriate command handler.
+     * After every command (including unrecognised ones), the input prompt is reprinted
+     * so the user knows the TUI is ready for the next input.
+     *
+     * @param line the raw text line read from stdin
      */
     private void handleLine(String line) {
         var cmd = parser.parse(line);
@@ -148,10 +167,16 @@ public class CLIView implements ModelObserver {
     // Command handlers — each called on the MAIN thread
     // =========================================================================
 
-    /*
-     * Handles: join <nickname> <numPlayers>
-     * Saves the intended nickname locally before sending the command.
-     * If the server rejects it (e.g. duplicate nickname), the error arrives via onError() and the user can try again.
+    /**
+     * Handles the {@code join <nickname> <numPlayers>} command.
+     *
+     * <p>The intended nickname is saved locally <em>before</em> the server call so that
+     * the initial snapshot — which may arrive on the network thread almost immediately —
+     * can already identify the local player correctly. If the server rejects the join
+     * (e.g. duplicate nickname), the error is delivered via {@link #onError} and
+     * {@code localNickname} is reset to {@code null} so the user can try again.
+     *
+     * @param args the command arguments; expects exactly two elements: nickname and numPlayers
      */
     private void handleJoin(String[] args) {
         if (args.length != 2) {
@@ -186,9 +211,14 @@ public class CLIView implements ModelObserver {
         }
     }
 
-    /*
-     * Handles: place <A-G>
-     * Sends a placeTotem command using the saved localNickname.
+    /**
+     * Handles the {@code place <A-G>} command.
+     *
+     * <p>Sends a {@code placeTotem} request to the server using the saved
+     * {@code localNickname}. The position letter is normalised to uppercase before
+     * being forwarded, so both {@code "place a"} and {@code "place A"} are accepted.
+     *
+     * @param args the command arguments; expects exactly one element: a single letter (A–G)
      */
     private void handlePlace(String[] args) {
         if (!isJoined()) return;
@@ -208,9 +238,13 @@ public class CLIView implements ModelObserver {
         }
     }
 
-    /*
-     * Handles: take <cardId>
-     * Sends a takeCard command using the saved localNickname.
+    /**
+     * Handles the {@code take <cardId>} command.
+     *
+     * <p>Sends a {@code takeCard} request to the server for the specified card identifier.
+     * Argument validation (e.g. whether the card is actually available) is performed server-side.
+     *
+     * @param args the command arguments; expects exactly one element: the card identifier
      */
     private void handleTake(String[] args) {
         if (!isJoined()) return;
@@ -227,9 +261,12 @@ public class CLIView implements ModelObserver {
         }
     }
 
-    /*
-     * Handles: show
-     * Reprints the current game state on demand.
+    /**
+     * Handles the {@code show} command.
+     *
+     * <p>Retrieves the latest snapshot from {@link ClientModel} and reprints the full
+     * game state on demand, without waiting for the next server update. Useful when
+     * a server update has scrolled the board off screen.
      */
     private void handleShow() {
         ClientGameState state = clientModel.getState();
@@ -240,9 +277,12 @@ public class CLIView implements ModelObserver {
         renderer.renderState(state, localNickname);
     }
 
-    /*
-     * Handles: players
-     * Prints only the player list (shorter than full "show").
+    /**
+     * Handles the {@code players} command.
+     *
+     * <p>Prints a compact summary (nickname, food, prestige points) for all players in the
+     * game, without rendering the full board or offer-track details. More readable than
+     * {@code show} when only player stats are needed.
      */
     private void handlePlayers() {
         ClientGameState state = clientModel.getState();
@@ -260,9 +300,13 @@ public class CLIView implements ModelObserver {
         );
     }
 
-    /*
-     * Handles: info <cardId>
-     * Prints full details of the given card, including building description if available.
+    /**
+     * Handles the {@code info <cardId>} command.
+     *
+     * <p>Delegates to {@link CliRenderer#renderCardInfo} to display full card details,
+     * including the building description when available.
+     *
+     * @param args the command arguments; expects exactly one element: the card identifier
      */
     private void handleInfo(String[] args) {
         if (args.length != 1) {
@@ -272,9 +316,12 @@ public class CLIView implements ModelObserver {
         renderer.renderCardInfo(args[0]);
     }
 
-    /*
-     * Handles: leaderboard
-     * Prints the historical table of results stored on server's database
+    /**
+     * Handles the {@code leaderboard} command.
+     *
+     * <p>Prints the historical rankings stored in the server's database.
+     * The leaderboard is available only after the game has ended and the server has
+     * sent the corresponding update; until then, an informational message is shown.
      */
     private void handleLeaderboard() {
         ClientGameState state = clientModel.getState();
@@ -285,9 +332,10 @@ public class CLIView implements ModelObserver {
         renderer.renderLeaderboard(state.getLeaderboard());
     }
 
-    /*
-     * Handles: quit
-     * Exits the application cleanly.
+    /**
+     * Handles the {@code quit} command.
+     *
+     * <p>Prints a farewell message and terminates the JVM via {@link System#exit}.
      */
     private void handleQuit() {
         System.out.println("Goodbye.");
@@ -298,9 +346,14 @@ public class CLIView implements ModelObserver {
     // Utility
     // =========================================================================
 
-    /*
-     * Returns true if the local player has joined a game.
-     * Prints a message and returns false if not yet joined, so command handlers can guard themselves with a one-liner.
+    /**
+     * Returns {@code true} if the local player has successfully joined a game.
+     *
+     * <p>If {@code localNickname} is {@code null}, prints an instructional message and
+     * returns {@code false}, allowing command handlers to guard themselves with a single
+     * {@code if (!isJoined()) return;} line.
+     *
+     * @return {@code true} if the player has joined; {@code false} otherwise
      */
     private boolean isJoined() {
         if (localNickname == null) {
