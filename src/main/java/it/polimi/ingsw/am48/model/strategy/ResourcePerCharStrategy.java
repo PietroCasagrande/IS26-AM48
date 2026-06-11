@@ -4,11 +4,36 @@ import it.polimi.ingsw.am48.model.enums.CharacterType;
 import it.polimi.ingsw.am48.model.enums.Resource;
 import it.polimi.ingsw.am48.model.player.PlayerContext;
 
+/**
+ * Effect that grants a resource scaled by the number of characters of a given type the
+ * current player owns.
+ * <p>
+ * This strategy is shared by both characters and buildings: the amount awarded is
+ * {@code quantity * (number of characters of characterType in the tribe)}. The kind of
+ * resource determines how the amount is applied:
+ * <ul>
+ *     <li>{@code FOOD} &ndash; adds food (e.g. the Hunter character);</li>
+ *     <li>{@code FOOD_POINTS} &ndash; adds one food per character plus the scaled prestige
+ *     points (e.g. the building granting food and points per hunter);</li>
+ *     <li>{@code FOOD_DISCOUNT} &ndash; increases the food discount for famine;</li>
+ *     <li>{@code PRESTIGE_POINT} &ndash; adds prestige points.</li>
+ * </ul>
+ *
+ * @see CardStrategy
+ */
 public class ResourcePerCharStrategy extends CardStrategy{
     private final Resource resource;
     private final int quantity;
     private final CharacterType characterType;
 
+    /**
+     * Creates a new per-character resource effect.
+     *
+     * @param resource      the kind of resource to grant
+     * @param quantity      the amount granted for each owned character of {@code characterType}
+     * @param characterType the character type whose count drives the reward
+     * @param registration  the registration action describing when the effect triggers
+     */
     public ResourcePerCharStrategy(Resource resource, int quantity, CharacterType characterType, RegistrationAction registration) {
         // PER IL MOMENTO SEGNATA COME PERSISTENTE, MA DA RIVEDERE PER L'HUNTER CHARACTER
         super(registration);
@@ -17,6 +42,13 @@ public class ResourcePerCharStrategy extends CardStrategy{
         this.characterType = characterType;
     }
 
+    /**
+     * Grants the configured resource to the current player, scaled by how many characters
+     * of {@code characterType} are in their tribe.
+     *
+     * @param playerContext the context of the current player and all the players in game
+     * @throws IllegalArgumentException if the configured resource is not supported
+     */
     @Override
     public void effect(PlayerContext playerContext) {
         int num = playerContext.getCurrPlayer().getTribe().countByType(characterType);
