@@ -11,17 +11,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * MySQL implementation of {@link LeaderboardRepository}, backed by a HikariCP connection pool.
+ *
+ * <p>On construction, this class reads database connection parameters from a
+ * {@code db.properties} file on the classpath (see {@code db.properties.example} for the
+ * required format) and initialises a pool of up to five connections. All queries use
+ * {@link PreparedStatement} to prevent SQL injection.
+ *
+ * <p>The underlying table schema is defined in {@code schema.sql}. In particular, a composite
+ * index on {@code (num_players, final_score DESC)} ensures that {@link #getLeaderboard} remains
+ * efficient even for large result sets.
+ *
+ * <p>Call {@link #close()} when the server shuts down to release all pooled connections.
+ */
 public class MySqlLeaderboardRepository implements LeaderboardRepository{
 
     private final HikariDataSource dataSource;
 
-    /*
-    * loadProperties() reads db.properties file, and returns a Properties object.
-    * HikariConfig is the configuration object: we are telling him where is the DB (url), what's the username and password,
-    * and how many connections are needed in the pool.
-    *
-    * HikariDataSource(config) creates the real pool: now HikariCP is able to open connections with MySql
-    * */
+    /**
+     * Constructs the repository by reading {@code db.properties} from the classpath and
+     * initialising a HikariCP connection pool configured with the URL, credentials, and a
+     * maximum pool size of 5.
+     *
+     * @throws RuntimeException if {@code db.properties} is missing or cannot be parsed,
+     *                          or if the pool cannot establish a connection to MySQL
+     */
     public MySqlLeaderboardRepository(){
         Properties props = loadProperties();
         HikariConfig config = new HikariConfig();
@@ -32,7 +47,13 @@ public class MySqlLeaderboardRepository implements LeaderboardRepository{
         this.dataSource = new HikariDataSource(config);
     }
 
-
+    /**
+     * Reads database connection properties from {@code db.properties} on the classpath.
+     *
+     * @return a {@link Properties} object populated with at least {@code db.url},
+     *         {@code db.username}, and {@code db.password}
+     * @throws RuntimeException if the file is not found or an I/O error occurs while reading it
+     */
     private Properties loadProperties() {
         Properties props = new Properties();
         // looks for db.properties file in src/main/resources path
@@ -49,6 +70,16 @@ public class MySqlLeaderboardRepository implements LeaderboardRepository{
         return props;
     }
 
+    /**
+     * Inserts one row into the {@code game_results} table for the given player result.
+     *
+     * <p>Uses a {@link PreparedStatement} with positional placeholders to prevent SQL injection.
+     * The {@link java.time.LocalDateTime} timestamp is converted to a JDBC {@link Timestamp}
+     * before being bound to the statement.
+     *
+     * @param result the game result to persist; must not be {@code null}
+     * @throws RuntimeException wrapping the underlying {@link SQLException} if the INSERT fails
+     */
     @Override
     public void saveResult(GameResult result) {
         String sql = "INSERT INTO game_results " +
@@ -73,6 +104,17 @@ public class MySqlLeaderboardRepository implements LeaderboardRepository{
         }
     }
 
+    /**
+     * Queries the {@code game_results} table for all rows matching the given player count,
+     * ordered by {@code final_score} descending, and maps each row to a {@link GameResult}.
+     *
+     * <p>The query leverages the composite index on {@code (num_players, final_score DESC)}
+     * defined in {@code schema.sql} to avoid a full-table scan.
+     *
+     * @param numPlayers the number of players to filter by
+     * @return an ordered list of {@link GameResult} entries; never {@code null}, may be empty
+     * @throws RuntimeException wrapping the underlying {@link SQLException} if the query fails
+     */
     @Override
     public List<GameResult> getLeaderboard(int numPlayers) {
         String sql = "SELECT game_id, nickname, final_score, num_players, game_date " +
@@ -107,7 +149,10 @@ public class MySqlLeaderboardRepository implements LeaderboardRepository{
         return leaderboard;
     }
 
-    // Whenever the server is turned off, every connection with MySql is closed
+    /**
+     * Closes the HikariCP connection pool, releasing all pooled connections to MySQL.
+     * Should be called exactly once when the server shuts down.
+     */
     public void close() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
