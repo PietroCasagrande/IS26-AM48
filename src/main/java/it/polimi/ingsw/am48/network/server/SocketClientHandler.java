@@ -18,15 +18,46 @@ import java.io.*;
 import java.net.Socket;
 import java.util.List;
 
+/**
+ * Server-side handler for a single Socket client connection.
+ *
+ * <p>One instance is created per accepted {@link Socket} and run on its own thread
+ * (implements {@link Runnable}). It plays two roles:
+ * <ol>
+ *   <li><b>Command receiver:</b> {@link #run()} continuously reads JSON lines from the
+ *       client, deserialises each into a {@link ClientCommand} via Jackson's polymorphic
+ *       type resolution, and calls {@link ClientCommand#execute} passing {@code this} as
+ *       the handler — giving the command access to {@link #getController()},
+ *       {@link #getServer()}, and {@link #getNickname()}.</li>
+ *   <li><b>{@link VirtualViewSocket}:</b> the {@code show*}/{@code reportError} methods
+ *       wrap their argument in the corresponding {@link ServerNotification} subclass,
+ *       serialise it to JSON, and write it to the client's output stream.</li>
+ * </ol>
+ *
+ * <p>When the read loop ends (client disconnects or an {@link IOException} occurs), the
+ * {@code finally} block in {@link #run()} performs full cleanup: it terminates the
+ * client's game via {@link GameController#handleClientDisconnect}, notifies the remaining
+ * players ("companions") that the game has ended, unregisters this client from
+ * {@link MesosServer}, and closes the socket.
+ */
 public class SocketClientHandler implements Runnable, VirtualViewSocket {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
     private ObjectMapper mapper;
     private GameController controller;
-    private MesosServer server; // Riferimento al server principale per il broadcast
-    private String nickname; // Identifica questo client
+    private MesosServer server; // server's reference for the broadcast
+    private String nickname; // identifies this client
 
+    /**
+     * Wraps the given socket and sets up buffered input/output streams for line-based
+     * JSON communication.
+     *
+     * @param socket     the accepted client connection
+     * @param controller the game controller used to execute commands received from this client
+     * @param server     the shared server hub used for broadcasting and client registration
+     * @throws IOException if the socket's input/output streams cannot be obtained
+     */
     public SocketClientHandler(Socket socket, GameController controller, MesosServer server) throws IOException {
         this.socket = socket;
         this.controller = controller;
@@ -36,6 +67,20 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
         this.mapper = JsonMapper.get();
     }
 
+    /**
+     * Main read loop for this client's connection, run on a dedicated thread.
+     *
+     * <p>Each line read from the socket is deserialised into a {@link ClientCommand}
+     * (the {@code "type"} field selects the concrete subclass) and executed immediately.
+     * The loop ends when the client closes the connection or an {@link IOException} occurs.
+     *
+     * <p>On exit, if this client had completed a {@code join} (i.e. {@link #nickname} is set),
+     * the {@code finally} block tears down the client's game: it calls
+     * {@link GameController#handleClientDisconnect} to obtain the remaining players
+     * ("companions"), notifies them via {@link MesosServer#broadcastErrorToGame} that the
+     * game has been terminated, and unregisters this client from {@link MesosServer}.
+     * The socket is then closed regardless of whether a nickname was set.
+     */
     @Override
     public void run() {
         try {
@@ -64,30 +109,59 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
         }
     }
 
-    // --- Metodi usati dai ClientCommand per eseguire le azioni ---
+    // --- Methods used by ClientCommands in order to execute actions ---
 
     public GameController getController() { return controller; }
     public MesosServer getServer() { return server; }
     public String getNickname() { return nickname; }
     public void setNickname(String nickname) { this.nickname = nickname; }
+    /**
+     * Returns this handler itself as a {@link VirtualView}, so that {@link ClientCommand}
+     * implementations can send notifications (e.g. error reports) directly back to this client.
+     *
+     * @return this instance, viewed as a {@link VirtualView}
+     */
     public VirtualView getSelfView() { return this; }
 
-    // --- Implementazione VirtualViewSocket (invia messaggi AL client) ---
 
+    // --- VirtualViewSocket implementation (sends messages to THE client) ---
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Wraps {@code delta} in a {@link GameDeltaNotification} and sends it as a JSON line.
+     */
     @Override
     public void showGameDelta(GameDelta delta) {
         send(new GameDeltaNotification(delta));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Wraps {@code snapshot} in an {@link InitialSnapshotNotification} and sends it as
+     * a JSON line.
+     */
     @Override
     public void showInitialSnapshot(GameSnapshot snapshot) {
         send(new InitialSnapshotNotification(snapshot));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Wraps {@code errorMessage} in an {@link ErrorNotification} and sends it as a JSON line.
+     */
     @Override
     public void reportError(String errorMessage) {
         send(new ErrorNotification(errorMessage));    }
 
+    /**
+     * Serialises the given notification to JSON and writes it as a single line to the
+     * client's output stream.
+     *
+     * @param notification the notification to send
+     */
     private void send(ServerNotification notification) {
         try {
             out.println(mapper.writeValueAsString(notification));

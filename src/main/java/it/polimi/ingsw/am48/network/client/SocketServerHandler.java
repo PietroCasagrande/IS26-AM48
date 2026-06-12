@@ -19,6 +19,12 @@ import java.net.Socket;
  * reads incoming {@link ServerNotification} objects and applies them
  * to the local {@link ClientModel}.
  *
+ * <p>This class is the Socket-side counterpart of
+ * {@link it.polimi.ingsw.am48.network.server.SocketClientHandler}: commands sent via
+ * {@link #send} are deserialised and executed there, while notifications sent from
+ * {@code SocketClientHandler} are received and applied here via
+ * {@link ServerNotification#apply}.
+ *
  * <p>On connection loss, starts a reconnect watcher thread that polls
  * the server until it comes back online, then instructs the player
  * to rejoin.</p>
@@ -71,24 +77,43 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Sends a {@link JoinGameCommand} carrying both {@code numPlayers} and
+     * {@code nickname}; unlike {@link #placeTotem} and {@link #takeCard}, the nickname
+     * has not yet been established on the server side, so it must be included here.
+     */
     @Override
     public void joinGame(int numPlayers, String nickname) {
         send(new JoinGameCommand(numPlayers, nickname));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Sends a {@link PlaceTotemCommand} carrying only {@code position}; {@code nickname}
+     * is not transmitted because the server already identifies this connection by the
+     * nickname registered during {@code joinGame}.
+     */
     @Override
     public void placeTotem(String nickname, char position) {
         send(new PlaceTotemCommand(position));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Sends a {@link TakeCardCommand} carrying only {@code cardId}; {@code nickname}
+     * is not transmitted, for the same reason as {@link #placeTotem}.
+     */
     @Override
     public void takeCard(String nickname, String cardId) {
         send(new TakeCardCommand(cardId));
     }
 
     /**
-     * Serializes a {@link ClientCommand} to JSON and sends it over the
-     * socket.
+     * Serializes a {@link ClientCommand} to JSON and sends it over the socket.
      *
      * @param command the command to send
      */
@@ -101,6 +126,12 @@ public class SocketServerHandler implements Runnable, VirtualServerSocket {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Closes the underlying socket, if open. After this call, the listener thread's
+     * {@link #run()} loop will exit via an {@link IOException} on the next read.
+     */
     @Override
     public void disconnect() {
         try {
