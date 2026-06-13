@@ -10,28 +10,57 @@ import javafx.application.Application;
 
 import java.util.Scanner;
 
-/*
+/**
  * Entry point for the Mesos client application.
  *
- * Responsibilities:
- *   - Ask the user to choose network technology (Socket or RMI).
- *   - Ask the user to choose the view type (TUI or GUI).
- *   - Establish the connection to the server.
- *   - Wire together ClientModel, VirtualServer, and the chosen view.
+ * <p>Responsibilities:
+ * <ul>
+ *   <li>Ask the user to choose the network technology (Socket or RMI).</li>
+ *   <li>Ask the user to choose the view type (TUI or GUI).</li>
+ *   <li>Establish the connection to the server.</li>
+ *   <li>Wire together {@link ClientModel}, {@link VirtualServer}, and the chosen view.</li>
+ * </ul>
  *
- * This class contains NO game logic. It only assembles the components and hands control to the chosen view.
+ * <p>This class contains <b>no game logic</b>: it only assembles the components and hands
+ * control to the chosen view.
+ *
+ * <p>To run the client with Maven, after starting {@code ServerMain} on another terminal:
+ * <pre>{@code mvn exec:java -Dexec.mainClass="it.polimi.ingsw.am48.ClientMain"}</pre>
+ *
+ * @see it.polimi.ingsw.am48.network.server.ServerMain
+ * @see LauncherClient
  */
-
-// To run the client with maven, write
-//      mvn exec:java -Dexec.mainClass="it.polimi.ingsw.am48.ClientMain"
-// on the terminal, after running ServerMain on another terminal window.
-
 public class ClientMain {
 
     private static final String DEFAULT_HOST = "localhost";
     private static final int    DEFAULT_SOCKET_PORT = 12345;
     private static final int    DEFAULT_RMI_PORT    = 1099;
 
+    /**
+     * Interactively prompts the user for connection and view settings, then assembles and
+     * launches the client.
+     *
+     * <p>The setup proceeds in six steps:
+     * <ol>
+     *   <li><b>Host:</b> read the server hostname, defaulting to {@value #DEFAULT_HOST}.</li>
+     *   <li><b>Network technology:</b> Socket or RMI, defaulting to Socket.</li>
+     *   <li><b>View type:</b> TUI or GUI, defaulting to TUI.</li>
+     *   <li><b>{@link ClientModel}:</b> created first, since the network handlers need it
+     *       to deliver incoming snapshots and deltas as soon as the connection is open.</li>
+     *   <li><b>Connection:</b> for Socket, a {@link SocketServerHandler} is created and its
+     *       listener loop started on a daemon thread; for RMI, a {@link RmiClient} is
+     *       constructed, which performs the registry lookup itself. Either way, the result
+     *       is exposed uniformly as a {@link VirtualServer}.</li>
+     *   <li><b>View:</b> for TUI, {@link CLIView#run()} is called directly, blocking the
+     *       main thread on stdin; for GUI, the model and server are passed statically to
+     *       {@link GUIViewFxml} before launching the JavaFX {@link Application}.</li>
+     * </ol>
+     *
+     * @param args command-line arguments, forwarded unchanged to {@link Application#launch}
+     *             when the GUI view is selected
+     * @throws Exception if the connection to the server cannot be established
+     *                    (e.g. socket connection refused, or RMI registry/lookup failure)
+     */
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
 
