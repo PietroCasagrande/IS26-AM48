@@ -320,11 +320,15 @@ public class GameBoardController implements ModelObserver {
      */
     private void checkAcquirableCharacters(ClientGameState state) {
 
+        if (skipButton.isVisible() && !skipButton.isDisabled()) {
+            return;
+        }
+
         boolean isUpperEmpty = state.getUpperRowCardIds().stream()
                 .allMatch(cardId -> cardId.startsWith("EV"));
         boolean isLowerEmpty = state.getLowerRowCardIds().stream()
                 .allMatch(cardId -> cardId.startsWith("EV"));
-        boolean isMyTurn = getCurrentPlayer(state).equals(myNickname);
+        boolean isMyTurn = Objects.equals(getCurrentPlayer(state), myNickname);
         Character myOfferCard = state.getOfferTrackPositions()
                 .entrySet()
                 .stream()
