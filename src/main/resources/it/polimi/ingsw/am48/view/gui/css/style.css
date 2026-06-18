@@ -1,0 +1,700 @@
+/* ======================================================================================== */
+/*                                      ROOTS (STACK PANELS)                                */
+/* ======================================================================================== */
+
+#root {
+    -fx-background-image: url("../images/background.png");
+    -fx-background-size: cover; /* Questo è il comando magico! */
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+#rootLobby {
+    -fx-background-image: url("../images/loading-lobby.png");
+    -fx-background-size: cover;
+}
+
+/* Il box nero opaco */
+.lobby-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.5); /* 75% di opacità nera */
+    -fx-background-radius: 30px;               /* Angoli smussati */
+    -fx-padding: 60px;                         /* Spazio interno generoso */
+    -fx-border-color: rgba(255, 255, 255, 0.1); /* Bordino sottilissimo per staccare */
+    -fx-border-width: 1px;
+    -fx-border-radius: 30px;
+    -fx-max-width: 500px;
+    -fx-max-height: 50px;                    /* Evita che il box diventi troppo largo */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0.5, 0, 0);
+}
+
+#rootJoinGame {
+    -fx-background-image: url("../images/background-with-characters.jpeg");
+    -fx-background-size: cover;
+}
+
+.rootTribe {
+    /* Sostituisci con il path della tua immagine di sfondo */
+    -fx-background-image: url("../images/background-leaderboard.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
+
+/* ======================================================================================== */
+/*                                          BUTTONS                                         */
+/* ======================================================================================== */
+
+/* ======================================== FIRE BUTTONS ================================== */
+
+.button-menu-fire {
+    /* Gradiente dall'arancione al rosso scuro */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+
+    /* Bordi più arrotondati, organici */
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 12px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+.button-menu-fire:hover {
+    /* Il gradiente diventa più acceso e luminoso */
+    -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
+    -fx-cursor: hand;
+    /* L'ombra diventa un "bagliore" arancione */
+    -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
+}
+
+.button-menu-fire:armed {
+    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    -fx-background-insets: 0;
+
+    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    /* Il tuo stile di selezione */
+    -fx-border-color: #FFCA71;
+    -fx-border-width: 2px;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-font-size: 22px;
+
+    /* Bagliore */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 5);
+}
+
+/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+.button-menu-fire:pressed {
+    -fx-background-color: #d35400;
+    -fx-background-insets: 0;
+}
+
+/* ======================================== EXIT BUTTON ================================== */
+
+.button-exit {
+    /* Gradiente dall'arancione al rosso scuro */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 5px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+.button-exit:hover {
+    /* Il gradiente diventa più acceso e luminoso */
+    -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
+    -fx-cursor: hand;
+    /* L'ombra diventa un "bagliore" arancione */
+    -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
+}
+
+.button-exit:armed,
+.button-exit:focused {
+    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    -fx-background-insets: 0;
+
+    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    /* Il tuo stile di selezione */
+    -fx-border-color: #FFCA71;
+    -fx-border-width: 2px;
+    -fx-font-size: 22px;
+
+    /* Bagliore */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 5);
+}
+
+/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+.button-exit:pressed {
+    -fx-background-color: #d35400;
+    -fx-background-insets: 0;
+}
+
+/* =================================== NIGHT BUTTONS ====================================== */
+
+.button-menu-night {
+    /* Gradiente dal ciano al violetto */
+    -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+
+    /* Bordi più arrotondati, organici */
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 12px 30px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+.button-menu-night:hover {
+    /* Il gradiente diventa più acceso e luminoso */
+    -fx-background-color: linear-gradient(to bottom, #115f88, #70334f);
+    -fx-cursor: hand;
+    /* L'ombra diventa un "bagliore" arancione */
+    -fx-effect: dropshadow(three-pass-box, rgb(2, 67, 99), 20, 0, 0, 0);
+}
+
+/* ======================================================================================== */
+/*                                 TOGGLE BUTTON GROUP                                      */
+/* ======================================================================================== */
+
+/* Questo serve a resettare TUTTI gli stati che Scene Builder sporca di azzurro */
+.button-menu-night:selected,
+.button-menu-night:focused,
+.button-menu-night:selected:focused {
+    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
+
+    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    -fx-background-insets: 0;
+
+    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    /* Il tuo stile di selezione */
+    -fx-border-color: #FFCA71;
+    -fx-border-width: 4px;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-font-size: 16px;
+
+    /* Bagliore */
+    -fx-effect: dropshadow(three-pass-box, rgba(17, 95, 136, 0.8), 15, 0, 0, 0);
+}
+
+/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+.button-menu-night:pressed {
+    -fx-background-color: #024363;
+    -fx-background-insets: 0;
+}
+
+/* ======================================================================================== */
+/*                                          TEXT                                            */
+/* ======================================================================================== */
+
+/* Stile per la scritta "Waiting" */
+.waiting-text {
+    -fx-font-family: "Papyrus", "System";      /* Mantieni lo stile Mesos */
+    -fx-font-size: 32px;
+    -fx-text-fill: #fff3e0;                    /* Crema chiaro per contrasto */
+    -fx-font-weight: bold;
+}
+
+/* ======================================== PLAYER TRIBE TITLE ================================== */
+
+.tribe-main-title {
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+
+    /* Bordi più arrotondati, organici */
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 5px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+/* ======================================== CHARACTERS TYPE LABELS ================================== */
+
+.tribe-character-title {
+    -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
+
+    /* Testo bianco crema */
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+
+    /* Bordi più arrotondati, organici */
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    -fx-padding: 5px 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+/* --- STILE MINI (Quando è incastrato in basso) --- */
+/* Il CSS legge: "Trova le .tribe-label che si trovano DENTRO .mini-mode" */
+.mini-mode .tribe-character-title {
+    -fx-font-size: 10px; /* Font molto più piccolo! */
+    -fx-padding: 2px;    /* Margini ridotti */
+}
+
+/* Puoi fare la stessa cosa per rimpicciolire anche le immagini delle carte!
+.mini-mode .card-image {
+    -fx-fit-width: 90px; /* Rimpicciolisce la larghezza delle carte in modalità mini
+} */
+
+/* Stile per il conteggio giocatori */
+.player-count-text {
+    -fx-font-size: 18px;
+    -fx-text-fill: #ffcc00;                    /* Giallo ambra per evidenziare il dato */
+    -fx-letter-spacing: 2px;
+}
+
+/* ======================================================================================== */
+/*                                          TEXT FIELD                                      */
+/* ======================================================================================== */
+
+.nickname-text-field {
+    /* Il gradiente principale */
+    -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
+
+    /* FORZATURA 1: Applichiamo il raggio a tutti i possibili strati di background di JavaFX */
+    -fx-background-radius: 25px, 25px, 25px, 25px;
+
+    /* FORZATURA 2: Azzeriamo tutti gli insets per evitare angoli squadrati "fantasma" */
+    -fx-background-insets: 0, 0, 0, 0;
+
+    -fx-text-fill: #FFF3E0;
+    -fx-prompt-text-fill: rgba(255, 243, 224, 0.5);
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: "System";
+
+    /* Bordo dorato */
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+    -fx-border-radius: 25px;
+
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+/* Forziamo anche lo stato di focus per evitare che torni rettangolare quando scrivi */
+.nickname-text-field:focused {
+    -fx-background-color: linear-gradient(to bottom, #03567d, #6e2448);
+
+    /* Ripetiamo la forzatura del raggio e degli insets */
+    -fx-background-radius: 25px, 25px, 25px, 25px;
+    -fx-background-insets: 0, 0, 0, 0;
+
+    -fx-border-color: #F5B041;
+    -fx-border-width: 2px;
+
+    /* Eliminiamo i rettangoli azzurri di sistema */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ======================================================================================== */
+/*                                          SCROLL PANE                                     */
+/* ======================================================================================== */
+
+/* 2. Trucco Magico: Rende la "finestra" dello ScrollPane totalmente trasparente */
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+/* ====================================== SCROLL BAR DESIGN ================================= */
+
+/* 2. Sfondo del "binario" in cui scorre la barra */
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color: rgba(0, 0, 0, 0.4); /* Sfondo scuro semi-trasparente */
+    -fx-border-color: #F5B041; /* Bordino dorato */
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+/* 3. Il cursore vero e proprio (Thumb) con i colori del tuo fuoco */
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
+    -fx-background-radius: 10px;
+    -fx-background-insets: 2px; /* Lascia un po' di respiro dal bordo del binario */
+}
+
+/* Effetto Hover quando ci passi sopra col mouse */
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
+    -fx-cursor: hand;
+}
+
+/* 4. Nascondiamo le freccine default alle estremità (Stile UI Moderna) */
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0px; /* Le rimpicciolisce a zero */
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " "; /* Toglie la forma del triangolo */
+    -fx-padding: 0px;
+}
+
+/* ====================================== CARD COLUMN DESIGN ================================= */
+
+/* 3. Le Corsie / Colonne delle carte */
+.tribe-column {
+    /* Uno sfondo nero semi-trasparente per far leggere bene le carte sopra lo sfondo globale */
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+
+    /* Bordo SOLO a destra (Top Right Bottom Left) con il tuo color oro */
+    -fx-border-color: transparent #F5B041 transparent transparent;
+    -fx-border-width: 0 2px 0 0;
+
+    /* Un tocco di stile: linea tratteggiata per un effetto più "antico" (opzionale) */
+    -fx-border-style: dotted;
+}
+
+/* L'ultima colonna a destra non deve avere il bordo, altrimenti sbatte contro la barra di scorrimento */
+.tribe-column-last {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-border-width: 0;
+}
+
+/* ======================================================================================== */
+/*                                      ROOTS (STACK PANELS)                                */
+/* ======================================================================================== */
+
+#rootboard {
+    -fx-background-image: url("../images/background-game-board.jpeg");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+/* ======================================================================================== */
+/* GAME OBJECTS & TOKENS                                  */
+/* ======================================================================================== */
+
+.token {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 20, 0.5, 0, 0);
+}
+
+.totem-selectable {
+    -fx-cursor: hand;
+}
+
+.totem-selectable:hover {
+    -fx-scale-x: 1.15;
+    -fx-scale-y: 1.15;
+}
+
+.opponent-label {
+    -fx-text-fill: #FFD700;
+    -fx-effect: dropshadow(gaussian, black, 5, 0.6, 1, 1);
+    -fx-background-color: #00000080;
+    -fx-background-radius: 8px;
+    -fx-padding: 4px 10px;
+    -fx-font-weight: bold;
+}
+
+.opponent-label:hover {
+    -fx-text-fill: #FFF3E0;
+    -fx-effect: dropshadow(gaussian, #FFD700, 10, 0.5, 0, 0);
+}
+
+/* ======================================================================================== */
+/* DECKS & ERAS                                           */
+/* ======================================================================================== */
+
+#deck {
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.deck-era1 {
+    -fx-background-image: url("../images/deckEra/deckEra1.png");
+}
+
+.deck-era2 {
+    -fx-background-image: url("../images/deckEra/deckEra2.png");
+}
+
+.deck-era3 {
+    -fx-background-image: url("../images/deckEra/deckEra3.png");
+}
+
+.glass-box {
+    -fx-border-color: rgba(255, 255, 255, 0.7);
+    -fx-border-width: 2px;
+    -fx-border-radius: 30px;
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-radius: 30px;
+    -fx-padding: 15px;
+}
+
+/* ======================================================================================== */
+/*                                      LEADERBOARD                                         */
+/* ======================================================================================== */
+
+#rootLeaderboard {
+    -fx-background-image: url("../images/background-leaderboard.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+#rootRanking {
+    -fx-background-image: url("../images/background-leaderboard.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+/* ======================================================================================== */
+/*                                      PHASE INDICATOR                                      */
+/* ======================================================================================== */
+
+.phase-indicator {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-radius: 15px;
+    -fx-padding: 8px 20px;
+    -fx-border-color: rgba(255, 215, 0, 0.3);
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+}
+
+.phase-indicator .label {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.opponent-stat-food {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+.opponent-stat-pp {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+/* ======================================================================================== */
+/*                                      EVENT NOTIFICATIONS                                  */
+/* ======================================================================================== */
+
+.event-notification {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-background-radius: 15;
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+    -fx-padding: 12 25 12 25;
+}
+
+.event-title {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-font-family: "Papyrus";
+}
+
+.event-detail {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+.leaderboard-title {
+    -fx-font-family: "Papyrus";
+    -fx-font-size: 48px;
+    -fx-text-fill: #FFD700;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+/* --- Leaderboard (end-of-game) --- */
+
+.lb-winner-label {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+}
+
+.lb-winner-name {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 28;
+    -fx-font-weight: bold;
+}
+
+.lb-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.lb-row {
+    -fx-background-color: rgba(0,0,0,0.4);
+    -fx-background-radius: 10;
+}
+
+.lb-row-winner {
+    -fx-background-color: rgba(0,0,0,0.6);
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.lb-row-self {
+    -fx-background-color: rgba(255,215,0,0.12);
+}
+
+.lb-rank {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+    -fx-min-width: 55;
+}
+
+.lb-nick {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-min-width: 200;
+}
+
+.lb-nick-winner {
+    -fx-text-fill: #FFD700;
+}
+
+.lb-points {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-min-width: 80;
+}
+
+.lb-food {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 18;
+}
+
+/* --- Ranking (Intergalactic / historical) --- */
+
+.rk-row {
+    -fx-background-color: rgba(0,0,0,0.4);
+    -fx-background-radius: 10;
+}
+
+.rk-rank {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-min-width: 50;
+}
+
+.rk-nick {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-min-width: 200;
+}
+
+.rk-score {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-min-width: 80;
+}
+
+.rk-players {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 16;
+    -fx-min-width: 100;
+}
+
+.rk-date {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 16;
+    -fx-min-width: 110;
+}
+
+.rk-gameid {
+    -fx-text-fill: #999;
+    -fx-font-size: 14;
+    -fx-min-width: 80;
+}
+
+.rk-empty {
+    -fx-text-fill: #FFF3E0;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}

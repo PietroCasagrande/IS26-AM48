@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+
+<!-- Questo VBox è il pannello "Glass Box" centrale -->
+<GridPane fx:id="boardCenterRoot" alignment="CENTER" styleClass="glass-box"
+          prefHeight="780.0" maxHeight="780.0"
+          xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="it.polimi.ingsw.am48.view.gui.BoardCenterController">
+
+    <rowConstraints>
+        <RowConstraints percentHeight="35.0" valignment="CENTER" />
+        <RowConstraints percentHeight="30.0" valignment="CENTER" />
+        <RowConstraints percentHeight="35.0" valignment="CENTER" />
+    </rowConstraints>
+
+    <columnConstraints>
+        <ColumnConstraints percentWidth="100.0" halignment="CENTER" />
+    </columnConstraints>
+
+    <HBox GridPane.rowIndex="0" alignment="CENTER" spacing="100.0" minHeight="0.0">
+        <HBox fx:id="upperCharacterRow" alignment="CENTER_LEFT" spacing="5.0" />
+        <HBox fx:id="upperBuildingRow" alignment="CENTER_LEFT" spacing="5.0" />
+    </HBox>
+
+    <HBox GridPane.rowIndex="1" alignment="CENTER" spacing="5.0" minHeight="0.0">
+        <Pane fx:id="offerTurnCard" minWidth="95.0" />
+        <HBox fx:id="offerTrackContainer" alignment="CENTER" spacing="4.0" />
+        <VBox fx:id="deckContainer" alignment="CENTER" minWidth="80.0" />
+    </HBox>
+
+    <HBox GridPane.rowIndex="2" alignment="CENTER" spacing="100.0" minHeight="0.0">
+        <HBox fx:id="lowerCharacterRow" alignment="CENTER_LEFT" spacing="5.0" />
+        <HBox fx:id="lowerBuildingRow" alignment="CENTER_LEFT" spacing="5.0" />
+    </HBox>
+
+</GridPane>

@@ -13,31 +13,50 @@ import it.polimi.ingsw.am48.utils.GameDataLoader;
 
 import java.util.List;
 
+/**
+ * Orchestrates the complete initialization pipeline of the game board.
+ * <p>
+ * This builder class acts as a central facade to hide the complexity of the setup phase.
+ * It manages the loading of the raw JSON game data, delegates the instantiation of
+ * individual components to their respective factories, coordinates the deck building
+ * via {@link DeckSetup}, and finally assembles the complete {@link Board} object.
+ */
 public class BoardBuilder {
+
+    /**
+     * Builds and fully initializes a new game board tailored for the specified player count.
+     * <p>
+     * The initialization follows a strict pipeline:
+     * <ol>
+     * <li><b>I/O Load:</b> Reads the base configurations from the {@code game_data.json} file into a {@link BoardDTO}.</li>
+     * <li><b>Factory Generation:</b> Converts the DTO blueprints into concrete domain objects (Cards, Tracks) using specialized factories.</li>
+     * <li><b>Deck Assembly:</b> Shuffles and orders the created cards into playable decks according to the game rules.</li>
+     * <li><b>Board Assembly:</b> Injects all the generated components into a fresh {@link Board} instance.</li>
+     * </ol>
+     *
+     * @param requiredPlayer the number of players participating in the game (must be valid for the game rules)
+     * @return a fully configured and ready-to-play {@link Board} instance
+     */
     public Board createBoard(int requiredPlayer){
-        // Read game_data.json and create dto
+
         BoardDTO dto = new GameDataLoader().loadData();
 
-        // Factory pattern convert dto to objects
         List<CharacterCard> characters = new CharacterFactory(dto.characters).createCards(requiredPlayer);
         List<EventCard> events = new EventFactory(dto.events).createCards(requiredPlayer);
         List<BuildingCard> buildings = new BuildingFactory(dto.buildings).createCards(requiredPlayer);
         OfferCardTrack track = new OfferTrackFactory(dto.offerCards).createCards(requiredPlayer).getFirst();
         OfferTurnCard offerTurnCard = new OfferTurnFactory(dto.offerTurnCard).createCards(requiredPlayer).getFirst();
 
-        //Tribe and Building decks generation
         DeckSetup deckSetup = new DeckSetup(characters, events, buildings, dto.buildingSetup);
         Deck<Card> tribeDeck = new Deck<>(deckSetup.createTribeDeck(requiredPlayer));
         Deck<BuildingCard> buildingDeck = new Deck<>(deckSetup.createBuildingDeck(requiredPlayer));
 
-        //Number of buildings to display per era
         List<Integer> buildingsPerEra = dto.buildingSetup
                 .get(requiredPlayer)
                 .values()
                 .stream()
                 .toList();
 
-        //Board creation
         return new Board(track, offerTurnCard, tribeDeck, buildingDeck, buildingsPerEra, requiredPlayer);
     }
 }

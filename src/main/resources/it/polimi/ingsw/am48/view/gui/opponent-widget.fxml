@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="opponentRoot" alignment="CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="it.polimi.ingsw.am48.view.gui.OpponentWidgetController">
+    <ImageView fx:id="avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+    <Label fx:id="labelNickname" text="Player" styleClass="opponent-label">
+        <font><Font name="System Bold" size="16.0"/></font>
+    </Label>
+    <HBox alignment="CENTER" spacing="6.0">
+        <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+            <image><Image url="@images/food.png"/></image>
+        </ImageView>
+        <Label fx:id="foodCount" text="0" styleClass="opponent-stat-food" />
+        <ImageView fx:id="prestigeImage" fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+            <image><Image url="@images/prestigePoints.png"/></image>
+        </ImageView>
+        <Label fx:id="prestigeCount" text="0" styleClass="opponent-stat-pp" />
+    </HBox>
+</VBox>

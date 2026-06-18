@@ -93,37 +93,24 @@ class PlayerOfferPhaseTest {
         return new BuildingCard(id, Era.FIRST, null, 0, 5);
     }
 
-    /**
-     * Returns a fresh OfferCard('B', 1 top, 0 bottom, 0 food) with totem already placed.
-     * Fresh instance per call avoids IllegalStateException from shared state across tests.
-     */
     private OfferCard freshOfferB(Player player) {
         OfferCard offer = new OfferCard('B', 1, 0, 0, 3);
         offer.placeTotem(player);
         return offer;
     }
 
-    /**
-     * Returns a fresh OfferCard('A', 1 top, 0 bottom, 3 food) with totem already placed.
-     */
     private OfferCard freshOfferA(Player player) {
         OfferCard offer = new OfferCard('A', 1, 0, 3, 3);
         offer.placeTotem(player);
         return offer;
     }
 
-    /**
-     * Returns a fresh OfferCard('C', 1 top, 1 bottom, 0 food) with totem already placed.
-     */
     private OfferCard freshOfferC(Player player) {
         OfferCard offer = new OfferCard('C', 1, 1, 0, 3);
         offer.placeTotem(player);
         return offer;
     }
 
-    /**
-     * Sets up mocks for a normal top-row pick. Uses a fresh OfferCard so returnTotem() works.
-     */
     private OfferCard setupNormalPick(Player player, char letter, int numUp, int numDown,
                                       int foodBonus, String cardId, Card card) {
         OfferCard offer = new OfferCard(letter, numUp, numDown, foodBonus, 3);
@@ -135,7 +122,6 @@ class PlayerOfferPhaseTest {
         return offer;
     }
 
-    /** Convenience overload for offerB (1 top, 0 bottom, 0 food). */
     private OfferCard setupNormalPickB(Player player, String cardId, Card card) {
         return setupNormalPick(player, 'B', 1, 0, 0, cardId, card);
     }
@@ -156,7 +142,7 @@ class PlayerOfferPhaseTest {
         when(mockBoard.getPlaceOrder()).thenReturn(List.of(p1, p2, p3));
     }
 
-    // ==================== constructor ====================
+    // ==================== constructor (primary) ====================
 
     @Test
     @DisplayName("constructor: should not produce side effects")
@@ -164,6 +150,32 @@ class PlayerOfferPhaseTest {
         PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         assertEquals(0, p1.getFood());
         verify(mockBoard, never()).returnTotem(any());
+    }
+
+    // ==================== constructor (fromSnapshot) ====================
+
+    @Test
+    @DisplayName("fromSnapshot constructor: should restore state and allow the correct player to pick")
+    void shouldRestoreStateFromSnapshotConstructor() {
+        // currIdx=1 means p2 is next
+        PlayerOfferPhase phase = new PlayerOfferPhase(
+                List.of(p1, p2, p3), 1, 0, 0, false, null, false);
+
+        Card card = makeCharCard("card1");
+        setupNormalPickB(p2, "card1", card);
+
+        assertDoesNotThrow(() -> phase.takeCard(mockGame, p2, "card1"));
+    }
+
+    @Test
+    @DisplayName("fromSnapshot constructor: should restore extraPickActive and extraPickPlayer")
+    void shouldRestoreExtraPickStateFromSnapshotConstructor() {
+        // extraPickActive=true, extraPickPlayer=p2 → p3 cannot pick
+        PlayerOfferPhase phase = new PlayerOfferPhase(
+                List.of(p1, p2, p3), 3, 0, 0, true, p2, false);
+
+        assertThrows(InvalidActionException.class,
+                () -> phase.takeCard(mockGame, p3, "cardX"));
     }
 
     // ==================== setup ====================
@@ -236,6 +248,18 @@ class PlayerOfferPhaseTest {
         assertEquals("alice", delta.getPlayerNickname());
     }
 
+    @Test
+    @DisplayName("setup: should not throw even when offerA totem is absent (orElse null path)")
+    void shouldNotThrowInSetupWhenOfferATotemAbsent() {
+        // OfferCard with letter A but no totem placed — returnTotem() returns empty
+        OfferCard emptyOfferA = new OfferCard('A', 1, 0, 3, 3);
+        when(mockBoard.findTrackPosition(p1)).thenReturn(emptyOfferA);
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        assertDoesNotThrow(() -> phase.setup(mockGame));
+        // handleTotemReturn is called with null — returnTotem(null) is called on board
+        verify(mockBoard).returnTotem(null);
+    }
+
     // ==================== takeCard - turn validation ====================
 
     @Test
@@ -269,13 +293,40 @@ class PlayerOfferPhaseTest {
     }
 
     @Test
+    @DisplayName("validatePick: should throw when offer does not allow picking from top row")
+    void shouldThrowWhenOfferHasZeroTopPicks() {
+        // offer with numUp=0: any top pick is forbidden
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        OfferCard offer = new OfferCard('D', 0, 1, 0, 3);
+        offer.placeTotem(p1);
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offer);
+        when(mockBoard.isCardTop("card1")).thenReturn(true);
+        when(mockBoard.isCardDown("card1")).thenReturn(false);
+        assertThrows(InvalidActionException.class,
+                () -> phase.takeCard(mockGame, p1, "card1"));
+    }
+
+    @Test
+    @DisplayName("validatePick: should throw when offer does not allow picking from bottom row")
+    void shouldThrowWhenOfferHasZeroBottomPicks() {
+        // offer with numDown=0: any bottom pick is forbidden
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        OfferCard offer = new OfferCard('D', 1, 0, 0, 3);
+        offer.placeTotem(p1);
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offer);
+        when(mockBoard.isCardTop("card1")).thenReturn(false);
+        when(mockBoard.isCardDown("card1")).thenReturn(true);
+        assertThrows(InvalidActionException.class,
+                () -> phase.takeCard(mockGame, p1, "card1"));
+    }
+
+    @Test
     @DisplayName("validatePick: should throw when player already picked the maximum from the top row")
     void shouldThrowWhenAlreadyPickedMaxFromTop() {
         PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
         Card card1 = makeCharCard("card1");
         Card card2 = makeCharCard("card2");
 
-        // offerC allows 1 top + 1 bottom; first pick uses up the top slot
         OfferCard offer = new OfferCard('C', 1, 1, 0, 3);
         offer.placeTotem(p1);
         when(mockBoard.findTrackPosition(p1)).thenReturn(offer);
@@ -311,6 +362,101 @@ class PlayerOfferPhaseTest {
                 () -> phase.takeCard(mockGame, p1, "card2"));
     }
 
+    // ==================== takeCard - skip logic ====================
+
+    @Test
+    @DisplayName("takeCard skip: should set skipAvailable and return SkipDelta when no chars in upper and picks from top not exhausted")
+    void shouldSkipTopWhenNoCharactersInUpperRow() {
+        // offer with 1 top + 1 bottom; upper tribe has no CharacterCards
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        OfferCard offer = new OfferCard('C', 1, 1, 0, 3);
+        offer.placeTotem(p1);
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offer);
+        when(mockTribeShowed.getUpperList()).thenReturn(List.of()); // no chars
+
+        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "skip");
+
+        assertFalse(deltas.isEmpty());
+        assertInstanceOf(SkipDelta.class, deltas.getFirst());
+    }
+
+    @Test
+    @DisplayName("takeCard skip: should throw when chars are available in upper row and player tries to skip top pick")
+    void shouldThrowWhenCharsAvailableInUpperAndPlayerSkipsTop() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        OfferCard offer = new OfferCard('C', 1, 1, 0, 3);
+        offer.placeTotem(p1);
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offer);
+
+        CharacterCard availableChar = makeCharCard("H1");
+        when(mockTribeShowed.getUpperList()).thenReturn(List.of(availableChar));
+
+        assertThrows(InvalidActionException.class,
+                () -> phase.takeCard(mockGame, p1, "skip"));
+    }
+
+    @Test
+    @DisplayName("takeCard skip: should set skipAvailable when no chars in lower row and top picks exhausted")
+    void shouldSkipBottomWhenNoCharactersInLowerRow() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        Card card1 = makeCharCard("card1");
+
+        // offerC: 1 top + 1 bottom; first pick from top exhausts top slot
+        OfferCard offer = new OfferCard('C', 1, 1, 0, 3);
+        offer.placeTotem(p1);
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offer);
+        when(mockBoard.isCardTop("card1")).thenReturn(true);
+        when(mockBoard.isCardDown("card1")).thenReturn(false);
+        when(mockBoard.takeCard(any(PlayerContext.class), eq("card1"))).thenReturn(card1);
+        phase.takeCard(mockGame, p1, "card1"); // picksFromUp = 1
+
+        // now try to skip bottom — no chars in lower
+        when(mockTribeShowed.getLowerList()).thenReturn(List.of());
+        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "skip");
+
+        assertFalse(deltas.isEmpty());
+        assertInstanceOf(SkipDelta.class, deltas.getFirst());
+    }
+
+    @Test
+    @DisplayName("takeCard skip: should throw when chars are available in lower row and player tries to skip bottom pick")
+    void shouldThrowWhenCharsAvailableInLowerAndPlayerSkipsBottom() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        Card card1 = makeCharCard("card1");
+
+        OfferCard offer = new OfferCard('C', 1, 1, 0, 3);
+        offer.placeTotem(p1);
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offer);
+        when(mockBoard.isCardTop("card1")).thenReturn(true);
+        when(mockBoard.isCardDown("card1")).thenReturn(false);
+        when(mockBoard.takeCard(any(PlayerContext.class), eq("card1"))).thenReturn(card1);
+        phase.takeCard(mockGame, p1, "card1"); // picksFromUp = 1
+
+        CharacterCard availableChar = makeCharCard("H1");
+        when(mockTribeShowed.getLowerList()).thenReturn(List.of(availableChar));
+
+        assertThrows(InvalidActionException.class,
+                () -> phase.takeCard(mockGame, p1, "skip"));
+    }
+
+    @Test
+    @DisplayName("takeCard skip: should transition to EndTurnPhase when extra pick player sends skip")
+    void shouldTransitionToEndTurnWhenExtraPickPlayerSkips() {
+        p2.setExtraPickRight();
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
+        Card card = makeCharCard("card1");
+        setupNormalPickB(p1, "card1", card);
+        setupEndTurnMocks();
+
+        phase.takeCard(mockGame, p1, "card1"); // extraPickActive = true
+
+        // p2 sends "skip" during extra pick
+        List<GameDelta> deltas = phase.takeCard(mockGame, p2, "skip");
+
+        verify(mockGame, atLeastOnce()).setPhase(any(PlaceTotemPhase.class));
+        assertFalse(deltas.isEmpty());
+    }
+
     // ==================== takeCard - pick counter and turn progression ====================
 
     @Test
@@ -328,7 +474,6 @@ class PlayerOfferPhaseTest {
 
         phase.takeCard(mockGame, p1, "card1");
 
-        // p1 still has a bottom pick — p2 must not be allowed yet
         assertThrows(InvalidActionException.class,
                 () -> phase.takeCard(mockGame, p2, "cardX"));
     }
@@ -342,7 +487,6 @@ class PlayerOfferPhaseTest {
 
         phase.takeCard(mockGame, p1, "card1");
 
-        // p1 still has a top pick — p2 must not be allowed yet
         assertThrows(InvalidActionException.class,
                 () -> phase.takeCard(mockGame, p2, "cardX"));
     }
@@ -412,6 +556,20 @@ class PlayerOfferPhaseTest {
         List<GameDelta> deltas = phase.takeCard(mockGame, p1, "bld1");
 
         assertInstanceOf(BuildingCardPickedDelta.class, deltas.getFirst());
+    }
+
+    @Test
+    @DisplayName("takeCard: should return SkipDelta when card is null (skip path in buildCardDelta)")
+    void shouldReturnSkipDeltaWhenCardIsNull() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        OfferCard offer = new OfferCard('C', 1, 1, 0, 3);
+        offer.placeTotem(p1);
+        when(mockBoard.findTrackPosition(p1)).thenReturn(offer);
+        when(mockTribeShowed.getUpperList()).thenReturn(List.of());
+
+        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "skip");
+
+        assertInstanceOf(SkipDelta.class, deltas.getFirst());
     }
 
     @Test
@@ -495,6 +653,40 @@ class PlayerOfferPhaseTest {
         verify(mockGame).incrementTurn();
     }
 
+    @Test
+    @DisplayName("takeCard: should return three deltas in correct order on last card of last turn")
+    void shouldReturnThreeDeltasInCorrectOrderOnLastCardOfLastTurn() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
+        Card card = makeCharCard("card1");
+        setupNormalPickB(p1, "card1", card);
+        when(mockGame.getCurrentTurn()).thenReturn(11);
+        when(mockBoard.getPlaceOrder()).thenReturn(List.of(p1, p2, p3));
+
+        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "card1");
+
+        assertEquals(3, deltas.size());
+        assertInstanceOf(CharacterCardPickedDelta.class, deltas.get(0));
+        assertInstanceOf(EndTurnDelta.class, deltas.get(1));
+        assertInstanceOf(EndGameDelta.class, deltas.get(2));
+    }
+
+    @Test
+    @DisplayName("takeCard: should return three deltas with BuildingCardPickedDelta first when building card picked on last turn")
+    void shouldReturnThreeDeltasWithBuildingDeltaFirstWhenBuildingCardPicked() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
+        BuildingCard building = makeBuildingCard("b1");
+        setupNormalPick(p1, 'B', 1, 0, 0, "b1", building);
+        when(mockGame.getCurrentTurn()).thenReturn(11);
+        when(mockBoard.getPlaceOrder()).thenReturn(List.of(p1, p2, p3));
+
+        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "b1");
+
+        assertEquals(3, deltas.size());
+        assertInstanceOf(BuildingCardPickedDelta.class, deltas.get(0));
+        assertInstanceOf(EndTurnDelta.class, deltas.get(1));
+        assertInstanceOf(EndGameDelta.class, deltas.get(2));
+    }
+
     // ==================== takeCard - extra pick ====================
 
     @Test
@@ -561,6 +753,21 @@ class PlayerOfferPhaseTest {
         verify(mockGame, atLeastOnce()).setPhase(any(PlaceTotemPhase.class));
     }
 
+    @Test
+    @DisplayName("takeCard: should remain in PlayerOfferPhase after all pick when extra pick is active")
+    void shouldRemainInPlayerOfferPhaseWhenExtraPickActive() {
+        p2.setExtraPickRight();
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
+        Card card = makeCharCard("card1");
+        setupNormalPickB(p1, "card1", card);
+
+        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "card1");
+
+        // phase should NOT have transitioned — game.setPhase should not have been called with EndTurnPhase
+        verify(mockGame, never()).setPhase(any(EndTurnPhase.class));
+        assertFalse(deltas.isEmpty());
+    }
+
     // ==================== toSnapshot ====================
 
     @Test
@@ -588,34 +795,26 @@ class PlayerOfferPhaseTest {
     }
 
     @Test
-    void shouldReturnThreeDeltasInCorrectOrderOnLastCardOfLastTurn() {
+    @DisplayName("toSnapshot: should include extraPickPlayer nickname when extra pick is active")
+    void shouldIncludeExtraPickPlayerNicknameInSnapshot() {
+        p2.setExtraPickRight();
         PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
         Card card = makeCharCard("card1");
-        setupNormalPickB(p1, "card1", card); // ← usa il nuovo helper
-        when(mockGame.getCurrentTurn()).thenReturn(11);
-        when(mockBoard.getPlaceOrder()).thenReturn(List.of(p1, p2, p3));
+        setupNormalPickB(p1, "card1", card);
 
-        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "card1");
+        phase.takeCard(mockGame, p1, "card1"); // activates extra pick for p2
 
-        assertEquals(3, deltas.size());
-        assertInstanceOf(CharacterCardPickedDelta.class, deltas.get(0));
-        assertInstanceOf(EndTurnDelta.class, deltas.get(1));
-        assertInstanceOf(EndGameDelta.class, deltas.get(2));
+        PlayerOfferPhaseSnapshot snapshot = (PlayerOfferPhaseSnapshot) phase.toSnapshot();
+        assertEquals("bob", snapshot.getExtraPickPlayerNickname());
+        assertTrue(snapshot.getExtraPickActive());
     }
 
     @Test
-    void shouldReturnThreeDeltasWithBuildingDeltaFirstWhenBuildingCardPicked() {
-        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1));
-        BuildingCard building = makeBuildingCard("b1"); // ← usa il nuovo helper
-        setupNormalPick(p1, 'B', 1, 0, 0, "b1", building); // ← firma corretta
-        when(mockGame.getCurrentTurn()).thenReturn(11);
-        when(mockBoard.getPlaceOrder()).thenReturn(List.of(p1, p2, p3));
-
-        List<GameDelta> deltas = phase.takeCard(mockGame, p1, "b1");
-
-        assertEquals(3, deltas.size());
-        assertInstanceOf(BuildingCardPickedDelta.class, deltas.get(0));
-        assertInstanceOf(EndTurnDelta.class, deltas.get(1));
-        assertInstanceOf(EndGameDelta.class, deltas.get(2));
+    @DisplayName("toSnapshot: should have null extraPickPlayerNickname when no extra pick is active")
+    void shouldHaveNullExtraPickPlayerNicknameWhenNoExtraPick() {
+        PlayerOfferPhase phase = new PlayerOfferPhase(List.of(p1, p2, p3));
+        PlayerOfferPhaseSnapshot snapshot = (PlayerOfferPhaseSnapshot) phase.toSnapshot();
+        assertNull(snapshot.getExtraPickPlayerNickname());
+        assertFalse(snapshot.getExtraPickActive());
     }
 }

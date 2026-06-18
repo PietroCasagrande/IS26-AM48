@@ -9,23 +9,57 @@
     <version>1.0-SNAPSHOT</version>
     <name>IS26-AM48</name>
 
+    <!-- ═══════════════════════════════════════════════════════════════════
+         PROPERTIES
+         ═══════════════════════════════════════════════════════════════════ -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.12.1</junit.version>
+        <javafx.version>21.0.6</javafx.version>
+
+        <!--
+            Java 21 (LTS): garantisce compatibilità con qualsiasi JDK >= 21,
+            incluse le macchine dei professori.
+            Se usate feature sintattiche di Java 22-25, riportate a 25 MA
+            assicuratevi che TUTTE le macchine della demo abbiano JDK 25.
+        -->
+        <java.version>25</java.version>
     </properties>
 
+    <!-- ═══════════════════════════════════════════════════════════════════
+         DEPENDENCIES
+         ═══════════════════════════════════════════════════════════════════ -->
     <dependencies>
+
+        <!-- ─── JavaFX: classi Java (compilazione + runtime sul classpath) ─── -->
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21.0.6</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
             <version>21.0.6</version>
         </dependency>
 
+        <!-- ─── Testing ─── -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -53,7 +87,14 @@
             <version>5.23.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.27.7</version>
+            <scope>test</scope>
+        </dependency>
 
+        <!-- ─── Serializzazione ─── -->
         <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -61,32 +102,323 @@
             <version>2.21.2</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.27.7</version>
-            <scope>test</scope>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.15.2</version>
         </dependency>
+
+        <!-- ─── Database (solo server) ─── -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
     </dependencies>
 
+    <!-- ═══════════════════════════════════════════════════════════════════
+         BUILD
+         ═══════════════════════════════════════════════════════════════════ -->
     <build>
         <plugins>
+
+            <!-- ─── Compilatore ─── -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>25</source>
-                    <target>25</target>
+                    <!--
+                        <release> è più corretto di <source>+<target>:
+                        garantisce che non vengano usate API rimosse dalla versione target.
+                        Valore 21 = LTS, massima compatibilità per la demo.
+                    -->
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
 
+            <!-- ─── Test runner ─── -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
+
+            <!-- ─── Fat JAR packaging ─── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.2</version>
+                <executions>
+
+                    <!-- ══════════════════════════════════════════════════
+                         ESECUZIONE 1: mesos-server.jar
+                         Contiene: Model, Controller, rete, Jackson, MySQL,
+                                   HikariCP, persistenza JSON.
+                         NON contiene: JavaFX (il server e' headless).
+                         ══════════════════════════════════════════════════ -->
+                    <execution>
+                        <id>server-jar</id>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <finalName>mesos-server</finalName>
+                            <!--
+                                Evita di generare il dependency-reduced-pom.xml
+                                che potrebbe confondere Maven in build successive.
+                            -->
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <!--
+                                            I JAR firmati (es. alcuni JAR Oracle/MySQL) contengono
+                                            firme crittografiche in META-INF. Quando Shade li "esplode"
+                                            e li rimette insieme, le firme non corrispondono piu'
+                                            e la JVM lancia SecurityException. Si rimuovono le firme.
+                                        -->
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <!--
+                                            Il fat JAR gira in classpath mode (non JPMS).
+                                            I module-info.class di ogni libreria colliderebbero
+                                            tra loro e con il nostro. Si escludono tutti.
+                                            Il nostro module-info.java rimane nel sorgente
+                                            e continua a essere utile per l'IDE.
+                                        -->
+                                        <exclude>module-info.class</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <artifactSet>
+                                <excludes>
+                                    <!-- JavaFX non serve al server (nessuna GUI) -->
+                                    <exclude>org.openjfx:*</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <transformers>
+                                <!-- Imposta la Main-Class nel MANIFEST.MF -->
+                                <transformer implementation=
+                                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>
+                                        it.polimi.ingsw.am48.network.server.ServerMain
+                                    </mainClass>
+                                </transformer>
+                                <!--
+                                    Unisce i file META-INF/services di tutte le dipendenze.
+                                    Necessario per Jackson (usa ServiceLoader per i moduli
+                                    datatype come jackson-datatype-jsr310) e per altri SPI.
+                                    Senza questo transformer, solo il primo JAR "vince"
+                                    e gli altri moduli Jackson vengono ignorati silenziosamente.
+                                -->
+                                <transformer implementation=
+                                                     "org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+
+                    <!-- ══════════════════════════════════════════════════
+                         ESECUZIONE 2: mesos-client.jar
+                         Contiene: View (TUI + GUI), rete client, Jackson,
+                                   JavaFX (classi + native per tutti gli OS).
+                         NON contiene: MySQL, HikariCP (solo il server
+                                       accede al DB).
+                         Main class: LauncherClient (NON ClientMain diretta)
+                         ══════════════════════════════════════════════════ -->
+                    <execution>
+                        <id>client-jar</id>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <finalName>mesos-client</finalName>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>module-info.class</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <artifactSet>
+                                <!-- MySQL e HikariCP non servono al client -->
+                                <excludes>
+                                    <exclude>com.mysql:*</exclude>
+                                    <exclude>com.zaxxer:HikariCP</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <transformers>
+                                <!--
+                                    IMPORTANTE: la mainClass e' LauncherClient, NON ClientMain.
+
+                                    Motivo: ClientMain chiama Application.launch() di JavaFX.
+                                    Java, vedendo che la classe principale e' collegata a
+                                    javafx.application.Application, va a cercare i moduli JavaFX
+                                    nel module-path di sistema PRIMA di avviare il main.
+                                    Non li trova (non c'e' JavaFX SDK installato separatamente)
+                                    e crasha con:
+                                        "Error: JavaFX runtime components are missing"
+                                    anche se il fat JAR li contiene.
+
+                                    LauncherClient e' una classe Java pura senza dipendenze
+                                    JavaFX: la JVM la avvia senza controlli sui moduli grafici,
+                                    poi e' il codice stesso a caricare JavaFX dal classpath.
+                                -->
+                                <transformer implementation=
+                                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>
+                                        it.polimi.ingsw.am48.LauncherClient
+                                    </mainClass>
+                                </transformer>
+                                <transformer implementation=
+                                                     "org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
+
+    <profiles>
+
+        <!-- Mac Apple Silicon (M1/M2/M3/M4) -->
+        <profile>
+            <id>mac-arm</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>mac-aarch64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>mac-aarch64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>mac-aarch64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-fxml</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>mac-aarch64</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <!-- Mac Intel (x86_64) -->
+        <profile>
+            <id>mac</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-fxml</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>mac</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <!-- Windows -->
+        <profile>
+            <id>windows</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-fxml</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <!-- Linux -->
+        <profile>
+            <id>linux</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-fxml</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>linux</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+
+    </profiles>
+
 </project>

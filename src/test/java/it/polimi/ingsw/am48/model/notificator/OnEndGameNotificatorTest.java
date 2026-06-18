@@ -13,6 +13,12 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests for {@link OnEndGameNotificator}.
+ * Verifies the behavior of the end-game notificator: no-op when empty,
+ * correct per-player strategy execution, multiple strategies per player,
+ * skipping of unregistered players, and preservation of player order.
+ */
 @ExtendWith(MockitoExtension.class)
 class OnEndGameNotificatorTest {
 
@@ -30,6 +36,12 @@ class OnEndGameNotificatorTest {
         notificator = new OnEndGameNotificator();
     }
 
+    /**
+     * Tests that {@link OnEndGameNotificator#notify(PlayerContext)} does nothing
+     * when no listeners have been attached.
+     * <p>Components involved: {@link OnEndGameNotificator}, {@link PlayerContext},
+     * {@link CardStrategy}.</p>
+     */
     @Test
     void notify_noListeners_doesNothing() {
         notificator.notify(playerContext);
@@ -38,6 +50,12 @@ class OnEndGameNotificatorTest {
         verifyNoInteractions(strategy1);
     }
 
+    /**
+     * Tests that a player present in the context but without registered strategies
+     * is skipped during notification, while other players' strategies still fire.
+     * <p>Components involved: {@link OnEndGameNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_playerWithNoStrategies_isSkipped() {
         when(playerContext.getPlayers()).thenReturn(List.of(player1));
@@ -51,6 +69,12 @@ class OnEndGameNotificatorTest {
         verifyNoInteractions(strategy1);
     }
 
+    /**
+     * Tests that a single player with one registered strategy has its effect
+     * called exactly once with the correct player context.
+     * <p>Components involved: {@link OnEndGameNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_singlePlayerSingleStrategy_callsEffectCorrectly() {
         when(playerContext.getPlayers()).thenReturn(List.of(player1));
@@ -62,6 +86,12 @@ class OnEndGameNotificatorTest {
         verify(strategy1).effect(playerContext);
     }
 
+    /**
+     * Tests that a single player with multiple registered strategies has all
+     * of them executed in sequence.
+     * <p>Components involved: {@link OnEndGameNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_singlePlayerMultipleStrategies_callsAllEffects() {
         when(playerContext.getPlayers()).thenReturn(List.of(player1));
@@ -75,6 +105,12 @@ class OnEndGameNotificatorTest {
         verify(strategy2).effect(playerContext);
     }
 
+    /**
+     * Tests that when multiple players have registered strategies, each player
+     * is set as the current player before their strategy executes.
+     * <p>Components involved: {@link OnEndGameNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_multiplePlayers_setsEachCurrPlayerAndCallsEffects() {
         when(playerContext.getPlayers()).thenReturn(List.of(player1, player2));
@@ -89,6 +125,12 @@ class OnEndGameNotificatorTest {
         verify(strategy2).effect(playerContext);
     }
 
+    /**
+     * Tests that when one of multiple players has no registered strategies,
+     * only the registered player's strategy is executed.
+     * <p>Components involved: {@link OnEndGameNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_multiplePlayersOneHasNoStrategies_onlyNotifiesRegistered() {
         when(playerContext.getPlayers()).thenReturn(List.of(player1, player2));
@@ -103,6 +145,12 @@ class OnEndGameNotificatorTest {
         verifyNoInteractions(strategy2);
     }
 
+    /**
+     * Tests that strategies are executed in the same order as the players
+     * returned by {@link PlayerContext#getPlayers()}.
+     * <p>Components involved: {@link OnEndGameNotificator}, {@link Player},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_respectsPlayerOrder() {
         when(playerContext.getPlayers()).thenReturn(List.of(player1, player2));

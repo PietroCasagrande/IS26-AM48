@@ -160,7 +160,7 @@ class GameTest {
                 () -> assertEquals(game.getGameId(), snapshot.getGameId()),
                 () -> assertEquals(game.getCurrentTurn(), snapshot.getCurrentTurn()),
                 () -> assertNull(snapshot.getBoard()),
-                () -> assertNotNull(snapshot.getPlayers())
+                () -> assertNotNull(snapshot.getPlayerContext().getPlayers())
         );
     }
 
@@ -176,7 +176,7 @@ class GameTest {
         GameSnapshot snapshot = game.toSnapshot();
 
         assertAll(
-                () -> assertEquals(1, snapshot.getPlayers().size()),
+                () -> assertEquals(1, snapshot.getPlayerContext().getPlayers().size()),
                 () -> assertNotNull(snapshot.getBoard()),
                 () -> assertEquals(game.getGameId(), snapshot.getGameId())
         );

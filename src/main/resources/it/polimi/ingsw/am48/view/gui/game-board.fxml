@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<?import javafx.geometry.Insets?>
+<StackPane fx:id="rootboard" id="rootboard"
+           stylesheets="@css/style.css"
+           xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="it.polimi.ingsw.am48.view.gui.GameBoardController">
+    <children>
+        <BorderPane prefHeight="720.0" prefWidth="1280.0">
+
+            <!-- BOTTOM: mano + sommario + token-->
+            <bottom>
+                <HBox alignment="CENTER_LEFT" spacing="50.0" BorderPane.alignment="CENTER" style="-fx-padding: 15;">
+                    <children>
+                        <ScrollPane fx:id="myHandBox"
+                                    fitToHeight="true" fitToWidth="true"
+                                    prefHeight="210.0" prefWidth="750.0"
+                                    vbarPolicy="NEVER" hbarPolicy="NEVER"
+                                    HBox.hgrow="ALWAYS">
+                            <HBox.margin>
+                                <Insets left="100.0" />
+                            </HBox.margin>
+                        <content>
+                            <!-- L'fx:id qui è la chiave di tutto! -->
+                            <fx:include fx:id="playerTribe" source="player-tribe-screen.fxml" />
+                        </content>
+                        </ScrollPane>
+
+                        <VBox fx:id="token" alignment="CENTER_LEFT"
+                              prefHeight="210.0" spacing="20.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                    <ImageView fx:id="food" fitHeight="70.0" fitWidth="70.0"
+                                               pickOnBounds="true" preserveRatio="true" styleClass="token">
+                                        <image><Image url="@images/food.png"/></image>
+                                    </ImageView>
+                                    <Label fx:id="foodCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                    <ImageView fx:id="prestige_points" fitHeight="70.0" fitWidth="70.0"
+                                               pickOnBounds="true" preserveRatio="true" styleClass="token">
+                                        <image><Image url="@images/prestigePoints.png"/></image>
+                                    </ImageView>
+                                    <Label fx:id="prestigeCount" text="0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <VBox fx:id="infoCard" alignment="CENTER"
+                              prefHeight="210.0" spacing="12.0">
+                            <HBox.margin>
+                                <Insets right="100.0" />
+                            </HBox.margin>
+                            <children>
+                                <StackPane fx:id="summaryCardContainer" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" style="-fx-cursor: hand; -fx-background-color: black; -fx-background-radius: 10px;">
+
+                                    <ImageView fx:id="summaryCardImage" fitWidth="120.0" preserveRatio="true" />
+
+                                    <Label fx:id="flipIcon" text="🔄" visible="false" style="-fx-font-size: 50px; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 5, 0.7, 0, 0);" />
+
+                                </StackPane>
+                                <Button fx:id="skipButton" mnemonicParsing="false"
+                                        text="SKIP" prefWidth="180.0" styleClass="button-menu-fire" onAction="#handleSkipAction"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </bottom>
+            <!--LEFT: avversario -->
+            <left>
+                <VBox alignment="CENTER" prefWidth="130.0" spacing="50.0" BorderPane.alignment="CENTER">
+
+                    <VBox fx:id="left_player1" alignment="CENTER" spacing="5.0">
+                        <ImageView fx:id="avatarLeft1" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                        <Label fx:id="labelLeft1" text="Player 2" styleClass="opponent-label">
+                            <font><Font name="System Bold" size="16.0"/></font>
+                        </Label>
+                    </VBox>
+
+                    <VBox fx:id="left_player2" alignment="CENTER" spacing="5.0">
+                        <ImageView fx:id="avatarLeft2" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                        <Label fx:id="labelLeft2" text="Player 3" styleClass="opponent-label">
+                            <font><Font name="System Bold" size="16.0"/></font>
+                        </Label>
+                    </VBox>
+
+                </VBox>
+            </left>
+
+            <!-- RIGHT: avversario -->
+            <right>
+                <VBox alignment="CENTER" prefWidth="130.0" spacing="50.0" BorderPane.alignment="CENTER">
+
+                    <VBox fx:id="right_player1" alignment="CENTER" spacing="5.0">
+                        <ImageView fx:id="avatarRight1" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                        <Label fx:id="labelRight1" text="Player 4" styleClass="opponent-label">
+                            <font><Font name="System Bold" size="16.0"/></font>
+                        </Label>
+                    </VBox>
+
+                    <VBox fx:id="right_player2" alignment="CENTER" spacing="5.0">
+                        <ImageView fx:id="avatarRight2" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+                        <Label fx:id="labelRight2" text="Player 5" styleClass="opponent-label">
+                            <font><Font name="System Bold" size="16.0"/></font>
+                        </Label>
+                    </VBox>
+
+                </VBox>
+            </right>
+
+            <!-- CENTER: board -->
+            <center>
+                <!-- Il contenitore con i margini -->
+                <VBox fx:id="center" alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+                    <BorderPane.margin>
+                        <Insets top="20" right="30" bottom="20" left="30"/>
+                    </BorderPane.margin>
+
+                    <!-- Phase / Turn indicator -->
+                    <HBox fx:id="phaseIndicator" alignment="CENTER" spacing="15.0" styleClass="phase-indicator">
+                        <Label fx:id="phaseLabel" text="Phase: --" />
+                        <Label fx:id="turnLabel" text="Turn: --" />
+
+                        <Label fx:id="turnNumberLabel" text="Round: --" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Label fx:id="eraLabel" text="Era: --" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+
+                        <ImageView fx:id="turnTotem" fitHeight="32.0" fitWidth="32.0" preserveRatio="true" />
+                    </HBox>
+
+                    <!-- QUI INCLUDI TUTTA L'AREA CENTRALE! -->
+                    <fx:include fx:id="boardCenter" source="board-center.fxml" />
+
+                </VBox>
+            </center>
+
+        </BorderPane>
+    </children>
+</StackPane>

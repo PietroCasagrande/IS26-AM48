@@ -10,6 +10,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests for {@link OnTotemReturnedNotificator}.
+ * Verifies that strategies registered per player fire only for the correct
+ * player context, that a second attachment for the same player overwrites
+ * the previous one, that strategies persist across multiple notify calls,
+ * and that the notificator uses {@link PlayerContext#getCurrPlayer()} to
+ * resolve the target player.
+ */
 class OnTotemReturnedNotificatorTest {
 
     private OnTotemReturnedNotificator notificator;
@@ -38,6 +46,13 @@ class OnTotemReturnedNotificatorTest {
 
     // ATTACH
 
+    /**
+     * Tests that a strategy registered via
+     * {@link OnTotemReturnedNotificator#attach(Player, CardStrategy)} fires
+     * when the corresponding player context is notified.
+     * <p>Components involved: {@link OnTotemReturnedNotificator},
+     * {@link Player}, {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("attach: strategy is correctly registered and activated on notify")
     void attach_singleStrategy_activatedOnNotify() {
@@ -47,6 +62,12 @@ class OnTotemReturnedNotificatorTest {
         verify(strategy1, times(1)).effect(context1);
     }
 
+    /**
+     * Tests that attaching a second strategy for the same player overwrites
+     * the first one and that only the last registered strategy fires.
+     * <p>Components involved: {@link OnTotemReturnedNotificator},
+     * {@link Player}, {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("attach: second strategy for same player overwrites the first")
     void attach_secondStrategy_overwritesFirst() {
@@ -60,6 +81,11 @@ class OnTotemReturnedNotificatorTest {
         verify(strategy1, never()).effect(any());
     }
 
+    /**
+     * Tests that strategies for different players are independent.
+     * <p>Components involved: {@link OnTotemReturnedNotificator},
+     * {@link Player}, {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("attach: different players have independent strategies")
     void attach_differentPlayers_independentStrategies() {
@@ -74,6 +100,12 @@ class OnTotemReturnedNotificatorTest {
 
     // NOTIFY
 
+    /**
+     * Tests that notifying a player context with no registered strategy
+     * does nothing and does not throw.
+     * <p>Components involved: {@link OnTotemReturnedNotificator},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("notify: player with no registered strategy does nothing")
     void notify_noStrategyRegistered_doesNothing() {
@@ -81,6 +113,12 @@ class OnTotemReturnedNotificatorTest {
         verify(strategy1, never()).effect(any());
     }
 
+    /**
+     * Tests that a registered strategy persists across multiple notify
+     * calls and fires every time.
+     * <p>Components involved: {@link OnTotemReturnedNotificator},
+     * {@link Player}, {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("notify: strategy is persistent and fires every time")
     void notify_persistentStrategy_firesEveryTime() {
@@ -94,6 +132,12 @@ class OnTotemReturnedNotificatorTest {
         verify(strategy1, times(3)).effect(context1);
     }
 
+    /**
+     * Tests that notifying a different player's context does not trigger
+     * another player's strategy (no cross-contamination).
+     * <p>Components involved: {@link OnTotemReturnedNotificator},
+     * {@link Player}, {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("notify: notifying player2 does not affect player1's strategy")
     void notify_differentPlayer_doesNotCrossContaminate() {
@@ -105,6 +149,13 @@ class OnTotemReturnedNotificatorTest {
         verify(strategy1, never()).effect(any());
     }
 
+    /**
+     * Tests that {@link OnTotemReturnedNotificator#notify(PlayerContext)}
+     * calls {@link PlayerContext#getCurrPlayer()} to look up the correct
+     * strategy key.
+     * <p>Components involved: {@link OnTotemReturnedNotificator},
+     * {@link Player}, {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     @DisplayName("notify: uses getCurrPlayer() to resolve the correct player")
     void notify_usesCurrPlayer_toResolveCorrectPlayer() {

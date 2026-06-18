@@ -7,6 +7,8 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 import it.polimi.ingsw.am48.network.client.ClientPlayerState;
 import it.polimi.ingsw.am48.network.client.RmiClient;
 import it.polimi.ingsw.am48.network.client.SocketServerHandler;
+import it.polimi.ingsw.am48.repository.GameRepository;
+import it.polimi.ingsw.am48.repository.LeaderboardRepository;
 import org.junit.jupiter.api.*;
 
 import java.net.ServerSocket;
@@ -18,6 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Timeout(30)
 class GameFlowIntegrationTest {
@@ -35,7 +39,11 @@ class GameFlowIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        GameManager gameManager = new GameManager();
+        GameRepository mockRepo = mock(GameRepository.class);
+        when(mockRepo.listActiveGameIds()).thenReturn(List.of());
+        LeaderboardRepository mockLeaderboard = mock(LeaderboardRepository.class);
+        GameManager gameManager = new GameManager(mockRepo, mockLeaderboard);
+
         MesosServer mesosServer = new MesosServer();
         GameController controller = new GameController(gameManager);
 
@@ -148,9 +156,9 @@ class GameFlowIntegrationTest {
         assertTrue(modelA.getState().getOfferTrackPositions().containsKey('C'));
 
         // La partita 2 NON è stata toccata
-        assertTrue(modelC.getState().getOfferTrackPositions().isEmpty(),
+        assertTrue(modelC.getState().getOfferTrackPositions().values().stream().allMatch(String::isEmpty),
                 "Game 2 track should be empty — Game 1 actions should not leak");
-        assertTrue(modelD.getState().getOfferTrackPositions().isEmpty(),
+        assertTrue(modelD.getState().getOfferTrackPositions().values().stream().allMatch(String::isEmpty),
                 "Game 2 track should be empty — Game 1 actions should not leak");
 
         // --- Azioni nella partita 2 ---
@@ -162,9 +170,9 @@ class GameFlowIntegrationTest {
         assertTrue(modelC.getState().getOfferTrackPositions().containsKey('F'));
 
         // La partita 1 non è cambiata
-        assertEquals(2, modelA.getState().getOfferTrackPositions().size(),
-                "Game 1 should still have exactly 2 totems");
-        assertFalse(modelA.getState().getOfferTrackPositions().containsKey('E'),
+        assertEquals(2, modelA.getState().getOfferTrackPositions().values().stream()
+                .filter(s -> !s.isEmpty()).count(), "Game 1 should still have exactly 2 totems");
+        assertTrue(modelA.getState().getOfferTrackPositions().getOrDefault('E', "").isEmpty(),
                 "Game 1 should not have Game 2's positions");
     }
 

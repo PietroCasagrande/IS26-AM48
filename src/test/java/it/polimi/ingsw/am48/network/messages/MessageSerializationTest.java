@@ -83,7 +83,7 @@ class MessageSerializationTest {
     @Test
     @DisplayName("GameDeltaNotification should survive JSON round-trip with polymorphic delta")
     void shouldSerializeAndDeserializeGameDelta() throws Exception {
-        TotemPlacedDelta delta = new TotemPlacedDelta("Pietro", 'A', List.of("Bob"));
+        TotemPlacedDelta delta = new TotemPlacedDelta("Pietro", 'A', List.of("Bob"), "PlaceTotem");
         GameDeltaNotification original = new GameDeltaNotification(delta);
         String json = mapper.writeValueAsString(original);
         ServerNotification deserialized = mapper.readValue(json, ServerNotification.class);

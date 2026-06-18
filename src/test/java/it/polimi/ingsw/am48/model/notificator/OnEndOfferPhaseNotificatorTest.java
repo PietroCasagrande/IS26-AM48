@@ -11,6 +11,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests for {@link OnEndOfferPhaseNotificator}.
+ * Verifies that the notificator does nothing when empty, correctly sets the
+ * card owner as the current player before executing the strategy, and restores
+ * the previous player afterward.
+ */
 @ExtendWith(MockitoExtension.class)
 class OnEndOfferPhaseNotificatorTest {
 
@@ -26,6 +32,12 @@ class OnEndOfferPhaseNotificatorTest {
         notificator = new OnEndOfferPhaseNotificator();
     }
 
+    /**
+     * Tests that {@link OnEndOfferPhaseNotificator#notify(PlayerContext)} does
+     * nothing when no strategy has been attached.
+     * <p>Components involved: {@link OnEndOfferPhaseNotificator},
+     * {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_noListeners_doesNothing() {
         notificator.notify(playerContext);
@@ -33,6 +45,13 @@ class OnEndOfferPhaseNotificatorTest {
         verifyNoInteractions(playerContext, strategy);
     }
 
+    /**
+     * Tests that when a strategy is attached, the notificator sets the card
+     * owner as the current player, executes the effect, and restores the
+     * previous player.
+     * <p>Components involved: {@link OnEndOfferPhaseNotificator},
+     * {@link Player}, {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_withListener_setsOwnerCallsEffectAndRestoresPrevious() {
         when(playerContext.getCurrPlayer()).thenReturn(previousPlayer);
@@ -48,6 +67,13 @@ class OnEndOfferPhaseNotificatorTest {
         verify(playerContext).setCurrPlayer(previousPlayer);
     }
 
+    /**
+     * Tests that the operations within {@code notify} happen in the correct
+     * order: save current player, switch to card owner, execute effect,
+     * restore previous player.
+     * <p>Components involved: {@link OnEndOfferPhaseNotificator},
+     * {@link Player}, {@link PlayerContext}, {@link CardStrategy}.</p>
+     */
     @Test
     void notify_callsSetCurrPlayerInCorrectOrder() {
         when(playerContext.getCurrPlayer()).thenReturn(previousPlayer);

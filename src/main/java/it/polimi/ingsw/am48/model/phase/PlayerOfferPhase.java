@@ -5,10 +5,8 @@ import it.polimi.ingsw.am48.model.board.Board;
 import it.polimi.ingsw.am48.model.board.OfferCard;
 import it.polimi.ingsw.am48.model.card.BuildingCard;
 import it.polimi.ingsw.am48.model.card.Card;
-import it.polimi.ingsw.am48.model.delta.BuildingCardPickedDelta;
-import it.polimi.ingsw.am48.model.delta.CharacterCardPickedDelta;
-import it.polimi.ingsw.am48.model.delta.GameDelta;
-import it.polimi.ingsw.am48.model.delta.OfferCardADelta;
+import it.polimi.ingsw.am48.model.card.CharacterCard;
+import it.polimi.ingsw.am48.model.delta.*;
 import it.polimi.ingsw.am48.model.game.Game;
 import it.polimi.ingsw.am48.model.player.Player;
 import it.polimi.ingsw.am48.model.snapshot.PhaseSnapshot;
@@ -18,15 +16,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Represents the main gameplay phase where players acquire cards from the board.
+ * <p>
+ * This phase is highly stateful, tracking exactly whose turn it is, how many cards
+ * they have picked from each row (upper or lower), and whether any special building
+ * effects (like the "Extra Pick" ability) are currently altering the standard flow.
+ */
 public class PlayerOfferPhase implements GamePhase {
     private final List<Player> actionOrder;
     private int currIdx;
     private int picksFromUp;
     private int picksFromDown;
-    private boolean extraPickActive;     // per l'edificio extra pick
-    private Player extraPickPlayer;      // chi ha l'edificio
+    private boolean extraPickActive;
+    private Player extraPickPlayer;
     private boolean totemReturned;
+    private boolean skipAvailable;
 
+    /**
+     * Initializes a new offer phase with a predetermined playing order.
+     *
+     * @param actionOrder the sorted list of players defining the turn sequence
+     */
     public PlayerOfferPhase(List<Player> actionOrder) {
         this.actionOrder = new ArrayList<>(actionOrder);
         currIdx = 0;
@@ -35,16 +46,40 @@ public class PlayerOfferPhase implements GamePhase {
         extraPickActive = false;
         extraPickPlayer = null;
         totemReturned = false;
+        skipAvailable = false;
     }
 
-    // controlla se c'è qualcuno sulla tessera A e, in caso affermativo, assegna cibo, ritorna totem e restituisce nuovo delta apposito
+    /**
+     * Reconstructs the phase from a saved state, restoring all internal counters and flags.
+     */
+    public PlayerOfferPhase(List<Player> actionOrder, int currIdx, int picksFromUp,
+                            int picksFromDown, boolean extraPickActive,
+                            Player extraPickPlayer, boolean totemReturned) {
+        this.actionOrder = new ArrayList<>(actionOrder);
+        this.currIdx = currIdx;
+        this.picksFromUp = picksFromUp;
+        this.picksFromDown = picksFromDown;
+        this.extraPickActive = extraPickActive;
+        this.extraPickPlayer = extraPickPlayer;
+        this.totemReturned = totemReturned;
+    }
+
+    /**
+     * Executes preliminary phase setup, specifically handling the "A" track slot bonus.
+     * <p>
+     * If the first player placed their totem on the "A" slot, they immediately receive
+     * food, return their totem, and their turn ends before any card picking begins.
+     *
+     * @param game the current game instance
+     * @return an {@code Optional} containing the resulting network delta, if the bonus was triggered
+     */
     public Optional<GameDelta> setup(Game game){
         OfferCard firstOffer = game.getBoard().findTrackPosition(actionOrder.getFirst());
 
         if(firstOffer.getLetterId() == 'A'){
             Player firstPlayer = actionOrder.getFirst();
             firstPlayer.updateFood(firstOffer.getFoodBonus());
-            handleTotemReturn(game, firstPlayer);
+            handleTotemReturn(game, firstOffer.returnTotem().orElse(null));
             currIdx++;
 
             return Optional.of(new OfferCardADelta(firstPlayer.getNickname(), firstPlayer.getFood()));
@@ -53,144 +88,215 @@ public class PlayerOfferPhase implements GamePhase {
         return Optional.empty();
     }
 
+
+    /**
+     * Handles the core logic of a player attempting to take a card from the board.
+     * <p>
+     * This method orchestrates the validation of the turn, enforces the drawing limits
+     * dictated by the player's position on the offer track, triggers card abilities
+     * via the Notificator Center, and determines whether the turn or the entire phase
+     * should advance. Moreover, handles extra pick building logic and skip pick logic.
+     *
+     * @param game   the main game instance
+     * @param player the player attempting the action
+     * @param cardId the unique identifier of the target card, or "skip" if the player chooses to pass
+     * @return a list of network deltas representing the state changes caused by the action
+     * @throws InvalidActionException if it is not the player's turn or if the pick violates the rules
+     */
     @Override
     public List<GameDelta> takeCard(Game game, Player player, String cardId) {
         List<GameDelta> deltas = new ArrayList<>();
 
-        // 1. Validazione turno
+        // Turn validation
         if (extraPickActive) {
-            // Siamo nella fase extra: solo il player con l'edificio può giocare
+            // Only the player with extra pick can play
             if (!player.equals(extraPickPlayer)) {
-                throw new InvalidActionException("Non è il tuo turno.");
+                throw new InvalidActionException("Not your turn.");
             }
-            // Può prendere solo dalla fila superiore
+            else if(cardId.equals("skip")){
+                extraPickActive = false;
+                extraPickPlayer = null;
+                EndTurnPhase endPhase = new EndTurnPhase();
+                game.setPhase(endPhase);
+                deltas.addAll(endPhase.endTurn(game));
+                return deltas;
+            }
+            // Extra card can be taken only from upper row
             if (!game.getBoard().isCardTop(cardId)) {
-                throw new InvalidActionException("Puoi prendere solo dalla fila superiore.");
+                throw new InvalidActionException("You can only take from upper row.");
             }
         } else {
-            // Turno normale
+            // Regular turn: check if it's the current player's turn
             if (!actionOrder.get(currIdx).equals(player)) {
-                throw new InvalidActionException("Non è il tuo turno.");
+                throw new InvalidActionException("Not your turn.");
             }
         }
 
         // Sets current player in PlayerContext
         game.getPlayerContext().setCurrPlayer(player);
+        OfferCard currentOffer = null;
 
-        // 2. Trova la tessera offerta del giocatore corrente
-        OfferCard currentOffer = game.getBoard().findTrackPosition(player);
-
-        // 3. Valida il pick (solo nel turno normale, non nel extra)
+        // If not in extra pick, validate the pick against the current offer
         if (!extraPickActive) {
+             currentOffer = game.getBoard().findTrackPosition(player);
             validatePick(game.getBoard(), cardId, currentOffer);
         }
 
-        // 4. Aggiorna contatori
-        if (!extraPickActive) {
-            if (game.getBoard().isCardTop(cardId)) {
-                picksFromUp++;
-            } else {
-                picksFromDown++;
+        Card selectedCard = null;
+
+        if(!skipAvailable){
+            boolean isTop = !extraPickActive && game.getBoard().isCardTop(cardId);
+            selectedCard = game.getBoard().takeCard(game.getPlayerContext(), cardId);
+
+            if (!extraPickActive) {
+                if (isTop) {
+                    picksFromUp++;
+                } else {
+                    picksFromDown++;
+                }
+            }
+
+            // Strategy registration to notificator center
+            if (selectedCard.getStrategy() != null) {
+                game.getPlayerContext().setCurrPlayer(player);
+                selectedCard.getStrategy().registerTo(
+                        game.getNotificatorCenter(), game.getPlayerContext());
+                // Immediately activates OnPick strategies
+                game.getNotificatorCenter().getPickNotificator()
+                        .notify(game.getPlayerContext());
+            }
+
+            if (extraPickActive) {
+                extraPickActive = false;
+                extraPickPlayer = null;
+                EndTurnPhase endPhase = new EndTurnPhase();
+                game.setPhase(endPhase);
+                deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "END_TURN"));
+                deltas.addAll(endPhase.endTurn(game));
+                return deltas;
             }
         }
 
-
-        // 5. Prendi la carta dal board (acquire + rimuovi da showed)
-        Card selectedCard = game.getBoard().takeCard(game.getPlayerContext(), cardId);
-
-        // 6. Registra la strategy della carta al notificator
-        if (selectedCard.getStrategy() != null) {
-            game.getPlayerContext().setCurrPlayer(player);
-            selectedCard.getStrategy().registerTo(
-                    game.getNotificatorCenter(), game.getPlayerContext());
-            // Attiva OnPick
-            game.getNotificatorCenter().getPickNotificator()
-                    .notify(game.getPlayerContext());
-        }
-
-        // 7. Se siamo nel extra pick, abbiamo finito
-        if (extraPickActive) {
-//            extraPickActive = false;
-//            extraPickPlayer = null;
-            deltas.add(buildCardDelta(player, selectedCard, game, totemReturned));  // se siamo all'extraPick dobbiamo costruire il delta, dato che non arriviamo a quello del punto 9
-            // Transizione a EndTurnPhase
-            EndTurnPhase endPhase = new EndTurnPhase();
-            game.setPhase(endPhase);
-            deltas.addAll(endPhase.endTurn(game));
-            return deltas;
-        }
-
-        // 8. Controlla se il giocatore ha finito i suoi pick
-        if (picksFromUp + picksFromDown >= currentOffer.getTotalPicks()) {
-            // Totem torna sulla tessera ordine di turno
+        // Checks the number of cards taken so far
+        if (picksFromUp + picksFromDown >= currentOffer.getTotalPicks() || skipAvailable) {
             handleTotemReturn(game, currentOffer.returnTotem().get());
             totemReturned = true;
 
-            // Reset per il prossimo giocatore
+            // Resets for next player
             picksFromUp = 0;
             picksFromDown = 0;
             currIdx++;
         }
 
-        // 9. Costruisci il delta
-        deltas.add(buildCardDelta(player, selectedCard, game, totemReturned));  // dobbiamo costruire delta DOPO l'eventuale ritorno del totem, per via di food/pp aggiornati
-        totemReturned = false;  // rimettiamo a false per prossimo player (in caso il curr l'avesse aggiornato)
-
-        // 10. Controlla se il round è finito
-        if (currIdx >= actionOrder.size()) {    // non è size()-1 perchè c'è stato currIdx++ oltre l'ultimo player
-            // Controlla se qualcuno ha l'edificio "extra pick"
-            // OnEndOfferPhaseNotificator controlla e setta il extra
+        // Handles end round
+        if (currIdx >= actionOrder.size()) {
             checkExtraPick(game);
 
             if (!extraPickActive) {
-                // Nessun extra: transizione a EndTurnPhase
                 EndTurnPhase endPhase = new EndTurnPhase();
                 game.setPhase(endPhase);
+                deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "END_TURN"));
                 deltas.addAll(endPhase.endTurn(game));
             }
-            // Se extraPickActive, la fase resta PlayerOfferPhase
-            // e aspetta il takeCard del extra player
+            else deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "PLAYER_OFFER"));
         }
+        else deltas.add(buildCardDelta(player, selectedCard, game, totemReturned, "PLAYER_OFFER"));
+
+        totemReturned = false;
+        skipAvailable = false;
 
         return deltas;
     }
 
+
+    /**
+     * Validates a player's attempt to pick a card against the game rules.
+     * <p>
+     * Ensures the player respects the limits of their offer slot (number of picks from
+     * upper/lower rows). If the player attempts to "skip", the method verifies that no
+     * valid Character cards are left in the required row.
+     *
+     * @param board  the current state of the game board
+     * @param cardId the ID of the requested card, or "skip"
+     * @param offer  the specific offer slot holding the player's totem
+     * @throws InvalidActionException if the requested action violates any constraints
+     */
     private void validatePick(Board board, String cardId, OfferCard offer) {
+
+        if(cardId.equals("skip")){
+            if(picksFromUp < offer.getNumUp()){
+                List<Card> tribeUpper = board.getTribeShowed().getUpperList();
+                int numCharUp = (int) tribeUpper.stream()
+                        .filter(c -> c instanceof CharacterCard)
+                        .count();
+                if(numCharUp == 0) {
+                    skipAvailable = true;
+                    return;
+                }
+                else{
+                    throw new InvalidActionException("You must take a card from the upper row.");
+                }
+            }
+            else if(picksFromDown < offer.getNumDown()){
+                List<Card> tribeLower = board.getTribeShowed().getLowerList();
+                int numCharDown = (int) tribeLower.stream()
+                        .filter(c -> c instanceof CharacterCard)
+                        .count();
+                if(numCharDown == 0) {
+                    skipAvailable = true;
+                    return;
+                }
+                else{
+                    throw new InvalidActionException("You must take a card from the lower row.");
+                }
+            }
+        }
+
         boolean isTop = board.isCardTop(cardId);
         boolean isDown = board.isCardDown(cardId);
 
         if (!isTop && !isDown) {
-            throw new InvalidActionException("La carta non è sul tabellone.");
+            throw new InvalidActionException("The selected card is not on the board.");
         }
         if (isTop && offer.getNumUp() == 0)
-            throw new InvalidActionException("Non puoi pescare dalla fila superiore");
+            throw new InvalidActionException("You can't draw a card from the upper row.");
 
         if (isDown && offer.getNumDown() == 0)
-            throw new InvalidActionException("Non puoi pescare dalla fila inferiore");
+            throw new InvalidActionException("You can't draw a card from the lower row.");
 
         if (isTop && picksFromUp >= offer.getNumUp()) {
-            throw new InvalidActionException("Hai già pescato il massimo dalla fila superiore.");
+            throw new InvalidActionException("You've already taken from the upper row.");
         }
         if (isDown && picksFromDown >= offer.getNumDown()) {
-            throw new InvalidActionException("Hai già pescato il massimo dalla fila inferiore.");
+            throw new InvalidActionException("You've already taken from the lower row.");
         }
     }
 
+    /**
+     * Executes the mechanical return of a player's totem to their pool.
+     * <p>
+     * Automatically triggers the "OnTotemReturned" notificator, which may activate
+     * specific strategic effects (e.g., gaining extra food upon retrieval).
+     *
+     * @param game   the main game instance
+     * @param player the player receiving their totem back
+     */
     private void handleTotemReturn(Game game, Player player) {
-        // Riporta totem sulla tessera ordine di turno
         game.getBoard().returnTotem(player);
-        // Attiva OnTotemReturned (edificio cibo extra)
         game.getPlayerContext().setCurrPlayer(player);
         game.getNotificatorCenter().getTotemReturnedNotificator()
                 .notify(game.getPlayerContext());
     }
 
+    /**
+     * Checks all players at the end of the round to see if the "Extra Pick" effect is triggered.
+     * <p>
+     * Searches the player contexts for the {@code deservesExtraPick} flag (usually activated
+     * by a specific building). If found, it activates the extra pick sub-phase.
+     *
+     * @param game the main game instance
+     */
     private void checkExtraPick(Game game) {
-        // L'edificio "extra pick" è registrato su OnEndOfferPhaseNotificator
-        // Controlliamo se c'è un listener
-        // Se sì, settiamo extraPickActive ed extraPickPlayer
-        // La notify di OnEndOfferPhaseNotificator non esegue il pick,
-        // setta solo un flag — il pick vero lo fa il player col prossimo takeCard
         game.getPlayerContext().getPlayers().stream()
                 .filter(Player::deservesExtraPick)
                 .findFirst()
@@ -200,25 +306,46 @@ public class PlayerOfferPhase implements GamePhase {
                 });
     }
 
-    private GameDelta buildCardDelta(Player player, Card card, Game game, boolean totemReturned) {
-        if (card instanceof BuildingCard) {
+    /**
+     * Constructs the appropriate network delta to broadcast the result of a pick action.
+     * <p>
+     * Differentiates between skipped turns, building purchases, and character acquisitions
+     * to package the correct updated lists and player stats for the clients.
+     *
+     * @param player        the player who performed the action
+     * @param card          the specific card acquired, or null if the turn was skipped
+     * @param game          the main game instance providing the updated board state
+     * @param totemReturned true if the player's totem was returned during this action
+     * @param phaseName     the identifier of the next game phase
+     * @return a concrete implementation of {@link GameDelta} ready for broadcast
+     */
+    private GameDelta buildCardDelta(Player player, Card card, Game game, boolean totemReturned, String phaseName) {
+        if(card == null){
+            return new SkipDelta(player.getNickname(), totemReturned, phaseName);
+        }
+        else if (card instanceof BuildingCard) {
             List<String> updatedUpperBuildingsIds = game.getBoard().getBuildingShowed().getUpperList().stream().map(Card::getCardId).toList();
             List<String> updatedLowerBuildingsIds = game.getBoard().getBuildingShowed().getLowerList().stream().map(Card::getCardId).toList();
 
-            return new BuildingCardPickedDelta(player.getNickname(), card.getCardId(),updatedUpperBuildingsIds, updatedLowerBuildingsIds, player.getFood(), player.getPoints(), totemReturned);
+            return new BuildingCardPickedDelta(player.getNickname(), card.getCardId(),updatedUpperBuildingsIds, updatedLowerBuildingsIds, player.getFood(), player.getPoints(), totemReturned, phaseName);
         }
         List<String> updatedUpperTribeIds = game.getBoard().getTribeShowed().getUpperList().stream().map(Card::getCardId).toList();
         List<String> updatedLowerTribeIds = game.getBoard().getTribeShowed().getLowerList().stream().map(Card::getCardId).toList();
 
-        return new CharacterCardPickedDelta(player.getNickname(), card.getCardId(),updatedUpperTribeIds, updatedLowerTribeIds, player.getFood(), player.getPoints(), totemReturned);
+        return new CharacterCardPickedDelta(player.getNickname(), card.getCardId(),updatedUpperTribeIds, updatedLowerTribeIds, player.getFood(), player.getPoints(), totemReturned, phaseName);
     }
 
+    /**
+     * Serializes this complex phase into a lightweight data transfer object.
+     *
+     * @return a {@link PlayerOfferPhaseSnapshot} capturing all internal counters and turn orders
+     */
     @Override
     public PhaseSnapshot toSnapshot(){
         List<String> orderNicknames = actionOrder.stream()
                 .map(Player::getNickname)
                 .toList();
 
-        return new PlayerOfferPhaseSnapshot(orderNicknames, currIdx);
+        return new PlayerOfferPhaseSnapshot(orderNicknames, currIdx, picksFromUp, picksFromDown, extraPickActive, extraPickPlayer != null ? extraPickPlayer.getNickname() : null, totemReturned);
     }
 }
