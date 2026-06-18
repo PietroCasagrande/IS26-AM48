@@ -98,10 +98,12 @@ public class PlayerTribeController {
 
             for (String cardId : characters) {
                 ImageView cardView = createImageView(cardId);
-                cardView.setPreserveRatio(true);
-                cardView.fitWidthProperty().bind(artistsColumn.widthProperty().multiply(0.85));
 
                 if (cardView != null) {
+
+                    cardView.setPreserveRatio(true);
+                    cardView.fitWidthProperty().bind(artistsColumn.widthProperty().multiply(0.85));
+
                     if (cardId.startsWith("ART")) {
                         artistsColumn.getChildren().add(cardView);
                     } else if (cardId.startsWith("BUI")) {
@@ -122,10 +124,12 @@ public class PlayerTribeController {
 
             for (String cardId : buildings) {
                 ImageView cardView = createImageView(cardId);
-                cardView.setPreserveRatio(true);
-                cardView.fitWidthProperty().bind(buildingsColumn.widthProperty().multiply(0.85));
 
                 if (cardView != null) {
+
+                    cardView.setPreserveRatio(true);
+                    cardView.fitWidthProperty().bind(buildingsColumn.widthProperty().multiply(0.85));
+
                     buildingsColumn.getChildren().add(cardView);
                 }
             }

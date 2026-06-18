@@ -138,6 +138,10 @@ public class GameBoardController implements ModelObserver {
                 opponentControllers[i].setModel(model);
                 opponentControllers[i].setServer(server);
 
+                if (this.imageCache != null) {
+                    opponentControllers[i].setDependencies(this.imageCache);
+                }
+
                 opponentBoxes[i].getChildren().add(widget);
                 opponentBoxes[i].setVisible(false);
             } catch (IOException e) {
@@ -359,23 +363,25 @@ public class GameBoardController implements ModelObserver {
     private void updatePlayerInfo(ClientGameState state) {
         Map<String, ClientPlayerState> players = state.getPlayers();
         String currentTurn = getCurrentPlayer(state);
-
-        // Use left slots first, then right slots
-        VBox[] containers = { left_player1, left_player2, right_player1, right_player2 };
-        for (VBox b : containers) { b.getChildren().clear(); b.setVisible(false); }
-
         String currentPhase = state.getCurrentPhase();
         boolean showTurnGlow = "PLACE_TOTEM".equals(currentPhase) || "PLAYER_OFFER".equals(currentPhase);
 
         for (VBox b : opponentBoxes) { b.setVisible(false); }
 
+        List<ClientPlayerState> opponents = new ArrayList<>();
+        for (ClientPlayerState p : players.values()) {
+            if (!p.getNickname().equals(myNickname)) {
+                opponents.add(p);
+            }
+        }
+        opponents.sort(Comparator.comparing(ClientPlayerState::getNickname));
+
         int slot = 0;
-        for (ClientPlayerState player : players.values()) {
-            if (player.getNickname().equals(myNickname)) continue;
+        for (ClientPlayerState player : opponents) {
             if (slot >= opponentBoxes.length) break;
 
-
             OpponentWidgetController wc = opponentControllers[slot];
+            if (wc == null) { slot++; continue; }
 
             String totemColor = player.getTotemColor();
             Image avatarImg = (totemColor != null) ? imageCache.renderTotem(totemColor) : null;
