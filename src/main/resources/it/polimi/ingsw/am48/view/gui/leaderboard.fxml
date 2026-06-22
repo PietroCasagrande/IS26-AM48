@@ -41,9 +41,6 @@
                     <Button fx:id="buttonHistory" mnemonicParsing="false"
                             styleClass="button-menu-fire" text="Intergalactic Ranking"
                             onAction="#handleHistory" />
-                    <Button fx:id="buttonNewGame" mnemonicParsing="false"
-                            styleClass="button-menu-fire" text="New Game"
-                            onAction="#handleNewGame" />
                     <Button fx:id="buttonMenu" mnemonicParsing="false"
                             styleClass="button-menu-fire" text="Back to Menu"
                             onAction="#handleMenu" />

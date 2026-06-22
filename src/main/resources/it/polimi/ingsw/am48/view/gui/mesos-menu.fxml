@@ -38,8 +38,6 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <StackPane fx:id="root" prefHeight="720.0" prefWidth="1280.0" stylesheets="@css/style.css"
            xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.polimi.ingsw.am48.view.gui.MesosMenuController">
@@ -52,7 +50,6 @@
                     <children>
                         <Button fx:id="buttonPlay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="Play Game" onAction="#handlePlay"/>
                         <Button fx:id="buttonHowToPLay" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="How to Play" onAction="#handleHowToPlay" />
-                        <Button fx:id="buttonSettings" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="Settings" />
                         <Button fx:id="buttonExit" alignment="CENTER" minWidth="250.0" mnemonicParsing="false" styleClass="button-menu-fire" text="Exit" onAction="#handleExit" />
                     </children>
                     <padding><Insets top="100.0" /></padding>

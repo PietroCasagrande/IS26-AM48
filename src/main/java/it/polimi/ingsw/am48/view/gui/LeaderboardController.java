@@ -181,40 +181,6 @@ public class LeaderboardController implements ModelObserver {
     }
 
     /**
-     * Handles the "New Game" button click.
-     * Disconnects the current socket, creates a fresh client model and socket connection,
-     * and transitions to the join game scene.
-     */
-    @FXML
-    private void handleNewGame() {
-        try {
-            // Close the current socket connection and terminate its thread
-            if (this.server instanceof SocketServerHandler) {
-                ((SocketServerHandler) this.server).disconnect();
-            }
-
-            // Create a fresh model and socket connection
-            ClientModel newModel = new ClientModel();
-            SocketServerHandler newServer = new SocketServerHandler("localhost", 12345, newModel);
-
-            // Start the network listener thread
-            Thread networkThread = new Thread(newServer);
-            networkThread.setDaemon(true);
-            networkThread.start();
-
-            // Transition to the join game scene
-            Object ctrl = SceneManager.changeScene("join-game-screen.fxml");
-            if (ctrl instanceof JoinGameController jgc) {
-                jgc.setServer(newServer);
-                jgc.setModel(newModel);
-            }
-
-        } catch (IOException e) {
-            System.err.println("Unable to connect to the server for a new game!");
-        }
-    }
-
-    /**
      * Handles the "Menu" button click. Returns to the main menu scene.
      */
     @FXML

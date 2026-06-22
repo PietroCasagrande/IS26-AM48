@@ -508,6 +508,8 @@ public class GameBoardController implements ModelObserver {
             alert.setTitle("GAME ERROR");
             alert.setHeaderText(null);
             alert.setContentText(message);
+            alert.getDialogPane().setMinWidth(700);
+            alert.getDialogPane().setMinHeight(javafx.scene.layout.Region.USE_COMPUTED_SIZE);
             alert.showAndWait();
         });
     }
