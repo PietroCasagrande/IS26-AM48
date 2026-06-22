@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EventFactoryTest {
 
-    // Helper per costruire un DTO evento con la strategia corretta
+    // Helper to build an event DTO with the correct strategy
     private CardDTO buildHuntEventDto(String id, String era) {
         StrategyDTO s = new StrategyDTO();
         s.effect = "HuntEventStrategy";
@@ -179,7 +179,7 @@ class EventFactoryTest {
                 () -> new EventFactory(List.of(dto)).createCards(2));
     }
 
-    // ==================== buildStrategy - ogni ramo del switch ====================
+    // ==================== buildStrategy - every branch of the switch ====================
 
     @Test
     @DisplayName("buildStrategy: should build ArtistEventStrategy correctly")

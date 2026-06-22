@@ -140,7 +140,7 @@ class CharacterFactoryTest {
                 () -> new CharacterFactory(List.of(dtoTwoPlus)).createCards(2));
     }
 
-    // ==================== buildStrategy - ogni ramo del switch ====================
+    // ==================== buildStrategy - every branch of the switch ====================
 
     @Test
     @DisplayName("buildStrategy: should build BuilderStrategy correctly")

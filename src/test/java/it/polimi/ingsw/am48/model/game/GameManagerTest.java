@@ -243,7 +243,7 @@ class GameManagerTest {
 
         manager.handleClientDisconnect("alice");
 
-        // entrambi i nickname devono essere liberi — non solo "alice"
+        // both nicknames must be free — not just "alice"
         assertDoesNotThrow(() -> manager.joinGame(2, "alice"));
         assertDoesNotThrow(() -> manager.joinGame(2, "bob"));
     }
@@ -262,12 +262,12 @@ class GameManagerTest {
     @Test
     @DisplayName("handleClientDisconnect: should work even if player is still in waiting game")
     void shouldCleanUpWaitingGameOnDisconnect() {
-        manager.joinGame(4, "alice"); // partita non ancora iniziata
+        manager.joinGame(4, "alice"); // game not started yet
 
         List<String> companions = manager.handleClientDisconnect("alice");
 
-        assertTrue(companions.isEmpty()); // nessun companion ancora
-        assertDoesNotThrow(() -> manager.joinGame(4, "alice")); // nickname libero
+        assertTrue(companions.isEmpty()); // no companion yet
+        assertDoesNotThrow(() -> manager.joinGame(4, "alice")); // nickname free
     }
 
     @Test
@@ -278,7 +278,7 @@ class GameManagerTest {
 
         manager.handleClientDisconnect("alice");
 
-        // la seconda chiamata non deve esplodere — alice non è più in playerToGame
+        // the second call must not blow up — alice is no longer in playerToGame
         assertDoesNotThrow(() -> manager.handleClientDisconnect("alice"));
     }
 }

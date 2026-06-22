@@ -28,7 +28,7 @@ public class TribeSnapshot implements Serializable {
     private final int currentPrestigePoints;
     private final int shamanStars;
     private final int foodDiscount;
-    private final boolean shamanSafety;    // indica se il Player è immune all'evento sciamanico
+    private final boolean shamanSafety;    // whether the Player is immune to the shaman event
     private final boolean shamanDoubling;
     private final boolean extraFoodRight;
     private final boolean extraPickRight;

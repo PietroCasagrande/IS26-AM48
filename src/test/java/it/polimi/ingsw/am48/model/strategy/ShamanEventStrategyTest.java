@@ -32,7 +32,7 @@ class ShamanEventStrategyTest {
 
     @Test
     void shouldGivePPToPlayerWithMostStars() {
-        // il player con più stelle riceve ppToMax
+        // the player with the most stars receives ppToMax
         p1.updateShamanStars(3);
         p2.updateShamanStars(1);
         p3.updateShamanStars(1);
@@ -42,7 +42,7 @@ class ShamanEventStrategyTest {
 
     @Test
     void shouldLosePPToPlayerWithFewestStars() {
-        // i player con meno stelle perdono ppToMin
+        // the players with the fewest stars lose ppToMin
         p1.updateShamanStars(3);
         p2.updateShamanStars(1);
         p3.updateShamanStars(1);
@@ -53,7 +53,7 @@ class ShamanEventStrategyTest {
 
     @Test
     void shouldGiveNothingToMiddlePlayers() {
-        // i player con stelle intermedie non ricevono né perdono punti
+        // players with intermediate stars neither gain nor lose points
         p1.updateShamanStars(3);
         p2.updateShamanStars(2);
         p3.updateShamanStars(1);
@@ -63,7 +63,7 @@ class ShamanEventStrategyTest {
 
     @Test
     void shouldGivePPToAllPlayersWithMaxStars() {
-        // più player con stesso massimo ricevono tutti ppToMax
+        // multiple players sharing the maximum all receive ppToMax
         p1.updateShamanStars(3);
         p2.updateShamanStars(3);
         p3.updateShamanStars(1);
@@ -74,7 +74,7 @@ class ShamanEventStrategyTest {
 
     @Test
     void shouldLosePPToAllPlayersWithMinStars() {
-        // più player con stesso minimo perdono tutti ppToMin
+        // multiple players sharing the minimum all lose ppToMin
         p1.updateShamanStars(3);
         p2.updateShamanStars(1);
         p3.updateShamanStars(1);
@@ -85,7 +85,7 @@ class ShamanEventStrategyTest {
 
     @Test
     void shouldApplyBothEffectsWhenAllPlayersHaveSameStars() {
-        // tutti con stesse stelle: ricevono ppToMax e perdono ppToMin
+        // everyone with the same stars: they receive ppToMax and lose ppToMin
         p1.updateShamanStars(2);
         p2.updateShamanStars(2);
         p3.updateShamanStars(2);
@@ -97,43 +97,43 @@ class ShamanEventStrategyTest {
 
     @Test
     void shouldDoubleMaxPPIfDeservesDoubleShamanPp() {
-        // player con doubling riceve ppToMax doppio
+        // player with doubling receives double ppToMax
         p1.updateShamanStars(3);
         p1.setShamanDoubling();
         p2.updateShamanStars(1);
         p3.updateShamanStars(1);
         strategy.effect(context);
-        assertEquals(6, p1.getPoints()); // 3 + 3 doppio
+        assertEquals(6, p1.getPoints()); // 3 + 3 doubled
     }
 
     @Test
     void shouldNotLosePPIfShamanSafe() {
-        // player con shamanSafety non perde PP pur avendo stelle minime
+        // player with shamanSafety does not lose PP even with the minimum stars
         p1.updateShamanStars(3);
         p2.updateShamanStars(1);
         p2.setShamanSafety();
         p3.updateShamanStars(1);
         strategy.effect(context);
-        assertEquals(3, p1.getPoints());  // massimo, riceve ppToMax
-        assertEquals(0, p2.getPoints());  // minimo ma immune, non perde
-        assertEquals(-1, p3.getPoints()); // minimo e non immune, perde ppToMin
+        assertEquals(3, p1.getPoints());  // maximum, receives ppToMax
+        assertEquals(0, p2.getPoints());  // minimum but immune, does not lose
+        assertEquals(-1, p3.getPoints()); // minimum and not immune, loses ppToMin
 
     }
 
     @Test
     void shouldNotDoublePPForMinPlayers() {
-        // il doubling non si applica ai player con stelle minime
+        // doubling does not apply to players with the minimum stars
         p1.updateShamanStars(3);
         p2.updateShamanStars(1);
-        p2.setShamanDoubling(); // doubling non conta per chi perde
+        p2.setShamanDoubling(); // doubling does not count for those who lose
         p3.updateShamanStars(1);
         strategy.effect(context);
-        assertEquals(-1, p2.getPoints()); // perde normale, doubling non conta
+        assertEquals(-1, p2.getPoints()); // loses normally, doubling does not count
     }
 
     @Test
     void shouldHandleZeroStarsForAll() {
-        // tutti con 0 stelle - stesso effetto di parità generale
+        // everyone with 0 stars - same effect as a general tie
         strategy.effect(context);
         assertEquals(2, p1.getPoints()); // 3 - 1
         assertEquals(2, p2.getPoints());
@@ -142,7 +142,7 @@ class ShamanEventStrategyTest {
 
     @Test
     void shouldStackWithExistingPoints() {
-        // l'effetto si somma ai punti già posseduti
+        // the effect adds to the points already held
         p1.updateShamanStars(3);
         p1.updatePoints(5);
         p2.updateShamanStars(1);

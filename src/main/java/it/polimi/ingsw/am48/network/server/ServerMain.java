@@ -89,23 +89,23 @@ public class ServerMain {
             RmiServer rmiServer = new RmiServer(controller, mesosServer);
             Registry registry = LocateRegistry.createRegistry(RMI_PORT);
             registry.rebind("MesosServer", rmiServer);
-            System.out.println("RMI Server avviato sulla porta: " + RMI_PORT);
+            System.out.println("RMI Server started on port: " + RMI_PORT);
         } catch (RemoteException e) {
-            System.err.println("Errore avvio RMI: " + e.getMessage());
+            System.err.println("RMI startup error: " + e.getMessage());
         }
 
         try {
             serverSocket = new ServerSocket(PORT);
-            System.out.println("Server avviato sulla porta " + PORT);
+            System.out.println("Server started on port " + PORT);
             while (running) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Nuova connessione accettata");
+                System.out.println("New connection accepted");
                 SocketClientHandler handler = new SocketClientHandler(clientSocket, controller, mesosServer);
                 threadPool.execute(handler);
             }
         } catch (IOException e) {
             if(!serverSocket.isClosed())
-                System.err.println("Errore nel server: " + e.getMessage());
+                System.err.println("Server error: " + e.getMessage());
         } finally {
             threadPool.shutdown();
         }
@@ -123,7 +123,7 @@ public class ServerMain {
         leaderboardRepository.close();
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close(); // Sblocca la accept() forzando una SocketException
+                serverSocket.close(); // Unblocks accept() by forcing a SocketException
             }
         } catch (IOException e) {
             e.printStackTrace();

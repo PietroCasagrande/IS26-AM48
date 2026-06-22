@@ -12,8 +12,8 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-// Testa la logica di connect(), joinGame(), placeTotem(), takeCard()
-// Lo fa tramite dei mock del Controller e di MesosServer
+// Tests the logic of connect(), joinGame(), placeTotem(), takeCard()
+// It does so through mocks of the Controller and MesosServer
 class RmiServerTest {
 
     private GameController controllerMock;

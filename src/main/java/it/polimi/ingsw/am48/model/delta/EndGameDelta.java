@@ -39,7 +39,7 @@ public class EndGameDelta extends GameDelta{
      *
      * @param model the client model whose state must be updated
      */
-    // EndGame modifica pp di tutti i giocatori
+    // EndGame updates pp of all players
     @Override
     public void applyTo(ClientModel model) {
         // System.out.println("DEBUG EndGameDelta: winner=" + winnerNickname + ", scores=" + finalScores);

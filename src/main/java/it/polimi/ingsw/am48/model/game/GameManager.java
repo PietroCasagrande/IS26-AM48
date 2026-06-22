@@ -127,7 +127,7 @@ public class GameManager implements ModelInterface{
                         playerToGame.remove(p.getNickname());
                     });
                 } else {
-                    throw new InvalidActionException("Nickname già in uso: " + nickname);
+                    throw new InvalidActionException("Nickname already in use: " + nickname);
                 }
             }
         }
@@ -137,7 +137,7 @@ public class GameManager implements ModelInterface{
                 throw new IllegalArgumentException("Invalid number of players");
             }
             if(playerToGame.containsKey(nickname)){
-                throw new InvalidActionException("Nickname già in uso: " + nickname);
+                throw new InvalidActionException("Nickname already in use: " + nickname);
             }
         }
 
@@ -254,7 +254,7 @@ public class GameManager implements ModelInterface{
     public Game getGameByNickname(String nickname){
         Game game = playerToGame.get(nickname);
         if(game == null){
-            throw new InvalidActionException("Nessuna partita trovata per: " + nickname);
+            throw new InvalidActionException("No game found for: " + nickname);
         }
         return game;
     }
@@ -298,7 +298,7 @@ public class GameManager implements ModelInterface{
      */
     private JoinResult handleReconnect(String nickname, Game game) {
         synchronized (game) {
-            game.markReconnected(nickname); // segna il giocatore come riconnesso
+            game.markReconnected(nickname); // marks the player as reconnected
 
             boolean allReconnected = game.allPlayersReconnected();
             if (allReconnected) {
@@ -332,7 +332,7 @@ public class GameManager implements ModelInterface{
             gameRepository.load(gameId).ifPresent(snapshot -> {
                 Game game = Game.fromSnapshot(snapshot);
                 crashedGames.put(gameId, game);
-                // popola anche playerToGame così getGameByNickname funziona
+                // also populate playerToGame so getGameByNickname works
                 game.getPlayerContext().getPlayers().forEach(p ->
                         playerToGame.put(p.getNickname(), game)
                 );
@@ -424,7 +424,7 @@ public class GameManager implements ModelInterface{
     public Game findGame(String gameId){
         Game game = activeGames.get(gameId);
         if(game == null){
-            throw new InvalidActionException("Partita non trovata: " + gameId);
+            throw new InvalidActionException("Game not found: " + gameId);
         }
         return game;
     }

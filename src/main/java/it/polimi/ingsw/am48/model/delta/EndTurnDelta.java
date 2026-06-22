@@ -19,11 +19,11 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
  * @see ClientModel
  */
 public class EndTurnDelta extends GameDelta {
-    private final Map<String, Integer> updatedFood;        // nickname -> cibo aggiornato
-    private final Map<String, Integer> updatedPrestige;    // nickname -> PP aggiornati
-    private final List<String> newUpperTribeIds;             // nuove carte personaggio ed evento nella fila superiore
-    private final List<String> newLowerTribeIds;             // carte spostate nella fila inferiore
-    private final List<String> newUpperBuildingIds;     // nuovi edifici (se cambio era)
+    private final Map<String, Integer> updatedFood;        // nickname -> updated food
+    private final Map<String, Integer> updatedPrestige;    // nickname -> updated PP
+    private final List<String> newUpperTribeIds;             // new character and event cards in the upper row
+    private final List<String> newLowerTribeIds;             // cards moved to the lower row
+    private final List<String> newUpperBuildingIds;     // new buildings (if era changed)
     private final List<String> newLowerBuildingIds;
     private final int currentTurn;
     private final String currentPhase;
@@ -79,7 +79,7 @@ public class EndTurnDelta extends GameDelta {
      *
      * @param model the client model whose state must be updated
      */
-    // EndTurn modifica showed e food e pp di tutti i giocatori
+    // EndTurn updates showed, food and pp of all players
     @Override
     public void applyTo(ClientModel model) {
         model.setPhase("EndTurnPhase");
@@ -102,7 +102,7 @@ public class EndTurnDelta extends GameDelta {
         model.setEra(currentEra);
     }
 
-    // getter per tutti i campi
+    // getters for all fields
     public Map<String, Integer> getUpdatedFood() { return updatedFood; }
     public Map<String, Integer> getUpdatedPrestige() { return updatedPrestige; }
     public List<String> getNewUpperTribeIds() { return newUpperTribeIds; }

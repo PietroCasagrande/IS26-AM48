@@ -12,7 +12,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
  * @see CardStrategy
  */
 public class HuntEventStrategy extends CardStrategy {
-    // food sempre +1, i pp cambiano
+    // food always +1, the pp change
     private int ppPerPlayer;
 
     /**

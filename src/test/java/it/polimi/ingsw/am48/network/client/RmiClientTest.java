@@ -10,8 +10,8 @@ import java.rmi.RemoteException;
 
 import static org.mockito.Mockito.*;
 
-// Test unitario con mock che verifica la logica:
-// chi chiama cosa, in che ordine, cosa succede sulle callback
+// Unit test with mocks that verifies the logic:
+// who calls what, in which order, what happens on the callbacks
 class RmiClientTest {
 
     private VirtualServerRmi serverMock;
@@ -22,8 +22,8 @@ class RmiClientTest {
     void setUp() throws RemoteException {
         serverMock = mock(VirtualServerRmi.class);
         modelMock = mock(ClientModel.class);
-        // Usiamo un costruttore alternativo per il test,
-        // perché quello standard fa lookup sul Registry
+        // We use an alternative constructor for the test,
+        // because the standard one does a lookup on the Registry
         rmiClient = new RmiClient(serverMock, modelMock);
     }
 

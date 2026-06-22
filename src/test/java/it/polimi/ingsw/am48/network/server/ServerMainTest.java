@@ -41,7 +41,7 @@ class ServerMainTest {
                 Thread.sleep(50);
             }
         }
-        fail("Server non pronto entro " + timeoutMs + "ms");
+        fail("Server not ready within " + timeoutMs + "ms");
     }
 
     @Test

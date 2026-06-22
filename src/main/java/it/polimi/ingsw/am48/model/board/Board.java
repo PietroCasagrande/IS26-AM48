@@ -221,7 +221,7 @@ public class Board {
                 .toList();
 
         List<String> tribeDeckIds = tribeDeck.getRemainingCardIds();
-        List<String> buildingDeckIds = buildingDeck.getRemainingCardIds(); // TODO: se vogliamo il deck di building separato per ere, dovremo salvarlo come Map<String, List<String>> per lo Snapshot
+        List<String> buildingDeckIds = buildingDeck.getRemainingCardIds(); // TODO: if we want the building deck split per era, we'll need to store it as Map<String, List<String>> in the Snapshot
 
         return new BoardSnapshot(
                 upperRowIds,
@@ -253,7 +253,7 @@ public class Board {
         for(String id : snapshot.getTribeDeckRemainingIds()){
             Card card = cardMap.get(id);
             if (card == null) {
-                throw new IllegalStateException("Errore critico: Il character con ID " + id + " non è presente nel salvataggio sul disco!");
+                throw new IllegalStateException("Critical error: the character with ID " + id + " is not present in the save on disk!");
             }
             tribeDeck.add(card);
         }
@@ -261,7 +261,7 @@ public class Board {
         for(String id : snapshot.getBuildingDeckRemainingIds()){
             Card card = cardMap.get(id);
             if (card == null) {
-                throw new IllegalStateException("Errore critico: Il building con ID " + id + " non è presente nel salvataggio sul disco!");
+                throw new IllegalStateException("Critical error: the building with ID " + id + " is not present in the save on disk!");
             }
             buildingDeck.add((BuildingCard) card);
         }

@@ -21,12 +21,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-// Integration Test per RMI che verifica la connessione, ovvero:
-// il registry funziona, lo stub arriva, la serializzazione non crasha
+// Integration Test for RMI that verifies the connection, that is:
+// the registry works, the stub arrives, the serialization does not crash
 @Timeout(10)
 class RmiIntegrationTest {
 
-    private static final int RMI_PORT = 2099; // porta diversa per evitare conflitti col server reale
+    private static final int RMI_PORT = 2099; // different port to avoid conflicts with the real server
     private static Registry registry;
 
     @BeforeAll
@@ -49,7 +49,7 @@ class RmiIntegrationTest {
 
     @AfterAll
     static void stopRegistry() throws Exception {
-        // Rimuovi il binding per pulire
+        // Remove the binding to clean up
         try { registry.unbind("MesosServer"); } catch (Exception ignored) {}
     }
 
@@ -74,10 +74,10 @@ class RmiIntegrationTest {
         client1.joinGame(2, "P1");
         client2.joinGame(2, "P2");
 
-        // Aspetta che i callback asincroni vengano processati
+        // Wait for the asynchronous callbacks to be processed
         Thread.sleep(500);
 
-        // Entrambi i client dovrebbero aver ricevuto lo snapshot
+        // Both clients should have received the snapshot
         assertNotNull(model1.getState());
         assertNotNull(model2.getState());
     }
@@ -98,7 +98,7 @@ class RmiIntegrationTest {
         assertNotNull(model1.getState());
         assertNotNull(model2.getState());
 
-        // Leggi l'ordine e piazza il primo
+        // Read the order and place the first one
         List<String> order = model1.getState().getOfferTurnCardOrder();
         String first = order.get(0);
         Map<String, RmiClient> clients = Map.of("Alice", client1, "Bob", client2);
@@ -106,7 +106,7 @@ class RmiIntegrationTest {
         clients.get(first).placeTotem(first, 'C');
         Thread.sleep(500);
 
-        // Entrambi i client devono vedere il totem piazzato
+        // Both clients must see the placed totem
         assertEquals(first, model1.getState().getOfferTrackPositions().get('C'));
         assertEquals(first, model2.getState().getOfferTrackPositions().get('C'));
     }
@@ -124,19 +124,19 @@ class RmiIntegrationTest {
         client2.joinGame(2, "Frank");
         Thread.sleep(500);
 
-        // Eve prova a piazzare il totem su una posizione invalida
-        // Questo dovrebbe generare un errore solo per Eve
+        // Eve tries to place the totem on an invalid position
+        // This should generate an error only for Eve
         assertDoesNotThrow(() -> client1.placeTotem("Eve", 'Z'));
         Thread.sleep(500);
 
-        // Il gioco non deve crashare, entrambi i model devono ancora funzionare
+        // The game must not crash, both models must still work
         assertNotNull(model1.getState());
         assertNotNull(model2.getState());
     }
 
     /*
-     *  Coerenza snapshot-delta è confermata: l'ordine dei turni arriva come nickname,
-     *  il placeTotem salva nickname, la mappa è consistente
+     *  Snapshot-delta consistency is confirmed: the turn order arrives as nicknames,
+     *  placeTotem stores the nickname, the map is consistent
      */
     @Test
     @DisplayName("RMI: full game flow - join and place totems for 5 players")
@@ -158,23 +158,23 @@ class RmiIntegrationTest {
             assertNotNull(model.getState());
         }
 
-        // L'ordine ora contiene nickname, non colori
+        // The order now contains nicknames, not colors
         List<String> turnOrder = models[0].getState().getOfferTurnCardOrder();
         // System.out.println("[TEST] Turn order: " + turnOrder);
 
-        // Verifica che l'ordine contenga nickname
+        // Verify that the order contains nicknames
         for (String name : turnOrder) {
             assertTrue(List.of(nicknames).contains(name),
                     "Turn order should contain nicknames, got: " + name);
         }
 
-        // Mappa nickname → client
+        // Map nickname → client
         Map<String, RmiClient> clientByNickname = new HashMap<>();
         for (int i = 0; i < 5; i++) {
             clientByNickname.put(nicknames[i], clients[i]);
         }
 
-        // Piazza i totem nell'ordine corretto
+        // Place the totems in the correct order
         for (int i = 0; i < 5; i++) {
             String nickname = turnOrder.get(i);
             RmiClient client = clientByNickname.get(nickname);
@@ -184,7 +184,7 @@ class RmiIntegrationTest {
         }
         Thread.sleep(500);
 
-        // Verifica che tutte le posizioni siano occupate in tutti i client
+        // Verify that all positions are occupied in all clients
         for (ClientModel model : models) {
             for (char pos : positions) {
                 assertTrue(model.getState().getOfferTrackPositions().containsKey(pos),
@@ -192,7 +192,7 @@ class RmiIntegrationTest {
             }
         }
 
-        // Verifica che ogni posizione sia occupata dal giocatore giusto (nickname, non colore)
+        // Verify that each position is occupied by the right player (nickname, not color)
         for (int i = 0; i < 5; i++) {
             String expectedNickname = turnOrder.get(i);
             String actualNickname = models[0].getState().getOfferTrackPositions().get(positions[i]);
@@ -209,7 +209,7 @@ class RmiIntegrationTest {
         RmiClient client1 = new RmiClient("localhost", RMI_PORT, model1);
         RmiClient client2 = new RmiClient("localhost", RMI_PORT, model2);
 
-        // === FASE 1: JOIN ===
+        // === PHASE 1: JOIN ===
         client1.joinGame(2, "Alice");
         client2.joinGame(2, "Bob");
         Thread.sleep(500);
@@ -218,24 +218,24 @@ class RmiIntegrationTest {
         assertNotNull(model2.getState());
         // System.out.println("[TEST] Phase after join: " + model1.getState().getCurrentPhase());
 
-        // Entrambi vedono le stesse carte esposte
+        // Both see the same exposed cards
         assertEquals(model1.getState().getUpperRowCardIds(), model2.getState().getUpperRowCardIds());
         assertEquals(model1.getState().getLowerRowCardIds(), model2.getState().getLowerRowCardIds());
 
-        // Ci sono carte esposte sulla board
+        // There are cards exposed on the board
         assertFalse(model1.getState().getUpperRowCardIds().isEmpty(), "Upper row should have cards");
         assertFalse(model1.getState().getLowerRowCardIds().isEmpty(), "Lower row should have cards");
 
         // System.out.println("[TEST] Upper row: " + model1.getState().getUpperRowCardIds());
         // System.out.println("[TEST] Lower row: " + model1.getState().getLowerRowCardIds());
 
-        // === FASE 2: PLACE TOTEM ===
+        // === PHASE 2: PLACE TOTEM ===
         List<String> turnOrder = model1.getState().getOfferTurnCardOrder();
         // System.out.println("[TEST] Place order: " + turnOrder);
 
         Map<String, RmiClient> clientByNick = Map.of("Alice", client1, "Bob", client2);
 
-        // Posizioni valide per 2 giocatori: B, C, E, F
+        // Valid positions for 2 players: B, C, E, F
         char[] validPositions = {'B', 'C'};
 
         String firstPlacer = turnOrder.get(0);
@@ -246,19 +246,19 @@ class RmiIntegrationTest {
         clientByNick.get(secondPlacer).placeTotem(secondPlacer, validPositions[1]);
         Thread.sleep(500);
 
-        // Verifica piazzamento
+        // Verify placement
         assertTrue(model1.getState().getOfferTrackPositions().containsKey(validPositions[0]));
         assertTrue(model1.getState().getOfferTrackPositions().containsKey(validPositions[1]));
         // System.out.println("[TEST] Track after placement: " + model1.getState().getOfferTrackPositions());
 
-        // === FASE 3: TAKE CARD ===
-        // L'ordine di presa è determinato dalla posizione sulla track (B prima di C)
-        // Chi ha piazzato su B gioca per primo nella fase offerta
+        // === PHASE 3: TAKE CARD ===
+        // The pick order is determined by the position on the track (B before C)
+        // Whoever placed on B plays first in the offer phase
         String firstPicker = model1.getState().getOfferTrackPositions().get(validPositions[0]);
         String secondPicker = model1.getState().getOfferTrackPositions().get(validPositions[1]);
         // System.out.println("[TEST] Pick order: " + firstPicker + " then " + secondPicker);
 
-        // Il primo giocatore prende una carta dalla lower row
+        // The first player takes a card from the lower row
         List<String> lowerCards = model1.getState().getLowerRowCardIds();
         String cardToPick = lowerCards.get(0);
         // System.out.println("[TEST] " + firstPicker + " picks card (from lower row): " + cardToPick);
@@ -266,13 +266,13 @@ class RmiIntegrationTest {
         clientByNick.get(firstPicker).takeCard(firstPicker, cardToPick);
         Thread.sleep(500);
 
-        // Verifica che la carta sia stata presa
-        // Il giocatore che ha preso deve averla nella sua tribù
+        // Verify that the card was taken
+        // The player who took it must have it in their tribe
         ClientPlayerState picker1State = model1.getState().getPlayer(firstPicker);
         // System.out.println("[TEST] " + firstPicker + " characters: " + picker1State.getCharacterCardIds());
         // System.out.println("[TEST] " + firstPicker + " buildings: " + picker1State.getBuildingCardIds());
 
-        // La carta non deve più essere nelle righe esposte di nessuno dei due client
+        // The card must no longer be in the exposed rows of either client
         assertFalse(model1.getState().getUpperRowCardIds().contains(cardToPick),
                 "Card " + cardToPick + " should no longer be in upper row of model1");
         assertFalse(model2.getState().getUpperRowCardIds().contains(cardToPick),
@@ -297,24 +297,24 @@ class RmiIntegrationTest {
 
         Map<String, RmiClient> clientByNick = Map.of("Alice", client1, "Bob", client2);
 
-        // Il secondo giocatore prova a piazzare per primo — deve fallire
+        // The second player tries to place first — it must fail
         clientByNick.get(second).placeTotem(second, 'B');
         Thread.sleep(300);
 
-        // La track deve essere vuota — il piazzamento non è andato a buon fine
+        // The track must be empty — the placement did not succeed
         assertTrue(model1.getState().getOfferTrackPositions().values().stream().allMatch(String::isEmpty),
                 "Track should be empty after out-of-turn placement");
         assertTrue(model2.getState().getOfferTrackPositions().values().stream().allMatch(String::isEmpty),
                 "Track should be empty after out-of-turn placement");
 
-        // Il giocatore corretto piazza — deve funzionare
+        // The correct player places — it must work
         clientByNick.get(first).placeTotem(first, 'B');
         Thread.sleep(300);
 
         assertTrue(model1.getState().getOfferTrackPositions().containsKey('B'),
                 "Track should have B after correct placement");
 
-        // Lo stato del gioco non è corrotto — il secondo giocatore ora può piazzare
+        // The game state is not corrupted — the second player can now place
         clientByNick.get(second).placeTotem(second, 'C');
         Thread.sleep(300);
 
@@ -334,7 +334,7 @@ class RmiIntegrationTest {
         client2.joinGame(2, "Bob");
         Thread.sleep(500);
 
-        // Dopo il join, stessi dati
+        // After the join, same data
         assertEquals(model1.getState().getUpperRowCardIds(), model2.getState().getUpperRowCardIds(),
                 "Upper row should be identical after join");
         assertEquals(model1.getState().getLowerRowCardIds(), model2.getState().getLowerRowCardIds(),
@@ -349,14 +349,14 @@ class RmiIntegrationTest {
         clientByNick.get(turnOrder.get(0)).placeTotem(turnOrder.get(0), 'B');
         Thread.sleep(300);
 
-        // Dopo il primo totem, stessi dati
+        // After the first totem, same data
         assertEquals(model1.getState().getOfferTrackPositions(), model2.getState().getOfferTrackPositions(),
                 "Track should be identical after first totem");
 
         clientByNick.get(turnOrder.get(1)).placeTotem(turnOrder.get(1), 'C');
         Thread.sleep(500);
 
-        // Dopo il secondo totem, stessi dati
+        // After the second totem, same data
         assertEquals(model1.getState().getOfferTrackPositions(), model2.getState().getOfferTrackPositions(),
                 "Track should be identical after second totem");
 
@@ -367,13 +367,13 @@ class RmiIntegrationTest {
         clientByNick.get(firstPicker).takeCard(firstPicker, cardId);
         Thread.sleep(500);
 
-        // Dopo la presa, stesse carte esposte
+        // After the pick, same exposed cards
         assertEquals(model1.getState().getUpperRowCardIds(), model2.getState().getUpperRowCardIds(),
                 "Upper row should be identical after take card");
         assertEquals(model1.getState().getLowerRowCardIds(), model2.getState().getLowerRowCardIds(),
                 "Lower row should be identical after take card");
 
-        // Stessi dati sui player
+        // Same data on the players
         assertEquals(
                 model1.getState().getPlayer("Alice").getCharacterCardIds(),
                 model2.getState().getPlayer("Alice").getCharacterCardIds(),

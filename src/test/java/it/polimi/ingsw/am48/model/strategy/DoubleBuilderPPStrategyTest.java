@@ -29,7 +29,7 @@ class DoubleBuilderPPStrategyTest {
 
     @Test
     void shouldDoubleBuilderPoints() {
-        // builderPoints raddoppia dopo l'effetto
+        // builderPoints doubles after the effect
         currPlayer.updateBuilderPoints(4);
         strategy.effect(context);
         assertEquals(8, currPlayer.getBuilderPoints());
@@ -37,17 +37,17 @@ class DoubleBuilderPPStrategyTest {
 
     @Test
     void shouldGiveZeroIfNoBuilderPoints() {
-        // raddoppiare zero rimane zero
+        // doubling zero stays zero
         strategy.effect(context);
         assertEquals(0, currPlayer.getBuilderPoints());
     }
 
     @Test
     void shouldNotAffectOtherPlayers() {
-        // l'effetto non deve modificare gli altri giocatori
+        // the effect must not modify the other players
         currPlayer.updateBuilderPoints(4);
         otherPlayer.updateBuilderPoints(4);
         strategy.effect(context);
-        assertEquals(4, otherPlayer.getBuilderPoints()); // invariato
+        assertEquals(4, otherPlayer.getBuilderPoints()); // unchanged
     }
 }

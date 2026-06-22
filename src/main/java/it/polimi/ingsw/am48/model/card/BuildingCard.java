@@ -52,7 +52,7 @@ public class BuildingCard extends Card{
         int actualCost = Math.max(0, this.foodCost - player.getTribe().getBuildingDiscount());
         if(player.getFood() < actualCost){
             throw new InvalidActionException(
-                    "Non hai il cibo sufficiente: richiesto " + actualCost + ", disponibile " + player.getFood());
+                    "Not enough food: required " + actualCost + ", available " + player.getFood());
         }
         player.updateFood(-actualCost);
         player.addToTribe(this);

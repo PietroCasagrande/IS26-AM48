@@ -57,15 +57,15 @@ public class Player {
 
     public String getNickname(){ return nickname; }
     public Totem getTotem(){ return totem; }
-    // getter e setter direttamente da player, non passiamo per getTribe()
+    // getters and setters directly on player, without going through getTribe()
 
     public int getPoints() { return this.tribe.getCurrentPrestigePoints(); }
     public int getFood() { return this.tribe.getCurrentFood(); }
     public void updatePoints(int points) { this.tribe.updateCurrentPrestigePoints(points); }
     public void updateFood(int food) { this.tribe.updateCurrentFood(food); }
-    // metodo utilizzato nelle strategy per aggiornare statistiche di tribe
+    // method used in the strategies to update the tribe's statistics
 
-    public Tribe getTribe() { return this.tribe; }    // forse non serve più avendo aggiunto i getter per ogni attributo
+    public Tribe getTribe() { return this.tribe; }    // maybe no longer needed now that we added getters for every attribute
     public int getTotalCharacters() { return this.tribe.getTotalCharacters(); }
     /**
      * Makes the player pay an amount of food, converting any shortfall into a prestige
@@ -79,7 +79,7 @@ public class Player {
      * @param ppPerFood the prestige points lost for each unit of food that cannot be paid (must be positive)
      */
     public void payFood(int food, int ppPerFood){this.tribe.payFood(food, ppPerFood); }
-    // per non concatenare getTribe().set(), altrimenti demetra si arrabbia
+    // to avoid chaining getTribe().set(), otherwise the Law of Demeter is violated
 
     public void addToTribe(CharacterCard card) { this.tribe.addToTribe(card); }
     public void addToTribe(BuildingCard card) { this.tribe.addToTribe(card); }

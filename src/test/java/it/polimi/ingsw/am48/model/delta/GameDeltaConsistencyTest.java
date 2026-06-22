@@ -61,7 +61,7 @@ public class GameDeltaConsistencyTest {
         allDeltas.addAll(gameManager.takeCard(pickOrder.get(1).getNickname(), lowerList.getFirst().getCardId()));
         allDeltas.addAll(gameManager.takeCard(pickOrder.get(1).getNickname(), upperList.get(1).getCardId()));
 
-        // ora controlliamo che lo stato del ClientGameState di ClientModel sia uguale allo stato del model sul server
+        // now we check that the ClientGameState in ClientModel matches the state of the model on the server
 
         for (GameDelta gameDelta : allDeltas) {
             clientModel.applyDelta(gameDelta);
@@ -75,21 +75,21 @@ public class GameDeltaConsistencyTest {
         assertThat(clientModel.getState().getCurrentPhase().equals(finalStateFromSnapshot.getCurrentPhase()));
         assertThat(clientModel.getState().getWinnerNickname().equals(finalStateFromSnapshot.getWinnerNickname()));
 
-        // 2. Liste di stringhe (l'ordine è importante per le righe delle carte)
+        // 2. String lists (order matters for the card rows)
         assertThat(clientModel.getState().getUpperRowCardIds()).as("upperRowCardIds").containsExactlyElementsOf(finalStateFromSnapshot.getUpperRowCardIds());
         assertThat(clientModel.getState().getLowerRowCardIds()).as("lowerRowCardIds").containsExactlyElementsOf(finalStateFromSnapshot.getLowerRowCardIds());
         assertThat(clientModel.getState().getBuildingUpperIds()).as("buildingUpperIds").containsExactlyElementsOf(finalStateFromSnapshot.getBuildingUpperIds());
         assertThat(clientModel.getState().getBuildingLowerIds()).as("buildingLowerIds").containsExactlyElementsOf(finalStateFromSnapshot.getBuildingLowerIds());
         assertThat(clientModel.getState().getOfferTurnCardOrder()).as("offerTurnCardOrder").containsExactlyElementsOf(finalStateFromSnapshot.getOfferTurnCardOrder());
 
-        // 4. Confronto dei Players
-        assertThat(clientModel.getState().getPlayers()).as("Mappa players").hasSize(finalStateFromSnapshot.getPlayers().size());
+        // 4. Players comparison
+        assertThat(clientModel.getState().getPlayers()).as("players map").hasSize(finalStateFromSnapshot.getPlayers().size());
 
         clientModel.getState().getPlayers().forEach((nickname, actualPlayer) -> {
             ClientPlayerState expectedPlayer = finalStateFromSnapshot.getPlayers().get(nickname);
-            assertThat(expectedPlayer).as("Player con nickname " + nickname).isNotNull();
+            assertThat(expectedPlayer).as("Player with nickname " + nickname).isNotNull();
 
-            // Chiamata al metodo helper per il confronto dettagliato del player
+            // Call to the helper method for the detailed player comparison
             comparePlayerStates(actualPlayer, expectedPlayer);
         });
     }
@@ -102,7 +102,7 @@ public class GameDeltaConsistencyTest {
         assertThat(actualP.getFood()).as(name + ": food").isEqualTo(expectedP.getFood());
         assertThat(actualP.getPoints()).as(name + ": points").isEqualTo(expectedP.getPoints());
 
-        // Liste delle carte del player
+        // Player's card lists
         assertThat(actualP.getCharacterCardIds())
                 .as(name + ": characterCards")
                 .containsExactlyInAnyOrderElementsOf(expectedP.getCharacterCardIds());

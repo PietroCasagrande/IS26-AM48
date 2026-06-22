@@ -30,20 +30,20 @@ class DoubleShamanPPStrategyTest {
 
     @Test
     void shouldBeFalseBeforeEffect() {
-        // il player non ha il raddoppio sciamanico prima dell'effetto
+        // the player does not have shaman doubling before the effect
         assertFalse(currPlayer.deservesDoubleShamanPp());
     }
 
     @Test
     void shouldSetShamanDoublingToTrue() {
-        // dopo l'effetto il player guadagna il doppio dei PP negli eventi sciamanici
+        // after the effect the player earns double the PP in shaman events
         strategy.effect(context);
         assertTrue(currPlayer.deservesDoubleShamanPp());
     }
 
     @Test
     void shouldNotAffectOtherPlayers() {
-        // l'effetto non deve modificare gli altri giocatori
+        // the effect must not modify the other players
         strategy.effect(context);
         assertFalse(otherPlayer.deservesDoubleShamanPp());
     }

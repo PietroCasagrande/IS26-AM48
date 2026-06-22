@@ -38,7 +38,7 @@ public class InventorsPairStrategy extends CardStrategy {
      */
     @Override
     public void registerTo(NotificatorCenter notificatorCenter, PlayerContext playerContext){
-        // inizializza il counter al numero di coppie già presenti al momento dell'acquisizione
+        // initialize the counter to the number of pairs already present at the time of acquisition
         completedPairs = playerContext.getCurrPlayer().getTribe().countInventorPairs();
         super.registerTo(notificatorCenter,playerContext);
     }
@@ -50,8 +50,8 @@ public class InventorsPairStrategy extends CardStrategy {
      */
     @Override
     public void effect(PlayerContext playerContext) {
-        // ON PICK controlla se nella tribe è cambiato il numero di coppie di inventori con lo stesso artifact
-        // in caso affermativo assegna 3 cibo al player
+        // ON PICK checks whether the number of inventor pairs with the same artifact has changed in the tribe
+        // if so, grants 3 food to the player
         Player player = playerContext.getCurrPlayer();
         int newPairs = player.getTribe().countInventorPairs();
         if (newPairs > completedPairs) {

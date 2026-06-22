@@ -21,7 +21,7 @@ public class PlayerOfferPhaseSnapshot extends PhaseSnapshot implements Serializa
     private final int picksFromUp;
     private final int picksFromDown;
     private final boolean extraPickActive;
-    private final String extraPickPlayerNickname; // nickname, non Player
+    private final String extraPickPlayerNickname; // nickname, not Player
     private final boolean totemReturned;
 
     /**

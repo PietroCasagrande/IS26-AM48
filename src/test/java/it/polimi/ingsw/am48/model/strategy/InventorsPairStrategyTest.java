@@ -16,7 +16,7 @@ class InventorsPairStrategyTest {
     private Player otherPlayer;
     private PlayerContext context;
     private InventorsPairStrategy strategy;
-    private NotificatorCenter mockNotificatorCenter; // dichiarazione del mock
+    private NotificatorCenter mockNotificatorCenter; // mock declaration
 
     @BeforeEach
     void setUp() {
@@ -34,7 +34,7 @@ class InventorsPairStrategyTest {
 
     @Test
     void shouldGiveNoFoodIfNoPairCompleted() {
-        // un solo inventor con ARROW non forma coppia
+        // a single inventor with ARROW does not form a pair
         currPlayer.addArtifact(Artifact.ARROW);
         strategy.effect(context);
         assertEquals(0, currPlayer.getFood());
@@ -42,7 +42,7 @@ class InventorsPairStrategyTest {
 
     @Test
     void shouldGiveThreeFoodWhenFirstPairCompleted() {
-        // due inventor con lo stesso artifact formano una coppia
+        // two inventors with the same artifact form a pair
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
         strategy.effect(context);
@@ -51,7 +51,7 @@ class InventorsPairStrategyTest {
 
     @Test
     void shouldGiveSixFoodWhenTwoPairsCompleted() {
-        // due coppie di artifact diversi assegnano 6 cibo totali
+        // two pairs of different artifacts grant 6 food in total
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.HOOK);
@@ -62,7 +62,7 @@ class InventorsPairStrategyTest {
 
     @Test
     void shouldNotGiveFoodForOddInventorAbovePair() {
-        // tre inventor uguali formano solo 1 coppia, il terzo non conta
+        // three identical inventors form only 1 pair, the third does not count
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
@@ -72,52 +72,52 @@ class InventorsPairStrategyTest {
 
     @Test
     void shouldNotGiveFoodIfNoNewPairCompleted() {
-        // formazione coppia, poi inserimento di inventor che non forma coppia
+        // form a pair, then add an inventor that does not form a pair
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
-        strategy.effect(context); // completa una coppia
-        currPlayer.addArtifact(Artifact.HOOK); // non forma coppia
-        strategy.effect(context); // nessuna nuova coppia
-        assertEquals(3, currPlayer.getFood()); // rimane 3
+        strategy.effect(context); // completes a pair
+        currPlayer.addArtifact(Artifact.HOOK); // does not form a pair
+        strategy.effect(context); // no new pair
+        assertEquals(3, currPlayer.getFood()); // stays 3
     }
 
     @Test
     void shouldNotGiveFoodForPairsAlreadyPresentAtAcquisition() {
-        // coppie già presenti prima dell'acquisizione non devono contare
+        // pairs already present before acquisition must not count
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
-        strategy.registerTo(mockNotificatorCenter, context); // simula acquisizione
-        strategy.effect(context); // nessuna nuova coppia dall'acquisizione
+        strategy.registerTo(mockNotificatorCenter, context); // simulates acquisition
+        strategy.effect(context); // no new pair since acquisition
         assertEquals(0, currPlayer.getFood());
     }
 
     @Test
     void shouldGiveFoodOnlyForNewPairsAfterAcquisition() {
-        // coppie pre-esistenti non contano, solo quelle nuove dopo acquisizione
+        // pre-existing pairs do not count, only new ones after acquisition
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
-        strategy.registerTo(mockNotificatorCenter, context); // acquisizione con 1 coppia già presente
+        strategy.registerTo(mockNotificatorCenter, context); // acquisition with 1 pair already present
         currPlayer.addArtifact(Artifact.HOOK);
         currPlayer.addArtifact(Artifact.HOOK);
-        strategy.effect(context); // nuova coppia formata dopo acquisizione
-        assertEquals(3, currPlayer.getFood()); // solo 1 nuova coppia × 3 cibo
+        strategy.effect(context); // new pair formed after acquisition
+        assertEquals(3, currPlayer.getFood()); // only 1 new pair × 3 food
     }
 
     @Test
     void shouldGiveAdditionalFoodWhenNewPairCompletedLater() {
-        // due coppie completate in momenti diversi assegnano cibo separatamente
+        // two pairs completed at different times grant food separately
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
-        strategy.effect(context); // prima coppia
+        strategy.effect(context); // first pair
         currPlayer.addArtifact(Artifact.HOOK);
         currPlayer.addArtifact(Artifact.HOOK);
-        strategy.effect(context); // seconda coppia
+        strategy.effect(context); // second pair
         assertEquals(6, currPlayer.getFood());
     }
 
     @Test
     void shouldNotAffectOtherPlayers() {
-        // l'effetto non deve modificare gli altri giocatori
+        // the effect must not modify the other players
         currPlayer.addArtifact(Artifact.ARROW);
         currPlayer.addArtifact(Artifact.ARROW);
         strategy.effect(context);

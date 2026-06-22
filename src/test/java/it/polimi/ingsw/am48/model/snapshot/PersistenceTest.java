@@ -44,7 +44,7 @@ class PersistenceTest {
 
     @AfterEach
     void tearDown() throws IOException {
-        // Pulisce la cartella di test dopo ogni test
+        // Cleans the test folder after each test
         Path dir = Path.of(TEST_SAVES_DIR);
         if (Files.exists(dir)) {
             Files.walk(dir)
@@ -60,7 +60,7 @@ class PersistenceTest {
 
     @Test
     void repository_saveAndLoad_roundtrip() {
-        // Verifica che save + load restituisca uno snapshot con gli stessi valori base
+        // Checks that save + load returns a snapshot with the same basic values
         GameSnapshot snapshot = buildMinimalSnapshot("GAME-1", 3, 2);
         repository.save("GAME-1", snapshot);
 
@@ -73,14 +73,14 @@ class PersistenceTest {
 
     @Test
     void repository_load_returnsEmpty_whenFileNotExists() {
-        // Verifica che caricare un id inesistente non lanci eccezione
-        Optional<GameSnapshot> result = repository.load("NON-ESISTENTE");
+        // Checks that loading a non-existent id does not throw an exception
+        Optional<GameSnapshot> result = repository.load("NON-EXISTENT");
         assertTrue(result.isEmpty());
     }
 
     @Test
     void repository_delete_removesFile() {
-        // Verifica che dopo delete il file non esista più
+        // Checks that after delete the file no longer exists
         repository.save("GAME-2", buildMinimalSnapshot("GAME-2", 2, 1));
         repository.delete("GAME-2");
         assertTrue(repository.load("GAME-2").isEmpty());
@@ -88,7 +88,7 @@ class PersistenceTest {
 
     @Test
     void repository_listActiveGameIds_returnsAllSaved() {
-        // Verifica che listActiveGameIds trovi tutti i file salvati
+        // Checks that listActiveGameIds finds all the saved files
         repository.save("GAME-A", buildMinimalSnapshot("GAME-A", 2, 1));
         repository.save("GAME-B", buildMinimalSnapshot("GAME-B", 3, 1));
         repository.save("GAME-C", buildMinimalSnapshot("GAME-C", 4, 1));
@@ -99,12 +99,12 @@ class PersistenceTest {
     }
 
     // ---------------------------------------------------------------
-    // SERIALIZZAZIONE POLIMORFICA DELLE FASI
+    // POLYMORPHIC SERIALIZATION OF PHASES
     // ---------------------------------------------------------------
 
     @Test
     void phaseSnapshot_waitingPhase_serializesAndDeserializesCorrectly() {
-        // Verifica che WaitingPhaseSnapshot sopravviva al roundtrip JSON
+        // Checks that WaitingPhaseSnapshot survives the JSON roundtrip
         GameSnapshot snapshot = buildSnapshotWithPhase("GAME-1", new WaitingPhaseSnapshot());
         repository.save("GAME-1", snapshot);
 
@@ -114,7 +114,7 @@ class PersistenceTest {
 
     @Test
     void phaseSnapshot_placeTotemPhase_preservesPlayersPlaced() {
-        // Verifica che i nickname dei giocatori che hanno piazzato vengano preservati
+        // Checks that the nicknames of the players who have placed are preserved
         Set<String> placed = Set.of("Alice", "Bob");
         GameSnapshot snapshot = buildSnapshotWithPhase("GAME-1",
                 new PlaceTotemPhaseSnapshot(placed));
@@ -127,7 +127,7 @@ class PersistenceTest {
 
     @Test
     void phaseSnapshot_playerOfferPhase_preservesOrderAndIndex() {
-        // Verifica che ordine e indice corrente della fase offerta vengano preservati
+        // Checks that the order and current index of the offer phase are preserved
         List<String> order = List.of("Alice", "Bob", "Carlo");
         GameSnapshot snapshot = buildSnapshotWithPhase("GAME-1",
                 new PlayerOfferPhaseSnapshot(order, 1, 0, 1, false, null, false));
@@ -141,13 +141,13 @@ class PersistenceTest {
     }
 
     // ---------------------------------------------------------------
-    // TRIBESNAPSHOT — tutti i campi inclusi i booleani
+    // TRIBESNAPSHOT — all fields including the booleans
     // ---------------------------------------------------------------
 
     @Test
     void tribeSnapshot_allFields_preservedAfterRoundtrip() {
-        // Verifica che tutti gli attributi di TribeSnapshot — inclusi i booleani
-        // aggiunti per la persistenza — sopravvivano alla serializzazione
+        // Checks that all TribeSnapshot attributes — including the booleans
+        // added for persistence — survive the serialization
         TribeSnapshot tribe = new TribeSnapshot(
                 List.of("CHAR-001", "CHAR-002"),
                 List.of("BUILD-003"),
@@ -180,13 +180,13 @@ class PersistenceTest {
     }
 
     // ---------------------------------------------------------------
-    // GAME.fromSnapshot() — correttezza stato
+    // GAME.fromSnapshot() — state correctness
     // ---------------------------------------------------------------
 
     @Test
     void gameFromSnapshot_restoresBasicState() {
-        // Verifica che Game.fromSnapshot() ripristini correttamente
-        // gameId, currentTurn e numero giocatori
+        // Checks that Game.fromSnapshot() correctly restores
+        // gameId, currentTurn and number of players
         GameSnapshot snapshot = buildRealisticSnapshot("GAME-1", 2, 3);
         repository.save("GAME-1", snapshot);
 
@@ -199,7 +199,7 @@ class PersistenceTest {
 
     @Test
     void gameFromSnapshot_restoresCurrPlayer() {
-        // Verifica che il currPlayer del PlayerContext punti al Player corretto
+        // Checks that the PlayerContext's currPlayer points to the correct Player
         GameSnapshot snapshot = buildRealisticSnapshot("GAME-1", 2, 1);
         String expectedCurrPlayer = snapshot.getPlayerContext().getCurrPlayerNickname();
 
@@ -211,8 +211,8 @@ class PersistenceTest {
 
     @Test
     void gameFromSnapshot_playerHasCorrectCardsInTribe() {
-        // Verifica che le carte nella tribe del giocatore ripristinato
-        // siano gli oggetti corretti (per id), non null
+        // Checks that the cards in the restored player's tribe
+        // are the correct objects (by id), not null
         GameSnapshot snapshot = buildRealisticSnapshot("GAME-1", 2, 1);
         Game restored = Game.fromSnapshot(snapshot);
 
@@ -229,8 +229,8 @@ class PersistenceTest {
 
     @Test
     void gameFromSnapshot_placeTotemPhase_restoredCorrectly() {
-        // Verifica che in PlaceTotemPhase il set dei giocatori che hanno
-        // già piazzato venga ripristinato correttamente
+        // Checks that in PlaceTotemPhase the set of players who have
+        // already placed is restored correctly
         Set<String> placed = Set.of("Alice");
         GameSnapshot snapshot = buildSnapshotWithPhase("GAME-1",
                 new PlaceTotemPhaseSnapshot(placed));
@@ -247,85 +247,85 @@ class PersistenceTest {
     }
 
     // ---------------------------------------------------------------
-    // STRATEGY RE-REGISTRATION — il punto più critico
+    // STRATEGY RE-REGISTRATION — the most critical point
     // ---------------------------------------------------------------
 
     @Test
     void gameFromSnapshot_buildingCardStrategies_areRegisteredToNotificator() {
-        // Verifica che dopo fromSnapshot le strategy degli edifici acquisiti
-        // siano correttamente registrate nel NotificatorCenter.
-        // Costruiamo una partita con un giocatore che ha un edificio,
-        // serializziamo, ripristiniamo e verifichiamo che il notificator
-        // abbia osservatori registrati.
+        // Checks that after fromSnapshot the strategies of the acquired buildings
+        // are correctly registered in the NotificatorCenter.
+        // We build a game with a player who owns a building,
+        // serialize it, restore it and verify that the notificator
+        // has registered observers.
         Game original = buildGameWithBuildingCard("GAME-1", 2);
         GameSnapshot snapshot = original.toSnapshot();
         repository.save("GAME-1", snapshot);
 
         Game restored = Game.fromSnapshot(repository.load("GAME-1").get());
 
-        // Il NotificatorCenter non deve essere vuoto — almeno un observer registrato
+        // The NotificatorCenter must not be empty — at least one observer registered
 //        assertFalse(restored.getNotificatorCenter().isEmpty(),
-//                "Nessuna strategy registrata dopo fromSnapshot — le carte edificio non funzioneranno");
+//                "No strategy registered after fromSnapshot — building cards will not work");
     }
 
     @Test
     void gameFromSnapshot_buildingStrategyFires_afterRestore() {
-        // 1. Setup gioco e player
+        // 1. Set up game and players
         Game original = new Game("GAME-TEST", 2);
         original.addPlayer("Alice");
         original.addPlayer("Bob");
         Player alice = original.getPlayerByNickname("Alice");
         original.getPlayerContext().setCurrPlayer(alice);
 
-        // 2. Recuperiamo le carte necessarie dalla mappa reale
+        // 2. Fetch the needed cards from the real map
         Map<String, Card> cardMap = CardMapBuilder.buildCardMap(2);
 
-        // L'edificio chiave
+        // The key building
         BuildingCard bld04 = (BuildingCard) cardMap.get("BLD-04");
         alice.getTribe().addToTribe(bld04);
 
-        // Diamo ad Alice 5 tipi diversi (Artist, Builder, Inventor, Hunter, Picker)
+        // Give Alice 5 different types (Artist, Builder, Inventor, Hunter, Picker)
         alice.getTribe().addToTribe((CharacterCard) cardMap.get("ART-01")); // Artist
         alice.getTribe().addToTribe((CharacterCard) cardMap.get("BUI-03")); // Builder
         alice.getTribe().addToTribe((CharacterCard) cardMap.get("INV-01")); // Inventor
         alice.getTribe().addToTribe((CharacterCard) cardMap.get("HUN-02")); // Hunter
         alice.getTribe().addToTribe((CharacterCard) cardMap.get("PIC-02")); // Picker
 
-        // Registriamo la strategy nel gioco originale (fondamentale per lo snapshot)
+        // Register the strategy in the original game (essential for the snapshot)
         bld04.getStrategy().registerTo(original.getNotificatorCenter(), original.getPlayerContext());
 
-        // 3. CRASH E RIPRISTINO
+        // 3. CRASH AND RESTORE
         GameSnapshot snapshot = original.toSnapshot();
         Game restored = Game.fromSnapshot(snapshot);
 
         Player restoredAlice = restored.getPlayerContext().getCurrPlayer();
         int foodBefore = restoredAlice.getTribe().getCurrentFood();
 
-        // 4. AZIONE: Alice pesca la 6a carta (Shaman) che completa il set
+        // 4. ACTION: Alice draws the 6th card (Shaman) that completes the set
         Card sha01 = cardMap.get("SHA-01");
         restoredAlice.getTribe().addToTribe((CharacterCard) sha01);
 
-        // Triggeriamo il Notificator dell'azione di pesca (OnPick)
-        // La strategy si sveglierà, controllerà la tribù, vedrà il set completo e darà cibo
+        // Trigger the Notificator for the draw action (OnPick)
+        // The strategy will wake up, inspect the tribe, see the complete set and grant food
         restored.getNotificatorCenter().getPickNotificator()
                 .notify(restored.getPlayerContext());
 
-        // 5. VERIFICA
+        // 5. CHECK
         int foodAfter = restoredAlice.getTribe().getCurrentFood();
 
         assertTrue(foodAfter > foodBefore,
-                "La strategy AllSet non si è attivata: il cibo doveva aumentare completando il set di 6 tipi");
+                "The AllSet strategy did not fire: food should have increased by completing the set of 6 types");
     }
 
     // ---------------------------------------------------------------
-    // SIMULAZIONE CRASH COMPLETA
+    // FULL CRASH SIMULATION
     // ---------------------------------------------------------------
 
     @Test
     void crashSimulation_stateIdenticalBeforeAndAfter() {
-        // Simula un crash completo: crea partita, fai join, serializza,
-        // distruggi il GameManager, creane uno nuovo che legge i file,
-        // verifica che Alice e Bob possano riconnettersi
+        // Simulates a full crash: create a game, join, serialize,
+        // destroy the GameManager, create a new one that reads the files,
+        // verify that Alice and Bob can reconnect
         LeaderboardRepository mockLeaderboard = mock(LeaderboardRepository.class);
         GameManager manager1 = new GameManager(repository, mockLeaderboard);
         manager1.loadCrashedGames();
@@ -333,26 +333,26 @@ class PersistenceTest {
         manager1.joinGame(2, "Alice");
         manager1.joinGame(2, "Bob");
 
-        // Simula crash — verifica che lo snapshot sia stato salvato
+        // Simulate crash — verify that the snapshot was saved
         List<String> savedIds = repository.listActiveGameIds();
-        assertFalse(savedIds.isEmpty(), "Nessuno snapshot salvato prima del crash");
+        assertFalse(savedIds.isEmpty(), "No snapshot saved before the crash");
 
-        // Riavvio — nuovo GameManager legge i file dal disco
+        // Restart — a new GameManager reads the files from disk
         GameManager manager2 = new GameManager(repository, mockLeaderboard);
         manager2.loadCrashedGames();
 
-        // Verifica che Alice e Bob possano riconnettersi senza eccezioni
+        // Verify that Alice and Bob can reconnect without exceptions
         assertDoesNotThrow(() -> manager2.joinGame(2, "Alice"));
         assertDoesNotThrow(() -> manager2.joinGame(2, "Bob"));
     }
 
     // ---------------------------------------------------------------
-    // HELPER METHODS — basati sui dati reali di game_data.json
+    // HELPER METHODS — based on the real data in game_data.json
     // ---------------------------------------------------------------
 
     /**
-     * Snapshot minimale per test di serializzazione base.
-     * Due giocatori con tribe vuote, fase di attesa.
+     * Minimal snapshot for basic serialization tests.
+     * Two players with empty tribes, waiting phase.
      */
     private GameSnapshot buildMinimalSnapshot(String gameId, int numPlayers, int currentTurn) {
         TribeSnapshot emptyTribe = buildEmptyTribeSnapshot();
@@ -368,8 +368,8 @@ class PersistenceTest {
     }
 
     /**
-     * Snapshot con una fase specifica — usato per testare il polimorfismo
-     * della deserializzazione di PhaseSnapshot.
+     * Snapshot with a specific phase — used to test the polymorphism
+     * of PhaseSnapshot deserialization.
      */
     private GameSnapshot buildSnapshotWithPhase(String gameId, PhaseSnapshot phase) {
         TribeSnapshot emptyTribe = buildEmptyTribeSnapshot();
@@ -385,8 +385,8 @@ class PersistenceTest {
     }
 
     /**
-     * Snapshot dove Alice ha una tribe con dati specifici — usato per
-     * verificare che tutti i campi di TribeSnapshot siano preservati.
+     * Snapshot where Alice has a tribe with specific data — used to
+     * verify that all TribeSnapshot fields are preserved.
      */
     private GameSnapshot buildSnapshotWithTribe(String gameId, TribeSnapshot tribe) {
         PlayerContextSnapshot playerContext = new PlayerContextSnapshot(
@@ -401,9 +401,9 @@ class PersistenceTest {
     }
 
     /**
-     * Snapshot realistico con carte reali dal JSON.
-     * Alice ha ART-01 (character) e BLD-01 (building, OnTotemReturned).
-     * Bob ha ART-02 (character). Fase PlaceTotem, nessuno ha ancora piazzato.
+     * Realistic snapshot with real cards from the JSON.
+     * Alice has ART-01 (character) and BLD-01 (building, OnTotemReturned).
+     * Bob has ART-02 (character). PlaceTotem phase, nobody has placed yet.
      */
     private GameSnapshot buildRealisticSnapshot(String gameId, int numPlayers, int currentTurn) {
         TribeSnapshot aliceTribe = new TribeSnapshot(
@@ -432,9 +432,9 @@ class PersistenceTest {
     }
 
     /**
-     * Costruisce un Game reale con Alice che possiede BLD-01
+     * Builds a real Game where Alice owns BLD-01
      * (ExtraFoodOnFoodStrategy, OnTotemReturned).
-     * Usato per testare che la strategy si riattivi dopo fromSnapshot.
+     * Used to test that the strategy re-activates after fromSnapshot.
      */
     private Game buildGameWithBuildingCard(String gameId, int numPlayers) {
         Game game = new Game(gameId, numPlayers);
@@ -454,8 +454,8 @@ class PersistenceTest {
     }
 
     /**
-     * Come buildGameWithBuildingCard ma con BLD-01 (ExtraFoodOnFoodStrategy,
-     * OnTotemReturned) — verifica che il food cambi dopo la notifica.
+     * Like buildGameWithBuildingCard but with BLD-01 (ExtraFoodOnFoodStrategy,
+     * OnTotemReturned) — verifies that food changes after the notification.
      */
     private Game buildGameWithKnownBuildingEffect(String gameId, int numPlayers) {
         Game game = new Game(gameId, numPlayers);
@@ -475,8 +475,8 @@ class PersistenceTest {
     }
 
     /**
-     * TribeSnapshot vuoto — usato come placeholder per giocatori
-     * che non hanno carte nel test specifico.
+     * Empty TribeSnapshot — used as a placeholder for players
+     * that have no cards in the specific test.
      */
     private TribeSnapshot buildEmptyTribeSnapshot() {
         return new TribeSnapshot(
@@ -486,7 +486,7 @@ class PersistenceTest {
     }
 
     /**
-     * BoardSnapshot minimale con deck ridotto e OfferTurnCard con Alice e Bob.
+     * Minimal BoardSnapshot with a reduced deck and an OfferTurnCard with Alice and Bob.
      */
     private BoardSnapshot buildMinimalBoardSnapshot(int numPlayers) {
         return new BoardSnapshot(

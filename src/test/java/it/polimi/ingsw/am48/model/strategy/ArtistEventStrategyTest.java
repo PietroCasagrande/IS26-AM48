@@ -42,14 +42,14 @@ class ArtistEventStrategyTest {
 
     @Test
     void shouldGiveNoPPIfNoArtists() {
-        // player senza artisti non raggiunge la soglia, perde ppLost
+        // player with no artists is below the threshold, loses ppLost
         strategy.effect(context);
         assertEquals(-1, p1.getPoints());
     }
 
     @Test
     void shouldLosePPIfBelowThreshold() {
-        // player con meno artisti del threshold perde ppLost
+        // player with fewer artists than the threshold loses ppLost
         addArtists(p1, 1);
         strategy.effect(context);
         assertEquals(-1, p1.getPoints());
@@ -57,71 +57,71 @@ class ArtistEventStrategyTest {
 
     @Test
     void shouldGivePPExactlyAtThreshold() {
-        // player con esattamente threshold artisti riceve ppPerArtist * threshold
+        // player with exactly threshold artists receives ppPerArtist * threshold
         addArtists(p1, 2); // threshold = 2
         strategy.effect(context);
-        assertEquals(6, p1.getPoints()); // 3 pp × 2 artisti
+        assertEquals(6, p1.getPoints()); // 3 pp × 2 artists
     }
 
     @Test
     void shouldGivePPAboveThreshold() {
-        // player con più artisti del threshold riceve ppPerArtist * count
+        // player with more artists than the threshold receives ppPerArtist * count
         addArtists(p1, 4);
         strategy.effect(context);
-        assertEquals(12, p1.getPoints()); // 3 pp × 4 artisti
+        assertEquals(12, p1.getPoints()); // 3 pp × 4 artists
     }
 
     @Test
     void shouldAffectAllPlayersIndependently() {
-        // ogni player viene valutato indipendentemente
-        addArtists(p1, 3); // sopra soglia
-        addArtists(p2, 1); // sotto soglia
-        // p3 senza artisti - sotto soglia
+        // each player is evaluated independently
+        addArtists(p1, 3); // above threshold
+        addArtists(p2, 1); // below threshold
+        // p3 with no artists - below threshold
         strategy.effect(context);
-        assertEquals(9, p1.getPoints());  // 3 pp × 3 artisti
-        assertEquals(-1, p2.getPoints()); // perde ppLost
-        assertEquals(-1, p3.getPoints()); // perde ppLost
+        assertEquals(9, p1.getPoints());  // 3 pp × 3 artists
+        assertEquals(-1, p2.getPoints()); // loses ppLost
+        assertEquals(-1, p3.getPoints()); // loses ppLost
     }
 
     @Test
     void shouldStackWithExistingPoints() {
-        // l'effetto si somma ai punti già posseduti dal player
+        // the effect adds to the points the player already holds
         addArtists(p1, 2);
-        p1.updatePoints(5); // punti pre-esistenti
+        p1.updatePoints(5); // pre-existing points
         strategy.effect(context);
-        assertEquals(11, p1.getPoints()); // 5 + (3 pp × 2 artisti)
+        assertEquals(11, p1.getPoints()); // 5 + (3 pp × 2 artists)
     }
 
     @Test
     void shouldReduceExistingPointsBelowThreshold() {
-        // ppLost si sottrae dai punti già posseduti se sotto soglia
-        p1.updatePoints(5); // punti pre-esistenti
-        strategy.effect(context); // nessun artista, sotto soglia
+        // ppLost is subtracted from the points already held if below threshold
+        p1.updatePoints(5); // pre-existing points
+        strategy.effect(context); // no artists, below threshold
         assertEquals(4, p1.getPoints()); // 5 - 1 ppLost
     }
 
     @Test
     void shouldAllowNegativePointsIfPPLostExceedsCurrentPoints() {
-        // i punti possono diventare negativi se ppLost supera i punti attuali
-        strategy.effect(context); // p1 parte da 0, perde 1
+        // points can become negative if ppLost exceeds the current points
+        strategy.effect(context); // p1 starts from 0, loses 1
         assertEquals(-1, p1.getPoints());
     }
 
     @Test
     void shouldHandleAllPlayersAboveThreshold() {
-        // tutti i player sopra soglia ricevono pp, nessuno perde
+        // all players above threshold receive pp, no one loses
         addArtists(p1, 2);
         addArtists(p2, 3);
         addArtists(p3, 5);
         strategy.effect(context);
-        assertEquals(6, p1.getPoints());  // 3 pp × 2 artisti
-        assertEquals(9, p2.getPoints());  // 3 pp × 3 artisti
-        assertEquals(15, p3.getPoints()); // 3 pp × 5 artisti
+        assertEquals(6, p1.getPoints());  // 3 pp × 2 artists
+        assertEquals(9, p2.getPoints());  // 3 pp × 3 artists
+        assertEquals(15, p3.getPoints()); // 3 pp × 5 artists
     }
 
     @Test
     void shouldHandleAllPlayersBelowThreshold() {
-        // tutti i player sotto soglia perdono ppLost
+        // all players below threshold lose ppLost
         addArtists(p1, 1);
         addArtists(p2, 0);
         addArtists(p3, 0);

@@ -62,12 +62,12 @@ class SocketServerHandlerTest {
         handlerExecutor.submit(handler);
     }
 
-    /** Legge il prossimo ClientCommand dal lato "server" del test */
+    /** Reads the next ClientCommand from the test's "server" side */
     private ClientCommand readCommandFromClient() throws Exception {
         return mapper.readValue(serverIn.readLine(), ClientCommand.class);
     }
 
-    /** Invia una ServerNotification dal lato "server" verso il handler */
+    /** Sends a ServerNotification from the "server" side towards the handler */
     private void sendNotificationToHandler(ServerNotification notification) throws Exception {
         serverOut.println(mapper.writeValueAsString(notification));
     }
@@ -126,7 +126,7 @@ class SocketServerHandlerTest {
     void shouldCallApplyDeltaOnGameDeltaNotification() throws Exception {
         startHandlerThread();
 
-        GameDelta delta = new TotemPlacedDelta("P1", 'A', List.of("P2"), "PlaceTotem");  // ← AGGIUNGI questa riga
+        GameDelta delta = new TotemPlacedDelta("P1", 'A', List.of("P2"), "PlaceTotem");  // ← ADD this line
         sendNotificationToHandler(new GameDeltaNotification(delta));
 
         verify(mockModel, timeout(1000)).applyDelta(any(GameDelta.class));

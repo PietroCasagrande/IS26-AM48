@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 
-<!-- Questo VBox è il pannello "Glass Box" centrale -->
+<!-- This VBox is the central "Glass Box" panel -->
 <GridPane fx:id="boardCenterRoot" alignment="CENTER" styleClass="glass-box"
           prefHeight="780.0" maxHeight="780.0"
           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"

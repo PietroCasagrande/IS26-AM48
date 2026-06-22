@@ -109,7 +109,7 @@ public class Game {
         return playerContext.getPlayers().stream()
                 .filter(p -> p.getNickname().equals(nickname))
                 .findFirst()
-                .orElseThrow(() -> new InvalidActionException("Giocatore non trovato: " + nickname));
+                .orElseThrow(() -> new InvalidActionException("Player not found: " + nickname));
     }
 
     // getters
@@ -140,7 +140,7 @@ public class Game {
     public Player findWinner(){
         return playerContext.getPlayers().stream()
                 .max((p1,p2) -> Integer.compare(p1.getPoints(), p2.getPoints()))
-                .orElseThrow(() -> new InvalidActionException("Nessun giocatore in partita."));
+                .orElseThrow(() -> new InvalidActionException("No players in the game."));
     }
 
     /**
@@ -148,7 +148,7 @@ public class Game {
      *
      * @param nickname the nickname of the reconnected player
      */
-    // segna il giocatore come riconnesso
+    // marks the player as reconnected
     public void markReconnected(String nickname) {
         reconnectedPlayers.add(nickname);
     }
@@ -158,7 +158,7 @@ public class Game {
      *
      * @return {@code true} if all participating players are marked as reconnected
      */
-    // true se tutti i player della partita si sono riconnessi
+    // true if all the players of the game have reconnected
     public boolean allPlayersReconnected() {
         return playerContext.getPlayers().stream()
                 .map(Player::getNickname)
@@ -218,7 +218,7 @@ public class Game {
 
         game.currentTurn = snapshot.getCurrentTurn();
 
-        // registriamo nuovamente le strategy dei buildings di tutti i player, altrimenti non verranno mai notificate (characters non si registrano)
+        // re-register the building strategies of all players, otherwise they would never be notified (characters do not register)
         game.playerContext.getPlayers().forEach(p -> {
             p.getTribe().getBuildings().forEach(b -> b.getStrategy().registerTo(game.notificatorCenter, game.playerContext));
         });

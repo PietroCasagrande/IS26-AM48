@@ -30,7 +30,7 @@ public interface ModelInterface {
      */
     JoinResult joinGame(int numPlayers, String nickname);
 
-    // metodi in-game: azioni del giocatore
+    // in-game methods: player actions
 
     /**
      * Processes a totem-placement move for the given player.

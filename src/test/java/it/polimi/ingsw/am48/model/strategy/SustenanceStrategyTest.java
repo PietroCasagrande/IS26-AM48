@@ -27,7 +27,7 @@ class SustenanceStrategyTest {
         context.addPlayer(p1);
         context.addPlayer(p2);
 
-        strategy = new SustenanceStrategy(1, null); // 1 pp perso per ogni cibo mancante
+        strategy = new SustenanceStrategy(1, null); // 1 pp lost for each missing food
     }
 
     private void addCharacters(Player player, int count) {
@@ -38,7 +38,7 @@ class SustenanceStrategyTest {
 
     @Test
     void shouldPayNoFoodIfNoCharacters() {
-        // player senza personaggi non paga cibo
+        // player with no characters pays no food
         p1.updateFood(3);
         strategy.effect(context);
         assertEquals(3, p1.getFood());
@@ -46,7 +46,7 @@ class SustenanceStrategyTest {
 
     @Test
     void shouldPayFoodEqualToCharacterCount() {
-        // player paga 1 cibo per ogni personaggio
+        // player pays 1 food for each character
         p1.updateFood(5);
         addCharacters(p1, 3);
         strategy.effect(context);
@@ -55,7 +55,7 @@ class SustenanceStrategyTest {
 
     @Test
     void shouldPayExactlyAllFoodIfEqual() {
-        // cibo esattamente uguale al numero di personaggi - arriva a 0 senza perdere PP
+        // food exactly equal to the number of characters - reaches 0 without losing PP
         p1.updateFood(3);
         addCharacters(p1, 3);
         strategy.effect(context);
@@ -65,52 +65,52 @@ class SustenanceStrategyTest {
 
     @Test
     void shouldLosePPIfFoodInsufficient() {
-        // cibo insufficiente - perde ppLostPerChar per ogni cibo mancante
+        // insufficient food - loses ppLostPerChar for each missing food
         p1.updateFood(1);
-        addCharacters(p1, 3); // deve pagare 3, ha solo 1
+        addCharacters(p1, 3); // must pay 3, has only 1
         strategy.effect(context);
         assertEquals(0, p1.getFood());
-        assertEquals(-2, p1.getPoints()); // mancano 2 cibo × 1 pp
+        assertEquals(-2, p1.getPoints()); // missing 2 food × 1 pp
     }
 
     @Test
     void shouldLoseAllFoodAndAllPPIfNoFood() {
-        // player senza cibo perde pp per ogni personaggio
+        // player with no food loses pp for each character
         addCharacters(p1, 3);
-        strategy.effect(context); // ha 0 cibo, deve pagare 3
+        strategy.effect(context); // has 0 food, must pay 3
         assertEquals(0, p1.getFood());
-        assertEquals(-3, p1.getPoints()); // 3 cibo mancanti × 1 pp
+        assertEquals(-3, p1.getPoints()); // 3 missing food × 1 pp
     }
 
     @Test
     void shouldApplyFoodDiscountBeforePaying() {
-        // foodDiscount riduce il cibo da pagare
+        // foodDiscount reduces the food to pay
         p1.updateFood(2);
-        p1.updateFoodDiscount(2); // sconto di 2
-        addCharacters(p1, 4); // deve pagare 4 - 2 = 2
+        p1.updateFoodDiscount(2); // discount of 2
+        addCharacters(p1, 4); // must pay 4 - 2 = 2
         strategy.effect(context);
         assertEquals(0, p1.getFood());
-        assertEquals(0, p1.getPoints()); // cibo sufficiente dopo sconto
+        assertEquals(0, p1.getPoints()); // enough food after discount
     }
 
     @Test
     void shouldNotPayIfDiscountCoversAll() {
-        // foodDiscount copre tutti i personaggi, nessun cibo pagato
+        // foodDiscount covers all characters, no food paid
         p1.updateFood(3);
         p1.updateFoodDiscount(5);
-        addCharacters(p1, 3); // deve pagare 3 - 5 = negativo → 0
+        addCharacters(p1, 3); // must pay 3 - 5 = negative → 0
         strategy.effect(context);
-        assertEquals(3, p1.getFood()); // nessun cibo pagato
+        assertEquals(3, p1.getFood()); // no food paid
         assertEquals(0, p1.getPoints());
     }
 
     @Test
     void shouldAffectAllPlayersIndependently() {
-        // ogni player viene valutato indipendentemente
+        // each player is evaluated independently
         p1.updateFood(5);
-        addCharacters(p1, 2); // p1 paga 2, gliene rimangono 3
+        addCharacters(p1, 2); // p1 pays 2, has 3 left
         p2.updateFood(1);
-        addCharacters(p2, 3); // p2 paga 3, ha solo 1, perde 2 pp
+        addCharacters(p2, 3); // p2 pays 3, has only 1, loses 2 pp
         strategy.effect(context);
         assertEquals(3, p1.getFood());
         assertEquals(0, p1.getPoints());

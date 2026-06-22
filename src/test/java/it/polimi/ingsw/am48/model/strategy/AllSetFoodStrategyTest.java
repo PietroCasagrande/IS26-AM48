@@ -20,7 +20,7 @@ class AllSetFoodStrategyTest {
     private Player otherPlayer;
     private PlayerContext context;
     private AllSetFoodStrategy strategy;
-    private NotificatorCenter mockNotificatorCenter; // dichiarazione mock
+    private NotificatorCenter mockNotificatorCenter; // mock declaration
 
     @BeforeEach
     void setUp() {
@@ -47,7 +47,7 @@ class AllSetFoodStrategyTest {
 
     @Test
     void shouldGiveNoFoodIfSetNotCompleted() {
-        // tribe incompleta - mancano alcuni tipi
+        // incomplete tribe - some types are missing
         currPlayer.addToTribe(new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2));
         currPlayer.addToTribe(new CharacterCard("A1", Era.FIRST, null, CharacterType.ARTIST, 2));
         strategy.effect(context);
@@ -56,7 +56,7 @@ class AllSetFoodStrategyTest {
 
     @Test
     void shouldGiveFiveFoodWhenFirstSetCompleted() {
-        // un set completo di 6 tipi diversi assegna 5 cibo
+        // a complete set of 6 different types grants 5 food
         addOneOfEachType();
         strategy.effect(context);
         assertEquals(5, currPlayer.getFood());
@@ -64,46 +64,46 @@ class AllSetFoodStrategyTest {
 
     @Test
     void shouldGiveTenFoodWhenTwoSetsCompleted() {
-        // due set completati in momenti diversi assegnano 10 cibo totali
+        // two sets completed at different times grant 10 food in total
         addOneOfEachType();
-        strategy.effect(context); // primo set
+        strategy.effect(context); // first set
         addOneOfEachType();
-        strategy.effect(context); // secondo set
+        strategy.effect(context); // second set
         assertEquals(10, currPlayer.getFood());
     }
 
     @Test
     void shouldNotGiveFoodIfNoNewSetCompleted() {
-        // aggiungere un personaggio di tipo già presente non completa un nuovo set
+        // adding a character of a type already present does not complete a new set
         addOneOfEachType();
-        strategy.effect(context); // primo set completato, 5 cibo
+        strategy.effect(context); // first set completed, 5 food
         currPlayer.addToTribe(new CharacterCard("H2", Era.FIRST, null, CharacterType.HUNTER, 2));
-        strategy.effect(context); // nessun nuovo set
-        assertEquals(5, currPlayer.getFood()); // rimane 5
+        strategy.effect(context); // no new set
+        assertEquals(5, currPlayer.getFood()); // stays 5
     }
 
     @Test
     void shouldNotGiveFoodForSetsAlreadyPresentAtAcquisition() {
-        // set già presenti prima dell'acquisizione non devono contare
+        // sets already present before acquisition must not count
         addOneOfEachType();
-        strategy.registerTo(mockNotificatorCenter, context); // simula acquisizione
-        strategy.effect(context); // nessun nuovo set dall'acquisizione
+        strategy.registerTo(mockNotificatorCenter, context); // simulates acquisition
+        strategy.effect(context); // no new set since acquisition
         assertEquals(0, currPlayer.getFood());
     }
 
     @Test
     void shouldGiveFoodOnlyForNewSetsAfterAcquisition() {
-        // set pre-esistenti non contano, solo quelli nuovi dopo acquisizione
+        // pre-existing sets do not count, only new ones after acquisition
         addOneOfEachType();
-        strategy.registerTo(mockNotificatorCenter, context); // acquisizione con 1 set già presente
+        strategy.registerTo(mockNotificatorCenter, context); // acquisition with 1 set already present
         addOneOfEachType();
-        strategy.effect(context); // nuovo set completato dopo acquisizione
-        assertEquals(5, currPlayer.getFood()); // solo 1 nuovo set × 5 cibo
+        strategy.effect(context); // new set completed after acquisition
+        assertEquals(5, currPlayer.getFood()); // only 1 new set × 5 food
     }
 
     @Test
     void shouldNotAffectOtherPlayers() {
-        // l'effetto non deve modificare gli altri giocatori
+        // the effect must not modify the other players
         addOneOfEachType();
         strategy.effect(context);
         assertEquals(0, otherPlayer.getFood());

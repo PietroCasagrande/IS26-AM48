@@ -17,7 +17,7 @@ import java.util.List;
 public class TotemPlacedDelta extends GameDelta{
     private final String playerNickname;
     private final char tileId;
-    private final List<String> updatedOfferTurnCardOrder; // ordine senza questo player
+    private final List<String> updatedOfferTurnCardOrder; // order without this player
     private final String currentPhase;
 
     /**

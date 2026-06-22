@@ -14,7 +14,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
  * @see CardStrategy
  */
 public class SustenanceStrategy extends CardStrategy {
-    private int ppLostPerChar;    // salvato con segno POSITIVO
+    private int ppLostPerChar;    // stored with a POSITIVE sign
 
     /**
      * Creates a new sustenance event effect.

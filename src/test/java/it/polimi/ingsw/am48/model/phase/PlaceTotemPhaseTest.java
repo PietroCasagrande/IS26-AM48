@@ -97,7 +97,7 @@ class PlaceTotemPhaseTest {
         assertFalse(ex.getMessage().isBlank());
     }
 
-    // ==================== placeTotem - delega a Board ====================
+    // ==================== placeTotem - delegates to Board ====================
 
     @Test
     @DisplayName("placeTotem: should delegate to board.placeTotem with correct arguments")
@@ -175,7 +175,7 @@ class PlaceTotemPhaseTest {
     @Test
     @DisplayName("placeTotem: should return list with exactly one delta when last player places and nobody is on tile A")
     void shouldReturnSingleDeltaWhenLastPlayerPlacesAndNoTileA() {
-        // nessuno sulla tessera A - setup restituisce Optional.empty()
+        // nobody on tile A - setup returns Optional.empty()
         OfferCard nonATile = mock(OfferCard.class);
         when(nonATile.getLetterId()).thenReturn('B');
         when(board.findTrackPosition(any())).thenReturn(nonATile);
@@ -193,7 +193,7 @@ class PlaceTotemPhaseTest {
     @Test
     @DisplayName("placeTotem: should return list with exactly two deltas when last player places and first in order is on tile A")
     void shouldReturnTwoDeltasWhenLastPlayerPlacesAndFirstIsOnTileA() {
-        // playerA è il primo nell'ordine di pesca ed è sulla tessera A
+        // playerA is first in the pick order and is on tile A
         OfferCard tileA = mock(OfferCard.class);
         when(tileA.getLetterId()).thenReturn('A');
         when(tileA.getFoodBonus()).thenReturn(3);
@@ -201,7 +201,7 @@ class PlaceTotemPhaseTest {
         OfferCard tileB = mock(OfferCard.class);
         when(tileB.getLetterId()).thenReturn('B');
 
-        // findTrackPosition restituisce A solo per playerA
+        // findTrackPosition returns A only for playerA
         when(board.findTrackPosition(playerA)).thenReturn(tileA);
         when(board.findTrackPosition(playerB)).thenReturn(tileB);
         when(board.findTrackPosition(playerC)).thenReturn(tileB);

@@ -35,7 +35,7 @@ public class BuilderStrategy extends CardStrategy {
      */
     @Override
     public void effect(PlayerContext playerContext) {
-        playerContext.getCurrPlayer().updateBuilderPoints(builderPp);    // punti assegnati dai builder a fine partita
-        playerContext.getCurrPlayer().updateBuildingDiscount(buildingDiscount);    // sconto (positivo) dato dai builder
+        playerContext.getCurrPlayer().updateBuilderPoints(builderPp);    // points granted by the builders at the end of the game
+        playerContext.getCurrPlayer().updateBuildingDiscount(buildingDiscount);    // discount (positive) given by the builders
     }
 }

@@ -34,18 +34,18 @@ public class TwoPlayersMatchTest {
         for(int j=0; j<10; j++){
             System.out.println("===================================== TURN " + (j+1) + " =====================================");
             System.out.println("===================================== BOARD =====================================");
-            System.out.println("Fila sopra:");
+            System.out.println("Upper row:");
             game.getBoard().getTribeShowed().getUpperList().forEach(c-> System.out.println(c.getCardId()));
-            System.out.println("\nFila sotto:");
+            System.out.println("\nLower row:");
             game.getBoard().getTribeShowed().getLowerList().forEach(c-> System.out.println(c.getCardId()));
-            System.out.println("\nEdifici sopra:");
+            System.out.println("\nBuildings upper:");
             game.getBoard().getBuildingShowed().getUpperList().forEach(c-> System.out.println(c.getCardId()));
-            System.out.println("\nEdifici sotto:");
+            System.out.println("\nBuildings lower:");
             game.getBoard().getBuildingShowed().getLowerList().forEach(c-> System.out.println(c.getCardId()));
             System.out.println("===========================================================================");
 
             //place totem input
-            System.out.println("Inserisci la posizione in cui piazzare il totem: "); //IMPORTANTE: scrivete entrambe le tessere (es C F)
+            System.out.println("Enter the position where to place the totem: "); //IMPORTANT: write both tiles (e.g. C F)
             Scanner sc = new Scanner(System.in);
             char c1 = sc.next().charAt(0);
             char c2 = sc.next().charAt(0);
@@ -63,8 +63,8 @@ public class TwoPlayersMatchTest {
             //take card: getting card ids
             for(int i = 0; i < picks1; i++){
                 System.out.println("===========================================================================");
-                System.out.println("Turno " + (i+1) + " di " + pickOrder.getFirst().getNickname());
-                System.out.println("Inserisci la carta che vuoi prendere: ");
+                System.out.println("Turn " + (i+1) + " of " + pickOrder.getFirst().getNickname());
+                System.out.println("Enter the card you want to take: ");
                 String s1 = sc.nextLine();
                 gameManager.takeCard(pickOrder.getFirst().getNickname(), s1);
 
@@ -94,20 +94,20 @@ public class TwoPlayersMatchTest {
 
                 //board update
                 System.out.println("===================================== BOARD =====================================");
-                System.out.println("Fila sopra:");
+                System.out.println("Upper row:");
                 game.getBoard().getTribeShowed().getUpperList().forEach(c-> System.out.println(c.getCardId()));
-                System.out.println("\nFila sotto:");
+                System.out.println("\nLower row:");
                 game.getBoard().getTribeShowed().getLowerList().forEach(c-> System.out.println(c.getCardId()));
-                System.out.println("\nEdifici sopra:");
+                System.out.println("\nBuildings upper:");
                 game.getBoard().getBuildingShowed().getUpperList().forEach(c-> System.out.println(c.getCardId()));
-                System.out.println("\nEdifici sotto:");
+                System.out.println("\nBuildings lower:");
                 game.getBoard().getBuildingShowed().getLowerList().forEach(c-> System.out.println(c.getCardId()));
             }
 
             for(int i = 0; i < picks2; i++){
                 System.out.println("===========================================================================");
-                System.out.println("Turno " + (i+1) + " di " + pickOrder.get(1).getNickname());
-                System.out.println("Inserisci la carta che vuoi prendere: ");
+                System.out.println("Turn " + (i+1) + " of " + pickOrder.get(1).getNickname());
+                System.out.println("Enter the card you want to take: ");
                 String s2 = sc.nextLine();
                 gameManager.takeCard(pickOrder.get(1).getNickname(), s2);
 
@@ -137,13 +137,13 @@ public class TwoPlayersMatchTest {
 
                 //board update
                 System.out.println("===================================== BOARD =====================================");
-                System.out.println("Fila sopra:");
+                System.out.println("Upper row:");
                 game.getBoard().getTribeShowed().getUpperList().forEach(c-> System.out.println(c.getCardId()));
-                System.out.println("\nFila sotto:");
+                System.out.println("\nLower row:");
                 game.getBoard().getTribeShowed().getLowerList().forEach(c-> System.out.println(c.getCardId()));
-                System.out.println("\nEdifici sopra:");
+                System.out.println("\nBuildings upper:");
                 game.getBoard().getBuildingShowed().getUpperList().forEach(c-> System.out.println(c.getCardId()));
-                System.out.println("\nEdifici sotto:");
+                System.out.println("\nBuildings lower:");
                 game.getBoard().getBuildingShowed().getLowerList().forEach(c-> System.out.println(c.getCardId()));
 
             }

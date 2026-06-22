@@ -26,7 +26,7 @@ class BuildingFactoryTest {
         dtoNoStrategy.strategy = null;
     }
 
-    // Helper per creare un DTO con strategia
+    // Helper to create a DTO with a strategy
     private CardDTO buildDto(String id, String era, String effect, String notificator) {
         StrategyDTO s = new StrategyDTO();
         s.effect = effect;
@@ -149,7 +149,7 @@ class BuildingFactoryTest {
                 () -> new BuildingFactory(List.of(dtoNoStrategy)).createCards(2));
     }
 
-    // ==================== buildStrategy - ogni ramo del switch ====================
+    // ==================== buildStrategy - every branch of the switch ====================
 
     @Test
     @DisplayName("buildStrategy: should build ExtraFoodOnFoodStrategy with OnTotemReturned notificator")

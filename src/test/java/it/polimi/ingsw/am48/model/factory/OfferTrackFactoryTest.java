@@ -144,7 +144,7 @@ class OfferTrackFactoryTest {
         track.placeTotem(pB, 'B');
         track.placeTotem(pC, 'C');
 
-        // TreeMap garantisce ordine alfabetico → pickOrder = A, B, C
+        // TreeMap guarantees alphabetical order → pickOrder = A, B, C
         List<Player> order = track.getPickOrder();
         assertEquals(List.of(pA, pB, pC), order);
     }
@@ -152,7 +152,7 @@ class OfferTrackFactoryTest {
     @Test
     @DisplayName("createCards: should use a TreeMap — pickOrder follows alphabetical slot order")
     void shouldUseTreeMapForAlphabeticalOrder() {
-        // Inserisco dtoC prima di dtoA: il TreeMap deve comunque ordinarli A → C
+        // Insert dtoC before dtoA: the TreeMap must still order them A → C
         OfferTrackFactory factory = new OfferTrackFactory(List.of(dtoC, dtoA));
         OfferCardTrack track = factory.createCards(2).getFirst();
 
@@ -163,7 +163,7 @@ class OfferTrackFactoryTest {
         track.placeTotem(pC, 'C');
 
         List<Player> order = track.getPickOrder();
-        assertEquals(pA, order.get(0)); // A prima di C
+        assertEquals(pA, order.get(0)); // A before C
         assertEquals(pC, order.get(1));
     }
 

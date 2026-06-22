@@ -30,20 +30,20 @@ class ShamanSafetyStrategyTest {
 
     @Test
     void shouldBeFalseBeforeEffect() {
-        // il player non è immune agli eventi sciamanici prima dell'effetto
+        // the player is not immune to shaman events before the effect
         assertFalse(currPlayer.isShamanSafe());
     }
 
     @Test
     void shouldSetShamanSafetyToTrue() {
-        // dopo l'effetto il player è immune agli eventi sciamanici
+        // after the effect the player is immune to shaman events
         strategy.effect(context);
         assertTrue(currPlayer.isShamanSafe());
     }
 
     @Test
     void shouldNotAffectOtherPlayers() {
-        // l'effetto non deve modificare gli altri giocatori
+        // the effect must not modify the other players
         strategy.effect(context);
         assertFalse(otherPlayer.isShamanSafe());
     }

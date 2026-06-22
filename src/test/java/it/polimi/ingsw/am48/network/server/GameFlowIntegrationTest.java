@@ -82,16 +82,16 @@ class GameFlowIntegrationTest {
     private SocketServerHandler createSocketClient(ClientModel model) throws Exception {
         SocketServerHandler handler = new SocketServerHandler("localhost", SOCKET_PORT, model);
         new Thread(handler).start();
-        Thread.sleep(100); // aspetta che il thread di ascolto sia attivo
+        Thread.sleep(100); // wait for the listening thread to be active
         return handler;
     }
 
-    /** Legge l'ordine dei turni e mappa nickname → client */
+    /** Reads the turn order and maps nickname → client */
     private List<String> getTurnOrder(ClientModel model) {
         return model.getState().getOfferTurnCardOrder();
     }
 
-    /** Piazza i totem nell'ordine corretto per una partita da 2 */
+    /** Places the totems in the correct order for a 2-player game */
     private void placeTotemsInOrder(
             ClientModel referenceModel,
             Map<String, VirtualServer> clientByNick,
@@ -107,13 +107,13 @@ class GameFlowIntegrationTest {
     }
 
     // ==========================================================
-    // TEST 4.1 — Due partite in parallelo
+    // TEST 4.1 — Two parallel games
     // ==========================================================
 
     @Test
     @DisplayName("4.1: Two parallel games should not interfere with each other")
     void twoParallelGamesShouldNotInterfere() throws Exception {
-        // --- Partita 1: Alice e Bob ---
+        // --- Game 1: Alice and Bob ---
         ClientModel modelA = new ClientModel();
         ClientModel modelB = new ClientModel();
         RmiClient clientA = createRmiClient(modelA);
@@ -123,7 +123,7 @@ class GameFlowIntegrationTest {
         clientB.joinGame(2, "Bob");
         Thread.sleep(500);
 
-        // --- Partita 2: Charlie e Dave ---
+        // --- Game 2: Charlie and Dave ---
         ClientModel modelC = new ClientModel();
         ClientModel modelD = new ClientModel();
         RmiClient clientC = createRmiClient(modelC);
@@ -133,43 +133,43 @@ class GameFlowIntegrationTest {
         clientD.joinGame(2, "Dave");
         Thread.sleep(500);
 
-        // Entrambe le partite sono avviate
+        // Both games are started
         assertNotNull(modelA.getState());
         assertNotNull(modelB.getState());
         assertNotNull(modelC.getState());
         assertNotNull(modelD.getState());
 
-        // Le partite hanno gameId diversi
+        // The games have different gameIds
         assertNotEquals(modelA.getState().getGameId(), modelC.getState().getGameId(),
                 "Parallel games should have different gameIds");
 
-        // Le carte esposte possono essere diverse (mazzi shufflati)
+        // The exposed cards may be different (shuffled decks)
         // System.out.println("[4.1] Game1 upper: " + modelA.getState().getUpperRowCardIds());
         // System.out.println("[4.1] Game2 upper: " + modelC.getState().getUpperRowCardIds());
 
-        // --- Azioni nella partita 1 ---
+        // --- Actions in game 1 ---
         Map<String, VirtualServer> game1Clients = Map.of("Alice", clientA, "Bob", clientB);
         placeTotemsInOrder(modelA, game1Clients, new char[]{'B', 'C'});
 
-        // La partita 1 ha totem piazzati
+        // Game 1 has placed totems
         assertTrue(modelA.getState().getOfferTrackPositions().containsKey('B'));
         assertTrue(modelA.getState().getOfferTrackPositions().containsKey('C'));
 
-        // La partita 2 NON è stata toccata
+        // Game 2 was NOT touched
         assertTrue(modelC.getState().getOfferTrackPositions().values().stream().allMatch(String::isEmpty),
                 "Game 2 track should be empty — Game 1 actions should not leak");
         assertTrue(modelD.getState().getOfferTrackPositions().values().stream().allMatch(String::isEmpty),
                 "Game 2 track should be empty — Game 1 actions should not leak");
 
-        // --- Azioni nella partita 2 ---
+        // --- Actions in game 2 ---
         Map<String, VirtualServer> game2Clients = Map.of("Charlie", clientC, "Dave", clientD);
         placeTotemsInOrder(modelC, game2Clients, new char[]{'E', 'F'});
 
-        // La partita 2 ha totem piazzati su posizioni diverse
+        // Game 2 has totems placed on different positions
         assertTrue(modelC.getState().getOfferTrackPositions().containsKey('E'));
         assertTrue(modelC.getState().getOfferTrackPositions().containsKey('F'));
 
-        // La partita 1 non è cambiata
+        // Game 1 has not changed
         assertEquals(2, modelA.getState().getOfferTrackPositions().values().stream()
                 .filter(s -> !s.isEmpty()).count(), "Game 1 should still have exactly 2 totems");
         assertTrue(modelA.getState().getOfferTrackPositions().getOrDefault('E', "").isEmpty(),
@@ -177,17 +177,17 @@ class GameFlowIntegrationTest {
     }
 
     // ==========================================================
-    // TEST 4.2 — Protocollo misto (Socket + RMI nella stessa partita)
+    // TEST 4.2 — Mixed protocol (Socket + RMI in the same game)
     // ==========================================================
 
     @Test
     @DisplayName("4.2: Socket and RMI clients in the same game should see identical state")
     void mixedProtocolShouldWork() throws Exception {
-        // Alice su RMI
+        // Alice on RMI
         ClientModel modelAlice = new ClientModel();
         RmiClient clientAlice = createRmiClient(modelAlice);
 
-        // Bob su Socket
+        // Bob on Socket
         ClientModel modelBob = new ClientModel();
         SocketServerHandler clientBob = createSocketClient(modelBob);
 
@@ -197,11 +197,11 @@ class GameFlowIntegrationTest {
         clientBob.joinGame(2, "Bob");
         Thread.sleep(500);
 
-        // Entrambi ricevono lo snapshot
+        // Both receive the snapshot
         assertNotNull(modelAlice.getState(), "RMI client should have state");
         assertNotNull(modelBob.getState(), "Socket client should have state");
 
-        // Stessi dati dopo il join
+        // Same data after the join
         assertEquals(modelAlice.getState().getGameId(), modelBob.getState().getGameId(),
                 "Both clients should be in the same game");
         assertEquals(modelAlice.getState().getUpperRowCardIds(), modelBob.getState().getUpperRowCardIds(),
@@ -221,7 +221,7 @@ class GameFlowIntegrationTest {
 
         placeTotemsInOrder(modelAlice, clientByNick, new char[]{'B', 'C'});
 
-        // Entrambi vedono la stessa track
+        // Both see the same track
         assertEquals(modelAlice.getState().getOfferTrackPositions(),
                 modelBob.getState().getOfferTrackPositions(),
                 "Offer track should be identical across protocols after totem placement");
@@ -229,7 +229,7 @@ class GameFlowIntegrationTest {
         // System.out.println("[4.2] Track (RMI): " + modelAlice.getState().getOfferTrackPositions());
         // System.out.println("[4.2] Track (Socket): " + modelBob.getState().getOfferTrackPositions());
 
-        // Take card — il primo nell'ordine di offerta prende dalla lower row
+        // Take card — the first in the offer order takes from the lower row
         String firstPicker = modelAlice.getState().getOfferTrackPositions().get('B');
         List<String> lowerCards = modelAlice.getState().getLowerRowCardIds();
         assertFalse(lowerCards.isEmpty(), "Lower row should have cards");
@@ -239,25 +239,25 @@ class GameFlowIntegrationTest {
         clientByNick.get(firstPicker).takeCard(firstPicker, cardToPick);
         Thread.sleep(500);
 
-        // Entrambi vedono la carta sparire dalle righe
+        // Both see the card disappear from the rows
         assertFalse(modelAlice.getState().getLowerRowCardIds().contains(cardToPick),
                 "Card should be gone from RMI client's lower row");
         assertFalse(modelBob.getState().getLowerRowCardIds().contains(cardToPick),
                 "Card should be gone from Socket client's lower row");
 
-        // Entrambi vedono la carta nella tribù del giocatore
+        // Both see the card in the player's tribe
         assertEquals(
                 modelAlice.getState().getPlayer(firstPicker).getCharacterCardIds(),
                 modelBob.getState().getPlayer(firstPicker).getCharacterCardIds(),
                 "Player's tribe should be identical across protocols");
 
-        // Stato complessivo identico
+        // Overall state identical
         assertEquals(modelAlice.getState().getUpperRowCardIds(), modelBob.getState().getUpperRowCardIds(),
                 "Upper row should remain identical across protocols");
     }
 
     // ==========================================================
-    // TEST 4.3 — Azioni rapide in sequenza
+    // TEST 4.3 — Rapid actions in sequence
     // ==========================================================
 
     @Test
@@ -275,22 +275,22 @@ class GameFlowIntegrationTest {
         List<String> order = getTurnOrder(model1);
         Map<String, VirtualServer> clients = Map.of("Fast", client1, "Furious", client2);
 
-        // Piazza senza sleep tra le due azioni
+        // Place without sleep between the two actions
         String first = order.get(0);
         String second = order.get(1);
         clients.get(first).placeTotem(first, 'B');
         clients.get(second).placeTotem(second, 'C');
-        // Nessun Thread.sleep tra le due!
+        // No Thread.sleep between the two!
 
-        Thread.sleep(1000); // aspetta che tutto venga processato
+        Thread.sleep(1000); // wait for everything to be processed
 
-        // Entrambe le posizioni devono essere occupate
+        // Both positions must be occupied
         assertTrue(model1.getState().getOfferTrackPositions().containsKey('B'),
                 "Position B should be occupied after rapid placement");
         assertTrue(model1.getState().getOfferTrackPositions().containsKey('C'),
                 "Position C should be occupied after rapid placement");
 
-        // Entrambi i client in sync
+        // Both clients in sync
         assertEquals(model1.getState().getOfferTrackPositions(),
                 model2.getState().getOfferTrackPositions(),
                 "Both clients should see identical track after rapid actions");

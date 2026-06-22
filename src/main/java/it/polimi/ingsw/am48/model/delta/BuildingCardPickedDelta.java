@@ -19,9 +19,9 @@ public class BuildingCardPickedDelta extends GameDelta{
     private final String cardId;
     private final List<String> updatedUpperBuildingIds;
     private final List<String> updatedLowerBuildingIds;
-    private final int updatedFood;        // cibo dopo pagamento edificio e ritorno totem
-    private final int updatedPoints;      // pp dopo eventuale penalità cibo
-    private final boolean totemReturned;  // true se il player ha finito i suoi pick
+    private final int updatedFood;        // food after paying for the building and returning the totem
+    private final int updatedPoints;      // pp after the possible food penalty
+    private final boolean totemReturned;  // true if the player has finished their picks
     private final String currentPhase;
 
     /**

@@ -25,13 +25,13 @@ public class GameFlowTest2Players {
 
     private static void printBoard(Game game) {
         System.out.println("=== BOARD ===");
-        System.out.println("Fila sopra:");
+        System.out.println("Upper row:");
         game.getBoard().getTribeShowed().getUpperList().forEach(c -> System.out.println(c.getCardId()));
-        System.out.println("Fila sotto:");
+        System.out.println("Lower row:");
         game.getBoard().getTribeShowed().getLowerList().forEach(c -> System.out.println(c.getCardId()));
-        System.out.println("Edifici sopra:");
+        System.out.println("Buildings upper:");
         game.getBoard().getBuildingShowed().getUpperList().forEach(c -> System.out.println(c.getCardId()));
-        System.out.println("Edifici sotto:");
+        System.out.println("Buildings lower:");
         game.getBoard().getBuildingShowed().getLowerList().forEach(c -> System.out.println(c.getCardId()));
     }
 
@@ -43,9 +43,9 @@ public class GameFlowTest2Players {
         Game game = gameManager.getGameByNickname("Alice");
         List<Player> placeOrder = game.getBoard().getPlaceOrder();
 
-        System.out.println("=== ORDINE DI PIAZZAMENTO INIZIALE ===");
+        System.out.println("=== INITIAL PLACEMENT ORDER ===");
         //placeOrder.forEach(p -> System.out.println(p.getNickname() + " | food: " + p.getTribe().getCurrentFood()));
-        System.out.println("Primo a piazzare il totem: " + placeOrder.getFirst().getNickname());
+        System.out.println("First to place the totem: " + placeOrder.getFirst().getNickname());
 
         Scanner sc = new Scanner(System.in);
 
@@ -54,39 +54,39 @@ public class GameFlowTest2Players {
             printBoard(game);
 
             List<Player> currentPlaceOrder = game.getBoard().getPlaceOrder();
-            System.out.println("Primo a piazzare il totem: " + placeOrder.getFirst().getNickname());
+            System.out.println("First to place the totem: " + placeOrder.getFirst().getNickname());
 
             boolean placed1 = false;
             while (!placed1) {
-                System.out.print("Posizione 1: ");
+                System.out.print("Position 1: ");
                 char c1 = sc.next().charAt(0);
                 try {
                     gameManager.placeTotem(currentPlaceOrder.getFirst().getNickname(), c1);
                     placed1 = true;
                 } catch (InvalidActionException | IllegalStateException | IllegalArgumentException e) {
-                    System.out.println("Non valido - " + e.getMessage());
-                    System.out.println("Riprova.");
+                    System.out.println("Invalid - " + e.getMessage());
+                    System.out.println("Try again.");
                 }
             }
 
             boolean placed2 = false;
             while (!placed2) {
-                System.out.print("Posizione 2: ");
+                System.out.print("Position 2: ");
                 char c2 = sc.next().charAt(0);
                 sc.nextLine();
                 try {
                     gameManager.placeTotem(currentPlaceOrder.getFirst().getNickname(), c2);
                     placed2 = true;
                 } catch (InvalidActionException | IllegalStateException | IllegalArgumentException e) {
-                    System.out.println("Non valido - " + e.getMessage());
-                    System.out.println("Riprova.");
+                    System.out.println("Invalid - " + e.getMessage());
+                    System.out.println("Try again.");
                 }
             }
 
 
-            // pickOrder può differire da placeOrder — va riletto dopo il piazzamento
+            // pickOrder may differ from placeOrder — it must be re-read after placement
             List<Player> pickOrder = game.getBoard().getPickOrder();
-            System.out.println(">>> Ordine di pick: " + pickOrder.stream().map(Player::getNickname).toList());
+            System.out.println(">>> Pick order: " + pickOrder.stream().map(Player::getNickname).toList());
 
             for (int pi = 0; pi < pickOrder.size(); pi++) {
                 Player current = pickOrder.get(pi);
@@ -99,18 +99,18 @@ public class GameFlowTest2Players {
 
                     boolean success = false;
                     while (!success) {
-                        System.out.print("Carta: ");
+                        System.out.print("Card: ");
                         String s = sc.nextLine().trim();
                         if (s.isEmpty()) {
-                            System.out.println("Input vuoto, riprova.");
+                            System.out.println("Empty input, try again.");
                             continue;
                         }
                         try {
                             gameManager.takeCard(current.getNickname(), s);
                             success = true;
                         } catch (InvalidActionException e) {
-                            System.out.println("Non valido - " + e.getMessage());
-                            System.out.println("Riprova.");
+                            System.out.println("Invalid - " + e.getMessage());
+                            System.out.println("Try again.");
                         }
                     }
 

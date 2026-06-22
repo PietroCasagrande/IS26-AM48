@@ -12,8 +12,8 @@ import static org.mockito.Mockito.*;
 
 class MesosServerTest {
 
-    // Classe di test riscritta per intero: MesosServer non ha più bisogno di GameManager, non accede direttamente al modello
-    // Non serve mockare Game, Player e PlayerContext, basta passare la lista di nickname (recipients)
+    // Test class rewritten entirely: MesosServer no longer needs GameManager and does not access the model directly
+    // No need to mock Game, Player and PlayerContext, just pass the list of nicknames (recipients)
 
     private MesosServer server;
 

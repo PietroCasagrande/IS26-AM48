@@ -30,7 +30,7 @@ public class ExtraFoodOnFoodStrategy extends CardStrategy {
      */
     @Override
     public void effect(PlayerContext playerContext) {
-        // diamo +1 cibo extra solo se il player è in una delle caselle di OfferTurnCard che dà cibo
+        // we give +1 extra food only if the player is on one of the OfferTurnCard squares that gives food
         Player player = playerContext.getCurrPlayer();
         if(player.deservesExtraFood()) player.updateFood(1);
     }

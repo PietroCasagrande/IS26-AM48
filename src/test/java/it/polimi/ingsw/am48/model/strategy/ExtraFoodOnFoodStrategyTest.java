@@ -30,7 +30,7 @@ class ExtraFoodOnFoodStrategyTest {
 
     @Test
     void shouldGiveExtraFoodIfDeserves() {
-        // player con diritto all'extra food riceve 1 cibo
+        // player entitled to extra food receives 1 food
         currPlayer.setExtraFoodRight(true);
         strategy.effect(context);
         assertEquals(1, currPlayer.getFood());
@@ -38,14 +38,14 @@ class ExtraFoodOnFoodStrategyTest {
 
     @Test
     void shouldNotGiveExtraFoodIfNotDeserves() {
-        // player senza diritto all'extra food non riceve nulla
+        // player not entitled to extra food receives nothing
         strategy.effect(context);
         assertEquals(0, currPlayer.getFood());
     }
 
     @Test
     void shouldStackWithExistingFood() {
-        // il cibo extra si somma a quello già posseduto
+        // the extra food adds to the food already held
         currPlayer.updateFood(3);
         currPlayer.setExtraFoodRight(true);
         strategy.effect(context);
@@ -54,16 +54,16 @@ class ExtraFoodOnFoodStrategyTest {
 
     @Test
     void shouldNotAffectOtherPlayers() {
-        // l'effetto non deve modificare gli altri giocatori
+        // the effect must not modify the other players
         currPlayer.setExtraFoodRight(true);
         otherPlayer.updateFood(2);
         strategy.effect(context);
-        assertEquals(2, otherPlayer.getFood()); // invariato
+        assertEquals(2, otherPlayer.getFood()); // unchanged
     }
 
     @Test
     void shouldNotGiveExtraFoodIfRightIsFalseByDefault() {
-        // il diritto è false di default, nessun cibo extra
+        // the right is false by default, no extra food
         assertFalse(currPlayer.deservesExtraFood());
         strategy.effect(context);
         assertEquals(0, currPlayer.getFood());

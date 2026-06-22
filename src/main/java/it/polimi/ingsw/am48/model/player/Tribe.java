@@ -23,15 +23,15 @@ import java.util.stream.Collectors;
  * @see Player
  */
 public class Tribe {
-    // final sugli oggetti per garantire che la variabile di riferimento non possa esser riassegnata a un altro oggetto
+    // final on the objects to ensure the reference variable cannot be reassigned to another object
     private final Map<CharacterType, List<CharacterCard>> characters;
     private final List<BuildingCard> buildings;
     private final Map<Artifact, Integer> artifacts;
-    private int currentFood;        // cibo totale tribù
-    private int foodDiscount;       // totale dello sconto sul cibo dato dai picker
+    private int currentFood;        // total food of the tribe
+    private int foodDiscount;       // total food discount granted by pickers
     private int buildingDiscount;
     private int shamanStars;
-    private boolean shamanSafety;    // indica se il Player è immune all'evento sciamanico
+    private boolean shamanSafety;    // whether the Player is immune to the shaman event
     private boolean shamanDoubling;
     private boolean extraFoodRight;
     private boolean extraPickRight;
@@ -95,7 +95,7 @@ public class Tribe {
         this.buildingPoints += card.getPrestigePoints();
     }
 
-    // setter utilizzati nelle strategy, in particolare UpdateResources, per aggiornare le risorse della tribe
+    // setters used in the strategies, in particular UpdateResources, to update the tribe's resources
     public void updateFoodDiscount(int amount) {
         this.foodDiscount += amount;
     }
@@ -129,7 +129,7 @@ public class Tribe {
     public void setExtraPickRight() { this.extraPickRight = true; }
 
 
-    // getter degli attributi di tribe, utilizzati nelle strategy degli eventi, per fare check sulla quantità
+    // getters for the tribe's attributes, used in the event strategies to check quantities
     public int getFoodDiscount() { return foodDiscount; }
     public int getBuildingDiscount() { return buildingDiscount; }
     public int getShamanStars() { return shamanStars; }
@@ -145,14 +145,14 @@ public class Tribe {
      *
      * @return the overall count of characters in the tribe
      */
-    // sostituisce il vecchio tribeSize(), getTotalCharacters() in player delega a questo
+    // replaces the old tribeSize(); getTotalCharacters() in player delegates to this
     public int getTotalCharacters(){
         return characters.values().stream()
                  .mapToInt(List::size)
                  .sum();
     }
 
-    // metodi per statistiche del giocatore, ovvero punti e cibo
+    // methods for the player's statistics, namely points and food
     public int getCurrentFood() { return currentFood; }
     public void updateCurrentFood(int currentFood) { this.currentFood += currentFood; }
     public int getCurrentPrestigePoints() { return currentPrestigePoints; }
@@ -168,8 +168,8 @@ public class Tribe {
      * @param food      the amount of food to pay (must be positive)
      * @param ppPerFood the prestige points lost per unit of food that cannot be covered (must be positive)
      */
-    // metodo per pagare cibo e perdere punti in caso di cibo insufficiente
-    // food e ppPerFood devono essere positivi
+    // method to pay food and lose points when food is insufficient
+    // food and ppPerFood must be positive
     public void payFood(int food, int ppPerFood){
         if(this.currentFood - food >= 0) this.currentFood -= food;
         else {
@@ -187,7 +187,7 @@ public class Tribe {
      *
      * @return the number of complete character sets (0 if at least one type is absent)
      */
-    // metodo che restituisce numero di personaggi la cui occorrenza di CharacterType è presente in minore quantità all'interno della mappa characters (anche 0 se nessuno di quel tipo)
+    // returns the size of the smallest per-type list within the characters map (0 if no character of some type)
     public int minListSize() {
         if (characters.size() < CharacterType.values().length) return 0;
         return characters.values().stream()
@@ -204,7 +204,7 @@ public class Tribe {
      *
      * @return the number of matching artifact (inventor) pairs
      */
-    // conta il numero di coppie di inventori con lo stesso Artifact
+    // counts the number of inventor pairs holding the same Artifact
     public int countInventorPairs() {
         return artifacts.values().stream()
                 .mapToInt(count -> count / 2)
@@ -219,24 +219,24 @@ public class Tribe {
      * builders and by buildings; 10 points for every pair of artists; and, for inventors,
      * the number of inventors multiplied by the number of distinct artifacts collected.
      */
-    // metodo utilizzato per il calcolo dei punti finali della tribù: currentPrestigePoints + puntiInventori + puntiPicker
+    // method used to compute the tribe's final score: currentPrestigePoints + inventor points + picker points
     public void computeTotalEndGameScore() {
-        // punti edifici (accumulati all'acquisto degli edifici, tramite addToTribe(BuildingCard))
+        // builder points (accumulated when a builder character is selected)
         this.currentPrestigePoints += builderPoints;
-        // punti costruttori (accumulati alla selezione di un personaggio costruttore)
+        // building points (accumulated when buildings are purchased, via addToTribe(BuildingCard))
         this.currentPrestigePoints += buildingPoints;
 
-        // punti artisti: 10PP per ogni coppia di artisti
+        // artist points: 10PP for every pair of artists
         int artistsPair = countByType(CharacterType.ARTIST) / 2;
         this.currentPrestigePoints += artistsPair * 10;
 
-        // punti inventori: numero di inventori * artefatti diversi
+        // inventor points: number of inventors * distinct artifacts
         int numOfInventors = countByType(CharacterType.INVENTOR);
         int numOfArtifacts = artifacts.size();
         this.currentPrestigePoints += numOfInventors * numOfArtifacts;
     }
 
-    // getter per i test di TribeTest e per le strategy
+    // getters for the TribeTest tests and for the strategies
     public Map<Artifact, Integer> getArtifacts() { return Collections.unmodifiableMap(artifacts); }
     public List<BuildingCard> getBuildings() { return Collections.unmodifiableList(buildings); }
     public Map<CharacterType, List<CharacterCard>> getCharacters() { return Collections.unmodifiableMap(characters); }

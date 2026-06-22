@@ -23,9 +23,9 @@ import java.io.Serializable;
  * @see ClientModel
  */
 @JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,      // uso un campo "type" nel JSON
-        include = JsonTypeInfo.As.PROPERTY,           // il campo è incluso nel payload
-        property = "type"                // nome del campo
+        use = JsonTypeInfo.Id.NAME,      // use a "type" field in the JSON
+        include = JsonTypeInfo.As.PROPERTY,           // the field is included in the payload
+        property = "type"                // name of the field
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TotemPlacedDelta.class,          name = "totemPlaced"),

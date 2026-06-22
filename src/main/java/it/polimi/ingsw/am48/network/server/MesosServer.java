@@ -28,7 +28,7 @@ import java.util.Map;
  * unregister, and read from it concurrently.
  */
 public class MesosServer {
-    // Map thread-safe per gestire le connessioni concorrenti
+    // thread-safe map to handle concurrent connections
     private final Map<String, VirtualView> connectedPlayers = new ConcurrentHashMap<>();
 
     /**
@@ -67,7 +67,7 @@ public class MesosServer {
         }
     }
 
-    // overload per GameSnapshot (Scenario 1B, joingame e set up partita, snapshot completo)
+    // overload for GameSnapshot (Scenario 1B, joingame and game set up, full snapshot)
     /**
      * Sends a full game snapshot to every recipient in the given list.
      *

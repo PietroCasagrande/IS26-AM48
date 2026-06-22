@@ -33,7 +33,7 @@
                                 <Insets left="100.0" />
                             </HBox.margin>
                         <content>
-                            <!-- L'fx:id qui è la chiave di tutto! -->
+                            <!-- The fx:id here is the key to everything! -->
                             <fx:include fx:id="playerTribe" source="player-tribe-screen.fxml" />
                         </content>
                         </ScrollPane>
@@ -122,7 +122,7 @@
 
             <!-- CENTER: board -->
             <center>
-                <!-- Il contenitore con i margini -->
+                <!-- The container with the margins -->
                 <VBox fx:id="center" alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
                         <Insets top="20" right="30" bottom="20" left="30"/>
@@ -139,7 +139,7 @@
                         <ImageView fx:id="turnTotem" fitHeight="32.0" fitWidth="32.0" preserveRatio="true" />
                     </HBox>
 
-                    <!-- QUI INCLUDI TUTTA L'AREA CENTRALE! -->
+                    <!-- INCLUDE THE ENTIRE CENTRAL AREA HERE! -->
                     <fx:include fx:id="boardCenter" source="board-center.fxml" />
 
                 </VBox>

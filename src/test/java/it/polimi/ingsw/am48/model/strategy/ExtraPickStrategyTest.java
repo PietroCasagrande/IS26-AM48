@@ -30,20 +30,20 @@ class ExtraPickStrategyTest {
 
     @Test
     void shouldBeFalseBeforeEffect() {
-        // il diritto alla pesca extra è false di default
+        // the right to an extra pick is false by default
         assertFalse(currPlayer.deservesExtraPick());
     }
 
     @Test
     void shouldSetExtraPickRightToTrue() {
-        // dopo l'effetto il player ha diritto alla pesca extra
+        // after the effect the player has the right to an extra pick
         strategy.effect(context);
         assertTrue(currPlayer.deservesExtraPick());
     }
 
     @Test
     void shouldNotAffectOtherPlayers() {
-        // l'effetto non deve modificare gli altri giocatori
+        // the effect must not modify the other players
         strategy.effect(context);
         assertFalse(otherPlayer.deservesExtraPick());
     }

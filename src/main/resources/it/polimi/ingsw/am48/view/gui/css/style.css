@@ -4,7 +4,7 @@
 
 #root {
     -fx-background-image: url("../images/background.png");
-    -fx-background-size: cover; /* Questo è il comando magico! */
+    -fx-background-size: cover; /* This is the magic command! */
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
 }
@@ -14,16 +14,16 @@
     -fx-background-size: cover;
 }
 
-/* Il box nero opaco */
+/* The opaque black box */
 .lobby-overlay {
-    -fx-background-color: rgba(0, 0, 0, 0.5); /* 75% di opacità nera */
-    -fx-background-radius: 30px;               /* Angoli smussati */
-    -fx-padding: 60px;                         /* Spazio interno generoso */
-    -fx-border-color: rgba(255, 255, 255, 0.1); /* Bordino sottilissimo per staccare */
+    -fx-background-color: rgba(0, 0, 0, 0.5); /* 75% black opacity */
+    -fx-background-radius: 30px;               /* Rounded corners */
+    -fx-padding: 60px;                         /* Generous inner spacing */
+    -fx-border-color: rgba(255, 255, 255, 0.1); /* Very thin border to separate */
     -fx-border-width: 1px;
     -fx-border-radius: 30px;
     -fx-max-width: 500px;
-    -fx-max-height: 50px;                    /* Evita che il box diventi troppo largo */
+    -fx-max-height: 50px;                    /* Prevents the box from becoming too wide */
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0.5, 0, 0);
 }
 
@@ -33,7 +33,7 @@
 }
 
 .rootTribe {
-    /* Sostituisci con il path della tua immagine di sfondo */
+    /* Replace with the path of your background image */
     -fx-background-image: url("../images/background-leaderboard.png");
     -fx-background-size: cover;
     -fx-background-position: center center;
@@ -47,20 +47,20 @@
 /* ======================================== FIRE BUTTONS ================================== */
 
 .button-menu-fire {
-    /* Gradiente dall'arancione al rosso scuro */
+    /* Gradient from orange to dark red */
     -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
 
-    /* Testo bianco crema */
+    /* Cream white text */
     -fx-text-fill: #FFF3E0;
     -fx-font-size: 22px;
     -fx-font-weight: bold;
     -fx-font-family: "System";
 
-    /* Bordi più arrotondati, organici */
+    /* More rounded, organic borders */
     -fx-background-radius: 25px;
     -fx-border-radius: 25px;
 
-    /* Bordo dorato */
+    /* Golden border */
     -fx-border-color: #F5B041;
     -fx-border-width: 2px;
 
@@ -69,36 +69,36 @@
 }
 
 .button-menu-fire:hover {
-    /* Il gradiente diventa più acceso e luminoso */
+    /* The gradient becomes brighter and more vivid */
     -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
     -fx-cursor: hand;
-    /* L'ombra diventa un "bagliore" arancione */
+    /* The shadow becomes an orange "glow" */
     -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
 }
 
 .button-menu-fire:armed {
-    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    /* Reaffirm the gradient - we write it first */
     -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
 
-    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    /* FUNDAMENTAL RESET: Scene Builder uses the insets for the blue. Set them to 0. */
     -fx-background-insets: 0;
 
-    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    /* Remove the default focus colors that create the outer rectangle */
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 
-    /* Il tuo stile di selezione */
+    /* Your selection style */
     -fx-border-color: #FFCA71;
     -fx-border-width: 2px;
     -fx-border-radius: 25px;
     -fx-background-radius: 25px;
     -fx-font-size: 22px;
 
-    /* Bagliore */
+    /* Glow */
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 5);
 }
 
-/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+/* This is also needed to prevent the system blue border from appearing on click */
 .button-menu-fire:pressed {
     -fx-background-color: #d35400;
     -fx-background-insets: 0;
@@ -107,16 +107,16 @@
 /* ======================================== EXIT BUTTON ================================== */
 
 .button-exit {
-    /* Gradiente dall'arancione al rosso scuro */
+    /* Gradient from orange to dark red */
     -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
 
-    /* Testo bianco crema */
+    /* Cream white text */
     -fx-text-fill: #FFF3E0;
     -fx-font-size: 22px;
     -fx-font-weight: bold;
     -fx-font-family: "System";
 
-    /* Bordo dorato */
+    /* Golden border */
     -fx-border-color: #F5B041;
     -fx-border-width: 2px;
 
@@ -125,35 +125,35 @@
 }
 
 .button-exit:hover {
-    /* Il gradiente diventa più acceso e luminoso */
+    /* The gradient becomes brighter and more vivid */
     -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
     -fx-cursor: hand;
-    /* L'ombra diventa un "bagliore" arancione */
+    /* The shadow becomes an orange "glow" */
     -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.7), 20, 0, 0, 0);
 }
 
 .button-exit:armed,
 .button-exit:focused {
-    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    /* Reaffirm the gradient - we write it first */
     -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
 
-    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    /* FUNDAMENTAL RESET: Scene Builder uses the insets for the blue. Set them to 0. */
     -fx-background-insets: 0;
 
-    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    /* Remove the default focus colors that create the outer rectangle */
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 
-    /* Il tuo stile di selezione */
+    /* Your selection style */
     -fx-border-color: #FFCA71;
     -fx-border-width: 2px;
     -fx-font-size: 22px;
 
-    /* Bagliore */
+    /* Glow */
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 5);
 }
 
-/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+/* This is also needed to prevent the system blue border from appearing on click */
 .button-exit:pressed {
     -fx-background-color: #d35400;
     -fx-background-insets: 0;
@@ -162,20 +162,20 @@
 /* =================================== NIGHT BUTTONS ====================================== */
 
 .button-menu-night {
-    /* Gradiente dal ciano al violetto */
+    /* Gradient from cyan to violet */
     -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
 
-    /* Testo bianco crema */
+    /* Cream white text */
     -fx-text-fill: #FFF3E0;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-font-family: "System";
 
-    /* Bordi più arrotondati, organici */
+    /* More rounded, organic borders */
     -fx-background-radius: 25px;
     -fx-border-radius: 25px;
 
-    /* Bordo dorato */
+    /* Golden border */
     -fx-border-color: #F5B041;
     -fx-border-width: 2px;
 
@@ -184,10 +184,10 @@
 }
 
 .button-menu-night:hover {
-    /* Il gradiente diventa più acceso e luminoso */
+    /* The gradient becomes brighter and more vivid */
     -fx-background-color: linear-gradient(to bottom, #115f88, #70334f);
     -fx-cursor: hand;
-    /* L'ombra diventa un "bagliore" arancione */
+    /* The shadow becomes an orange "glow" */
     -fx-effect: dropshadow(three-pass-box, rgb(2, 67, 99), 20, 0, 0, 0);
 }
 
@@ -195,32 +195,32 @@
 /*                                 TOGGLE BUTTON GROUP                                      */
 /* ======================================================================================== */
 
-/* Questo serve a resettare TUTTI gli stati che Scene Builder sporca di azzurro */
+/* This is to reset ALL the states that Scene Builder dirties with blue */
 .button-menu-night:selected,
 .button-menu-night:focused,
 .button-menu-night:selected:focused {
-    /* Riaffermiamo il gradiente - lo scriviamo come prima cosa */
+    /* Reaffirm the gradient - we write it first */
     -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
 
-    /* RESET FONDAMENTALE: Scene Builder usa gli insets per l'azzurro. Mettiamoli a 0. */
+    /* FUNDAMENTAL RESET: Scene Builder uses the insets for the blue. Set them to 0. */
     -fx-background-insets: 0;
 
-    /* Rimuoviamo i colori di focus predefiniti che creano il rettangolo esterno */
+    /* Remove the default focus colors that create the outer rectangle */
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 
-    /* Il tuo stile di selezione */
+    /* Your selection style */
     -fx-border-color: #FFCA71;
     -fx-border-width: 4px;
     -fx-border-radius: 25px;
     -fx-background-radius: 25px;
     -fx-font-size: 16px;
 
-    /* Bagliore */
+    /* Glow */
     -fx-effect: dropshadow(three-pass-box, rgba(17, 95, 136, 0.8), 15, 0, 0, 0);
 }
 
-/* Serve anche questo per evitare che al click appaia il bordo azzurro di sistema */
+/* This is also needed to prevent the system blue border from appearing on click */
 .button-menu-night:pressed {
     -fx-background-color: #024363;
     -fx-background-insets: 0;
@@ -230,11 +230,11 @@
 /*                                          TEXT                                            */
 /* ======================================================================================== */
 
-/* Stile per la scritta "Waiting" */
+/* Style for the "Waiting" text */
 .waiting-text {
-    -fx-font-family: "Papyrus", "System";      /* Mantieni lo stile Mesos */
+    -fx-font-family: "Papyrus", "System";      /* Keep the Mesos style */
     -fx-font-size: 32px;
-    -fx-text-fill: #fff3e0;                    /* Crema chiaro per contrasto */
+    -fx-text-fill: #fff3e0;                    /* Light cream for contrast */
     -fx-font-weight: bold;
 }
 
@@ -243,7 +243,7 @@
 .tribe-main-title {
     -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
 
-    /* Testo bianco crema */
+    /* Cream white text */
     -fx-text-fill: #FFF3E0;
     -fx-font-size: 22px;
     -fx-font-weight: bold;
@@ -251,9 +251,9 @@
     -fx-max-width: infinity;
     -fx-alignment: center;
 
-    /* Bordi più arrotondati, organici */
+    /* More rounded, organic borders */
 
-    /* Bordo dorato */
+    /* Golden border */
     -fx-border-color: #F5B041;
     -fx-border-width: 2px;
 
@@ -266,7 +266,7 @@
 .tribe-character-title {
     -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
 
-    /* Testo bianco crema */
+    /* Cream white text */
     -fx-text-fill: #FFF3E0;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -274,9 +274,9 @@
     -fx-max-width: infinity;
     -fx-alignment: center;
 
-    /* Bordi più arrotondati, organici */
+    /* More rounded, organic borders */
 
-    /* Bordo dorato */
+    /* Golden border */
     -fx-border-color: #F5B041;
     -fx-border-width: 2px;
 
@@ -284,22 +284,22 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
 }
 
-/* --- STILE MINI (Quando è incastrato in basso) --- */
-/* Il CSS legge: "Trova le .tribe-label che si trovano DENTRO .mini-mode" */
+/* --- MINI STYLE (When wedged at the bottom) --- */
+/* The CSS reads: "Find the .tribe-label that are INSIDE .mini-mode" */
 .mini-mode .tribe-character-title {
-    -fx-font-size: 10px; /* Font molto più piccolo! */
-    -fx-padding: 2px;    /* Margini ridotti */
+    -fx-font-size: 10px; /* Much smaller font! */
+    -fx-padding: 2px;    /* Reduced margins */
 }
 
-/* Puoi fare la stessa cosa per rimpicciolire anche le immagini delle carte!
+/* You can do the same thing to also shrink the card images!
 .mini-mode .card-image {
-    -fx-fit-width: 90px; /* Rimpicciolisce la larghezza delle carte in modalità mini
+    -fx-fit-width: 90px; /* Shrinks the width of the cards in mini mode
 } */
 
-/* Stile per il conteggio giocatori */
+/* Style for the player count */
 .player-count-text {
     -fx-font-size: 18px;
-    -fx-text-fill: #ffcc00;                    /* Giallo ambra per evidenziare il dato */
+    -fx-text-fill: #ffcc00;                    /* Amber yellow to highlight the value */
     -fx-letter-spacing: 2px;
 }
 
@@ -308,13 +308,13 @@
 /* ======================================================================================== */
 
 .nickname-text-field {
-    /* Il gradiente principale */
+    /* The main gradient */
     -fx-background-color: linear-gradient(to bottom, #024363, #571C39);
 
-    /* FORZATURA 1: Applichiamo il raggio a tutti i possibili strati di background di JavaFX */
+    /* FORCE 1: Apply the radius to all possible JavaFX background layers */
     -fx-background-radius: 25px, 25px, 25px, 25px;
 
-    /* FORZATURA 2: Azzeriamo tutti gli insets per evitare angoli squadrati "fantasma" */
+    /* FORCE 2: Zero out all insets to avoid "ghost" square corners */
     -fx-background-insets: 0, 0, 0, 0;
 
     -fx-text-fill: #FFF3E0;
@@ -323,7 +323,7 @@
     -fx-font-weight: bold;
     -fx-font-family: "System";
 
-    /* Bordo dorato */
+    /* Golden border */
     -fx-border-color: #F5B041;
     -fx-border-width: 2px;
     -fx-border-radius: 25px;
@@ -332,18 +332,18 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
 }
 
-/* Forziamo anche lo stato di focus per evitare che torni rettangolare quando scrivi */
+/* Also force the focus state to prevent it from becoming rectangular again when typing */
 .nickname-text-field:focused {
     -fx-background-color: linear-gradient(to bottom, #03567d, #6e2448);
 
-    /* Ripetiamo la forzatura del raggio e degli insets */
+    /* Repeat the radius and insets forcing */
     -fx-background-radius: 25px, 25px, 25px, 25px;
     -fx-background-insets: 0, 0, 0, 0;
 
     -fx-border-color: #F5B041;
     -fx-border-width: 2px;
 
-    /* Eliminiamo i rettangoli azzurri di sistema */
+    /* Remove the system blue rectangles */
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
@@ -352,7 +352,7 @@
 /*                                          SCROLL PANE                                     */
 /* ======================================================================================== */
 
-/* 2. Trucco Magico: Rende la "finestra" dello ScrollPane totalmente trasparente */
+/* 2. Magic Trick: Makes the ScrollPane "window" totally transparent */
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
@@ -363,60 +363,60 @@
 
 /* ====================================== SCROLL BAR DESIGN ================================= */
 
-/* 2. Sfondo del "binario" in cui scorre la barra */
+/* 2. Background of the "track" the bar slides in */
 .scroll-bar:horizontal .track,
 .scroll-bar:vertical .track {
-    -fx-background-color: rgba(0, 0, 0, 0.4); /* Sfondo scuro semi-trasparente */
-    -fx-border-color: #F5B041; /* Bordino dorato */
+    -fx-background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent dark background */
+    -fx-border-color: #F5B041; /* Golden border */
     -fx-border-width: 1px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
 }
 
-/* 3. Il cursore vero e proprio (Thumb) con i colori del tuo fuoco */
+/* 3. The actual cursor (Thumb) with your fire colors */
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
     -fx-background-color: linear-gradient(to bottom, #D35400, #900C3F);
     -fx-background-radius: 10px;
-    -fx-background-insets: 2px; /* Lascia un po' di respiro dal bordo del binario */
+    -fx-background-insets: 2px; /* Leaves a bit of room from the track border */
 }
 
-/* Effetto Hover quando ci passi sopra col mouse */
+/* Hover effect when you pass over it with the mouse */
 .scroll-bar:horizontal .thumb:hover,
 .scroll-bar:vertical .thumb:hover {
     -fx-background-color: linear-gradient(to bottom, #E67E22, #C0392B);
     -fx-cursor: hand;
 }
 
-/* 4. Nascondiamo le freccine default alle estremità (Stile UI Moderna) */
+/* 4. Hide the default little arrows at the ends (Modern UI Style) */
 .scroll-bar .increment-button,
 .scroll-bar .decrement-button {
     -fx-background-color: transparent;
-    -fx-padding: 0px; /* Le rimpicciolisce a zero */
+    -fx-padding: 0px; /* Shrinks them to zero */
 }
 
 .scroll-bar .increment-arrow,
 .scroll-bar .decrement-arrow {
-    -fx-shape: " "; /* Toglie la forma del triangolo */
+    -fx-shape: " "; /* Removes the triangle shape */
     -fx-padding: 0px;
 }
 
 /* ====================================== CARD COLUMN DESIGN ================================= */
 
-/* 3. Le Corsie / Colonne delle carte */
+/* 3. The Lanes / Card Columns */
 .tribe-column {
-    /* Uno sfondo nero semi-trasparente per far leggere bene le carte sopra lo sfondo globale */
+    /* A semi-transparent black background to read the cards well over the global background */
     -fx-background-color: rgba(0, 0, 0, 0.5);
 
-    /* Bordo SOLO a destra (Top Right Bottom Left) con il tuo color oro */
+    /* Border ONLY on the right (Top Right Bottom Left) with your gold color */
     -fx-border-color: transparent #F5B041 transparent transparent;
     -fx-border-width: 0 2px 0 0;
 
-    /* Un tocco di stile: linea tratteggiata per un effetto più "antico" (opzionale) */
+    /* A touch of style: dashed line for a more "ancient" effect (optional) */
     -fx-border-style: dotted;
 }
 
-/* L'ultima colonna a destra non deve avere il bordo, altrimenti sbatte contro la barra di scorrimento */
+/* The last column on the right must not have the border, otherwise it bumps into the scroll bar */
 .tribe-column-last {
     -fx-background-color: rgba(0, 0, 0, 0.5);
     -fx-border-width: 0;

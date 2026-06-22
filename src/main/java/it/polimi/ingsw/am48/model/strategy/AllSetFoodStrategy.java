@@ -37,7 +37,7 @@ public class AllSetFoodStrategy extends CardStrategy {
      */
     @Override
     public void registerTo(NotificatorCenter notificatorCenter, PlayerContext playerContext) {
-        // inizializza il counter al numero di set già presenti al momento dell'acquisizione
+        // initialize the counter to the number of sets already present at the time of acquisition
         completedSets = playerContext.getCurrPlayer().getTribe().minListSize();
         super.registerTo(notificatorCenter,playerContext);
     }
@@ -49,12 +49,12 @@ public class AllSetFoodStrategy extends CardStrategy {
      */
     @Override
     public void effect(PlayerContext playerContext) {
-        // (ad ogni OnPick) verifichiamo se è stato completato un nuovo set, ovvero se è stato aggiunto alla map un character del tipo che ne aveva meno
-        // in caso affermativo aggiungiamo 5 food al currentFood della tribe del player e aggiorniamo
+        // (at each OnPick) we check whether a new set has been completed, that is whether a character of the type that had the fewest has been added to the map
+        // if so, we add 5 food to the currentFood of the player's tribe and update
         Player player = playerContext.getCurrPlayer();
         int newMin = player.getTribe().minListSize();
         if (newMin > completedSets) {
-            player.updateFood((newMin - completedSets) * 5);    // oss: newMin - completedSets dovrebbe essere al max 1 se lo chiamiamo ad ogni pickCard
+            player.updateFood((newMin - completedSets) * 5);    // note: newMin - completedSets should be at most 1 if we call it at each pickCard
             completedSets = newMin;
         }
     }

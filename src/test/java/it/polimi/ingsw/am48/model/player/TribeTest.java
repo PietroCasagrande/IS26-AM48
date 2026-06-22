@@ -12,23 +12,23 @@ class TribeTest {
 
     private Tribe tribe;
 
-    // metodo eseguito prima di ogni singolo @Test, ogni metodo utilizza un istanza nuova
+    // method run before every single @Test, each method uses a fresh instance
     @BeforeEach
     void setUp() {
         tribe = new Tribe();
     }
 
 
-    // getTotalCharacters() — conta tutti i personaggi
+    // getTotalCharacters() — counts all characters
     @Test
     void newTribeShouldHaveZeroSize() {
-        // Una tribe appena creata non ha personaggi
+        // A freshly created tribe has no characters
         assertEquals(0, tribe.getTotalCharacters());
     }
 
     @Test
     void getTotalCharactersShouldCountAllCharacterTypes() {
-        // Aggiungo personaggi di tipi diversi, verifico che li conti tutti
+        // Add characters of different types, verify it counts them all
         tribe.addToTribe(new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2));
         tribe.addToTribe(new CharacterCard("H2", Era.FIRST, null, CharacterType.HUNTER, 2));
         tribe.addToTribe(new CharacterCard("S1", Era.FIRST, null, CharacterType.SHAMAN, 2));
@@ -36,7 +36,7 @@ class TribeTest {
     }
 
 
-    // countByType() — conta i personaggi di un tipo
+    // countByType() — counts the characters of a type
     @Test
     void countByTypeShouldReturnZeroForEmptyTribe() {
         assertEquals(0, tribe.countByType(CharacterType.HUNTER));
@@ -53,7 +53,7 @@ class TribeTest {
     }
 
 
-    // addToTribe(CharacterCard) — aggiunge personaggio
+    // addToTribe(CharacterCard) — adds a character
     @Test
     void addCharacterShouldIncreaseSizeAndCount() {
         CharacterCard hunter = new CharacterCard("H1", Era.FIRST, null, CharacterType.HUNTER, 2);
@@ -70,7 +70,7 @@ class TribeTest {
     }
 
 
-    // addToTribe(BuildingCard) — aggiunge edificio
+    // addToTribe(BuildingCard) — adds a building
     @Test
     void addBuildingShouldAddToListAndUpdatePoints() {
         BuildingCard building = new BuildingCard("B1", Era.FIRST, null, 2, 5);
@@ -88,7 +88,7 @@ class TribeTest {
     }
 
 
-    // updateCurrentFood() — aggiunge/toglie cibo
+    // updateCurrentFood() — adds/removes food
     @Test
     void updateFoodShouldAdd() {
         tribe.updateCurrentFood(5);
@@ -119,7 +119,7 @@ class TribeTest {
 
     @Test
     void updatePrestigeShouldGoNegative() {
-        // Nelle regole i PP possono andare sotto zero
+        // In the rules PP can go below zero
         tribe.updateCurrentPrestigePoints(-5);
         assertEquals(-5, tribe.getCurrentPrestigePoints());
     }
@@ -156,7 +156,7 @@ class TribeTest {
     }
 
 
-    // addArtifact() — aggiunge artefatto al set
+    // addArtifact() — adds an artifact to the set
     @Test
     void addArtifactShouldAdd() {
         tribe.addArtifact(Artifact.ARROW);
@@ -166,7 +166,7 @@ class TribeTest {
 
     @Test
     void addArtifactShouldNotDuplicate() {
-        // È un Set, aggiungere lo stesso artefatto due volte non cambia nulla
+        // It is a Set, adding the same artifact twice changes nothing
         tribe.addArtifact(Artifact.ARROW);
         tribe.addArtifact(Artifact.ARROW);
         assertEquals(1, tribe.getArtifacts().size());
@@ -181,7 +181,7 @@ class TribeTest {
     }
 
 
-    // payFood() — paga cibo o perdi PP
+    // payFood() — pay food or lose PP
     @Test
     void payFoodWithEnoughShouldJustSubtract() {
         tribe.updateCurrentFood(5);
@@ -202,14 +202,14 @@ class TribeTest {
     void payFoodWithoutEnoughShouldLosePrestige() {
         tribe.updateCurrentFood(2);
         tribe.payFood(5, 2);
-        // Mancano 3 cibo → -3 × 2 = -6 PP
+        // Missing 3 food → -3 × 2 = -6 PP
         assertEquals(0, tribe.getCurrentFood());
         assertEquals(-6, tribe.getCurrentPrestigePoints());
     }
 
     @Test
     void payFoodWithZeroFoodShouldLoseAllAsPrestige() {
-        // 0 cibo, devo pagarne 4 a 2 PP ciascuno → -8 PP
+        // 0 food, must pay 4 at 2 PP each → -8 PP
         tribe.payFood(4, 2);
         assertEquals(0, tribe.getCurrentFood());
         assertEquals(-8, tribe.getCurrentPrestigePoints());
@@ -221,24 +221,24 @@ class TribeTest {
         tribe.updateCurrentPrestigePoints(20);
         tribe.payFood(5, 3);
         assertEquals(5, tribe.getCurrentFood());
-        assertEquals(20, tribe.getCurrentPrestigePoints()); // invariato
+        assertEquals(20, tribe.getCurrentPrestigePoints()); // unchanged
     }
 
 
-    // computeTotalEndGameScore() — punteggio finale
+    // computeTotalEndGameScore() — final score
     @Test
     void endGameScoreShouldAddBuilderAndBuildingPoints() {
         tribe.updateCurrentPrestigePoints(10);
         tribe.updateBuilderPoints(5);
         tribe.addToTribe(new BuildingCard("B1", Era.FIRST, null, 2, 3));
-        // PP base = 10, builder = 5, building = 3 → totale 18
+        // base PP = 10, builder = 5, building = 3 → total 18
         tribe.computeTotalEndGameScore();
         assertEquals(18, tribe.getCurrentPrestigePoints());
     }
 
     @Test
     void endGameScoreShouldCountArtistPairs() {
-        // 5 artisti → 2 coppie → 20 PP
+        // 5 artists → 2 pairs → 20 PP
         for (int i = 0; i < 5; i++) {
             tribe.addToTribe(new CharacterCard("A" + i, Era.FIRST, null, CharacterType.ARTIST, 2));
         }
@@ -248,7 +248,7 @@ class TribeTest {
 
     @Test
     void endGameScoreShouldCountArtistPairsIntegerDivision() {
-        // 1 artista → 0 coppie → 0 PP
+        // 1 artist → 0 pairs → 0 PP
         tribe.addToTribe(new CharacterCard("A1", Era.FIRST, null, CharacterType.ARTIST, 2));
         tribe.computeTotalEndGameScore();
         assertEquals(0, tribe.getCurrentPrestigePoints());
@@ -256,7 +256,7 @@ class TribeTest {
 
     @Test
     void endGameScoreShouldCountInventorsTimesArtifacts() {
-        // 3 inventori × 4 artefatti diversi = 12 PP
+        // 3 inventors × 4 different artifacts = 12 PP
         for (int i = 0; i < 3; i++) {
             tribe.addToTribe(new CharacterCard("I" + i, Era.FIRST, null, CharacterType.INVENTOR, 2));
         }
@@ -270,7 +270,7 @@ class TribeTest {
 
     @Test
     void endGameScoreWithZeroInventorsShouldGiveZeroInventorPoints() {
-        // 0 inventori × 5 artefatti = 0 PP
+        // 0 inventors × 5 artifacts = 0 PP
         tribe.addArtifact(Artifact.ARROW);
         tribe.addArtifact(Artifact.BOWL);
         tribe.addArtifact(Artifact.FLUTE);
@@ -282,7 +282,7 @@ class TribeTest {
 
     @Test
     void endGameScoreWithZeroArtifactsShouldGiveZeroInventorPoints() {
-        // 3 inventori × 0 artefatti = 0 PP
+        // 3 inventors × 0 artifacts = 0 PP
         for (int i = 0; i < 3; i++) {
             tribe.addToTribe(new CharacterCard("I" + i, Era.FIRST, null, CharacterType.INVENTOR, 2));
         }
@@ -292,31 +292,31 @@ class TribeTest {
 
     @Test
     void endGameScoreShouldCombineEverything() {
-        // Scenario completo come nell'esempio del regolamento
-        tribe.updateCurrentPrestigePoints(19);  // punti accumulati durante la partita
+        // Full scenario as in the rulebook example
+        tribe.updateCurrentPrestigePoints(19);  // points accumulated during the game
 
-        // 5 inventori
+        // 5 inventors
         for (int i = 0; i < 5; i++) {
             tribe.addToTribe(new CharacterCard("I" + i, Era.FIRST, null, CharacterType.INVENTOR, 2));
         }
-        // 4 artefatti diversi → inventori = 5 × 4 = 20 PP
+        // 4 different artifacts → inventors = 5 × 4 = 20 PP
         tribe.addArtifact(Artifact.ARROW);
         tribe.addArtifact(Artifact.BOWL);
         tribe.addArtifact(Artifact.FLUTE);
         tribe.addArtifact(Artifact.CANOE);
 
-        // 2 costruttori con 3+1 PP → builderPoints = 4
+        // 2 builders with 3+1 PP → builderPoints = 4
         tribe.updateBuilderPoints(4);
 
-        // 2 edifici con 8+2 PP (buildingPoints lo simuliamo direttamente)
-        // Nota: addToTribe(BuildingCard) aggiunge automaticamente a buildingPoints
+        // 2 buildings with 8+2 PP (we simulate buildingPoints directly)
+        // Note: addToTribe(BuildingCard) automatically adds to buildingPoints
         tribe.addToTribe(new BuildingCard("E1", Era.FIRST, null, 2, 8));
         tribe.addToTribe(new BuildingCard("E2", Era.SECOND, null, 3, 2));
 
-        // Atteso: 19 + 20 (inventori) + 0 (artisti) + 4 (builder) + 10 (edifici) = 53
-        // Nota: l'esempio del regolamento dà 68 perché include anche 15 PP
-        // da un edificio speciale — quei 15 PP verrebbero aggiunti dalla strategy
-        // dell'edificio tramite l'OnEndGameNotificator, non da computeTotalEndGameScore
+        // Expected: 19 + 20 (inventors) + 0 (artists) + 4 (builder) + 10 (buildings) = 53
+        // Note: the rulebook example gives 68 because it also includes 15 PP
+        // from a special building — those 15 PP would be added by the building's
+        // strategy via the OnEndGameNotificator, not by computeTotalEndGameScore
         tribe.computeTotalEndGameScore();
         assertEquals(53, tribe.getCurrentPrestigePoints());
     }

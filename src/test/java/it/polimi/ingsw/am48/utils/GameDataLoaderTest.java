@@ -94,7 +94,7 @@ class GameDataLoaderTest {
                 .orElseThrow();
         assertNotNull(bui01.strategy);
         assertEquals("BuilderStrategy", bui01.strategy.effect);
-        // nota: BuilderStrategy nei character non ha notificator nel JSON aggiornato
+        // note: BuilderStrategy in the characters has no notificator in the updated JSON
     }
 
     @Test

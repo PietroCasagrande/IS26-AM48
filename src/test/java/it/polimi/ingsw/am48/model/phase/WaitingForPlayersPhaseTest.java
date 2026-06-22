@@ -43,7 +43,7 @@ class WaitingForPlayersPhaseTest {
         assertInstanceOf(WaitingPhaseSnapshot.class, phase.toSnapshot());
     }
 
-    // ==================== addPlayer - giocatore NON è l'ultimo ====================
+    // ==================== addPlayer - player is NOT the last ====================
 
     @Nested
     @DisplayName("When the added player does NOT complete the lobby")
@@ -90,15 +90,15 @@ class WaitingForPlayersPhaseTest {
         }
     }
 
-    // ==================== addPlayer - giocatore È l'ultimo ====================
+    // ==================== addPlayer - player IS the last ====================
 
     @Nested
     @DisplayName("When the added player COMPLETES the lobby")
     class LastPlayer {
 
-        // Nota: addPlayer chiama internamente new BoardBuilder().createBoard(REQUIRED)
-        // che legge game_data.json e costruisce una Board reale. Non è mockabile,
-        // quindi usiamo una Game reale per i test di transizione di fase.
+        // Note: addPlayer internally calls new BoardBuilder().createBoard(REQUIRED)
+        // which reads game_data.json and builds a real Board. It cannot be mocked,
+        // so we use a real Game for the phase transition tests.
 
         private Game realGame;
 

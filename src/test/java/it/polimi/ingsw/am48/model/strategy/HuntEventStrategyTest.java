@@ -41,7 +41,7 @@ class HuntEventStrategyTest {
 
     @Test
     void shouldGiveNothingIfNoHunters() {
-        // player senza hunter non riceve nulla
+        // player with no hunters receives nothing
         strategy.effect(context);
         assertEquals(0, p1.getFood());
         assertEquals(0, p1.getPoints());
@@ -49,7 +49,7 @@ class HuntEventStrategyTest {
 
     @Test
     void shouldGiveOneFoodPerHunter() {
-        // 1 cibo per ogni hunter indipendentemente dai pp
+        // 1 food for each hunter regardless of pp
         addHunters(p1, 3);
         strategy.effect(context);
         assertEquals(3, p1.getFood());
@@ -57,24 +57,24 @@ class HuntEventStrategyTest {
 
     @Test
     void shouldGivePPPerHunter() {
-        // ppPerPlayer pp per ogni hunter
+        // ppPerPlayer pp for each hunter
         addHunters(p1, 3);
         strategy.effect(context);
-        assertEquals(6, p1.getPoints()); // 2 pp × 3 hunter
+        assertEquals(6, p1.getPoints()); // 2 pp × 3 hunters
     }
 
     @Test
     void shouldGiveBothFoodAndPPCorrectly() {
-        // cibo e pp vengono assegnati entrambi correttamente
+        // food and pp are both assigned correctly
         addHunters(p1, 2);
         strategy.effect(context);
         assertEquals(2, p1.getFood());
-        assertEquals(4, p1.getPoints()); // 2 pp × 2 hunter
+        assertEquals(4, p1.getPoints()); // 2 pp × 2 hunters
     }
 
     @Test
     void shouldNotCountOtherCharacterTypes() {
-        // altri tipi di personaggi non vengono contati
+        // other character types are not counted
         p1.addToTribe(new CharacterCard("A1", Era.FIRST, null, CharacterType.ARTIST, 2));
         p1.addToTribe(new CharacterCard("B1", Era.FIRST, null, CharacterType.BUILDER, 2));
         strategy.effect(context);
@@ -84,13 +84,13 @@ class HuntEventStrategyTest {
 
     @Test
     void shouldAffectAllPlayersIndependently() {
-        // ogni player viene valutato indipendentemente
+        // each player is evaluated independently
         addHunters(p1, 3);
         addHunters(p2, 1);
-        // p3 senza hunter
+        // p3 with no hunters
         strategy.effect(context);
         assertEquals(3, p1.getFood());
-        assertEquals(6, p1.getPoints()); // 2 pp × 3 hunter
+        assertEquals(6, p1.getPoints()); // 2 pp × 3 hunters
         assertEquals(1, p2.getFood());
         assertEquals(2, p2.getPoints()); // 2 pp × 1 hunter
         assertEquals(0, p3.getFood());
@@ -99,7 +99,7 @@ class HuntEventStrategyTest {
 
     @Test
     void shouldStackWithExistingFoodAndPoints() {
-        // cibo e pp si sommano a quelli già posseduti
+        // food and pp add to those already held
         p1.updateFood(5);
         p1.updatePoints(3);
         addHunters(p1, 2);
@@ -110,11 +110,11 @@ class HuntEventStrategyTest {
 
     @Test
     void shouldScaleCorrectlyWithManyHunters() {
-        // verifica che la scala sia corretta con molti hunter
+        // checks that the scaling is correct with many hunters
         addHunters(p1, 6);
         strategy.effect(context);
         assertEquals(6, p1.getFood());
-        assertEquals(12, p1.getPoints()); // 2 pp × 6 hunter
+        assertEquals(12, p1.getPoints()); // 2 pp × 6 hunters
     }
 
     @Test

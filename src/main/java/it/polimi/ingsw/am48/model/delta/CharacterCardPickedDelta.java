@@ -17,8 +17,8 @@ import it.polimi.ingsw.am48.network.client.ClientModel;
 public class CharacterCardPickedDelta extends GameDelta{
     private final String playerNickname;
     private final String cardId;
-    private final List<String> updatedUpperTribeIds;  // fila superiore di showed aggiornata
-    private final List<String> updatedLowerTribeIds;  // fila inferiore di showed aggiornata
+    private final List<String> updatedUpperTribeIds;  // updated upper row of showed
+    private final List<String> updatedLowerTribeIds;  // updated lower row of showed
     private final int updatedFood;
     private final int updatedPoints;
     private final boolean totemReturned;

@@ -69,7 +69,7 @@ class ClientPlayerStateTest {
 
     @Test
     void shouldReturnDefensiveCopyOfCharacterCards() {
-        // la lista restituita non deve essere modificabile
+        // the returned list must not be modifiable
         ClientPlayerState state = ClientPlayerState.fromSnapshot(mockSnapshot);
         assertThrows(UnsupportedOperationException.class,
                 () -> state.getCharacterCardIds().add("hacked"));
@@ -100,7 +100,7 @@ class ClientPlayerStateTest {
 
     @Test
     void shouldAllowNegativeFood() {
-        // il cibo può diventare negativo per penalità
+        // food can become negative due to penalties
         ClientPlayerState state = ClientPlayerState.fromSnapshot(mockSnapshot);
         state.setFood(-2);
         assertEquals(-2, state.getFood());

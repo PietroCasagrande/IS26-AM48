@@ -95,9 +95,9 @@ class MessageSerializationTest {
     @Test
     @DisplayName("InitialSnapshotNotification should serialize with correct type")
     void shouldSerializeInitialSnapshot() throws Exception {
-        // Non possiamo costruire un GameSnapshot reale facilmente,
-        // ma possiamo verificare che la serializzazione non crashi
-        // e che il type sia corretto
+        // We cannot easily build a real GameSnapshot,
+        // but we can verify that the serialization does not crash
+        // and that the type is correct
         InitialSnapshotNotification original = new InitialSnapshotNotification(null);
         String json = mapper.writeValueAsString(original);
         assertTrue(json.contains("\"type\":\"initialSnapshot\""));

@@ -172,12 +172,12 @@ class ClientGameStateTest {
 
     @Test
     void shouldNotModifyOriginalListOnUpdate() {
-        // updateTribeShowed fa una copia difensiva
+        // updateTribeShowed makes a defensive copy
         ClientGameState state = ClientGameState.fromSnapshot(mockSnapshot);
         List<String> upper = new ArrayList<>(List.of("c1"));
         state.updateTribeShowed(upper, List.of());
-        upper.add("c2"); // modifica la lista originale
-        assertEquals(List.of("c1"), state.getUpperRowCardIds()); // lo stato non deve cambiare
+        upper.add("c2"); // modifies the original list
+        assertEquals(List.of("c1"), state.getUpperRowCardIds()); // the state must not change
     }
 
     // --- updateBuildingShowed ---
@@ -304,7 +304,7 @@ class ClientGameStateTest {
     @Test
     void shouldNotRemoveOtherPlayersFromTrack() {
         ClientGameState state = ClientGameState.fromSnapshot(mockSnapshot);
-        // aggiungi bob sulla track prima
+        // add bob on the track first
         state.placeTotemOnTrack('B', "bob");
         state.returnTotemToTurnCard("alice");
         assertEquals("bob", state.getOfferTrackPositions().get('B'));
@@ -337,7 +337,7 @@ class ClientGameStateTest {
         assertEquals(3, state.getCurrentTurn());
     }
 
-    // --- immutabilità getters ---
+    // --- getters immutability ---
 
     @Test
     void shouldReturnUnmodifiableUpperRow() {

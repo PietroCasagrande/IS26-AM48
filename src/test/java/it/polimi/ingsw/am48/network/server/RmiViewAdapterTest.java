@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-// Verifica che l'adapter deleghi correttamente al callback, e che le chiamate siano asincrone
+// Checks that the adapter correctly delegates to the callback, and that the calls are asynchronous
 class RmiViewAdapterTest {
     private VirtualViewRmi callbackMock;
     private RmiViewAdapter adapter;

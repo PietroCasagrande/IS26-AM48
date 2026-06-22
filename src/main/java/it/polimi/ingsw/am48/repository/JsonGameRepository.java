@@ -27,8 +27,8 @@ import java.util.stream.Stream;
  */
 public class JsonGameRepository implements GameRepository {
 
-    private final Path savesDir;  // percorso della cartella dove risiedono i file JSON
-    private final ObjectMapper objectMapper;  // traduce tra Oggetti Java e JSON
+    private final Path savesDir;  // path of the folder where the JSON files live
+    private final ObjectMapper objectMapper;  // translates between Java objects and JSON
 
     /**
      * Creates a repository rooted at the given directory, creating the directory if it is
@@ -38,7 +38,7 @@ public class JsonGameRepository implements GameRepository {
      * @throws RuntimeException if the saves directory cannot be created
      */
     public JsonGameRepository(String savesDirPath) {
-        // converte la stringa in un oggetto Path gestibile dal sistema operativo
+        // converts the string into a Path object handled by the operating system
         this.savesDir = Path.of(savesDirPath);
         this.objectMapper = new ObjectMapper();
         createSavesDirIfAbsent();
@@ -56,11 +56,11 @@ public class JsonGameRepository implements GameRepository {
     public void save(String gameId, GameSnapshot snapshot) {
         Path file = fileFor(gameId);
         try {
-            // converte l'oggetto snapshot in JSON e lo scrive fisicamente nel file indicato dal Path
+            // converts the snapshot object into JSON and physically writes it to the file at the Path
             objectMapper.writerWithDefaultPrettyPrinter()
                     .writeValue(file.toFile(), snapshot);
         } catch (IOException e) {
-            throw new RuntimeException("Errore nel salvataggio della partita " + gameId, e);
+            throw new RuntimeException("Error while saving game " + gameId, e);
         }
     }
 
@@ -75,16 +75,16 @@ public class JsonGameRepository implements GameRepository {
     @Override
     public Optional<GameSnapshot> load(String gameId) {
         Path file = fileFor(gameId);
-        // Path e Files ci permettono di verificare l'esistenza del file prima di tentare la lettura
+        // Path and Files let us check that the file exists before attempting to read it
         if (!Files.exists(file)) {
             return Optional.empty();
         }
         try {
-            // legge il contenuto del file e lo ricostruisce come istanza della classe GameSnapshot
+            // reads the file content and rebuilds it as an instance of the GameSnapshot class
             GameSnapshot snapshot = objectMapper.readValue(file.toFile(), GameSnapshot.class);
             return Optional.of(snapshot);
         } catch (IOException e) {
-            throw new RuntimeException("Errore nel caricamento della partita " + gameId, e);
+            throw new RuntimeException("Error while loading game " + gameId, e);
         }
     }
 
@@ -97,10 +97,10 @@ public class JsonGameRepository implements GameRepository {
     @Override
     public void delete(String gameId) {
         try {
-            // elimina il file se esiste; Files.deleteIfExists evita eccezioni se il file è già stato rimosso
+            // deletes the file if it exists; Files.deleteIfExists avoids exceptions if the file was already removed
             Files.deleteIfExists(fileFor(gameId));
         } catch (IOException e) {
-            throw new RuntimeException("Errore nella cancellazione della partita " + gameId, e);
+            throw new RuntimeException("Error while deleting game " + gameId, e);
         }
     }
 
@@ -113,14 +113,14 @@ public class JsonGameRepository implements GameRepository {
      */
     @Override
     public List<String> listActiveGameIds() {
-        // apre uno Stream sulle risorse della cartella. try-with-resources garantisce la chiusura del file system stream
+        // opens a Stream over the folder contents. try-with-resources guarantees the file system stream is closed
         try (Stream<Path> files = Files.list(savesDir)) {
             return files
-                    .filter(p -> p.toString().endsWith(".json")) // considera solo i salvataggi JSON
-                    .map(p -> p.getFileName().toString().replace(".json", "")) // estrae solo l'ID (nome file senza estensione)
+                    .filter(p -> p.toString().endsWith(".json")) // only consider JSON saves
+                    .map(p -> p.getFileName().toString().replace(".json", "")) // extract only the ID (file name without extension)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new RuntimeException("Errore nella lettura della cartella saves", e);
+            throw new RuntimeException("Error while reading the saves folder", e);
         }
     }
 
@@ -131,7 +131,7 @@ public class JsonGameRepository implements GameRepository {
      * @return the path {@code <savesDir>/<gameId>.json}
      */
     private Path fileFor(String gameId) {
-        // aggiunge nome file specifico al percorso
+        // appends the specific file name to the path
         return savesDir.resolve(gameId + ".json");
     }
 
@@ -142,10 +142,10 @@ public class JsonGameRepository implements GameRepository {
      */
     private void createSavesDirIfAbsent() {
         try {
-            // crea cartella dei salvataggi se mancante
+            // create the saves folder if missing
             Files.createDirectories(savesDir);
         } catch (IOException e) {
-            throw new RuntimeException("Impossibile creare la cartella saves: " + savesDir, e);
+            throw new RuntimeException("Unable to create the saves folder: " + savesDir, e);
         }
     }
     

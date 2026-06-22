@@ -90,7 +90,7 @@ public class SocketClientHandler implements Runnable, VirtualViewSocket {
                 command.execute(this);
             }
         } catch (IOException e) {
-            System.err.println("connessione persa con " + nickname);
+            System.err.println("connection lost with " + nickname);
         } finally {
             if(nickname != null) {
                 // pick active clients (companions) and clean GameManager

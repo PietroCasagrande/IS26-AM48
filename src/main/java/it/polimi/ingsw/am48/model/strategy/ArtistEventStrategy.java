@@ -15,7 +15,7 @@ import it.polimi.ingsw.am48.model.player.PlayerContext;
 public class ArtistEventStrategy extends CardStrategy {
     int threshold;
     int ppPerArtist;
-    int ppLost;   // salvato con segno NEGATIVO
+    int ppLost;   // stored with a NEGATIVE sign
 
     /**
      * Creates a new artist event effect.
@@ -39,7 +39,7 @@ public class ArtistEventStrategy extends CardStrategy {
      */
     @Override
     public void effect(PlayerContext playerContext) {
-        // assegna tot pp per ogni artista posseduto se si è oltre la soglia, altrimenti toglie il numero di pp indicato
+        // grants so many pp for each artist owned if above the threshold, otherwise removes the indicated number of pp
         playerContext.getPlayers().forEach(p -> {
                 int artistsCount = p.getTribe().countByType(CharacterType.ARTIST);
                 if(artistsCount >= this.threshold) p.updatePoints(ppPerArtist * artistsCount);
