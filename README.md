@@ -120,7 +120,7 @@ src/main/java/it/polimi/ingsw/am48/
 
 ## Communication protocol
 
-The full client–server protocol — the command/notification message catalogue, the join/offer/turn sequences, and the snapshot-then-delta synchronization flow — is documented separately as part of the final delivery (sequence diagrams + message reference). See [`docs/protocol.md`](docs/protocol.md).
+The full client–server protocol — the command/notification message catalogue, the join/offer/turn sequences, and the snapshot-then-delta synchronization flow — is documented separately as part of the final delivery (sequence diagrams + message reference). See [`deliveries/docs/CommunicationProtocol.pdf`](deliveries/docs/CommunicationProtocol.pdf).
 
 ## Requirements
 
@@ -141,6 +141,11 @@ mvn clean package -P windows
 
 This generates `target/mesos-server.jar` and `target/mesos-client.jar`.
 
+> **Note.** Only the **client** is platform-specific (it bundles the native
+> JavaFX libraries for the selected OS). The **server** is headless and
+> runs on any OS, so a single `mesos-server.jar` works everywhere — you do
+> not need to rebuild it per platform.
+
 ### Server
 
 ```bash
@@ -157,11 +162,73 @@ java -jar target/mesos-client.jar
 
 At launch the client asks for the server host, the transport (Socket / RMI) and the interface (TUI / GUI). Multiple clients can run on the same machine.
 
-> **Distributed play over RMI.** RMI needs the server to call back to each client, so on multi-machine setups the client must advertise the IP the server can actually reach. If RMI fails to connect across machines, start the client with:
-> ```bash
-> java -Djava.rmi.server.hostname=<CLIENT_IP> -jar target/mesos-client.jar
-> ```
-> RMI also requires bidirectional TCP, so it can fail behind firewalled / NAT'd networks (e.g. some university or mobile-hotspot networks); **Socket** is the reliable fallback for distributed testing.
+### Game lobby
+
+When a client connects:
+
+- if **no match is forming**, the player creates a new one and chooses the
+  number of players (**2 to 5**);
+- if a **match is already forming**, the player joins it automatically;
+- the match starts as soon as the chosen number of players have joined.
+
+Nicknames must be unique within a server; a name already in use is rejected
+at join time.
+
+## Distributed play (multiple machines)
+
+To play across different machines, one player hosts the server and the
+others connect to it using the host's local IP address. All players must
+be on the same network.
+
+### 1. On the host machine (server)
+
+Find your local IP address:
+
+- **Windows:** `ipconfig` → look for the `IPv4 Address` (e.g. `192.168.x.x`)
+- **Linux:** `ip addr` → look for the `inet` address on your active interface
+- **macOS:** `ifconfig` → look for the `inet` address (e.g. `192.168.x.x`)
+
+Start the server:
+
+```
+java -jar target/mesos-server.jar
+```
+
+The server listens on **Socket port 12345** and **RMI port 1099**. Make
+sure these ports are reachable from the other machines (same LAN, no
+firewall blocking inbound connections).
+
+### 2. On each client machine
+
+Start the client:
+
+```
+java -jar target/mesos-client.jar
+```
+
+At launch the client asks for:
+
+- **Server host:** enter the **host machine's local IP** (e.g. `192.168.1.42`),
+  not `localhost`
+- **Transport:** Socket or RMI
+- **Interface:** TUI or GUI
+
+> **Transport choice.** On a normal home/LAN network both Socket and RMI
+> work. On public or hotspot networks with restrictive firewalls, prefer
+> **Socket**: RMI requires bidirectional TCP and may fail when inbound
+> connections to the client are blocked.
+
+### Distributed play over RMI
+
+RMI needs the server to call back to each client, so the server must
+advertise an IP address the clients can actually reach. If RMI fails to
+connect across machines, start the **server** with:
+
+```
+java -Djava.rmi.server.hostname=<SERVER_LOCAL_IP> -jar target/mesos-server.jar
+```
+
+Replace `<SERVER_LOCAL_IP>` with the same local IP found in step 1.
 
 ## Database setup (leaderboard feature)
 
